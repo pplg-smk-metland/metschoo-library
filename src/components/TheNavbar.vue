@@ -1,15 +1,28 @@
 <script setup>
+import { ref } from "vue"
 import { RouterLink } from "vue-router"
+
+const openNavBtn = ref(null)
+const closeNavBtn = ref(null)
+const navlinks = ref(null)
+
+function openNav() {
+  navlinks.value.classList.add("active")
+}
+
+function closeNav() {
+  navlinks.value.classList.remove("active")
+}
 </script>
 
 <template>
   <nav>
     <div class="logo">ceritanya logo</div>
 
-    <ul class="nav-links">
+    <ul class="nav-links" ref="navlinks">
       <li class="nav-links__header">
         <div class="logo">Ceritanya logo</div>
-        <button class="nav-btn close">
+        <button class="nav-btn close" ref="closeNavBtn" @click="closeNav">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </li>
@@ -20,7 +33,7 @@ import { RouterLink } from "vue-router"
       <li><router-link :to="{ name: 'sign-in' }">Sign in</router-link></li>
     </ul>
 
-    <button class="nav-btn open">
+    <button class="nav-btn open" ref="openNavBtn" @click="openNav">
       <i class="fa-solid fa-bars"></i>
     </button>
   </nav>
