@@ -15,11 +15,6 @@ const router = createRouter({
       component: () => import("../views/PustakaView.vue"),
     },
     {
-      path: "/layanan",
-      name: "layanan",
-      component: () => import("../views/LayananView.vue"),
-    },
-    {
       path: "/wishlist",
       name: "wishlist",
       component: () => import("../views/WishListView.vue"),
