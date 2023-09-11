@@ -1,0 +1,42 @@
+<script setup>
+import { ref, onMounted } from "vue"
+import BookItem from "../BookItem.vue"
+import { supabase } from "../../supabase/index.js"
+
+const bukuBiasa = ref([])
+const isLoading = ref(false)
+
+async function ambilBukuBiasa() {
+  try {
+    const { data, error } = await supabase.from("buku").select(`*`).limit(20)
+
+    if (error) throw error
+    bukuBiasa.value = data
+  } catch (err) {
+    alert(err.message)
+  }
+}
+
+onMounted(async () => {
+  isLoading.value = true
+  await ambilBukuBiasa()
+  isLoading.value = false
+})
+</script>
+
+<template>
+  <h2>rekomendasi</h2>
+  <ul class="book-list">
+    <li v-if="isLoading">Memuat buku...</li>
+    <li v-if="!isLoading && !bukuBiasa.length">Bukunya ga ada gaes</li>
+    <BookItem v-for="buku in bukuBiasa" :key="buku.no_isbn" :buku="buku" />
+  </ul>
+</template>
+
+<style>
+.book-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+</style>

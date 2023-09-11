@@ -1,9 +1,12 @@
 <script setup>
-import TheWelcome from '../components/TheWelcome.vue'
+import CollectionBooks from "../components/home/CollectionBooks.vue"
+import ReccomendationBooks from "../components/home/ReccomendationBooks.vue"
 </script>
 
 <template>
   <main>
-    <TheWelcome />
+    <h1>Metschoo Library</h1>
+    <CollectionBooks />
+    <ReccomendationBooks />
   </main>
 </template>

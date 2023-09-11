@@ -1,5 +1,9 @@
-<script setup></script>
+<script setup>
+import TheNavbar from "./components/TheNavbar.vue"
+import { RouterView } from "vue-router"
+</script>
 
 <template>
-  <h1>Metschoo Library</h1>
+  <TheNavbar />
+  <RouterView></RouterView>
 </template>
