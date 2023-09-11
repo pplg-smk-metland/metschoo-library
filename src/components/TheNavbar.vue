@@ -2,6 +2,10 @@
 import { ref } from "vue"
 import { RouterLink } from "vue-router"
 
+import { useAuthStore } from "../stores/auth.js"
+
+const authStore = useAuthStore()
+
 const openNavBtn = ref(null)
 const closeNavBtn = ref(null)
 const navlinks = ref(null)
@@ -30,7 +34,10 @@ function closeNav() {
       <li><router-link :to="{ name: 'pustaka' }">Pustaka</router-link></li>
       <li><router-link :to="{ name: 'layanan' }">Layanan</router-link></li>
       <li><router-link :to="{ name: 'wishlist' }">Wishlist</router-link></li>
-      <li><router-link :to="{ name: 'sign-in' }">Sign in</router-link></li>
+      <li v-if="!authStore.session">
+        <router-link :to="{ name: 'sign-in' }">Sign in</router-link>
+      </li>
+      <li v-else><router-link :to="{ name: 'profile' }">Profile</router-link></li>
     </ul>
 
     <button class="nav-btn open" ref="openNavBtn" @click="openNav">

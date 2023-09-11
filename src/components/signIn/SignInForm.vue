@@ -1,20 +1,33 @@
 <script setup>
-import { computed, ref } from "vue"
+import { ref } from "vue"
+import { useAuthStore } from "../../stores/auth.js"
+
+import router from "../../router/index.js"
 
 const props = defineProps({
-  isLoggingIn: Boolean,
+  isSigningIn: Boolean,
 })
 
-const isSignUp = computed(() => !props.isLoggingIn)
+const authStore = useAuthStore()
 
 const email = ref("")
 const password = ref("")
+
+async function handleSignIn() {
+  await authStore.handleSignIn(email.value, password.value)
+  router.push({ name: "home" })
+}
+
+async function handleSignUp() {
+  await authStore.handleSignUp(email.value, password.value)
+  router.push({ name: "home" })
+}
 </script>
 
 <template>
   <div class="signin">
-    <div class="form-container log-in" v-show="isLoggingIn">
-      <form @submit.prevent="handleLogIn">
+    <div class="form-container log-in" v-if="isSigningIn">
+      <form @submit.prevent="handleSignIn">
         <label for="login-email">Email</label>
         <input required type="email" id="login-email" placeholder="Email" v-model="email" />
 
@@ -26,11 +39,11 @@ const password = ref("")
           placeholder="Your password here"
           v-model="password"
         />
-        <button type="submit" class="btn submit-button">Log in</button>
+        <button type="submit" class="btn submit-button">Sign in</button>
       </form>
     </div>
 
-    <div class="form-container sign-up" v-show="isSignUp">
+    <div class="form-container sign-up" v-else>
       <form @submit.prevent="handleSignUp">
         <label for="signup-email">Email</label>
         <input required type="email" id="signup-email" placeholder="Email" v-model="email" />
