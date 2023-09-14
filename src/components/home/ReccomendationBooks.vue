@@ -3,7 +3,7 @@ import { ref, onMounted } from "vue"
 import BookItem from "../BookItem.vue"
 import { supabase } from "../../supabase/index.js"
 
-const bukuBiasa = ref([])
+const bukuRekomendasi = ref([])
 const isLoading = ref(false)
 
 async function ambilBukuBiasa() {
@@ -11,7 +11,7 @@ async function ambilBukuBiasa() {
     const { data, error } = await supabase.from("buku").select(`*`).limit(20)
 
     if (error) throw error
-    bukuBiasa.value = data
+    bukuRekomendasi.value = data
   } catch (err) {
     alert(err.message)
   }
@@ -28,15 +28,8 @@ onMounted(async () => {
   <h2>rekomendasi</h2>
   <ul class="book-list">
     <li v-if="isLoading">Memuat buku...</li>
-    <li v-if="!isLoading && !bukuBiasa.length">Bukunya ga ada gaes</li>
-    <BookItem v-for="buku in bukuBiasa" :key="buku.no_isbn" :buku="buku" />
+    <li v-if="!isLoading && !bukuRekomendasi.length">Bukunya ga ada gaes</li>
+    <BookItem v-for="buku in bukuRekomendasi" :key="buku.no_isbn" :buku="buku" />
   </ul>
 </template>
-
-<style>
-.book-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-</style>
+>
