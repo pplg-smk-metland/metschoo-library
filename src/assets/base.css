@@ -65,10 +65,14 @@ button {
 label,
 input {
   display: block;
-  padding: 1rem;
+}
+
+label {
+  padding-block: 1rem 0.5rem;
 }
 
 input {
+  padding: 1rem;
   width: 100%;
 }
 

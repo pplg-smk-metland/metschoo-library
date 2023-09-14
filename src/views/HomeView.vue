@@ -6,7 +6,18 @@ import ReccomendationBooks from "../components/home/ReccomendationBooks.vue"
 <template>
   <main>
     <h1>Metschoo Library</h1>
-    <CollectionBooks />
-    <ReccomendationBooks />
+    <section class="main-section">
+      <ReccomendationBooks />
+    </section>
+
+    <section class="main-section">
+      <CollectionBooks />
+    </section>
   </main>
 </template>
+
+<style>
+.main-section {
+  padding: 2rem;
+}
+</style>

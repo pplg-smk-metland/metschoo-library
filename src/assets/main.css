@@ -1,5 +1,21 @@
 @import "./base.css";
 
+main {
+  padding: 2rem;
+  max-width: 100ch;
+  min-height: 70vh;
+}
+
+.book-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), auto));
+  gap: 1rem;
+}
+
 a,
 .green {
   text-decoration: none;
