@@ -1,5 +1,6 @@
 import { defineStore } from "pinia"
 import { supabase } from "../supabase/index.js"
+import router from "../router/index.js"
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
@@ -37,6 +38,7 @@ export const useAuthStore = defineStore("auth", {
           password,
         })
         if (error) throw error
+        router.push({ name: "home" })
       } catch (err) {
         alert(err.message)
       }
@@ -46,6 +48,7 @@ export const useAuthStore = defineStore("auth", {
       try {
         const { error } = await supabase.auth.signOut()
         if (error) throw error
+        router.push({ name: "home" })
       } catch (err) {
         alert(err.message)
       }
