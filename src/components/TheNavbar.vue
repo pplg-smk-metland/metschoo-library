@@ -34,9 +34,9 @@ function closeNav() {
       <li><router-link :to="{ name: 'pustaka' }">Pustaka</router-link></li>
       <li><router-link :to="{ name: 'wishlist' }">Wishlist</router-link></li>
       <li v-if="!authStore.session">
-        <router-link :to="{ name: 'sign-in' }">Sign in</router-link>
+        <router-link :to="{ name: 'sign-in' }">Masuk</router-link>
       </li>
-      <li v-else><router-link :to="{ name: 'profile' }">Profile</router-link></li>
+      <li v-else><router-link :to="{ name: 'profile' }">Profil</router-link></li>
     </ul>
 
     <button class="nav-btn open" ref="openNavBtn" @click="openNav">

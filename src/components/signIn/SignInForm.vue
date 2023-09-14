@@ -2,8 +2,6 @@
 import { ref } from "vue"
 import { useAuthStore } from "../../stores/auth.js"
 
-import router from "../../router/index.js"
-
 const props = defineProps({
   isSigningIn: Boolean,
 })
@@ -15,12 +13,10 @@ const password = ref("")
 
 async function handleSignIn() {
   await authStore.handleSignIn(email.value, password.value)
-  router.push({ name: "home" })
 }
 
 async function handleSignUp() {
   await authStore.handleSignUp(email.value, password.value)
-  router.push({ name: "home" })
 }
 </script>
 

@@ -12,8 +12,8 @@ function handleSwitchForm() {
 <template>
   <div class="about">
     <h1>
-      <span v-if="isSigningIn">Sign in</span>
-      <span v-else>Sign up</span>
+      <span v-if="isSigningIn">Masuk</span>
+      <span v-else>Daftar</span>
     </h1>
 
     <SignInForm :isSigningIn="isSigningIn" />
