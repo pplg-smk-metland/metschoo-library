@@ -21,11 +21,15 @@ function closeNav() {
 
 <template>
   <nav>
-    <div class="logo">ceritanya logo</div>
+    <div>
+      <img class="logo" src="/logo.svg" alt="Logo Metschoo Library" />
+    </div>
 
     <ul class="nav-links" ref="navlinks">
       <li class="nav-links__header">
-        <div class="logo">Ceritanya logo</div>
+        <div>
+          <img class="logo" src="/logo.svg" alt="Logo Metschoo Library" />
+        </div>
         <button class="nav-btn close" ref="closeNavBtn" @click="closeNav">
           <i class="fa-solid fa-xmark"></i>
         </button>
@@ -47,11 +51,17 @@ function closeNav() {
 <style>
 nav {
   background: var(--accent);
+  color: white;
+  font-weight: 300;
   padding-inline: 0.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: relative;
+}
+
+.logo {
+  height: 60px;
 }
 
 .nav-links {
