@@ -2,13 +2,13 @@
 import { ref } from "vue"
 import { useAuthStore } from "../../stores/auth.js"
 
+const authStore = useAuthStore()
+
 const isSigningIn = ref(false)
 
 function handleSwitchForm() {
   isSigningIn.value = !isSigningIn.value
 }
-
-const authStore = useAuthStore()
 
 const email = ref("")
 const password = ref("")

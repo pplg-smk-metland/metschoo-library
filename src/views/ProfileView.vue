@@ -1,4 +1,5 @@
 <script setup>
+import { ref, onMounted } from "vue"
 import { useAuthStore } from "../stores/auth.js"
 import router from "../router/index.js"
 
@@ -11,6 +12,26 @@ function signOut() {
     router.push()
   }
 }
+
+const name = ref("")
+const kelas = ref("")
+const jurusan = ref("")
+
+function updateUser() {
+  const updates = {
+    nama: name.value,
+    kelas: kelas.value,
+    jurusan: jurusan.value,
+  }
+  authStore.handleUpdateProfile(updates)
+}
+
+onMounted(async () => {
+  const data = await authStore.getProfile()
+  name.value = data.nama
+  kelas.value = data.kelas
+  jurusan.value = data.jurusan
+})
 </script>
 
 <template>
@@ -21,14 +42,22 @@ function signOut() {
     </header>
 
     <div class="profile">
-      <form>
+      <form @submit.prevent="updateUser">
         <label for="name">Name</label>
-        <input type="text" />
+        <input type="text" placeholder="nama lu" v-model="name" />
 
-        <label for="email">Email</label>
-        <input type="email" />
+        <label for="kelas">Kelas</label>
 
-        <button>Ubah profile</button>
+        <select name="kelas" id="kelas" v-model="kelas">
+          <option value="X">X</option>
+          <option value="XI">XI</option>
+          <option value="XII">XII</option>
+        </select>
+
+        <label for="jurusan">Jurusan</label>
+        <input type="text" placeholder="JURUSAN LOO APA" v-model="jurusan" />
+
+        <button type="submit">Ubah profile</button>
       </form>
     </div>
 

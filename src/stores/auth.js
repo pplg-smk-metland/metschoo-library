@@ -27,7 +27,7 @@ export const useAuthStore = defineStore("auth", {
         if (error) throw error
         alert("Cek email lu ya buat verifikasi email!")
       } catch (err) {
-        alert(err.mesage)
+        alert(err.message)
       }
     },
 
@@ -51,6 +51,34 @@ export const useAuthStore = defineStore("auth", {
         router.push({ name: "home" })
       } catch (err) {
         alert(err.message)
+      }
+    },
+
+    async getProfile() {
+      const { user } = this.session
+      try {
+        const { data, error, status } = await supabase
+          .from("pengguna")
+          .select("*")
+          .eq("id", user.id)
+          .single()
+        if (error && status !== 406) throw error
+        return data
+      } catch (err) {
+        alert(err.message)
+      }
+    },
+
+    async handleUpdateProfile(profileUpdates) {
+      const updates = {
+        id: this.session.user.id,
+        ...profileUpdates,
+      }
+      try {
+        const { error } = await supabase.from("pengguna").upsert(updates)
+        if (error) throw error
+      } catch (err) {
+        console.error(err.message)
       }
     },
   },
