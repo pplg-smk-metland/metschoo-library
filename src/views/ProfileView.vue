@@ -40,7 +40,8 @@ onMounted(async () => {
     </header>
 
     <div class="profile">
-      <form @submit.prevent="updateUser">
+      <img class="profile-picture" src="../assets/profilepicture.svg" alt="Foto kamu disini" />
+      <form class="profile-form" @submit.prevent="updateUser">
         <label for="name">Name</label>
         <input type="text" placeholder="Masukan Nama" v-model="dataPengguna.nama" />
 
@@ -54,12 +55,42 @@ onMounted(async () => {
         <label for="jurusan">Jurusan</label>
         <input type="text" placeholder="Masukkan Jurusan" v-model="dataPengguna.jurusan" />
 
-        <CTA type="submit" :isButton="true" :fill="true">Ubah profil</CTA>
+        <CTA class="button-ubah" type="submit" :isButton="true" :fill="true">Ubah profil</CTA>
       </form>
     </div>
 
     <div>
-      <CTA :isButton="true" @click="signOut">Keluar akun</CTA>
+      <CTA class="button-keluar" :isButton="true" @click="signOut">Keluar akun</CTA>
     </div>
   </main>
 </template>
+<style>
+@media screen and (max-width: 50em) {
+  .profile {
+    flex-direction: column;
+  }
+}
+.profile {
+  display: flex;
+  margin-bottom: 200px;
+  gap: 20px;
+}
+
+.profile-form {
+  flex-basis: 1000px;
+}
+
+.profile-picture {
+  height: 360px;
+  margin: 20px;
+}
+
+.button-ubah {
+  justify-self: flex-end;
+  margin-left: auto;
+}
+
+.button-keluar {
+  margin: 20px;
+}
+</style>
