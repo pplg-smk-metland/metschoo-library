@@ -16,8 +16,4 @@ const props = defineProps({
   outline: 2px solid #444;
   padding: 2rem;
 }
-
-.book + .book {
-  margin-block-start: 1rem;
-}
 </style>
