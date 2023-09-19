@@ -33,31 +33,33 @@ onMounted(async () => {
 </script>
 
 <template>
-  <header>
-    <h1>Profil</h1>
-    <p>Selamat Datang di Profil kamu</p>
-  </header>
+  <main>
+    <header>
+      <h1>Profil</h1>
+      <p>Selamat Datang di Profil kamu</p>
+    </header>
 
-  <div class="profile">
-    <form @submit.prevent="updateUser">
-      <label for="name">Name</label>
-      <input type="text" placeholder="Masukan Nama" v-model="dataPengguna.nama" />
+    <div class="profile">
+      <form @submit.prevent="updateUser">
+        <label for="name">Name</label>
+        <input type="text" placeholder="Masukan Nama" v-model="dataPengguna.nama" />
 
-      <label for="kelas">Kelas</label>
-      <select name="kelas" id="kelas" v-model="dataPengguna.kelas">
-        <option value="X">X</option>
-        <option value="XI">XI</option>
-        <option value="XII">XII</option>
-      </select>
+        <label for="kelas">Kelas</label>
+        <select name="kelas" id="kelas" v-model="dataPengguna.kelas">
+          <option value="X">X</option>
+          <option value="XI">XI</option>
+          <option value="XII">XII</option>
+        </select>
 
-      <label for="jurusan">Jurusan</label>
-      <input type="text" placeholder="Masukkan Jurusan" v-model="dataPengguna.jurusan" />
+        <label for="jurusan">Jurusan</label>
+        <input type="text" placeholder="Masukkan Jurusan" v-model="dataPengguna.jurusan" />
 
-      <CTA type="submit" :isButton="true" :fill="true">Ubah profil</CTA>
-    </form>
-  </div>
+        <CTA type="submit" :isButton="true" :fill="true">Ubah profil</CTA>
+      </form>
+    </div>
 
-  <div>
-    <CTA :isButton="true" @click="signOut">Keluar akun</CTA>
-  </div>
+    <div>
+      <CTA :isButton="true" @click="signOut">Keluar akun</CTA>
+    </div>
+  </main>
 </template>

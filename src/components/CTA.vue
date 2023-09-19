@@ -6,7 +6,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <button v-if="isButton" :class="['cta', { 'cta--fill': fill }]">
+  <button v-if="isButton" :class="['btn', 'cta', { 'cta--fill': fill }]">
     <slot />
   </button>
 
@@ -18,8 +18,6 @@ const props = defineProps({
 <style scoped>
 .cta {
   outline: 2px solid var(--primary);
-  padding: 1rem 2rem;
-  margin-block: 1rem;
 }
 
 .cta--fill {

@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from "vue"
+import CTA from "../CTA.vue"
 import { useAuthStore } from "../../stores/auth.js"
 
 const authStore = useAuthStore()
@@ -12,13 +13,16 @@ function handleSwitchForm() {
 
 const email = ref("")
 const password = ref("")
+const confirmPassword = ref("")
 
 async function handleSignIn() {
   await authStore.handleSignIn(email.value, password.value)
 }
 
 async function handleSignUp() {
-  await authStore.handleSignUp(email.value, password.value)
+  if (confirmPassword.value === password.value) {
+    await authStore.handleSignUp(email.value, password.value)
+  } else alert("passwordnya gak sama..")
 }
 </script>
 
@@ -38,10 +42,10 @@ async function handleSignUp() {
           required
           type="password"
           id="login-password"
-          placeholder="Your password here"
+          placeholder="Password anda"
           v-model="password"
         />
-        <button type="submit" class="btn submit-button confirm-button">Masuk</button>
+        <CTA type="submit" :is-button="true" :fill="true">Masuk</CTA>
       </form>
     </div>
 
@@ -54,59 +58,46 @@ async function handleSignUp() {
           required
           type="password"
           id="signup-password"
-          placeholder="Your password here"
+          placeholder="Password anda"
           v-model="password"
         />
+        <label for="confirm-password">Konfirmasi password</label>
+        <input type="password" placeholder="ketik lagi coba" required v-model="confirmPassword" />
 
-        <button type="submit" class="btn submit-button confirm-button">Daftar</button>
+        <CTA type="submit" :is-button="true" :fill="true">Daftar</CTA>
       </form>
     </div>
-    <button @click="handleSwitchForm" class="btn submit-button switch-button">
+    <CTA @click="handleSwitchForm" :is-button="true">
       <span v-if="isSigningIn">Belum punya akun? Daftar</span>
       <span v-else>Sudah punya akun? Masuk</span>
-    </button>
+    </CTA>
   </div>
 </template>
 
 <style>
-.signin-form {
-  flex-basis: 50ch;
-}
-
 .signin {
-  flex-basis: 500px;
   background-color: #a4c5c5;
-  max-width: 50%;
-  padding: 50px;
-  margin: 50px;
+  flex-basis: 60ch;
+  max-width: 60ch;
+  padding: 2rem;
   border-radius: 42px;
   box-shadow: -10px 10px 10px 5px rgba(0, 0, 0, 0.4);
+
+  display: flex;
+  flex-direction: column;
 }
 
-input {
-  border-style: none;
-  background-color: #d9d9d9;
-  border-radius: 12px;
+.form-container {
+  flex-grow: 1;
 }
 
-.signin > h1 {
+.signin h1 {
   text-align: center;
 }
 
-.submit-button {
-  text-align: center;
+.signin .btn {
   width: 100%;
-  margin-block: 1rem;
-}
-
-.confirm-button {
-  background-color: #ababab;
-  border-radius: 12px;
-  margin-block: 25px;
-}
-
-.switch-button {
-  border: 1px solid black;
-  border-radius: 12px;
+  text-align: center;
+  margin-block-start: 2rem;
 }
 </style>

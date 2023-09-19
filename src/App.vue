@@ -12,15 +12,16 @@ onMounted(() => {
 
 <template>
   <TheNavbar />
-  <main>
-    <RouterView></RouterView>
-  </main>
+  <RouterView></RouterView>
 
   <TheFooter />
 </template>
 
 <style>
 main {
+  padding: 2rem;
+  min-height: 70vh;
+
   flex-grow: 1;
 }
 </style>

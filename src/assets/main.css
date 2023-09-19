@@ -34,6 +34,7 @@ input {
   background: var(--grey);
   padding: 1rem;
   width: 100%;
+  border-radius: 0.5rem;
 }
 
 input:focus-visible {
@@ -54,13 +55,9 @@ select {
 }
 
 .btn {
+  margin-block: 1rem;
   padding: 1rem 1.5rem;
-}
-
-main {
-  padding: 2rem;
-  max-width: 100ch;
-  min-height: 70vh;
+  border-radius: 0.5rem;
 }
 
 .book-list {
