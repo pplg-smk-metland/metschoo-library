@@ -63,9 +63,3 @@ onMounted(async () => {
     </div>
   </main>
 </template>
-
-<style>
-input:focus {
-  outline: 2px solid var(--primary);
-}
-</style>
