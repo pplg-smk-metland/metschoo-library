@@ -8,7 +8,11 @@ const isLoading = ref(false)
 
 async function ambilBukuKoleksi() {
   try {
-    const { data, error } = await supabase.from("buku_koleksi").select(`*`).limit(20)
+    const { data, error } = await supabase
+      .from("buku")
+      .select(`*`)
+      .eq("kategori", "koleksi")
+      .limit(20)
 
     if (error) throw error
     bukuKoleksi.value = data
