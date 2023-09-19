@@ -5,11 +5,9 @@ const authStore = useAuthStore()
 </script>
 
 <template>
-  <main class="wishlist">
-    <h1>Wishlist</h1>
-    <p v-if="authStore.session">
-      Kamu sudah login tapi kami belom selesai buat aplikasinya sabar yah
-    </p>
-    <p v-else>Kamu harus login dlu</p>
-  </main>
+  <h1>Wishlist</h1>
+  <p v-if="authStore.session">
+    Kamu sudah login tapi kami belom selesai buat aplikasinya sabar yah
+  </p>
+  <p v-else>Kamu harus login dlu</p>
 </template>
