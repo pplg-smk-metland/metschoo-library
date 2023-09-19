@@ -1,14 +1,14 @@
 :root {
-  --primary-100: hsl(176, 30%, 90%);
-  --primary-300: hsl(175, 57%, 87%);
-  --primary-500: hsl(177, 65%, 60%);
-  --primary-700: hsl(170, 70%, 40%);
-  ---primary-900: hsl(176, 90%, 3%);
+  --primary: #336f6c;
 
-  --secondary: hsl(174, 57%, 11%);
-  --accent: #336f6c;
+  --secondary-100: #1d564c;
+  --secondary-500: #08322c;
+  --accent: #40d4c5;
+
   --white: hsl(180, 54%, 95%);
-  --dark: var(---primary-900);
+  --grey: hsl(180, 25%, 90%);
+  --dark-grey: hsl(180, 10%, 70%);
+  --dark: var(--secondary-500);
 
   --color-confirm: hsl(100, 50%, 50%);
   --color-warning: hsl(39, 100%, 50%);
@@ -17,67 +17,13 @@
 
   --background: var(--white);
   --text: var(--dark);
+
+  --nav-link-active: var(--secondary-100);
 }
 
 [data-theme="dark"] {
   --background: var(--dark);
   --text: var(--white);
-}
-
-body {
-  background: var(--background);
-  color: var(--text);
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  margin-block: 0.8rem;
-}
-
-h1 {
-  line-height: 0.8;
-}
-
-h2 {
-  line-height: 1.1;
-}
-
-h3 {
-  line-height: 1.3;
-}
-
-p {
-  margin-block: 0.5rem;
-  line-height: 1.7;
-}
-
-button {
-  all: unset;
-  box-sizing: border-box;
-  display: block;
-  cursor: pointer;
-}
-
-label,
-input {
-  display: block;
-}
-
-label {
-  padding-block: 1rem 0.5rem;
-}
-
-input {
-  padding: 1rem;
-  width: 100%;
-}
-
-.btn {
-  padding: 1rem 1.5rem;
 }
 
 *,
@@ -96,6 +42,8 @@ body {
   line-height: 1.5;
   font-family: "Josefin Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
+  background: var(--background);
+  color: var(--text);
 }
 
 img,
@@ -112,6 +60,14 @@ button,
 textarea,
 select {
   font: inherit;
+}
+
+input,
+button {
+  all: unset;
+  box-sizing: border-box;
+  display: block;
+  cursor: pointer;
 }
 
 p,
