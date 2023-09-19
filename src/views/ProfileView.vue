@@ -1,7 +1,8 @@
 <script setup>
-import { ref, onMounted } from "vue"
+import { onMounted, reactive } from "vue"
 import { useAuthStore } from "../stores/auth.js"
 import router from "../router/index.js"
+import CTA from "../components/CTA.vue"
 
 const authStore = useAuthStore()
 
@@ -13,24 +14,21 @@ function signOut() {
   }
 }
 
-const name = ref("")
-const kelas = ref("")
-const jurusan = ref("")
+const dataPengguna = reactive({
+  nama: "",
+  kelas: "",
+  jurusan: "",
+})
 
 function updateUser() {
-  const updates = {
-    nama: name.value,
-    kelas: kelas.value,
-    jurusan: jurusan.value,
-  }
-  authStore.handleUpdateProfile(updates)
+  authStore.handleUpdateProfile(dataPengguna)
 }
 
 onMounted(async () => {
-  const data = await authStore.getProfile()
-  name.value = data.nama
-  kelas.value = data.kelas
-  jurusan.value = data.jurusan
+  const { nama, kelas, jurusan } = await authStore.getProfile()
+  dataPengguna.nama = nama
+  dataPengguna.kelas = kelas
+  dataPengguna.jurusan = jurusan
 })
 </script>
 
@@ -38,31 +36,36 @@ onMounted(async () => {
   <main>
     <header>
       <h1>Profil</h1>
-      <p>Selamat datang di profil kamu</p>
+      <p>Selamat Datang di Profil kamu</p>
     </header>
 
     <div class="profile">
       <form @submit.prevent="updateUser">
         <label for="name">Name</label>
-        <input type="text" placeholder="nama lu" v-model="name" />
+        <input type="text" placeholder="Masukan Nama" v-model="dataPengguna.nama" />
 
         <label for="kelas">Kelas</label>
-
-        <select name="kelas" id="kelas" v-model="kelas">
+        <select name="kelas" id="kelas" v-model="dataPengguna.kelas">
           <option value="X">X</option>
           <option value="XI">XI</option>
           <option value="XII">XII</option>
         </select>
 
         <label for="jurusan">Jurusan</label>
-        <input type="text" placeholder="JURUSAN LOO APA" v-model="jurusan" />
+        <input type="text" placeholder="Masukkan Jurusan" v-model="dataPengguna.jurusan" />
 
-        <button type="submit">Ubah profile</button>
+        <CTA type="submit" :isButton="true">Ubah profile</CTA>
       </form>
     </div>
 
     <div>
-      <button @click="signOut">Keluar akun</button>
+      <CTA :isButton="true" @click="signOut">Keluar akun</CTA>
     </div>
   </main>
 </template>
+
+<style>
+input:focus {
+  outline: 2px solid var(--primary);
+}
+</style>

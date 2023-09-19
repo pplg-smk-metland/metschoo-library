@@ -48,10 +48,11 @@ function closeNav() {
     </button>
   </nav>
 </template>
+
 <style>
 nav {
-  background: var(--accent);
-  color: white;
+  background: var(--primary);
+  color: var(--white);
   font-weight: 300;
   padding-inline: 0.5rem;
   display: flex;
@@ -61,7 +62,7 @@ nav {
 }
 
 .logo {
-  height: 60px;
+  height: 3.5rem;
 }
 
 .nav-links {
@@ -90,6 +91,7 @@ nav {
   justify-content: space-between;
   align-items: center;
 }
+
 nav a,
 .nav-btn {
   color: inherit;
@@ -98,6 +100,15 @@ nav a,
   display: inline-block;
 }
 
+nav a.active {
+  background: var(--nav-link-active);
+}
+
+@media (hover: hover) {
+  nav a:hover {
+    background-color: #1d564c;
+  }
+}
 @media screen and (min-width: 50em) {
   .nav-links {
     flex-direction: row;
