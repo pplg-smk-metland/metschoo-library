@@ -29,8 +29,14 @@ async function handleSignUp() {
 <template>
   <div class="signin">
     <h1>
-      <span v-if="isSigningIn">Masuk ke akun</span>
-      <span v-else>Daftar akun baru</span>
+      <div v-if="isSigningIn">
+        <span>Masuk</span>
+        <p>Masuk ke akun Metschoo Library yang sudah anda miliki!</p>
+      </div>
+      <div v-else>
+        <span>Daftar</span>
+        <p>Buat akun Metschoo Library yang baru!</p>
+      </div>
     </h1>
     <div class="form-container log-in" v-if="isSigningIn">
       <form @submit.prevent="handleSignIn">
@@ -42,7 +48,7 @@ async function handleSignUp() {
           required
           type="password"
           id="login-password"
-          placeholder="Password anda"
+          placeholder="Password Anda"
           v-model="password"
         />
         <CTA type="submit" :is-button="true" :fill="true">Masuk</CTA>
@@ -58,11 +64,16 @@ async function handleSignUp() {
           required
           type="password"
           id="signup-password"
-          placeholder="Password anda"
+          placeholder="Password Anda"
           v-model="password"
         />
-        <label for="confirm-password">Konfirmasi password</label>
-        <input type="password" placeholder="ketik lagi coba" required v-model="confirmPassword" />
+        <label for="confirm-password">Konfirmasi Password</label>
+        <input
+          type="password"
+          placeholder="Ketik Ulang Password"
+          required
+          v-model="confirmPassword"
+        />
 
         <CTA type="submit" :is-button="true" :fill="true">Daftar</CTA>
       </form>
@@ -93,6 +104,11 @@ async function handleSignUp() {
 
 .signin h1 {
   text-align: center;
+}
+
+.signin p {
+  font-weight: 300;
+  font-size: large;
 }
 
 .signin .btn {
