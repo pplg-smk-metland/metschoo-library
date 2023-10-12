@@ -8,7 +8,11 @@ const isLoading = ref(false)
 
 async function ambilBukuBiasa() {
   try {
-    const { data, error } = await supabase.from("buku").select(`*`).eq("kategori", "paket").limit(20)
+    const { data, error } = await supabase
+      .from("buku")
+      .select(`*`)
+      .eq("kategori", "paket")
+      .limit(20)
 
     if (error) throw error
     bukuRekomendasi.value = data
@@ -32,4 +36,3 @@ onMounted(async () => {
     <BookItem v-for="buku in bukuRekomendasi" :key="buku.no_isbn" :buku="buku" />
   </ul>
 </template>
->

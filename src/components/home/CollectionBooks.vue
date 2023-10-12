@@ -36,5 +36,3 @@ onMounted(async () => {
     <BookItem v-for="buku in bukuKoleksi" :key="buku.isbn" :buku="buku" />
   </ul>
 </template>
-
-<style></style>
