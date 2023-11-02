@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from "vue"
 import { RouterLink } from "vue-router"
-
 import { useAuthStore } from "../stores/auth.js"
 
 const authStore = useAuthStore()
@@ -37,6 +36,7 @@ function closeNav() {
       <li><router-link :to="{ name: 'home' }">Beranda</router-link></li>
       <li><router-link :to="{ name: 'pustaka' }">Pustaka</router-link></li>
       <li><router-link :to="{ name: 'wishlist' }">Wishlist</router-link></li>
+      <li><router-link :to="{ name: 'search' }">Search</router-link></li>
       <li v-if="!authStore.session">
         <router-link :to="{ name: 'sign-in' }">Masuk</router-link>
       </li>
@@ -63,6 +63,11 @@ nav {
 
 .logo {
   height: 3.5rem;
+}
+
+#search {
+  color: var(--text);
+  padding: 0.5rem;
 }
 
 .nav-links {

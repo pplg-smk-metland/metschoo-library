@@ -1,9 +1,12 @@
 <script setup>
-import { onMounted } from "vue"
+import { onMounted, provide, ref } from "vue"
 import TheNavbar from "./components/TheNavbar.vue"
 import TheFooter from "./components/TheFooter.vue"
 import { RouterView } from "vue-router"
 import { useAuthStore } from "./stores/auth.js"
+
+const searchTerm = ref("")
+provide("searchTerm", searchTerm)
 
 onMounted(() => {
   useAuthStore().init()

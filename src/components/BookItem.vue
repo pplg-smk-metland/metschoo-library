@@ -15,7 +15,7 @@ async function getImages() {
     .list(props.buku.no_isbn + "/", { limit: 1, offset: 0, search: props.buku.no_isbn })
   if (error) throw error
 
-  return data[0].name
+  return data[0]?.name
 }
 
 onMounted(async () => {
