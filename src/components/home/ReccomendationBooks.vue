@@ -7,6 +7,11 @@ const bukuRekomendasi = ref([])
 const isLoading = ref(false)
 
 async function ambilBukuBiasa() {
+  const localBukuRekomendasi = JSON.parse(localStorage.getItem("bukuRekomendasi"))
+  if (localBukuRekomendasi?.bukuRekomendasi && Date.now() - localBukuRekomendasi.date < 60000) {
+    bukuRekomendasi.value = localBukuRekomendasi
+    return
+  }
   try {
     const { data, error } = await supabase
       .from("buku")
@@ -16,6 +21,13 @@ async function ambilBukuBiasa() {
 
     if (error) throw error
     bukuRekomendasi.value = data
+    localStorage.setItem(
+      "bukuRekomendasi",
+      JSON.stringify({
+        date: Date.now(),
+        bukuRekomendasi: bukuRekomendasi.value,
+      })
+    )
   } catch (err) {
     alert(err.message)
   }
