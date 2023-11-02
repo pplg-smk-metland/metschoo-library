@@ -14,6 +14,7 @@ async function cariBuku() {
       .from("buku")
       .select()
       .textSearch("judul", bukuYangDicari.value, { type: "websearch" })
+      .limit(20)
     if (error) throw error
     console.log(bukuYangDicari)
     console.log(data)

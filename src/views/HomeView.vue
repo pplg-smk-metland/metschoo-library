@@ -1,14 +1,14 @@
 <script setup>
 import CollectionBooks from "../components/home/CollectionBooks.vue"
 import ReccomendationBooks from "../components/home/ReccomendationBooks.vue"
-import SearchBarVue from "../components/SearchBar.vue"
+import SearchBar from "../components/SearchBar.vue"
 </script>
 
 <template>
   <main>
     <h1>Metschoo Library</h1>
     <section class="search">
-      <SearchBarVue></SearchBarVue>
+      <SearchBar></SearchBar>
     </section>
 
     <section class="main-section">
