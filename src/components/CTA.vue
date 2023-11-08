@@ -20,6 +20,10 @@ const props = defineProps({
   outline: 2px solid var(--primary);
 }
 
+.cta:hover {
+  background: var(--dark-grey);
+}
+
 .cta--fill {
   background: var(--primary);
   color: var(--white);
