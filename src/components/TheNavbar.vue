@@ -65,11 +65,6 @@ nav {
   height: 3.5rem;
 }
 
-#search {
-  color: var(--text);
-  padding: 0.5rem;
-}
-
 .nav-links {
   background: inherit;
   margin: 0;
