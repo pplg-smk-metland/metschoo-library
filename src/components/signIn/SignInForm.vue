@@ -87,12 +87,12 @@ async function handleSignUp() {
 
 <style>
 .signin {
-  background-color: #a4c5c5;
+  /* background-color: #a4c5c5; */
   flex-basis: 60ch;
   max-width: 60ch;
   padding: 2rem;
-  border-radius: 42px;
-  box-shadow: -10px 10px 10px 5px rgba(0, 0, 0, 0.4);
+  border: solid 2px #444;
+  border-radius: 0.5rem;
 
   display: flex;
   flex-direction: column;
