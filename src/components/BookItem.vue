@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from "vue"
 import { supabase } from "../supabase"
+import CTA from "./CTA.vue"
 
 const props = defineProps({
   buku: Object,
@@ -29,12 +30,17 @@ onMounted(async () => {
 
 <template>
   <li class="buku">
-    <img :src="`${cdnURL}/${buku.no_isbn}/${imgURL}`" class="buku__gambar" alt="gambar buku" />
-    <h2 class="buku__judul">{{ buku.judul }}</h2>
-    <p>{{ buku.no_isbn }}</p>
-    <div class="metadata">
-      <p class="buku__penulis">{{ buku.penulis }}</p>
-      <p class="buku__tahun-terbit">{{ buku.tahun_terbit }}</p>
+    <figure>
+      <img :src="`${cdnURL}/${buku.no_isbn}/${imgURL}`" class="buku__gambar" alt="gambar buku" />
+    </figure>
+    <div class="buku__info">
+      <h2 class="buku__judul">{{ buku.judul }}</h2>
+      <p>{{ buku.no_isbn }}</p>
+      <div class="metadata">
+        <p class="buku__penulis">{{ buku.penulis }}</p>
+        <p class="buku__tahun-terbit">{{ buku.tahun_terbit }}</p>
+      </div>
+      <CTA :isButton="true">Pinjam buku</CTA>
     </div>
   </li>
 </template>
@@ -44,6 +50,10 @@ onMounted(async () => {
   outline: 2px solid #444;
   padding: 2rem;
   transition: background-color 200ms ease;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .buku__gambar {
@@ -68,11 +78,5 @@ onMounted(async () => {
 
 .buku__tahun-terbit {
   font-size: 0.85rem;
-}
-
-@media (hover: hover) {
-  .buku:hover {
-    background: var(--dark-grey);
-  }
 }
 </style>

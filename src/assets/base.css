@@ -55,6 +55,10 @@ svg {
   max-width: 100%;
 }
 
+img {
+  font-style: italic;
+}
+
 input,
 button,
 textarea,
