@@ -37,6 +37,10 @@ input {
   border-radius: 0.5rem;
 }
 
+input:hover {
+  background: var(--dark-grey);
+}
+
 input:focus-visible {
   outline: 2px solid var(--primary);
 }
@@ -55,6 +59,7 @@ select {
 }
 
 .btn {
+  margin: 20px 0px;
   padding: 1rem 1.5rem;
   border-radius: 0.5rem;
 }
