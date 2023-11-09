@@ -28,4 +28,7 @@ const props = defineProps({
   background: var(--primary);
   color: var(--white);
 }
+.cta--fill:hover {
+  background: var(--secondary-100);
+}
 </style>
