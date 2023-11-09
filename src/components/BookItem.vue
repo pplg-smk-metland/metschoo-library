@@ -1,6 +1,8 @@
 <script setup>
 import { onMounted, ref } from "vue"
 import { supabase } from "../supabase"
+import { useAuthStore } from "../stores/auth"
+import router from "../router"
 import CTA from "./CTA.vue"
 
 const props = defineProps({
@@ -26,12 +28,33 @@ onMounted(async () => {
     console.error(error)
   }
 })
+
+const authStore = useAuthStore()
+
+function pinjamBuku(judul) {
+  if (!authStore.session) {
+    alert("kalau mau pinjam buku, buat akun dulu ya")
+    router.push({ name: "sign-in" })
+    return
+  }
+
+  // TODO: buat logika peminjaman buku
+  if (confirm(`Beneran mau pinjem buku ${judul}?`)) {
+    alert("meminjam buku...")
+  }
+}
 </script>
 
 <template>
   <li class="buku">
     <figure>
-      <img :src="`${cdnURL}/${buku.no_isbn}/${imgURL}`" class="buku__gambar" alt="gambar buku" />
+      <img
+        :src="`${cdnURL}/${buku.no_isbn}/${imgURL}`"
+        class="buku__gambar"
+        alt="gambar buku"
+        width="400"
+        height="600"
+      />
     </figure>
     <div class="buku__info">
       <h2 class="buku__judul">{{ buku.judul }}</h2>
@@ -40,7 +63,7 @@ onMounted(async () => {
         <p class="buku__penulis">{{ buku.penulis }}</p>
         <p class="buku__tahun-terbit">{{ buku.tahun_terbit }}</p>
       </div>
-      <CTA :isButton="true">Pinjam buku</CTA>
+      <CTA :isButton="true" @click="pinjamBuku(buku.judul)">Pinjam buku</CTA>
     </div>
   </li>
 </template>
@@ -48,7 +71,6 @@ onMounted(async () => {
 <style>
 .buku {
   outline: 2px solid #444;
-  padding: 2rem;
   transition: background-color 200ms ease;
 
   display: flex;
@@ -59,6 +81,11 @@ onMounted(async () => {
 .buku__gambar {
   width: 100%;
   object-fit: cover;
+  background-repeat: no-repeat;
+}
+
+.buku__info {
+  padding: 2rem;
 }
 
 .buku__judul .metadata {
