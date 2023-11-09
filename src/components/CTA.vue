@@ -20,7 +20,8 @@ const props = defineProps({
   outline: 2px solid var(--primary);
 }
 
-.cta:hover {
+.cta:hover,
+.cta:focus-visible {
   background: var(--dark-grey);
 }
 
@@ -28,7 +29,9 @@ const props = defineProps({
   background: var(--primary);
   color: var(--white);
 }
-.cta--fill:hover {
+
+.cta--fill:is(:hover, :focus-visible) {
   background: var(--secondary-100);
+  color: var(--white);
 }
 </style>
