@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive } from "vue"
+import { ref, onMounted } from "vue"
 import { useAuthStore } from "../stores/auth.js"
 import router from "../router/index.js"
 import CTA from "../components/CTA.vue"
@@ -14,21 +14,15 @@ function signOut() {
   }
 }
 
-const dataPengguna = reactive({
-  nama: "",
-  kelas: "",
-  jurusan: "",
-})
+const dataPengguna = ref({})
 
 function updateUser() {
   authStore.handleUpdateProfile(dataPengguna)
 }
 
 onMounted(async () => {
-  const { nama, kelas, jurusan } = await authStore.getProfile()
-  dataPengguna.nama = nama
-  dataPengguna.kelas = kelas
-  dataPengguna.jurusan = jurusan
+  const data = await authStore.getProfile()
+  dataPengguna.value = data
 })
 </script>
 
