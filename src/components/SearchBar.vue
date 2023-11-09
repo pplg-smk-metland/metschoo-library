@@ -34,8 +34,7 @@ async function cariBuku() {
   display: flex;
   gap: 1rem;
 }
-
-#search:hover {
-  background: var(--dark-grey);
+#search {
+  margin: 20px 0px;
 }
 </style>
