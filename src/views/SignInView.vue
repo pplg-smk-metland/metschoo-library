@@ -10,7 +10,6 @@ import SignInForm from "../components/signIn/SignInForm.vue"
 
 <style scoped>
 main {
-  background-color: #2b9696;
   display: flex;
   flex-direction: row;
   justify-content: center;
