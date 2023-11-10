@@ -2,7 +2,9 @@
 import { ref, onMounted } from "vue"
 import { useAuthStore } from "../stores/auth.js"
 import router from "../router/index.js"
+import { supabase } from "../supabase"
 import CTA from "../components/CTA.vue"
+import ProfileBook from "../components/profile/ProfileBook.vue"
 
 const authStore = useAuthStore()
 
@@ -24,15 +26,35 @@ onMounted(async () => {
   const data = await authStore.getProfile()
   dataPengguna.value = data
 })
+
+// ambil buku yang dipinjam
+const bukuYangDipinjam = ref([])
+
+async function ambilBukuYangDipinjam() {
+  try {
+    const { data, error } = await supabase
+      .from("peminjaman")
+      .select("*")
+      .eq("user_id", authStore.session.user.id)
+    if (error) throw error
+    return data
+  } catch (err) {
+    console.error(err.message)
+  }
+}
+
+onMounted(async () => {
+  bukuYangDipinjam.value = await ambilBukuYangDipinjam()
+})
 </script>
 
 <template>
-  <main>
-    <header>
-      <h1>Profil</h1>
-      <p>Selamat Datang di Profil kamu</p>
-    </header>
+  <header>
+    <h1>Profil</h1>
+    <p>Selamat Datang di Profil kamu</p>
+  </header>
 
+  <main>
     <div class="profile">
       <img class="profile-picture" src="../assets/profilepicture.svg" alt="Foto kamu disini" />
       <form class="profile-form" @submit.prevent="updateUser">
@@ -52,6 +74,13 @@ onMounted(async () => {
         <CTA class="button-ubah" type="submit" :isButton="true" :fill="true">Ubah profil</CTA>
       </form>
     </div>
+
+    <section>
+      <ul class="book-list">
+        <li v-show="bukuYangDipinjam.length == 0">Ga ada buku yang dipinjam</li>
+        <ProfileBook v-for="buku in bukuYangDipinjam" :key="buku.no_isbn" :buku="buku" />
+      </ul>
+    </section>
 
     <div>
       <CTA class="button-keluar" :isButton="true" @click="signOut">Keluar akun</CTA>
