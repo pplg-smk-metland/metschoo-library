@@ -60,7 +60,7 @@ export const useAuthStore = defineStore("auth", {
         const { data, error, status } = await supabase
           .from("pengguna")
           .select("*")
-          .eq("id", user.id)
+          .eq("user_id", user.id)
           .single()
         if (error && status !== 406) throw error
         return data
@@ -71,7 +71,7 @@ export const useAuthStore = defineStore("auth", {
 
     async handleUpdateProfile(profileUpdates) {
       const updates = {
-        id: this.session.user.id,
+        user_id: this.session.user.id,
         ...profileUpdates,
       }
       try {
