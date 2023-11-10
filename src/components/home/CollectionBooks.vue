@@ -15,7 +15,7 @@ async function ambilBukuKoleksi() {
       .limit(20)
 
     if (error) throw error
-    bukuKoleksi.value = data
+    return data
   } catch (err) {
     alert(err.message)
   }
@@ -23,7 +23,7 @@ async function ambilBukuKoleksi() {
 
 onMounted(async () => {
   isLoading.value = true
-  await ambilBukuKoleksi()
+  bukuKoleksi.value = await ambilBukuKoleksi()
   isLoading.value = false
 })
 </script>

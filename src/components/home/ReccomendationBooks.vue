@@ -12,6 +12,7 @@ async function ambilBukuBiasa() {
     bukuRekomendasi.value = localBukuRekomendasi
     return
   }
+
   try {
     const { data, error } = await supabase
       .from("buku")
@@ -20,14 +21,14 @@ async function ambilBukuBiasa() {
       .limit(20)
 
     if (error) throw error
-    bukuRekomendasi.value = data
     localStorage.setItem(
       "bukuRekomendasi",
       JSON.stringify({
         date: Date.now(),
-        bukuRekomendasi: bukuRekomendasi.value,
+        bukuRekomendasi: data,
       })
     )
+    return data
   } catch (err) {
     alert(err.message)
   }
@@ -35,7 +36,7 @@ async function ambilBukuBiasa() {
 
 onMounted(async () => {
   isLoading.value = true
-  await ambilBukuBiasa()
+  bukuRekomendasi.value = await ambilBukuBiasa()
   isLoading.value = false
 })
 </script>
