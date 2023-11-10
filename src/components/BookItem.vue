@@ -31,7 +31,7 @@ onMounted(async () => {
 
 const authStore = useAuthStore()
 
-function pinjamBuku(judul) {
+async function pinjamBuku(buku) {
   if (!authStore.session) {
     alert("kalau mau pinjam buku, buat akun dulu ya")
     router.push({ name: "sign-in" })
@@ -39,9 +39,29 @@ function pinjamBuku(judul) {
   }
 
   // TODO: buat logika peminjaman buku
-  if (confirm(`Beneran mau pinjem buku ${judul}?`)) {
+  if (confirm(`Beneran mau pinjem buku ${buku.judul}?`)) {
     alert("meminjam buku...")
+    const updates = {
+      no_isbn: buku.no_isbn,
+    }
+
+    try {
+      await supabase.from("peminjaman").insert(updates)
+    } catch (err) {
+      console.error(err.message)
+    }
   }
+
+  statusPeminjaman()
+}
+
+async function statusPeminjaman() {
+  const { data, error } = await supabase
+    .from("peminjaman")
+    .select()
+    .eq("user_id", authStore.session.user.id)
+  if (error) throw error
+  return data
 }
 </script>
 
@@ -52,6 +72,7 @@ function pinjamBuku(judul) {
         :src="`${cdnURL}/${buku.no_isbn}/${imgURL}`"
         class="buku__gambar"
         alt="gambar buku"
+        loading="lazy"
         width="400"
         height="600"
       />
@@ -63,7 +84,7 @@ function pinjamBuku(judul) {
         <p class="buku__penulis">{{ buku.penulis }}</p>
         <p class="buku__tahun-terbit">{{ buku.tahun_terbit }}</p>
       </div>
-      <CTA :isButton="true" @click="pinjamBuku(buku.judul)">Pinjam buku</CTA>
+      <CTA :isButton="true" @click="pinjamBuku(buku)">Pinjam buku</CTA>
     </div>
   </li>
 </template>
