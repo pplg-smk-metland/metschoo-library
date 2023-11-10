@@ -2,6 +2,7 @@
 import { ref } from "vue"
 import CTA from "../CTA.vue"
 import { useAuthStore } from "../../stores/auth.js"
+import { supabase } from "../../supabase"
 
 const authStore = useAuthStore()
 
@@ -11,37 +12,49 @@ function handleSwitchForm() {
   isSigningIn.value = !isSigningIn.value
 }
 
-const email = ref("")
-const password = ref("")
-const confirmPassword = ref("")
+const data = ref({
+  email: "",
+  password: "",
+  confirmPassword: "",
+})
 
 async function handleSignIn() {
-  await authStore.handleSignIn(email.value, password.value)
+  await authStore.handleSignIn(data.value.email, data.value.password)
 }
 
 async function handleSignUp() {
+  const { email, password, confirmPassword } = data
+
   if (confirmPassword.value === password.value) {
-    await authStore.handleSignUp(email.value, password.value)
+    try {
+      await authStore.handleSignUp(email.value, password.value)
+    } catch (err) {
+      console.error(err.message)
+    }
   } else alert("passwordnya gak sama..")
+
+  await supabase
+    .from("pengguna")
+    .update({ nama: data.value.nama })
+    .eq("user_id", authStore.session.user.id)
 }
 </script>
 
 <template>
   <div class="signin">
-    <h1>
-      <div v-if="isSigningIn">
-        <span>Masuk</span>
-        <p>Masuk ke akun Metschoo Library yang sudah anda miliki!</p>
-      </div>
-      <div v-else>
-        <span>Daftar</span>
-        <p>Buat akun Metschoo Library yang baru!</p>
-      </div>
+    <h1 v-if="isSigningIn">
+      <span>Masuk</span>
+      <p>Masuk ke akun Metschoo Library yang sudah anda miliki!</p>
     </h1>
+    <h1 v-else>
+      <span>Daftar</span>
+      <p>Buat akun Metschoo Library yang baru!</p>
+    </h1>
+
     <div class="form-container log-in" v-if="isSigningIn">
       <form @submit.prevent="handleSignIn">
         <label for="login-email">Email</label>
-        <input required type="email" id="login-email" placeholder="Email" v-model="email" />
+        <input required type="email" id="login-email" placeholder="Email" v-model="data.email" />
 
         <label for="login-password">Password</label>
         <input
@@ -49,7 +62,7 @@ async function handleSignUp() {
           type="password"
           id="login-password"
           placeholder="Password Anda"
-          v-model="password"
+          v-model="data.password"
         />
         <CTA type="submit" :is-button="true" :fill="true">Masuk</CTA>
       </form>
@@ -57,22 +70,24 @@ async function handleSignUp() {
 
     <div class="form-container sign-up" v-else>
       <form @submit.prevent="handleSignUp">
+        <label for="nama">Nama</label>
+        <input type="text" name="nama" id="nama" placeholder="Siapa namamu?" required />
         <label for="signup-email">Email</label>
-        <input required type="email" id="signup-email" placeholder="Email" v-model="email" />
+        <input required type="email" id="signup-email" placeholder="Email" v-model="data.email" />
         <label for="signup-password">Password</label>
         <input
           required
           type="password"
           id="signup-password"
           placeholder="Password Anda"
-          v-model="password"
+          v-model="data.password"
         />
         <label for="confirm-password">Konfirmasi Password</label>
         <input
           type="password"
           placeholder="Ketik Ulang Password"
           required
-          v-model="confirmPassword"
+          v-model="data.confirmPassword"
         />
 
         <CTA type="submit" :is-button="true" :fill="true">Daftar</CTA>

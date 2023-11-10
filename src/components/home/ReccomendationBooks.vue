@@ -45,7 +45,7 @@ onMounted(async () => {
   <h2>Rekomendasi</h2>
   <ul class="book-list">
     <li v-if="isLoading">Memuat buku...</li>
-    <li v-if="!isLoading && !bukuRekomendasi.length">Bukunya ga ada gaes</li>
+    <li v-else>Bukunya ga ada gaes</li>
     <BookItem v-for="buku in bukuRekomendasi" :key="buku.no_isbn" :buku="buku" />
   </ul>
 </template>
