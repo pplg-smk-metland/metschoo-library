@@ -51,8 +51,12 @@ async function kembalikanBuku(buku) {
     </figure>
     <div class="buku__info">
       <h2 class="buku__judul">{{ buku.judul }}</h2>
-      <p>{{ buku.no_isbn }}</p>
       <div class="metadata">
+        <p>{{ buku.no_isbn }}</p>
+        <p>
+          Tanggal pinjam:
+          {{ new Date(buku.tgl_pinjam).toLocaleDateString() }}
+        </p>
         <p class="buku__penulis">{{ buku.penulis }}</p>
         <p class="buku__tahun-terbit">{{ buku.tahun_terbit }}</p>
       </div>
@@ -60,3 +64,10 @@ async function kembalikanBuku(buku) {
     </div>
   </li>
 </template>
+
+<style>
+.metadata {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+</style>

@@ -8,18 +8,23 @@ import ProfileBook from "../components/profile/ProfileBook.vue"
 
 const authStore = useAuthStore()
 
+const dataPengguna = ref({})
+async function updateUser() {
+  try {
+    await authStore.handleUpdateProfile(dataPengguna.value)
+    alert("sukses memperbarui data pengguna.")
+  } catch (err) {
+    alert("gagal memperbarui data pengguna.")
+    console.error(err.message)
+  }
+}
+
 function signOut() {
   const reallySigningOut = confirm("Beneran nih mau keluar akun?")
   if (reallySigningOut) {
     authStore.handleSignOut()
-    router.push()
+    router.push({})
   }
-}
-
-const dataPengguna = ref({})
-
-function updateUser() {
-  authStore.handleUpdateProfile(dataPengguna)
 }
 
 onMounted(async () => {
@@ -29,17 +34,22 @@ onMounted(async () => {
 
 // ambil buku yang dipinjam
 const bukuYangDipinjam = ref([])
+const isLoading = ref(false)
 
 async function ambilBukuYangDipinjam() {
   try {
+    isLoading.value = true
     const { data, error } = await supabase
       .from("peminjaman")
-      .select("*")
+      .select(`*`)
       .eq("user_id", authStore.session.user.id)
+
     if (error) throw error
     return data
   } catch (err) {
     console.error(err.message)
+  } finally {
+    isLoading.value = false
   }
 }
 
@@ -58,7 +68,7 @@ onMounted(async () => {
     <div class="profile">
       <img class="profile-picture" src="../assets/profilepicture.svg" alt="Foto kamu disini" />
       <form class="profile-form" @submit.prevent="updateUser">
-        <label for="name">Name</label>
+        <label for="name">Nama</label>
         <input type="text" placeholder="Masukan Nama" v-model="dataPengguna.nama" />
 
         <label for="kelas">Kelas</label>
@@ -77,7 +87,8 @@ onMounted(async () => {
 
     <section>
       <ul class="book-list">
-        <li v-show="bukuYangDipinjam.length == 0">Ga ada buku yang dipinjam</li>
+        <li v-if="isLoading">Bukunya lagi diambil, tunggu sebentar ya</li>
+        <li v-else-if="!isLoading && bukuYangDipinjam.length === 0">Ga ada buku yang dipinjam</li>
         <ProfileBook v-for="buku in bukuYangDipinjam" :key="buku.no_isbn" :buku="buku" />
       </ul>
     </section>
