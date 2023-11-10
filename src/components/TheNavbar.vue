@@ -55,10 +55,12 @@ nav {
   color: var(--white);
   font-weight: 300;
   padding-inline: 0.5rem;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: relative;
+  position: sticky;
+  top: 0;
 }
 
 .logo {
@@ -83,6 +85,7 @@ nav {
 
 .nav-links.active {
   translate: 0 0;
+  z-index: 10;
 }
 
 .nav-links__header {
@@ -97,10 +100,17 @@ nav a,
   color: inherit;
   text-decoration: none;
   padding: 1rem;
-  display: inline-block;
+  display: block;
+  position: relative;
 }
 
-nav a.active {
+nav a.active::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 100%;
+  width: 0.4rem;
   background: var(--nav-link-active);
 }
 
@@ -110,6 +120,11 @@ nav a.active {
   }
 }
 @media screen and (min-width: 50em) {
+  nav a.active::before {
+    height: 0.4rem;
+    width: 100%;
+  }
+
   .nav-links {
     flex-direction: row;
     position: relative;
