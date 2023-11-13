@@ -7,6 +7,9 @@ const props = defineProps({
   buku: Object,
 })
 
+// object buku hasil join ada di dalam object
+const dataBuku = props.buku.buku
+
 const cdnURL = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/Buku`
 const imgURL = ref("")
 
@@ -50,15 +53,19 @@ async function kembalikanBuku(buku) {
       />
     </figure>
     <div class="buku__info">
-      <h2 class="buku__judul">{{ buku.judul }}</h2>
+      <h2 class="buku__judul">{{ dataBuku.judul }}</h2>
       <div class="metadata">
-        <p>{{ buku.no_isbn }}</p>
+        <p>{{ dataBuku.no_isbn }}</p>
         <p>
           Tanggal pinjam:
           {{ new Date(buku.tgl_pinjam).toLocaleDateString() }}
         </p>
-        <p class="buku__penulis">{{ buku.penulis }}</p>
-        <p class="buku__tahun-terbit">{{ buku.tahun_terbit }}</p>
+        <p>
+          Tanggal kembali:
+          {{ new Date(buku.tgl_kembali).toLocaleDateString() }}
+        </p>
+        <p class="buku__penulis">{{ dataBuku.penulis }}</p>
+        <p class="buku__tahun-terbit">{{ dataBuku.tahun_terbit }}</p>
       </div>
       <CTA :isButton="true" @click="kembalikanBuku(buku)">Kembalikan buku</CTA>
     </div>

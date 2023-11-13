@@ -41,7 +41,7 @@ async function ambilBukuYangDipinjam() {
     isLoading.value = true
     const { data, error } = await supabase
       .from("peminjaman")
-      .select(`*`)
+      .select(`tgl_pinjam, tgl_kembali, buku(*)`)
       .eq("user_id", authStore.session.user.id)
 
     if (error) throw error

@@ -12,10 +12,10 @@ const props = defineProps({
 const cdnURL = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/Buku`
 const imgURL = ref("")
 
-async function getImages() {
+async function getBookImage() {
   const { data, error } = await supabase.storage
     .from("Buku")
-    .list(props.buku.no_isbn + "/", { limit: 1, offset: 0, search: props.buku.no_isbn })
+    .list(`${props.buku.no_isbn}/`, { limit: 1, offset: 0, search: props.buku.no_isbn })
   if (error) throw error
 
   return data[0]?.name
@@ -23,7 +23,7 @@ async function getImages() {
 
 onMounted(async () => {
   try {
-    imgURL.value = await getImages()
+    imgURL.value = await getBookImage()
   } catch (error) {
     console.error(error)
   }
