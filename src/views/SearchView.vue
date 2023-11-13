@@ -7,8 +7,10 @@ import { supabase } from "../supabase"
 const bukuYangDicari = inject("searchTerm")
 
 const books = ref([])
+const isLoading = ref(false)
 
 async function cariBuku() {
+  isLoading.value = true
   try {
     const { data, error } = await supabase
       .from("buku")
@@ -16,16 +18,17 @@ async function cariBuku() {
       .textSearch("judul", bukuYangDicari.value, { type: "websearch" })
       .limit(20)
     if (error) throw error
-    console.log(bukuYangDicari)
-    console.log(data)
+
     books.value = data
   } catch (err) {
     alert(err.message)
+  } finally {
+    isLoading.value = false
   }
 }
 
 onMounted(async () => {
-  await cariBuku()
+  if (bukuYangDicari.value.length !== 0) await cariBuku()
 })
 </script>
 
@@ -37,7 +40,8 @@ onMounted(async () => {
     </section>
 
     <ul class="book-list">
-      <li class="mesasge" v-show="!books.length">ga ada buku woi</li>
+      <li v-show="isLoading">Sedang mengambil buku, sebentar ya</li>
+      <li class="mesasge" v-show="!isLoading && !books.length">ga ada buku woi</li>
       <BookItem v-for="buku in books" :key="buku.no_isbn" :buku="buku"></BookItem>
     </ul>
   </main>
