@@ -23,11 +23,11 @@ async function handleSignIn() {
 }
 
 async function handleSignUp() {
-  const { email, password, confirmPassword } = data
+  const { email, password, confirmPassword } = data.value
 
-  if (confirmPassword.value === password.value) {
+  if (confirmPassword === password) {
     try {
-      await authStore.handleSignUp(email.value, password.value)
+      await authStore.handleSignUp(email, password)
     } catch (err) {
       console.error(err.message)
     }

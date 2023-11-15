@@ -70,6 +70,8 @@ onMounted(async () => {
       <form class="profile-form" @submit.prevent="updateUser">
         <label for="name">Nama</label>
         <input type="text" placeholder="Masukan Nama" v-model="dataPengguna.nama" />
+        <label for="email">Email</label>
+        <input type="text" placeholder="email kamu" v-model="dataPengguna.email" />
 
         <label for="kelas">Kelas</label>
         <select name="kelas" id="kelas" v-model="dataPengguna.kelas">
