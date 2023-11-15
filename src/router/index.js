@@ -1,3 +1,4 @@
+import { useAuthStore } from "../stores/auth"
 import { createRouter, createWebHistory } from "vue-router"
 import HomeView from "../views/HomeView.vue"
 
@@ -35,12 +36,27 @@ const routes = [
     name: "search",
     component: () => import("../views/SearchView.vue"),
   },
+  {
+    path: "/admin",
+    name: "admin",
+    component: () => import("../views/AdminView.vue"),
+  },
 ]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
   linkActiveClass: "active",
+})
+
+router.beforeEach(async (to, from) => {
+  const authStore = useAuthStore()
+  const user = authStore.session?.user
+  if (user) {
+    if (user.role !== "admin" && to.name === "admin") {
+      return { name: "home" }
+    }
+  }
 })
 
 export default router
