@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from "vue"
+import TheDialog from "../TheDialog.vue"
 import CTA from "../CTA.vue"
 import { useAuthStore } from "../../stores/auth.js"
 import { supabase } from "../../supabase"
@@ -18,25 +19,42 @@ const data = ref({
   confirmPassword: "",
 })
 
+const errorDialogOpen = ref(false)
+const errorMessage = ref("")
+
 async function handleSignIn() {
-  await authStore.handleSignIn(data.value.email, data.value.password)
+  try {
+    await authStore.handleSignIn(data.value.email, data.value.password)
+  } catch (err) {
+    errorDialogOpen.value = true
+    errorMessage.value = err.message
+  }
 }
 
 async function handleSignUp() {
   const { email, password, confirmPassword } = data.value
 
-  if (confirmPassword === password) {
-    try {
-      await authStore.handleSignUp(email, password)
-    } catch (err) {
-      console.error(err.message)
-    }
-  } else alert("passwordnya gak sama..")
+  if (confirmPassword !== password) {
+    alert("passwordnya ga sama")
+    return
+  }
+
+  try {
+    await authStore.handleSignUp(email, password)
+  } catch (err) {
+    errorDialogOpen.value = true
+    errorMessage.value = err.message
+  }
 
   await supabase
     .from("pengguna")
     .update({ nama: data.value.nama })
     .eq("user_id", authStore.session.user.id)
+}
+
+function closeErrorDialog() {
+  errorDialogOpen.value = false
+  errorMessage.value = ""
 }
 </script>
 
@@ -93,11 +111,17 @@ async function handleSignUp() {
         <CTA type="submit" :is-button="true" :fill="true">Daftar</CTA>
       </form>
     </div>
+
     <CTA @click="handleSwitchForm" :is-button="true">
       <span v-if="isSigningIn">Belum punya akun? Daftar</span>
       <span v-else>Sudah punya akun? Masuk</span>
     </CTA>
   </div>
+
+  <TheDialog :isOpen="errorDialogOpen" @dialogClose="closeErrorDialog">
+    <h2>Error!</h2>
+    {{ errorMessage }}
+  </TheDialog>
 </template>
 
 <style>

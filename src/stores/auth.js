@@ -40,7 +40,7 @@ export const useAuthStore = defineStore("auth", {
         if (error) throw error
         router.push({ name: "home" })
       } catch (err) {
-        alert(err.message)
+        throw new Error(err.message)
       }
     },
 
@@ -50,7 +50,7 @@ export const useAuthStore = defineStore("auth", {
         if (error) throw error
         router.push({ name: "home" })
       } catch (err) {
-        alert(err.message)
+        throw new Error(err.message)
       }
     },
 
