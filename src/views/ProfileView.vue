@@ -4,6 +4,7 @@ import { useAuthStore } from "../stores/auth.js"
 import router from "../router/index.js"
 import { supabase } from "../supabase"
 import CTA from "../components/CTA.vue"
+import TheDialog from "../components/TheDialog.vue"
 import ProfileBook from "../components/profile/ProfileBook.vue"
 
 const authStore = useAuthStore()
@@ -17,15 +18,19 @@ function changeDisplayForm() {
     : (displayForm.value = displayFormKeys[0])
 }
 
+const dialogIsOpen = ref(false)
+const dialogMessage = ref("")
+
 const dataPengguna = ref({})
 
 async function updateUserInfo() {
   try {
     await authStore.handleUpdateProfile(dataPengguna.value)
-    alert("sukses memperbarui data pengguna.")
+    dialogIsOpen.value = true
+    dialogMessage.value = "sukses memperbarui data pengguna."
   } catch (err) {
-    alert("gagal memperbarui data pengguna.")
-    console.error(err.message)
+    dialogIsOpen.value = true
+    dialogMessage.value = err.message
   }
 }
 
@@ -145,6 +150,11 @@ onMounted(async () => {
         </div>
       </form>
     </div>
+
+    <TheDialog :is-open="dialogIsOpen" @dialog-close="dialogIsOpen = false">
+      <h2>Info</h2>
+      <p>{{ dialogMessage }}</p>
+    </TheDialog>
 
     <section>
       <ul class="book-list">
