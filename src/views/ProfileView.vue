@@ -8,8 +8,18 @@ import ProfileBook from "../components/profile/ProfileBook.vue"
 
 const authStore = useAuthStore()
 
+const displayFormKeys = ["basic-info", "credentials"]
+const displayForm = ref(displayFormKeys[0])
+
+function changeDisplayForm() {
+  displayForm.value === displayFormKeys[0]
+    ? (displayForm.value = displayFormKeys[1])
+    : (displayForm.value = displayFormKeys[0])
+}
+
 const dataPengguna = ref({})
-async function updateUser() {
+
+async function updateUserInfo() {
   try {
     await authStore.handleUpdateProfile(dataPengguna.value)
     alert("sukses memperbarui data pengguna.")
@@ -31,6 +41,18 @@ onMounted(async () => {
   const data = await authStore.getProfile()
   dataPengguna.value = data
 })
+
+// credentials
+
+const userCredentials = ref({
+  password: "",
+  confirmPassword: "",
+  email: "",
+})
+
+function updateUserCredentials() {
+  alert("memperbarui...")
+}
 
 // ambil buku yang dipinjam
 const bukuYangDipinjam = ref([])
@@ -67,11 +89,13 @@ onMounted(async () => {
   <main>
     <div class="profile">
       <img class="profile-picture" src="../assets/profilepicture.svg" alt="Foto kamu disini" />
-      <form class="profile-form" @submit.prevent="updateUser">
+      <form
+        class="profile-form"
+        @submit.prevent="updateUserInfo"
+        v-if="displayForm === 'basic-info'"
+      >
         <label for="name">Nama</label>
         <input type="text" placeholder="Masukan Nama" v-model="dataPengguna.nama" />
-        <label for="email">Email</label>
-        <input type="text" placeholder="email kamu" v-model="dataPengguna.email" />
 
         <label for="kelas">Kelas</label>
         <select name="kelas" id="kelas" v-model="dataPengguna.kelas">
@@ -83,7 +107,42 @@ onMounted(async () => {
         <label for="jurusan">Jurusan</label>
         <input type="text" placeholder="Masukkan Jurusan" v-model="dataPengguna.jurusan" />
 
-        <CTA class="button-ubah" type="submit" :isButton="true" :fill="true">Ubah profil</CTA>
+        <div class="button-container">
+          <CTA class="button-ubah" :isButton="true" :fill="true">Ubah profil</CTA>
+          <CTA :isButton="true" @click="changeDisplayForm">Ubah informasi lainnnya</CTA>
+        </div>
+      </form>
+
+      <form
+        class="profile-form"
+        @submit.prevent="updateUserCredentials"
+        v-if="displayForm === 'credentials'"
+      >
+        <label for="password">Password</label>
+        <input
+          type="password"
+          name="password"
+          id="password"
+          required
+          v-model="userCredentials.password"
+        />
+
+        <label for="confirm-password">konfirmasi password</label>
+        <input
+          type="password"
+          name="confirm-password"
+          id="confirm-password"
+          required
+          v-model="userCredentials.confirmPassword"
+        />
+
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" required v-model="userCredentials.email" />
+
+        <div class="button-container">
+          <CTA :isButton="true" :fill="true">Ubah profil</CTA>
+          <CTA :isButton="true" @click="changeDisplayForm">Kembali</CTA>
+        </div>
       </form>
     </div>
 
@@ -109,21 +168,21 @@ onMounted(async () => {
 .profile {
   display: flex;
   margin-bottom: 200px;
-  gap: 20px;
-}
-
-.profile-form {
-  flex-basis: 1000px;
+  gap: 2rem;
 }
 
 .profile-picture {
-  height: 360px;
-  margin: 20px;
+  flex-basis: 35ch;
 }
 
-.button-ubah {
-  justify-self: flex-end;
-  margin-left: auto;
+.profile-form {
+  flex-grow: 1;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
 }
 
 .button-keluar {
