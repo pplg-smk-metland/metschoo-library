@@ -1,17 +1,17 @@
 <script setup>
+import BaseLayout from "../layouts/BaseLayout.vue"
 import SignInForm from "../components/signIn/SignInForm.vue"
 </script>
 
 <template>
-  <main>
+  <BaseLayout>
     <SignInForm />
-  </main>
+  </BaseLayout>
 </template>
 
 <style scoped>
 main {
   display: flex;
-  flex-direction: row;
   justify-content: center;
 }
 </style>

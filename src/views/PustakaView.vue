@@ -1,6 +1,10 @@
+<script setup>
+import BaseLayout from "../layouts/BaseLayout.vue"
+</script>
+
 <template>
-  <main>
+  <BaseLayout>
     <h1>Pustaka</h1>
     <p>Belum dibuat coy sabar yah</p>
-  </main>
+  </BaseLayout>
 </template>

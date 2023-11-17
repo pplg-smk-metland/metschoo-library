@@ -1,13 +1,14 @@
 <script setup>
+import BaseLayout from "../layouts/BaseLayout.vue"
 import CollectionBooks from "../components/home/CollectionBooks.vue"
 import ReccomendationBooks from "../components/home/ReccomendationBooks.vue"
 import SearchBar from "../components/SearchBar.vue"
 </script>
 
 <template>
-  <main>
-    <h1>Metschoo Library</h1>
+  <BaseLayout>
     <section class="search">
+      <h1>Metschoo Library</h1>
       <SearchBar></SearchBar>
     </section>
 
@@ -18,11 +19,5 @@ import SearchBar from "../components/SearchBar.vue"
     <section class="main-section">
       <CollectionBooks />
     </section>
-  </main>
+  </BaseLayout>
 </template>
-
-<style>
-.main-section {
-  padding: 2rem;
-}
-</style>

@@ -3,6 +3,8 @@ import { ref, onMounted } from "vue"
 import { useAuthStore } from "../stores/auth.js"
 import router from "../router/index.js"
 import { supabase } from "../supabase"
+
+import BaseLayout from "../layouts/BaseLayout.vue"
 import CTA from "../components/CTA.vue"
 import TheDialog from "../components/TheDialog.vue"
 import ProfileBook from "../components/profile/ProfileBook.vue"
@@ -81,17 +83,21 @@ async function ambilBukuYangDipinjam() {
 }
 
 onMounted(async () => {
-  bukuYangDipinjam.value = await ambilBukuYangDipinjam()
+  await muatUlangBuku()
 })
+
+async function muatUlangBuku() {
+  bukuYangDipinjam.value = await ambilBukuYangDipinjam()
+}
 </script>
 
 <template>
-  <header>
-    <h1>Profil</h1>
-    <p>Selamat Datang di Profil kamu</p>
-  </header>
+  <BaseLayout>
+    <header>
+      <h1>Profil</h1>
+      <p>Selamat Datang di Profil kamu</p>
+    </header>
 
-  <main>
     <div class="profile">
       <img class="profile-picture" src="../assets/profilepicture.svg" alt="Foto kamu disini" />
       <form
@@ -157,18 +163,25 @@ onMounted(async () => {
     </TheDialog>
 
     <section>
+      <h2>Buku yang dipinjam</h2>
       <ul class="book-list">
         <li v-if="isLoading">Bukunya lagi diambil, tunggu sebentar ya</li>
         <li v-else-if="!isLoading && bukuYangDipinjam.length === 0">Ga ada buku yang dipinjam</li>
-        <ProfileBook v-for="buku in bukuYangDipinjam" :key="buku.no_isbn" :buku="buku" />
+        <ProfileBook
+          v-for="buku in bukuYangDipinjam"
+          :key="buku.no_isbn"
+          :buku="buku"
+          @delete="muatUlangBuku"
+        />
       </ul>
     </section>
 
     <div>
       <CTA class="button-keluar" :isButton="true" @click="signOut">Keluar akun</CTA>
     </div>
-  </main>
+  </BaseLayout>
 </template>
+
 <style>
 @media screen and (max-width: 50em) {
   .profile {

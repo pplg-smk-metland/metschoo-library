@@ -19,12 +19,3 @@ onMounted(() => {
 
   <TheFooter />
 </template>
-
-<style>
-main {
-  padding: 2rem;
-  min-height: 70vh;
-
-  flex-grow: 1;
-}
-</style>

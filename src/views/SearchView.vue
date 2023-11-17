@@ -1,5 +1,7 @@
 <script setup>
 import { inject, onMounted, ref } from "vue"
+
+import BaseLayout from "../layouts/BaseLayout.vue"
 import BookItem from "../components/BookItem.vue"
 import SearchBar from "../components/SearchBar.vue"
 import { supabase } from "../supabase"
@@ -33,7 +35,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <main>
+  <BaseLayout>
     <h1>Search</h1>
     <section class="search">
       <SearchBar @search="cariBuku"></SearchBar>
@@ -44,5 +46,5 @@ onMounted(async () => {
       <li class="mesasge" v-show="!isLoading && !books.length">ga ada buku woi</li>
       <BookItem v-for="buku in books" :key="buku.no_isbn" :buku="buku"></BookItem>
     </ul>
-  </main>
+  </BaseLayout>
 </template>
