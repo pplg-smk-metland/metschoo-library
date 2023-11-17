@@ -7,6 +7,8 @@ const props = defineProps({
   buku: Object,
 })
 
+const emit = defineEmits(["delete"])
+
 // object buku hasil join ada di dalam object
 const dataBuku = props.buku.buku
 
@@ -16,7 +18,7 @@ const imgURL = ref("")
 async function getImages() {
   const { data, error } = await supabase.storage
     .from("Buku")
-    .list(props.buku.no_isbn + "/", { limit: 1, offset: 0, search: props.buku.no_isbn })
+    .list(dataBuku.no_isbn + "/", { limit: 1, offset: 0, search: dataBuku.no_isbn })
   if (error) throw error
 
   return data[0]?.name
@@ -30,9 +32,10 @@ onMounted(async () => {
   }
 })
 
-async function kembalikanBuku(buku) {
+async function kembalikanBuku() {
+  emit("delete")
   try {
-    const { error } = await supabase.from("pengembalian").delete().eq("no_isbn", buku.no_isbn)
+    const { error } = await supabase.from("peminjaman").delete().eq("no_isbn", dataBuku.no_isbn)
     if (error) throw error
   } catch (err) {
     console.error(err.message)
@@ -44,7 +47,7 @@ async function kembalikanBuku(buku) {
   <li class="buku">
     <figure>
       <img
-        :src="`${cdnURL}/${buku.no_isbn}/${imgURL}`"
+        :src="`${cdnURL}/${dataBuku.no_isbn}/${imgURL}`"
         class="buku__gambar"
         alt="gambar buku"
         loading="lazy"
@@ -52,10 +55,15 @@ async function kembalikanBuku(buku) {
         height="300"
       />
     </figure>
-    <div class="buku__info">
-      <h2 class="buku__judul">{{ dataBuku.judul }}</h2>
-      <div class="metadata">
+    <figcaption class="buku__info">
+      <div class="buku__metadata">
+        <h3 class="buku__judul">{{ dataBuku.judul }}</h3>
         <p>{{ dataBuku.no_isbn }}</p>
+        <p class="buku__penulis">{{ dataBuku.penulis }}</p>
+        <p class="buku__tahun-terbit">{{ dataBuku.tahun_terbit }}</p>
+      </div>
+
+      <div class="tanggal">
         <p>
           Tanggal pinjam:
           {{ new Date(buku.tgl_pinjam).toLocaleDateString() }}
@@ -64,17 +72,19 @@ async function kembalikanBuku(buku) {
           Tanggal kembali:
           {{ new Date(buku.tgl_kembali).toLocaleDateString() }}
         </p>
-        <p class="buku__penulis">{{ dataBuku.penulis }}</p>
-        <p class="buku__tahun-terbit">{{ dataBuku.tahun_terbit }}</p>
       </div>
-      <CTA :isButton="true" @click="kembalikanBuku(buku)">Kembalikan buku</CTA>
-    </div>
+      <CTA :isButton="true" @click="kembalikanBuku">Kembalikan buku</CTA>
+    </figcaption>
   </li>
 </template>
 
-<style>
-.metadata {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+<style scoped>
+.buku {
+  border-radius: 0.5rem;
+}
+
+.tanggal {
+  display: flex;
+  justify-content: space-between;
 }
 </style>

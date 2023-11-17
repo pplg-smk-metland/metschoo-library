@@ -4,6 +4,7 @@ import { supabase } from "../supabase"
 import { useAuthStore } from "../stores/auth"
 import router from "../router"
 import CTA from "./CTA.vue"
+import TheDialog from "./TheDialog.vue"
 
 const props = defineProps({
   buku: Object,
@@ -29,31 +30,39 @@ onMounted(async () => {
   }
 })
 
-const authStore = useAuthStore()
+const dialogIsOpen = ref(false)
+const dialogMessage = ref("")
+
+function openDialog(message) {
+  dialogIsOpen.value = true
+  dialogMessage.value = message
+}
 
 async function pinjamBuku(buku) {
   if (!authStore.session) {
-    alert("kalau mau pinjam buku, buat akun dulu ya")
+    openDialog("kalau mau pinjam buku, buat akun dulu ya")
     router.push({ name: "sign-in" })
     return
   }
 
   // TODO: buat logika peminjaman buku
   if (confirm(`Beneran mau pinjem buku ${buku.judul}?`)) {
-    alert("meminjam buku...")
     const updates = {
       no_isbn: buku.no_isbn,
     }
 
     try {
       await supabase.from("peminjaman").insert(updates)
+      openDialog(`sukses memnijam buku ${buku.judul}`)
     } catch (err) {
-      console.error(err.message)
+      openDialog(err.message)
     }
   }
 
   statusPeminjaman()
 }
+
+const authStore = useAuthStore()
 
 async function statusPeminjaman() {
   const { data, error } = await supabase
@@ -77,15 +86,19 @@ async function statusPeminjaman() {
         height="600"
       />
     </figure>
-    <div class="buku__info">
-      <h2 class="buku__judul">{{ buku.judul }}</h2>
-      <p>{{ buku.no_isbn }}</p>
+    <figcaption class="buku__info">
       <div class="metadata">
+        <h2 class="buku__judul">{{ buku.judul }}</h2>
         <p class="buku__penulis">{{ buku.penulis }}</p>
         <p class="buku__tahun-terbit">{{ buku.tahun_terbit }}</p>
       </div>
       <CTA :isButton="true" @click="pinjamBuku(buku)">Pinjam buku</CTA>
-    </div>
+    </figcaption>
+
+    <TheDialog :is-open="dialogIsOpen" @dialog-close="dialogIsOpen = false">
+      <h2>Info!!</h2>
+      <p>{{ dialogMessage }}</p>
+    </TheDialog>
   </li>
 </template>
 
@@ -109,7 +122,7 @@ async function statusPeminjaman() {
   padding: 2rem;
 }
 
-.buku__judul .metadata {
+.buku .metadata {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;

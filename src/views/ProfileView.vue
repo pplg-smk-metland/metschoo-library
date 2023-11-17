@@ -207,8 +207,4 @@ async function muatUlangBuku() {
   justify-content: flex-end;
   gap: 0.5rem;
 }
-
-.button-keluar {
-  margin: 20px;
-}
 </style>
