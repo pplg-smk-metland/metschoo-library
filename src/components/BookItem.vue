@@ -53,7 +53,7 @@ async function pinjamBuku(buku) {
 
     try {
       await supabase.from("peminjaman").insert(updates)
-      openDialog(`sukses memnijam buku ${buku.judul}`)
+      openDialog(`sukses meminjam buku ${buku.judul}`)
     } catch (err) {
       openDialog(err.message)
     }
@@ -93,7 +93,7 @@ async function statusPeminjaman() {
         <p class="buku__tahun-terbit">{{ buku.tahun_terbit }}</p>
       </div>
     </figcaption>
-    <CTA :isButton="true" @click="pinjamBuku(buku)">Pinjam buku</CTA>
+    <CTA @click="pinjamBuku(buku)">Pinjam buku</CTA>
 
     <TheDialog :is-open="dialogIsOpen" @dialog-close="dialogIsOpen = false">
       <h2>Info!!</h2>

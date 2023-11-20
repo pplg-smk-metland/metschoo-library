@@ -1,18 +1,18 @@
 <script setup>
 const props = defineProps({
-  isButton: Boolean,
+  isLink: Boolean,
   fill: Boolean,
 })
 </script>
 
 <template>
-  <button v-if="isButton" :class="['btn', 'cta', { 'cta--fill': fill }]">
-    <slot />
-  </button>
-
-  <a v-else href="#">
+  <a href="#" v-if="isLink">
     <slot />
   </a>
+
+  <button v-else :class="['btn', 'cta', { 'cta--fill': fill }]">
+    <slot />
+  </button>
 </template>
 
 <style scoped>

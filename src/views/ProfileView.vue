@@ -124,8 +124,8 @@ async function muatUlangBuku() {
         <input type="text" placeholder="Masukkan Jurusan" v-model="dataPengguna.jurusan" />
 
         <div class="button-container">
-          <CTA class="button-ubah" :isButton="true" :fill="true">Ubah profil</CTA>
-          <CTA :isButton="true" @click="changeDisplayForm">Ubah informasi lainnnya</CTA>
+          <CTA class="button-ubah" :fill="true">Ubah profil</CTA>
+          <CTA @click="changeDisplayForm">Ubah informasi lainnnya</CTA>
         </div>
       </form>
 
@@ -156,8 +156,8 @@ async function muatUlangBuku() {
         <input type="email" name="email" id="email" required v-model="userCredentials.email" />
 
         <div class="button-container">
-          <CTA :isButton="true" :fill="true">Ubah profil</CTA>
-          <CTA :isButton="true" @click="changeDisplayForm">Kembali</CTA>
+          <CTA :fill="true">Ubah profil</CTA>
+          <CTA @click="changeDisplayForm">Kembali</CTA>
         </div>
       </form>
     </div>
@@ -192,7 +192,7 @@ async function muatUlangBuku() {
     </section>
 
     <div>
-      <CTA class="button-keluar" :isButton="true" @click="signOut">Keluar akun</CTA>
+      <CTA class="button-keluar" @click="signOut">Keluar akun</CTA>
     </div>
   </BaseLayout>
 </template>
