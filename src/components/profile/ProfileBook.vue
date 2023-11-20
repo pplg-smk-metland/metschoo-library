@@ -73,7 +73,10 @@ async function kembalikanBuku() {
           {{ new Date(buku.tgl_kembali).toLocaleDateString() }}
         </p>
       </div>
-      <CTA :isButton="true" @click="kembalikanBuku">Kembalikan buku</CTA>
+      <p class="buku__status-peminjaman" v-if="!buku.sudah_dipinjam">
+        menunggu konfirmasi peminjaman buku
+      </p>
+      <CTA @click="kembalikanBuku">Kembalikan buku</CTA>
     </figcaption>
   </li>
 </template>
@@ -86,5 +89,9 @@ async function kembalikanBuku() {
 .tanggal {
   display: flex;
   justify-content: space-between;
+}
+
+.buku__status-peminjaman {
+  font-style: italic;
 }
 </style>

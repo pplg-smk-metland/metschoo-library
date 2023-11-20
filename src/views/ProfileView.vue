@@ -63,6 +63,9 @@ function updateUserCredentials() {
 
 // ambil buku yang dipinjam
 const bukuYangDipinjam = ref([])
+const bukuBlumDikonfirmasi = ref([])
+const bukuSudahDikonfirmasi = ref([])
+
 const isLoading = ref(false)
 
 async function ambilBukuYangDipinjam() {
@@ -88,6 +91,8 @@ onMounted(async () => {
 
 async function muatUlangBuku() {
   bukuYangDipinjam.value = await ambilBukuYangDipinjam()
+  bukuBlumDikonfirmasi.value = bukuYangDipinjam.value.filter((buku) => !buku.sudah_dipinjam)
+  bukuSudahDikonfirmasi.value = bukuYangDipinjam.value.filter((buku) => buku.sudah_dipinjam)
 }
 </script>
 
@@ -164,11 +169,21 @@ async function muatUlangBuku() {
 
     <section>
       <h2>Buku yang dipinjam</h2>
+      <p v-if="isLoading">Bukunya lagi diambil, tunggu sebentar ya</p>
+      <p v-else-if="!isLoading && bukuYangDipinjam.length === 0">Ga ada buku yang dipinjam</p>
+
+      <h3>Belum dikonfirmasi</h3>
       <ul class="book-list">
-        <li v-if="isLoading">Bukunya lagi diambil, tunggu sebentar ya</li>
-        <li v-else-if="!isLoading && bukuYangDipinjam.length === 0">Ga ada buku yang dipinjam</li>
+        <li v-if="!bukuBlumDikonfirmasi.length">ga ada bukunya nih</li>
+        <ProfileBook v-for="buku in bukuBlumDikonfirmasi" :key="buku.no_isbn" :buku="buku" />
+      </ul>
+
+      <h3>Sudah dikonfirmasi</h3>
+
+      <ul class="book-list">
+        <li v-if="!bukuSudahDikonfirmasi.length">ga ada bukunya nih</li>
         <ProfileBook
-          v-for="buku in bukuYangDipinjam"
+          v-for="buku in bukuSudahDikonfirmasi"
           :key="buku.no_isbn"
           :buku="buku"
           @delete="muatUlangBuku"
