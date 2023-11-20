@@ -82,18 +82,18 @@ async function statusPeminjaman() {
         class="buku__gambar"
         alt="gambar buku"
         loading="lazy"
-        width="400"
-        height="600"
+        width="200"
+        height="300"
       />
     </figure>
     <figcaption class="buku__info">
       <div class="metadata">
-        <h2 class="buku__judul">{{ buku.judul }}</h2>
+        <h3 class="buku__judul">{{ buku.judul }}</h3>
         <p class="buku__penulis">{{ buku.penulis }}</p>
         <p class="buku__tahun-terbit">{{ buku.tahun_terbit }}</p>
       </div>
-      <CTA :isButton="true" @click="pinjamBuku(buku)">Pinjam buku</CTA>
     </figcaption>
+    <CTA :isButton="true" @click="pinjamBuku(buku)">Pinjam buku</CTA>
 
     <TheDialog :is-open="dialogIsOpen" @dialog-close="dialogIsOpen = false">
       <h2>Info!!</h2>
@@ -104,12 +104,11 @@ async function statusPeminjaman() {
 
 <style>
 .buku {
-  outline: 2px solid #444;
-  transition: background-color 200ms ease;
+  border-radius: 0.5rem;
+  outline: 2px solid #ddd;
 
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
 }
 
 .buku__gambar {
@@ -119,25 +118,22 @@ async function statusPeminjaman() {
 }
 
 .buku__info {
-  padding: 2rem;
+  padding: 1rem;
+  flex-grow: 1;
 }
 
-.buku .metadata {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.metadata > * {
+.buku__judul {
+  font-weight: normal;
   margin: 0;
-}
-
-.buku__penulis {
-  font-size: 1.2rem;
-  font-weight: bold;
+  line-height: 1;
 }
 
 .buku__tahun-terbit {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
+}
+
+.buku .btn {
+  align-self: start;
+  margin: 0 1rem 1rem 1rem;
 }
 </style>
