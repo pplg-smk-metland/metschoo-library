@@ -9,7 +9,7 @@ const dataPeminjaman = ref([])
 
 async function ambilDataPeminjaman() {
   try {
-    const { data, error } = await supabase.from("peminjaman").select("*")
+    const { data, error } = await supabase.from("peminjaman").select("*, pengguna(*), buku(*)")
     if (error) throw error
     return data
   } catch (err) {
@@ -64,5 +64,9 @@ async function konfirmasiPeminjaman(no_isbn) {
   list-style: none;
   margin: 0;
   padding: 0;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(50ch, 1fr));
+  gap: 1rem;
 }
 </style>
