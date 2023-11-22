@@ -6,18 +6,17 @@
 
     <ul class="sidebar__list">
       <li>
-        <a href="/admin">Dashboard</a>
+        <routerLink :to="{ name: 'admin' }">Dashboard</routerLink>
         <ul class="sidebar__sub-list">
-          <li><a href="#">Manajemen pengguna</a></li>
-          <li><a href="#">peminjaman</a></li>
+          <li><routerLink :to="{ name: 'manajemen-pengguna' }">Manajemen pengguna</routerLink></li>
+          <li><routerLink :to="{ name: 'peminjaman' }">peminjaman</routerLink></li>
         </ul>
       </li>
       <li>
-        <a href="#">Data buku</a>
+        <routerLink :to="{ name: 'data-buku' }">Data buku</routerLink>
         <ul class="sidebar__sub-list">
-          <li><a href="#">Daftar buku</a></li>
-          <li><a href="#">Tambah buku</a></li>
-          <li><a href="#">apa kek</a></li>
+          <li><RouterLink :to="{ name: 'daftar-buku' }">Daftar buku</RouterLink></li>
+          <li><routerLink :to="{ name: 'tambah-buku' }">Tambah buku</routerLink></li>
         </ul>
       </li>
     </ul>
@@ -28,7 +27,7 @@
 .sidebar {
   background: var(--primary);
   color: var(--white);
-  flex-basis: 25ch;
+  min-width: 25ch;
 
   display: flex;
   flex-direction: column;

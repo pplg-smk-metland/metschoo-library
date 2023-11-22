@@ -38,8 +38,39 @@ const routes = [
   },
   {
     path: "/admin",
-    name: "admin",
     component: () => import("../views/AdminView.vue"),
+    children: [
+      {
+        path: "",
+        name: "admin",
+        component: () => import("../views/admin/AdminRoot.vue"),
+      },
+      {
+        path: "manajemen-pengguna",
+        name: "manajemen-pengguna",
+        component: () => import("../views/admin/AdminManajemenPengguna.vue"),
+      },
+      {
+        path: "peminjaman",
+        name: "peminjaman",
+        component: () => import("../views/admin/AdminPeminjaman.vue"),
+      },
+      {
+        path: "data-buku",
+        name: "data-buku",
+        component: () => import("../views/admin/AdminDataBuku.vue"),
+      },
+      {
+        path: "daftar-buku",
+        name: "daftar-buku",
+        component: () => import("../views/admin/AdminDaftarBuku.vue"),
+      },
+      {
+        path: "tambah-buku",
+        name: "tambah-buku",
+        component: () => import("../views/admin/AdminTambahBuku.vue"),
+      },
+    ],
   },
 ]
 
