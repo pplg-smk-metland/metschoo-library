@@ -10,8 +10,4 @@ main {
   min-height: 70vh;
   flex-grow: 1;
 }
-
-.main-section {
-  padding: 2rem;
-}
 </style>

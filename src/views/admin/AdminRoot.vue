@@ -1,19 +1,21 @@
 <script setup>
 import { ref, onMounted } from "vue"
-
 import DataRow from "../../components/admin/DataRow.vue"
-
 import { supabase } from "../../supabase"
 
+const isLoading = ref(false)
 const dataPeminjaman = ref([])
 
 async function ambilDataPeminjaman() {
   try {
+    isLoading.value = true
     const { data, error } = await supabase.from("peminjaman").select("*, pengguna(*), buku(*)")
     if (error) throw error
     return data
   } catch (err) {
     console.error(err.message)
+  } finally {
+    isLoading.value = false
   }
 }
 
@@ -23,7 +25,7 @@ onMounted(async () => {
 
 async function konfirmasiPeminjaman(no_isbn) {
   try {
-    alert("beneran nih mau konfirmasi")
+    if (!confirm("beneran nih mau konfirmasi peminjaman buku")) return
     const { data, error } = await supabase
       .from("peminjaman")
       .update({ sudah_dipinjam: true })
@@ -36,6 +38,10 @@ async function konfirmasiPeminjaman(no_isbn) {
     console.error(err.message)
   }
 }
+
+function konfirmasiPengembalian(no_isbn) {
+  alert(`kembalikan buku dengan no isbn ${no_isbn}`)
+}
 </script>
 
 <template>
@@ -46,12 +52,14 @@ async function konfirmasiPeminjaman(no_isbn) {
     <h2>Data peminjaman buku</h2>
 
     <ul class="data-list">
-      <li v-if="!dataPeminjaman.length">ga ada data peminjamannya</li>
+      <li v-if="!isLoading && !dataPeminjaman.length">ga ada data peminjamannya</li>
+      <li v-else-if="isLoading && !dataPeminjaman.length">Memuat data peminjaman...</li>
       <DataRow
         v-for="data in dataPeminjaman"
         :key="data.user_id"
         :data="data"
-        @konfirmasi="konfirmasiPeminjaman(data.no_isbn)"
+        @konfirmasiPeminjaman="konfirmasiPeminjaman(data.no_isbn)"
+        @konfirmasiPengembalian="konfirmasiPengembalian(data.no_isbn)"
       />
     </ul>
   </section>

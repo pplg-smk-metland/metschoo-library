@@ -5,10 +5,14 @@ const props = defineProps({
   data: Object,
 })
 
-const emit = defineEmits(["konfirmasi"])
+const emit = defineEmits(["konfirmasiPeminjaman", "konfirmasiPengembalian"])
 
-function konfirmasi() {
-  emit("konfirmasi")
+function konfirmasiPeminjaman() {
+  emit("konfirmasiPeminjaman")
+}
+
+function konfirmasiPengembalian() {
+  emit("konfirmasiPengembalian")
 }
 </script>
 
@@ -29,7 +33,9 @@ function konfirmasi() {
       <p>{{ data.pengguna.nama }}</p>
       <p>{{ data.pengguna.kelas }} - {{ data.pengguna.jurusan }}</p>
     </div>
-    <CTA @click="konfirmasi" :disabled="data.sudah_dipinjam">Konfirmasi peminjaman</CTA>
+
+    <CTA @click="konfirmasiPeminjaman" v-show="!data.sudah_dipinjam">Konfirmasi peminjaman</CTA>
+    <CTA @click="konfirmasiPengembalian" v-show="data.sudah_dipinjam">Konfirmasi pengembalian</CTA>
   </li>
 </template>
 
@@ -41,5 +47,9 @@ function konfirmasi() {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 0.5rem;
+}
+
+.data-row h1 {
+  line-height: 1;
 }
 </style>
