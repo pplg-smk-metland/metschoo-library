@@ -14,6 +14,7 @@ async function ambilBukuBiasa() {
   }
 
   try {
+    isLoading.value = true
     const { data, error } = await supabase
       .from("buku")
       .select(`*`)
@@ -31,13 +32,13 @@ async function ambilBukuBiasa() {
     return data
   } catch (err) {
     alert(err.message)
+  } finally {
+    isLoading.value = false
   }
 }
 
 onMounted(async () => {
-  isLoading.value = true
   bukuRekomendasi.value = await ambilBukuBiasa()
-  isLoading.value = false
 })
 </script>
 

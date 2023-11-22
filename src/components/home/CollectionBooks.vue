@@ -8,6 +8,7 @@ const isLoading = ref(false)
 
 async function ambilBukuKoleksi() {
   try {
+    isLoading.value = true
     const { data, error } = await supabase
       .from("buku")
       .select(`*`)
@@ -18,13 +19,13 @@ async function ambilBukuKoleksi() {
     return data
   } catch (err) {
     alert(err.message)
+  } finally {
+    isLoading.value = false
   }
 }
 
 onMounted(async () => {
-  isLoading.value = true
   bukuKoleksi.value = await ambilBukuKoleksi()
-  isLoading.value = false
 })
 </script>
 

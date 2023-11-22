@@ -49,7 +49,7 @@ function closeNav() {
   </nav>
 </template>
 
-<style>
+<style scoped>
 nav {
   background: var(--primary);
   color: var(--white);

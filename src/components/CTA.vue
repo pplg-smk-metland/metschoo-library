@@ -34,4 +34,8 @@ const props = defineProps({
   background: var(--secondary-100);
   color: var(--white);
 }
+
+.cta:disabled {
+  background: var(--dark-grey);
+}
 </style>
