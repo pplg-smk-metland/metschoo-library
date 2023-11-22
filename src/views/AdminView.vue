@@ -1,8 +1,9 @@
 <script setup>
 import { ref, onMounted } from "vue"
 
-import BaseLayout from "../layouts/BaseLayout.vue"
+import AdminLayout from "../layouts/AdminLayout.vue"
 import DataRow from "../components/admin/DataRow.vue"
+
 import { supabase } from "../supabase"
 
 const dataPeminjaman = ref([])
@@ -39,7 +40,7 @@ async function konfirmasiPeminjaman(no_isbn) {
 </script>
 
 <template>
-  <BaseLayout>
+  <AdminLayout>
     <h1>Admin</h1>
     <p>Halo admin</p>
 
@@ -56,7 +57,7 @@ async function konfirmasiPeminjaman(no_isbn) {
         />
       </ul>
     </section>
-  </BaseLayout>
+  </AdminLayout>
 </template>
 
 <style scoped>
