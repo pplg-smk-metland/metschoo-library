@@ -5,6 +5,7 @@ import CTA from "../components/CTA.vue"
 
 import { supabase } from "../supabase"
 import { useRoute } from "vue-router"
+import { useAuthStore } from "../stores/auth"
 import { ambilBukuDariISBN } from "../lib/utils"
 
 const dataBuku = ref({})
@@ -30,6 +31,23 @@ onMounted(async () => {
   // ambil gambar buku
   imgURL.value = await ambilBukuDariISBN(isbn)
 })
+
+function pinjamBuku() {
+  alert("bentar ya lom dibkin")
+}
+
+async function masukkanWishlist(no_isbn) {
+  const authStore = useAuthStore()
+  try {
+    const { data, error } = await supabase
+      .from("wishlist")
+      .insert([{ user_id: authStore.session.user.id, no_isbn: no_isbn }])
+    if (error) throw error
+    return data
+  } catch (err) {
+    console.error(err.message)
+  }
+}
 </script>
 
 <template>
@@ -46,8 +64,8 @@ onMounted(async () => {
         <p>{{ dataBuku.jumlah_exspl }}</p>
 
         <div class="button-container">
-          <CTA @click="alert('bentar belum dibuat')">Pinjam buku</CTA>
-          <CTA @click="alert('bentar belum dibuat')">tambahkan ke wishlist</CTA>
+          <CTA @click="pinjamBuku">Pinjam buku</CTA>
+          <CTA @click="masukkanWishlist(dataBuku.no_isbn)">tambahkan ke wishlist</CTA>
         </div>
       </div>
     </div>
