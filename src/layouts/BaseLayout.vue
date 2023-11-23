@@ -1,4 +1,9 @@
+<script setup>
+import TheNavbar from "../components/TheNavbar.vue"
+</script>
+
 <template>
+  <TheNavbar />
   <main>
     <slot>halaman ini belum ada isinya. bentar ya</slot>
   </main>

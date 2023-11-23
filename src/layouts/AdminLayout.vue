@@ -1,16 +1,27 @@
 <script setup>
+import TheNavbar from "../components/TheNavbar.vue"
 import AdminSidebar from "../components/admin/AdminSidebar.vue"
 </script>
 
 <template>
   <div class="wrapper">
-    <AdminSidebar></AdminSidebar>
-    <main><slot /></main>
+    <TheNavbar />
+    <AdminSidebar />
+    <main>
+      <slot />
+    </main>
   </div>
 </template>
 
-<style>
+<style scoped>
 .wrapper {
-  display: flex;
+  display: grid;
+  grid-template-areas:
+    "navbar navbar"
+    "sidebar content";
+}
+
+main {
+  grid-area: content;
 }
 </style>

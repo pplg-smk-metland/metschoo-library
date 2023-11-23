@@ -19,7 +19,7 @@ function closeNav() {
 </script>
 
 <template>
-  <nav>
+  <nav class="navbar">
     <div class="logo">
       <img src="/logo.svg" alt="Logo Metschoo Library" />
     </div>
@@ -52,11 +52,14 @@ function closeNav() {
 </template>
 
 <style scoped>
-nav {
+.navbar {
   background: var(--primary);
   color: var(--white);
   font-weight: 300;
   padding-inline: 0.5rem;
+  z-index: 10;
+
+  grid-area: navbar;
 
   display: flex;
   justify-content: space-between;
@@ -101,7 +104,7 @@ nav {
   align-items: center;
 }
 
-nav a,
+.navbar a,
 .nav-btn {
   color: inherit;
   text-decoration: none;

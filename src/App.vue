@@ -14,7 +14,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <TheNavbar />
   <RouterView></RouterView>
 
   <TheFooter />
