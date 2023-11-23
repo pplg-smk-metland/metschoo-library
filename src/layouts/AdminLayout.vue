@@ -19,6 +19,7 @@ import AdminSidebar from "../components/admin/AdminSidebar.vue"
   grid-template-areas:
     "navbar navbar"
     "sidebar content";
+  grid-template-columns: 25ch 1fr;
 }
 
 main {

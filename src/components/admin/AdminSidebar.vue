@@ -27,7 +27,6 @@
 .sidebar {
   background: var(--primary);
   color: var(--white);
-  min-width: 25ch;
   max-height: 100vh;
   position: sticky;
   top: 3rem;
