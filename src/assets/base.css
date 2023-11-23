@@ -1,5 +1,7 @@
 :root {
-  --primary: #336f6c;
+  --primary-500: #336f6c;
+  --primary-200: #1d564c;
+  --primary: var(--primary-500);
 
   --secondary-100: #1d564c;
   --secondary-500: #08322c;
@@ -18,7 +20,7 @@
   --background: var(--white);
   --text: var(--dark);
 
-  --nav-link-active: var(--secondary-100);
+  --nav-link-active: var(--primary-200);
 }
 
 [data-theme="dark"] {

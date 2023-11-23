@@ -20,14 +20,16 @@ function closeNav() {
 
 <template>
   <nav>
-    <div>
-      <img class="logo" src="/logo.svg" alt="Logo Metschoo Library" />
+    <div class="logo">
+      <img src="/logo.svg" alt="Logo Metschoo Library" />
     </div>
 
     <ul class="nav-links" ref="navlinks">
       <li class="nav-links__header">
-        <div>
-          <img class="logo" src="/logo.svg" alt="Logo Metschoo Library" />
+        <div class="logo">
+          <router-link :to="{ name: 'home' }">
+            <img src="/logo.svg" alt="Logo Metschoo Library" />
+          </router-link>
         </div>
         <button class="nav-btn close" ref="closeNavBtn" @click="closeNav">
           <i class="fa-solid fa-xmark"></i>
@@ -63,8 +65,12 @@ nav {
   top: 0;
 }
 
-.logo {
+.logo img {
   height: 3.5rem;
+}
+
+.logo a::before {
+  display: none;
 }
 
 .nav-links {
@@ -104,7 +110,7 @@ nav a,
   position: relative;
 }
 
-nav a.active::before {
+.nav-links a.active::before {
   content: "";
   position: absolute;
   bottom: 0;
@@ -115,12 +121,13 @@ nav a.active::before {
 }
 
 @media (hover: hover) {
-  nav a:hover {
-    background-color: #1d564c;
+  .nav-links a:hover {
+    background: var(--primary-200);
   }
 }
+
 @media screen and (min-width: 50em) {
-  nav a.active::before {
+  .nav-links a.active::before {
     height: 0.4rem;
     width: 100%;
   }
