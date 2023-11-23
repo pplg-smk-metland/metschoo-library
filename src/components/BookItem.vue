@@ -6,7 +6,7 @@ import router from "../router"
 import CTA from "./CTA.vue"
 import TheDialog from "./TheDialog.vue"
 
-import { ambilBukuDariISBN } from "../lib/utils.js"
+import { ambilGambarBukuDariISBN, pinjamBukuDariISBN } from "../lib/utils.js"
 
 const props = defineProps({
   buku: Object,
@@ -15,7 +15,7 @@ const props = defineProps({
 const imgURL = ref("")
 onMounted(async () => {
   try {
-    imgURL.value = await ambilBukuDariISBN(props.buku.no_isbn)
+    imgURL.value = await ambilGambarBukuDariISBN(props.buku.no_isbn)
   } catch (error) {
     console.error(error)
   }
@@ -29,6 +29,8 @@ function openDialog(message) {
   dialogMessage.value = message
 }
 
+const authStore = useAuthStore()
+
 async function pinjamBuku(buku) {
   if (!authStore.session) {
     openDialog("kalau mau pinjam buku, buat akun dulu ya")
@@ -38,12 +40,8 @@ async function pinjamBuku(buku) {
 
   // TODO: buat logika peminjaman buku
   if (confirm(`Beneran mau pinjem buku ${buku.judul}?`)) {
-    const updates = {
-      no_isbn: buku.no_isbn,
-    }
-
     try {
-      await supabase.from("peminjaman").insert(updates)
+      pinjamBukuDariISBN(buku.no_isbn)
       openDialog(`sukses meminjam buku ${buku.judul}`)
     } catch (err) {
       openDialog(err.message)
@@ -54,7 +52,6 @@ async function pinjamBuku(buku) {
 }
 
 async function statusPeminjaman() {
-  const authStore = useAuthStore()
   const { data, error } = await supabase
     .from("peminjaman")
     .select()

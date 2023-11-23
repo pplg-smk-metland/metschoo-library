@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue"
 import { supabase } from "../../supabase"
+import { ambilGambarBukuDariISBN } from "../../lib/utils"
 import CTA from "../CTA.vue"
 
 const props = defineProps({
@@ -12,24 +13,10 @@ const emit = defineEmits(["delete"])
 // object buku hasil join ada di dalam object
 const dataBuku = props.buku.buku
 
-const cdnURL = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/Buku`
 const imgURL = ref("")
 
-async function getImages() {
-  const { data, error } = await supabase.storage
-    .from("Buku")
-    .list(dataBuku.no_isbn + "/", { limit: 1, offset: 0, search: dataBuku.no_isbn })
-  if (error) throw error
-
-  return data[0]?.name
-}
-
 onMounted(async () => {
-  try {
-    imgURL.value = await getImages()
-  } catch (error) {
-    console.error(error)
-  }
+  imgURL.value = await ambilGambarBukuDariISBN(dataBuku.no_isbn)
 })
 
 async function kembalikanBuku() {
@@ -47,7 +34,7 @@ async function kembalikanBuku() {
   <li class="buku">
     <figure>
       <img
-        :src="`${cdnURL}/${dataBuku.no_isbn}/${imgURL}`"
+        :src="imgURL"
         class="buku__gambar"
         alt="gambar buku"
         loading="lazy"

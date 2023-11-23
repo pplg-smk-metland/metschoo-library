@@ -6,7 +6,7 @@ import CTA from "../components/CTA.vue"
 import { supabase } from "../supabase"
 import { useRoute } from "vue-router"
 import { useAuthStore } from "../stores/auth"
-import { ambilBukuDariISBN } from "../lib/utils"
+import { ambilGambarBukuDariISBN, pinjamBukuDariISBN } from "../lib/utils"
 
 const dataBuku = ref({})
 
@@ -29,7 +29,7 @@ onMounted(async () => {
   dataBuku.value = await ambilDataBuku(isbn)
 
   // ambil gambar buku
-  imgURL.value = await ambilBukuDariISBN(isbn)
+  imgURL.value = await ambilGambarBukuDariISBN(isbn)
 })
 
 function pinjamBuku() {

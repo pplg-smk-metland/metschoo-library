@@ -1,6 +1,6 @@
 <script setup>
 import CTA from "../CTA.vue"
-import { ambilBukuDariISBN } from "../../lib/utils"
+import { ambilGambarBukuDariISBN } from "../../lib/utils"
 import { onMounted, ref } from "vue"
 
 const props = defineProps({
@@ -13,7 +13,7 @@ function pinjamBuku() {
 
 const imgURL = ref("")
 onMounted(async () => {
-  imgURL.value = await ambilBukuDariISBN(props.buku.no_isbn)
+  imgURL.value = await ambilGambarBukuDariISBN(props.buku.no_isbn)
 })
 </script>
 
