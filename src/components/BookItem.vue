@@ -6,25 +6,16 @@ import router from "../router"
 import CTA from "./CTA.vue"
 import TheDialog from "./TheDialog.vue"
 
+import { ambilBukuDariISBN } from "../lib/utils.js"
+
 const props = defineProps({
   buku: Object,
 })
 
-const cdnURL = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/Buku`
 const imgURL = ref("")
-
-async function getBookImage() {
-  const { data, error } = await supabase.storage
-    .from("Buku")
-    .list(`${props.buku.no_isbn}/`, { limit: 1, offset: 0, search: props.buku.no_isbn })
-  if (error) throw error
-
-  return data[0]?.name
-}
-
 onMounted(async () => {
   try {
-    imgURL.value = await getBookImage()
+    imgURL.value = await ambilBukuDariISBN(props.buku.no_isbn)
   } catch (error) {
     console.error(error)
   }
@@ -62,9 +53,8 @@ async function pinjamBuku(buku) {
   statusPeminjaman()
 }
 
-const authStore = useAuthStore()
-
 async function statusPeminjaman() {
+  const authStore = useAuthStore()
   const { data, error } = await supabase
     .from("peminjaman")
     .select()
@@ -79,7 +69,7 @@ async function statusPeminjaman() {
     <routerLink :to="`/buku/${buku.no_isbn}`">
       <figure>
         <img
-          :src="`${cdnURL}/${buku.no_isbn}/${imgURL}`"
+          :src="imgURL"
           class="buku__gambar"
           alt="gambar buku"
           loading="lazy"

@@ -2,8 +2,10 @@
 import { onMounted, ref } from "vue"
 import BaseLayout from "../layouts/BaseLayout.vue"
 import CTA from "../components/CTA.vue"
+
 import { supabase } from "../supabase"
 import { useRoute } from "vue-router"
+import { ambilBukuDariISBN } from "../lib/utils"
 
 const dataBuku = ref({})
 
@@ -17,17 +19,7 @@ async function ambilDataBuku(no_isbn) {
   }
 }
 
-const cdnURL = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/Buku`
 const imgURL = ref("")
-
-async function ambilGambarBuku() {
-  const { data, error } = await supabase.storage
-    .from("Buku")
-    .list(`${dataBuku.value.no_isbn}/`, { limit: 1, offset: 0, search: dataBuku.value.no_isbn })
-  if (error) throw error
-
-  return data[0]?.name
-}
 
 onMounted(async () => {
   //ambl databuku
@@ -36,7 +28,7 @@ onMounted(async () => {
   dataBuku.value = await ambilDataBuku(isbn)
 
   // ambil gambar buku
-  imgURL.value = await ambilGambarBuku()
+  imgURL.value = await ambilBukuDariISBN(isbn)
 })
 </script>
 
@@ -44,7 +36,7 @@ onMounted(async () => {
   <BaseLayout>
     <div class="buku">
       <div class="buku__gambar">
-        <img :src="`${cdnURL}/${dataBuku.no_isbn}/${imgURL}`" alt="" width="400" />
+        <img :src="imgURL" alt="" width="400" />
       </div>
       <div class="buku__info">
         <h1>{{ dataBuku.judul }}</h1>
