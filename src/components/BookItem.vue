@@ -76,33 +76,35 @@ async function statusPeminjaman() {
 
 <template>
   <li class="buku">
-    <figure>
-      <img
-        :src="`${cdnURL}/${buku.no_isbn}/${imgURL}`"
-        class="buku__gambar"
-        alt="gambar buku"
-        loading="lazy"
-        width="200"
-        height="300"
-      />
-    </figure>
-    <figcaption class="buku__info">
-      <div class="metadata">
-        <h3 class="buku__judul">{{ buku.judul }}</h3>
-        <p class="buku__penulis">{{ buku.penulis }}</p>
-        <p class="buku__tahun-terbit">{{ buku.tahun_terbit }}</p>
-      </div>
-    </figcaption>
-    <CTA @click="pinjamBuku(buku)">Pinjam buku</CTA>
+    <routerLink :to="`/buku/${buku.no_isbn}`">
+      <figure>
+        <img
+          :src="`${cdnURL}/${buku.no_isbn}/${imgURL}`"
+          class="buku__gambar"
+          alt="gambar buku"
+          loading="lazy"
+          width="200"
+          height="300"
+        />
+      </figure>
+      <figcaption class="buku__info">
+        <div class="metadata">
+          <h3 class="buku__judul">{{ buku.judul }}</h3>
+          <p class="buku__penulis">{{ buku.penulis }}</p>
+          <p class="buku__tahun-terbit">{{ buku.tahun_terbit }}</p>
+        </div>
+      </figcaption>
+      <CTA @click="pinjamBuku(buku)">Pinjam buku</CTA>
 
-    <TheDialog :is-open="dialogIsOpen" @dialog-close="dialogIsOpen = false">
-      <h2>Info!!</h2>
-      <p>{{ dialogMessage }}</p>
-    </TheDialog>
+      <TheDialog :is-open="dialogIsOpen" @dialog-close="dialogIsOpen = false">
+        <h2>Info!!</h2>
+        <p>{{ dialogMessage }}</p>
+      </TheDialog>
+    </routerLink>
   </li>
 </template>
 
-<style>
+<style scoped>
 .buku {
   border-radius: 0.5rem;
   outline: 2px solid #ddd;

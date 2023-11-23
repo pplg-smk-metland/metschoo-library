@@ -37,6 +37,10 @@ const routes = [
     component: () => import("../views/SearchView.vue"),
   },
   {
+    path: "/buku/:isbn",
+    component: () => import("../views/BookView.vue"),
+  },
+  {
     path: "/admin",
     component: () => import("../views/AdminView.vue"),
     children: [
