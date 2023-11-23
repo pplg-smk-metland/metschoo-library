@@ -41,7 +41,7 @@ async function pinjamBuku(buku) {
   // TODO: buat logika peminjaman buku
   if (confirm(`Beneran mau pinjem buku ${buku.judul}?`)) {
     try {
-      pinjamBukuDariISBN(buku.no_isbn)
+      await pinjamBukuDariISBN(buku.no_isbn)
       openDialog(`sukses meminjam buku ${buku.judul}`)
     } catch (err) {
       openDialog(err.message)

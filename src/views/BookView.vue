@@ -32,8 +32,12 @@ onMounted(async () => {
   imgURL.value = await ambilGambarBukuDariISBN(isbn)
 })
 
-function pinjamBuku() {
-  alert("bentar ya lom dibkin")
+async function pinjamBuku(isbn) {
+  try {
+    await pinjamBukuDariISBN(isbn)
+  } catch (err) {
+    console.error(err.message)
+  }
 }
 
 async function masukkanWishlist(no_isbn) {

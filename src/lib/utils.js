@@ -14,5 +14,7 @@ export async function ambilGambarBukuDariISBN(isbn) {
   }
 }
 
-  return `${cdnURL}/${isbn}/${data[0]?.name}`
+export async function pinjamBukuDariISBN(isbn) {
+  const { error } = await supabase.from("peminjaman").insert({ no_isbn: isbn })
+  if (error) throw error
 }

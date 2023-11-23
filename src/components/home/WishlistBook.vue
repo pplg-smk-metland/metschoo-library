@@ -1,14 +1,18 @@
 <script setup>
 import CTA from "../CTA.vue"
-import { ambilGambarBukuDariISBN } from "../../lib/utils"
+import { ambilGambarBukuDariISBN, pinjamBukuDariISBN } from "../../lib/utils"
 import { onMounted, ref } from "vue"
 
 const props = defineProps({
   buku: Object,
 })
 
-function pinjamBuku() {
-  alert("blom dibikin sabar")
+async function pinjamBuku() {
+  try {
+    await pinjamBukuDariISBN(props.buku.no_isbn)
+  } catch (err) {
+    console.error(err.message)
+  }
 }
 
 const imgURL = ref("")
