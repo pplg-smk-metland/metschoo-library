@@ -1,12 +1,6 @@
 <script setup>
 import { onMounted, ref } from "vue"
-import { supabase } from "../supabase"
-import { useAuthStore } from "../stores/auth"
-import router from "../router"
-import CTA from "./CTA.vue"
-import TheDialog from "./TheDialog.vue"
-
-import { ambilGambarBukuDariISBN, pinjamBukuDariISBN } from "../lib/utils.js"
+import { ambilGambarBukuDariISBN } from "../lib/utils.js"
 
 const props = defineProps({
   buku: Object,
@@ -20,45 +14,6 @@ onMounted(async () => {
     console.error(error)
   }
 })
-
-const dialogIsOpen = ref(false)
-const dialogMessage = ref("")
-
-function openDialog(message) {
-  dialogIsOpen.value = true
-  dialogMessage.value = message
-}
-
-const authStore = useAuthStore()
-
-async function pinjamBuku(buku) {
-  if (!authStore.session) {
-    openDialog("kalau mau pinjam buku, buat akun dulu ya")
-    router.push({ name: "sign-in" })
-    return
-  }
-
-  // TODO: buat logika peminjaman buku
-  if (confirm(`Beneran mau pinjem buku ${buku.judul}?`)) {
-    try {
-      await pinjamBukuDariISBN(buku.no_isbn)
-      openDialog(`sukses meminjam buku ${buku.judul}`)
-    } catch (err) {
-      openDialog(err.message)
-    }
-  }
-
-  statusPeminjaman()
-}
-
-async function statusPeminjaman() {
-  const { data, error } = await supabase
-    .from("peminjaman")
-    .select()
-    .eq("user_id", authStore.session.user.id)
-  if (error) throw error
-  return data
-}
 </script>
 
 <template>
@@ -81,12 +36,6 @@ async function statusPeminjaman() {
           <p class="buku__tahun-terbit">{{ buku.tahun_terbit }}</p>
         </div>
       </figcaption>
-      <CTA @click="pinjamBuku(buku)">Pinjam buku</CTA>
-
-      <TheDialog :is-open="dialogIsOpen" @dialog-close="dialogIsOpen = false">
-        <h2>Info!!</h2>
-        <p>{{ dialogMessage }}</p>
-      </TheDialog>
     </routerLink>
   </li>
 </template>
@@ -95,9 +44,6 @@ async function statusPeminjaman() {
 .buku {
   border-radius: 0.5rem;
   outline: 2px solid #ddd;
-
-  display: flex;
-  flex-direction: column;
 }
 
 .buku__gambar {
@@ -117,8 +63,14 @@ async function statusPeminjaman() {
   line-height: 1;
 }
 
+.buku__penulis {
+  margin-block: 1rem 0;
+  line-height: 1.2;
+}
+
 .buku__tahun-terbit {
   font-size: 0.75rem;
+  margin: 0;
 }
 
 .buku .btn {
