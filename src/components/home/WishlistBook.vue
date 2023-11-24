@@ -2,14 +2,28 @@
 import CTA from "../CTA.vue"
 import { ambilGambarBukuDariISBN, pinjamBukuDariISBN } from "../../lib/utils"
 import { onMounted, ref } from "vue"
+import { supabase } from "../../supabase"
 
 const props = defineProps({
   buku: Object,
 })
 
+const emit = defineEmits(["pinjamBuku", "hapusBuku"])
+
 async function pinjamBuku() {
+  emit("pinjamBuku")
   try {
     await pinjamBukuDariISBN(props.buku.no_isbn)
+    await supabase.from("wishlist").delete().eq("no_isbn", props.buku.no_isbn)
+  } catch (err) {
+    console.error(err.message)
+  }
+}
+
+async function hapusBukuDariWishlist() {
+  emit("hapusBuku", props.buku)
+  try {
+    await supabase.from("wishlist").delete().eq("no_isbn", props.buku.no_isbn)
   } catch (err) {
     console.error(err.message)
   }
@@ -40,6 +54,13 @@ onMounted(async () => {
         <p class="buku__tahun-terbit">{{ buku.tahun_terbit }}</p>
       </div>
       <CTA @click="pinjamBuku">Pinjam buku</CTA>
+      <CTA @click="hapusBukuDariWishlist">Hapus buku dari wishlist</CTA>
     </figcaption>
   </li>
 </template>
+
+<style>
+.buku img {
+  object-fit: cover;
+}
+</style>
