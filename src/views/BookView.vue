@@ -1,9 +1,10 @@
 <script setup>
-import { onMounted, ref } from "vue"
+import { computed, onMounted, ref } from "vue"
 import BaseLayout from "../layouts/BaseLayout.vue"
 import TheDialog from "../components/TheDialog.vue"
 import CTA from "../components/CTA.vue"
 
+import { kembalikanBukuDariISBN } from "../lib/utils"
 import router from "../router"
 import { supabase } from "../supabase"
 import { useRoute } from "vue-router"
@@ -11,22 +12,72 @@ import { useAuthStore } from "../stores/auth"
 import { ambilGambarBukuDariISBN, pinjamBukuDariISBN } from "../lib/utils"
 
 const dataBuku = ref({})
-
 const authStore = useAuthStore()
 
-async function ambilDataBuku(no_isbn) {
+async function ambilDataBuku(isbn) {
   try {
     const { data, error } = await supabase
       .from("buku")
-      .select("*, peminjaman(sudah_dikonfirmasi)")
-      .eq("no_isbn", no_isbn)
-      .eq("peminjaman.user_id", authStore.session.user.id)
+      .select("*")
+      .eq("no_isbn", isbn)
+      .limit(1)
+      .single()
     if (error) throw error
-    return data[0]
+
+    return data
   } catch (err) {
     console.error(err.message)
   }
 }
+
+const bukuBisaDipinjam = ref(true)
+async function ambilDataPeminjamanBuku(isbn) {
+  try {
+    // check jika buku sudah dipinjam
+    const { data, error } = await supabase
+      .from("peminjaman")
+      .select("*")
+      .eq("no_isbn", isbn)
+      .eq("user_id", authStore.session.user.id)
+    if (error) throw error
+
+    if (!data || !data.length) return null
+
+    // check data peminjaman paling baru
+    const mostRecentData = ref({ tgl_pinjam: new Date(0) })
+
+    data.forEach((buku) => {
+      if (
+        new Date(mostRecentData.value.tgl_pinjam).getTime() < new Date(buku.tgl_pinjam).getTime()
+      ) {
+        mostRecentData.value = buku
+      }
+    })
+
+    // cari semua data di tabel, kalau sudah dikembalikan bisa dipinjam
+    if (mostRecentData.value.sudah_dikembalikan) {
+      bukuBisaDipinjam.value = true
+    } else bukuBisaDipinjam.value = false
+
+    return mostRecentData.value
+  } catch (err) {
+    console.error(err.message)
+  }
+}
+
+/* async function bukuAdaDiWishlist(isbn) {
+  try {
+    const { count, error } = await supabase
+      .from("wishlist")
+      .select("no_isbn")
+      .eq("no_isbn", isbn)
+      .eq("user_id", authStore.session.user.id)
+    if (error) throw error
+    return count !== 0 && count !== null
+  } catch (err) {
+    console.error(err.emesage)
+  }
+} */
 
 const imgURL = ref("")
 
@@ -34,9 +85,10 @@ const imgURL = ref("")
 onMounted(async () => {
   const route = useRoute()
   const { isbn } = route.params
-  dataBuku.value = await ambilDataBuku(isbn)
 
   imgURL.value = await ambilGambarBukuDariISBN(isbn)
+  dataBuku.value = await ambilDataBuku(isbn)
+  await ambilDataPeminjamanBuku(isbn)
 })
 
 const dialogIsOpen = ref(false)
@@ -66,14 +118,18 @@ async function pinjamBuku(buku) {
 
 // TODO: buat logika kembalikan buku
 async function kembalikanBuku(isbn) {
-  alert(`bentar blom dibuat. btw isbnnya ${isbn}`)
+  try {
+    await kembalikanBukuDariISBN(isbn)
+  } catch (err) {
+    openDialog(`Gagal mengembalikan buku! ${err.message}`)
+  }
 }
 
-async function masukkanWishlist(no_isbn) {
+async function masukkanWishlist(isbn) {
   try {
     const { data, error } = await supabase
       .from("wishlist")
-      .insert([{ user_id: authStore.session.user.id, no_isbn: no_isbn }])
+      .insert([{ user_id: authStore.session.user.id, no_isbn: isbn }])
     if (error) throw error
     return data
   } catch (err) {
@@ -81,9 +137,9 @@ async function masukkanWishlist(no_isbn) {
   }
 }
 
-function perbaruiDataBuku(payload) {
-  const newData = payload.new
-  dataBuku.value = newData
+async function perbaruiDataBuku(payload) {
+  await ambilDataPeminjamanBuku(payload.new.no_isbn)
+  dataBuku.value = await ambilDataBuku(payload.new.no_isbn)
 }
 
 supabase
@@ -106,28 +162,14 @@ supabase
         <p>{{ dataBuku.penerbit }} - {{ dataBuku.alamat_terbit }} {{ dataBuku.tahun_terbit }}</p>
         <p>{{ dataBuku.jumlah_exspl }}</p>
 
-        {{ dataBuku.peminjaman }}
         <div class="button-container">
-          <CTA
-            @click="pinjamBuku(dataBuku)"
-            :fill="true"
-            v-if="!dataBuku.peminjaman?.sudah_dikembalikan"
-          >
+          <CTA @click="pinjamBuku(dataBuku)" v-show="bukuBisaDipinjam" :fill="true">
             Pinjam buku
           </CTA>
-          <CTA
-            @click="kembalikanBuku(dataBuku.no_isbn)"
-            v-else
-            :disabled="dataBuku.peminjaman?.sudah_dikonfirmasi"
-          >
+          <CTA @click="kembalikanBuku(dataBuku.no_isbn)" v-show="!bukuBisaDipinjam">
             Kembalikan buku
           </CTA>
-          <CTA
-            @click="masukkanWishlist(dataBuku.no_isbn)"
-            :disabled="!dataBuku.peminjaman?.sudah_dikonfirmasi"
-          >
-            tambahkan ke wishlist
-          </CTA>
+          <CTA @click="masukkanWishlist(dataBuku.no_isbn)"> tambahkan ke wishlist </CTA>
         </div>
       </figcaption>
     </div>
