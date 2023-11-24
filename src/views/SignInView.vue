@@ -1,12 +1,13 @@
 <script setup>
-import BaseLayout from "../layouts/BaseLayout.vue"
+import TheNavbar from "../components/TheNavbar.vue"
 import SignInForm from "../components/signIn/SignInForm.vue"
 </script>
 
 <template>
-  <BaseLayout>
+  <TheNavbar />
+  <main>
     <SignInForm />
-  </BaseLayout>
+  </main>
 </template>
 
 <style scoped>
