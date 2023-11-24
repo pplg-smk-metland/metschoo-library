@@ -1,8 +1,10 @@
 <script setup>
-import { ref, onMounted } from "vue"
+import { ref, onMounted, computed } from "vue"
 import { useAuthStore } from "../stores/auth.js"
 import router from "../router/index.js"
 import { supabase } from "../supabase"
+
+import { kembalikanBukuDariISBN } from "../lib/utils"
 
 import BaseLayout from "../layouts/BaseLayout.vue"
 import CTA from "../components/CTA.vue"
@@ -63,8 +65,13 @@ function updateUserCredentials() {
 
 // ambil buku yang dipinjam
 const bukuYangDipinjam = ref([])
-const bukuBlumDikonfirmasi = ref([])
-const bukuSudahDikonfirmasi = ref([])
+const bukuBlumDikonfirmasi = computed(() => {
+  return bukuYangDipinjam.value.filter((buku) => !buku.sudah_dikonfirmasi)
+})
+
+const bukuSudahDikonfirmasi = computed(() => {
+  return bukuYangDipinjam.value.filter((buku) => buku.sudah_dikonfirmasi)
+})
 
 const isLoading = ref(false)
 
@@ -75,6 +82,7 @@ async function ambilBukuYangDipinjam() {
       .from("peminjaman")
       .select(`tgl_pinjam, tgl_kembali, buku(*)`)
       .eq("user_id", authStore.session.user.id)
+      .eq("sudah_dikembalikan", false)
 
     if (error) throw error
     return data
@@ -91,8 +99,17 @@ onMounted(async () => {
 
 async function muatUlangBuku() {
   bukuYangDipinjam.value = await ambilBukuYangDipinjam()
-  bukuBlumDikonfirmasi.value = bukuYangDipinjam.value.filter((buku) => !buku.sudah_dipinjam)
-  bukuSudahDikonfirmasi.value = bukuYangDipinjam.value.filter((buku) => buku.sudah_dipinjam)
+}
+
+async function kembalikanBuku(buku) {
+  try {
+    await kembalikanBukuDariISBN(buku.no_isbn)
+  } catch (err) {
+    console.error(err.message)
+  }
+
+  const found = bukuYangDipinjam.value.indexOf(buku)
+  bukuYangDipinjam.value.splice(found, 1)
 }
 </script>
 
@@ -162,11 +179,6 @@ async function muatUlangBuku() {
       </form>
     </div>
 
-    <TheDialog :is-open="dialogIsOpen" @dialog-close="dialogIsOpen = false">
-      <h2>Info</h2>
-      <p>{{ dialogMessage }}</p>
-    </TheDialog>
-
     <section>
       <h2>Buku yang dipinjam</h2>
       <p v-if="isLoading">Bukunya lagi diambil, tunggu sebentar ya</p>
@@ -186,7 +198,7 @@ async function muatUlangBuku() {
           v-for="buku in bukuSudahDikonfirmasi"
           :key="buku.no_isbn"
           :buku="buku"
-          @delete="muatUlangBuku"
+          @kembalikan-buku="kembalikanBuku"
         />
       </ul>
     </section>
@@ -194,6 +206,11 @@ async function muatUlangBuku() {
     <div>
       <CTA class="button-keluar" @click="signOut">Keluar akun</CTA>
     </div>
+
+    <TheDialog :is-open="dialogIsOpen" @dialog-close="dialogIsOpen = false">
+      <h2>Info</h2>
+      <p>{{ dialogMessage }}</p>
+    </TheDialog>
   </BaseLayout>
 </template>
 

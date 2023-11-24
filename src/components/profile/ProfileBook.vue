@@ -1,6 +1,5 @@
 <script setup>
 import { ref, onMounted } from "vue"
-import { supabase } from "../../supabase"
 import { ambilGambarBukuDariISBN } from "../../lib/utils"
 import CTA from "../CTA.vue"
 
@@ -8,7 +7,7 @@ const props = defineProps({
   buku: Object,
 })
 
-const emit = defineEmits(["delete"])
+const emit = defineEmits(["kembalikanBuku"])
 
 // object buku hasil join ada di dalam object
 const dataBuku = props.buku.buku
@@ -20,13 +19,7 @@ onMounted(async () => {
 })
 
 async function kembalikanBuku() {
-  emit("delete")
-  try {
-    const { error } = await supabase.from("peminjaman").delete().eq("no_isbn", dataBuku.no_isbn)
-    if (error) throw error
-  } catch (err) {
-    console.error(err.message)
-  }
+  emit("kembalikanBuku", props.buku)
 }
 </script>
 
@@ -60,7 +53,7 @@ async function kembalikanBuku() {
           {{ new Date(buku.tgl_kembali).toLocaleDateString() }}
         </p>
       </div>
-      <p class="buku__status-peminjaman" v-if="!buku.sudah_dipinjam">
+      <p class="buku__status-peminjaman" v-if="!buku.sudah_dikonfirmasi">
         menunggu konfirmasi peminjaman buku
       </p>
       <CTA @click="kembalikanBuku">Kembalikan buku</CTA>
