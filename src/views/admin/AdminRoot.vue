@@ -28,7 +28,7 @@ async function konfirmasiPeminjaman(no_isbn) {
     if (!confirm("beneran nih mau konfirmasi peminjaman buku")) return
     const { data, error } = await supabase
       .from("peminjaman")
-      .update({ sudah_dipinjam: true })
+      .update({ sudah_dikonfirmasi: true })
       .eq("no_isbn", no_isbn)
       .select()
     if (error) throw error

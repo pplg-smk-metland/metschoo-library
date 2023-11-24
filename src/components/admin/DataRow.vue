@@ -24,7 +24,7 @@ function konfirmasiPengembalian() {
       <p>{{ data.buku.penerbit }}</p>
       <p>{{ data.buku.jumlah_exspl }}</p>
       <p>
-        <span v-if="data.sudah_dipinjam === true">sudah dipinjam</span
+        <span v-if="data.sudah_dikonfirmasi === true">sudah dikonfirmasi</span
         ><span v-else>belum dipinjam</span>
       </p>
     </div>
@@ -34,8 +34,10 @@ function konfirmasiPengembalian() {
       <p>{{ data.pengguna.kelas }} - {{ data.pengguna.jurusan }}</p>
     </div>
 
-    <CTA @click="konfirmasiPeminjaman" v-show="!data.sudah_dipinjam">Konfirmasi peminjaman</CTA>
-    <CTA @click="konfirmasiPengembalian" v-show="data.sudah_dipinjam">Konfirmasi pengembalian</CTA>
+    <CTA @click="konfirmasiPeminjaman" v-show="!data.sudah_dikonfirmasi">Konfirmasi peminjaman</CTA>
+    <CTA @click="konfirmasiPengembalian" v-show="data.sudah_dikonfirmasi"
+      >Konfirmasi pengembalian</CTA
+    >
   </li>
 </template>
 
