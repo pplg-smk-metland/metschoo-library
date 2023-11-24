@@ -18,6 +18,19 @@ export async function ambilGambarBukuDariISBN(isbn) {
 }
 
 export async function pinjamBukuDariISBN(isbn) {
-  const { error } = await supabase.from("peminjaman").insert({ no_isbn: isbn })
+  const authStore = useAuthStore()
+  const { error } = await supabase
+    .from("peminjaman")
+    .insert({ user_id: authStore.session.user.id, no_isbn: isbn })
+  if (error) throw error
+}
+
+export async function kembalikanBukuDariISBN(isbn) {
+  const authStore = useAuthStore()
+  const { error } = await supabase
+    .from("peminjaman")
+    .update({ sudah_dikembalikan: true })
+    .eq("user_id", authStore.session.user.id)
+    .eq("no_isbn", isbn)
   if (error) throw error
 }
