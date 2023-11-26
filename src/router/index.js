@@ -31,11 +31,7 @@ const routes = [
     name: "profile",
     component: () => import("../views/ProfileView.vue"),
   },
-  {
-    path: "/search",
-    name: "search",
-    component: () => import("../views/SearchView.vue"),
-  },
+
   {
     path: "/buku/:isbn",
     component: () => import("../views/BookView.vue"),

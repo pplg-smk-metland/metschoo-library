@@ -38,7 +38,6 @@ function closeNav() {
       <li><router-link :to="{ name: 'home' }">Beranda</router-link></li>
       <li><router-link :to="{ name: 'pustaka' }">Pustaka</router-link></li>
       <li><router-link :to="{ name: 'wishlist' }">Wishlist</router-link></li>
-      <li><router-link :to="{ name: 'search' }">Search</router-link></li>
       <li v-if="!authStore.session">
         <router-link :to="{ name: 'sign-in' }">Masuk</router-link>
       </li>
