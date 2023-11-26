@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref } from "vue"
-import { ambilGambarBukuDariISBN } from "../lib/utils.js"
+import { ambilGambarBukuDariISBN } from "@/lib/utils.js"
 
 const props = defineProps({
   buku: Object,

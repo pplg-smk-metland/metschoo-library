@@ -1,9 +1,9 @@
 <script setup>
 import { ref } from "vue"
-import TheDialog from "../TheDialog.vue"
-import CTA from "../CTA.vue"
-import { useAuthStore } from "../../stores/auth.js"
-import { supabase } from "../../supabase"
+import { useAuthStore } from "@/stores/auth"
+import { supabase } from "@/lib/supabase"
+import TheDialog from "@/components/TheDialog.vue"
+import CTA from "@/components/CTA.vue"
 
 const authStore = useAuthStore()
 

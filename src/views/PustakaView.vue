@@ -1,10 +1,10 @@
 <script setup>
 import { inject, onMounted, ref } from "vue"
+import { supabase } from "@/lib/supabase"
 
-import BaseLayout from "../layouts/BaseLayout.vue"
-import BookItem from "../components/BookItem.vue"
-import SearchBar from "../components/SearchBar.vue"
-import { supabase } from "../supabase"
+import BaseLayout from "@/layouts/BaseLayout.vue"
+import BookItem from "@/components/BookItem.vue"
+import SearchBar from "@/components/SearchBar.vue"
 
 const bukuYangDicari = inject("searchTerm")
 

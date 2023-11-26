@@ -1,15 +1,15 @@
 <script setup>
 import { onMounted, ref } from "vue"
-import BaseLayout from "../layouts/BaseLayout.vue"
-import TheDialog from "../components/TheDialog.vue"
-import CTA from "../components/CTA.vue"
-
 import { kembalikanBukuDariISBN } from "../lib/utils"
 import router from "../router"
 import { supabase } from "../supabase"
 import { useRoute } from "vue-router"
 import { useAuthStore } from "../stores/auth"
 import { ambilGambarBukuDariISBN, pinjamBukuDariISBN } from "../lib/utils"
+
+import BaseLayout from "@/layouts/BaseLayout.vue"
+import TheDialog from "@/components/TheDialog.vue"
+import CTA from "@/components/CTA.vue"
 
 const authStore = useAuthStore()
 const dataBuku = ref({})

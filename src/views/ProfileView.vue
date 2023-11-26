@@ -1,15 +1,14 @@
 <script setup>
 import { ref, onMounted, computed } from "vue"
-import { useAuthStore } from "../stores/auth.js"
-import router from "../router/index.js"
-import { supabase } from "../supabase"
+import { useAuthStore } from "@/stores/auth"
+import router from "@/router/index.js"
+import { supabase } from "@/lib/supabase"
+import { kembalikanBukuDariISBN } from "@/lib/utils"
 
-import { kembalikanBukuDariISBN } from "../lib/utils"
-
-import BaseLayout from "../layouts/BaseLayout.vue"
-import CTA from "../components/CTA.vue"
-import TheDialog from "../components/TheDialog.vue"
-import ProfileBook from "../components/profile/ProfileBook.vue"
+import BaseLayout from "@/layouts/BaseLayout.vue"
+import CTA from "@/components/CTA.vue"
+import TheDialog from "@/components/TheDialog.vue"
+import ProfileBook from "@/components/profile/ProfileBook.vue"
 
 const authStore = useAuthStore()
 

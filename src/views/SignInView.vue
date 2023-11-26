@@ -1,6 +1,6 @@
 <script setup>
-import TheNavbar from "../components/TheNavbar.vue"
-import SignInForm from "../components/signIn/SignInForm.vue"
+import TheNavbar from "@/components/TheNavbar.vue"
+import SignInForm from "@/components/signIn/SignInForm.vue"
 </script>
 
 <template>

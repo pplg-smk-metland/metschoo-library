@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue"
-import DataRow from "../../components/admin/DataRow.vue"
-import { supabase } from "../../supabase"
+import { supabase } from "@/lib/supabase"
+import DataRow from "@/components/admin/DataRow.vue"
 
 const isLoading = ref(false)
 const dataPeminjaman = ref([])

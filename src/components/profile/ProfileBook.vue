@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue"
-import { ambilGambarBukuDariISBN } from "../../lib/utils"
-import CTA from "../CTA.vue"
+import { ambilGambarBukuDariISBN } from "@/lib/utils"
+import CTA from "@/components/CTA.vue"
 
 const props = defineProps({
   buku: Object,

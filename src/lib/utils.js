@@ -1,5 +1,5 @@
-import { supabase } from "../supabase"
-import { useAuthStore } from "../stores/auth"
+import { supabase } from "@/lib/supabase"
+import { useAuthStore } from "@/stores/auth"
 
 export async function ambilGambarBukuDariISBN(isbn) {
   const cdnURL = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/Buku`

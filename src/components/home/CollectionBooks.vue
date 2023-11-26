@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue"
-import BookItem from "../BookItem.vue"
-import { supabase } from "../../supabase/index.js"
+import { supabase } from "@/lib/supabase"
+import BookItem from "@/components/BookItem.vue"
 
 const bukuKoleksi = ref([])
 const isLoading = ref(false)

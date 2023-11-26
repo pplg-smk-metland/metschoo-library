@@ -1,8 +1,8 @@
 <script setup>
-import CTA from "../CTA.vue"
-import { ambilGambarBukuDariISBN, pinjamBukuDariISBN } from "../../lib/utils"
+import { ambilGambarBukuDariISBN, pinjamBukuDariISBN } from "@/lib/utils"
 import { onMounted, ref } from "vue"
-import { supabase } from "../../supabase"
+import { supabase } from "@/lib/supabase"
+import CTA from "@/components/CTA.vue"
 
 const props = defineProps({
   buku: Object,

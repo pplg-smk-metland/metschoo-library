@@ -1,8 +1,8 @@
 <script setup>
-import BaseLayout from "../layouts/BaseLayout.vue"
-import CollectionBooks from "../components/home/CollectionBooks.vue"
-import ReccomendationBooks from "../components/home/ReccomendationBooks.vue"
-import SearchBar from "../components/SearchBar.vue"
+import BaseLayout from "@/layouts/BaseLayout.vue"
+import CollectionBooks from "@/components/home/CollectionBooks.vue"
+import ReccomendationBooks from "@/components/home/ReccomendationBooks.vue"
+import SearchBar from "@/components/SearchBar.vue"
 </script>
 
 <template>

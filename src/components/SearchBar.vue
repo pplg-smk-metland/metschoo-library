@@ -1,7 +1,7 @@
 <script setup>
 import { inject } from "vue"
-import CTA from "./CTA.vue"
-import router from "../router"
+import router from "@/router"
+import CTA from "@/components/CTA.vue"
 
 const emit = defineEmits(["search"])
 const bukuYangDicari = inject("searchTerm")

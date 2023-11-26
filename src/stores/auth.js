@@ -1,6 +1,6 @@
 import { defineStore } from "pinia"
-import { supabase } from "../supabase/index.js"
-import router from "../router/index.js"
+import { supabase } from "@/lib/supabase"
+import router from "@/router"
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({

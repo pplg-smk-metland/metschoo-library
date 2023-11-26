@@ -1,5 +1,5 @@
 <script setup>
-import CTA from "../CTA.vue"
+import CTA from "@/components/CTA.vue"
 
 const props = defineProps({
   data: Object,

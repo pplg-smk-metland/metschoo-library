@@ -1,10 +1,11 @@
 <script setup>
 import { onMounted, ref } from "vue"
-import BaseLayout from "../layouts/BaseLayout.vue"
-import WishlistBook from "../components/wishlist/WishlistBook.vue"
-import TheDialog from "../components/TheDialog.vue"
-import { useAuthStore } from "../stores/auth.js"
-import { supabase } from "../supabase"
+import { useAuthStore } from "@/stores/auth.js"
+import { supabase } from "@/lib/supabase"
+
+import BaseLayout from "@/layouts/BaseLayout.vue"
+import WishlistBook from "@/components/wishlist/WishlistBook.vue"
+import TheDialog from "@/components/TheDialog.vue"
 
 const authStore = useAuthStore()
 
