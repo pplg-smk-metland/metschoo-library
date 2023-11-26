@@ -32,16 +32,16 @@ async function ambilDataBuku(isbn) {
 
 // cek jika buku sudah dipinjam
 const bukuBisaDipinjam = ref(true)
-async function ambilDataPeminjamanBuku(isbn) {
+async function cekStatusPeminjaman(isbn) {
   try {
     const { data, error } = await supabase
       .from("peminjaman")
-      .select("*")
-      .eq("no_isbn", isbn)
+      .select("sudah_dikembalikan")
       .eq("user_id", authStore.session.user.id)
+      .eq("no_isbn", isbn)
     if (error) throw error
 
-    if (!data || !data.length) return null
+    if (!data || !data.length) return true
 
     // cek data peminjaman paling baru
     const bukuPalingBaru = ref({ tgl_pinjam: new Date(0) })
@@ -54,11 +54,8 @@ async function ambilDataPeminjamanBuku(isbn) {
       }
     })
 
-    // cari semua data di tabel, kalau sudah dikembalikan bisa dipinjam
-    if (bukuPalingBaru.value.sudah_dikembalikan) bukuBisaDipinjam.value = true
-    else bukuBisaDipinjam.value = false
-
-    return bukuPalingBaru.value
+    // kalau sudah dikembalikan bisa dipinjam
+    return bukuPalingBaru.value.sudah_dikembalikan
   } catch (err) {
     console.error(err.message)
   }
@@ -66,7 +63,7 @@ async function ambilDataPeminjamanBuku(isbn) {
 
 // wishlist
 const bukuAdaDiWishlist = ref(false)
-async function ambilDataWishlistBuku(isbn) {
+async function CekWishlist(isbn) {
   try {
     const { count, error } = await supabase
       .from("wishlist")
@@ -75,7 +72,7 @@ async function ambilDataWishlistBuku(isbn) {
       .eq("no_isbn", isbn)
     if (error) throw error
 
-    if (count !== null && count !== 0) bukuAdaDiWishlist.value = true
+    return count !== null && count !== 0
   } catch (err) {
     console.error(err.message)
   }
@@ -91,8 +88,8 @@ onMounted(async () => {
   imgURL.value = await ambilGambarBukuDariISBN(isbn)
   dataBuku.value = await ambilDataBuku(isbn)
 
-  await ambilDataPeminjamanBuku(isbn)
-  await ambilDataWishlistBuku(isbn)
+  bukuBisaDipinjam.value = await cekStatusPeminjaman(isbn)
+  bukuAdaDiWishlist.value = await CekWishlist(isbn)
 })
 
 const dialogIsOpen = ref(false)
@@ -149,7 +146,7 @@ async function masukkanWishlist(isbn) {
 
 async function perbaruiDataBuku(payload) {
   console.log(payload)
-  await ambilDataPeminjamanBuku(payload.new.no_isbn)
+  await cekStatusPeminjaman(payload.new.no_isbn)
   dataBuku.value = await ambilDataBuku(payload.new.no_isbn)
 }
 

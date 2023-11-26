@@ -80,7 +80,7 @@ async function ambilBukuYangDipinjam() {
     isLoading.value = true
     const { data, error } = await supabase
       .from("peminjaman")
-      .select(`tgl_pinjam, tgl_kembali, buku(*)`)
+      .select(`tgl_pinjam, tgl_kembali, sudah_dikembalikan, buku(*)`)
       .eq("user_id", authStore.session.user.id)
       .eq("sudah_dikembalikan", false)
 
@@ -104,12 +104,12 @@ async function muatUlangBuku() {
 async function kembalikanBuku(buku) {
   try {
     await kembalikanBukuDariISBN(buku.no_isbn)
+
+    const found = bukuYangDipinjam.value.indexOf(buku)
+    bukuYangDipinjam.value.splice(found, 1)
   } catch (err) {
     console.error(err.message)
   }
-
-  const found = bukuYangDipinjam.value.indexOf(buku)
-  bukuYangDipinjam.value.splice(found, 1)
 }
 </script>
 
