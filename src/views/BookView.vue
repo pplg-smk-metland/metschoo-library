@@ -1,11 +1,10 @@
 <script setup>
 import { onMounted, ref } from "vue"
-import { kembalikanBukuDariISBN } from "../lib/utils"
-import router from "../router"
-import { supabase } from "../supabase"
+import router from "@/router"
+import { supabase } from "@/lib/supabase"
 import { useRoute } from "vue-router"
-import { useAuthStore } from "../stores/auth"
-import { ambilGambarBukuDariISBN, pinjamBukuDariISBN } from "../lib/utils"
+import { useAuthStore } from "@/stores/auth"
+import { ambilGambarBukuDariISBN, pinjamBukuDariISBN, kembalikanBukuDariISBN } from "@/lib/utils"
 
 import BaseLayout from "@/layouts/BaseLayout.vue"
 import TheDialog from "@/components/TheDialog.vue"
@@ -36,7 +35,7 @@ async function cekStatusPeminjaman(isbn) {
   try {
     const { data, error } = await supabase
       .from("peminjaman")
-      .select("sudah_dikembalikan")
+      .select("tgl_pinjam, sudah_dikembalikan")
       .eq("user_id", authStore.session.user.id)
       .eq("no_isbn", isbn)
     if (error) throw error
@@ -145,9 +144,7 @@ async function masukkanWishlist(isbn) {
 }
 
 async function perbaruiDataBuku(payload) {
-  console.log(payload)
-  await cekStatusPeminjaman(payload.new.no_isbn)
-  dataBuku.value = await ambilDataBuku(payload.new.no_isbn)
+  bukuBisaDipinjam.value = await cekStatusPeminjaman(payload.new.no_isbn)
 }
 
 supabase
