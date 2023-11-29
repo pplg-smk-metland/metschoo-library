@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted } from "vue"
 import { supabase } from "@/lib/supabase"
+
+import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import DataRow from "@/components/admin/DataRow.vue"
 
 const isLoading = ref(false)
@@ -52,8 +54,8 @@ function konfirmasiPengembalian(no_isbn) {
     <h2>Data peminjaman buku</h2>
 
     <ul class="data-list">
+      <LoadingSpinner v-if="isLoading" />
       <li v-if="!isLoading && !dataPeminjaman.length">ga ada data peminjamannya</li>
-      <li v-else-if="isLoading && !dataPeminjaman.length">Memuat data peminjaman...</li>
       <DataRow
         v-for="data in dataPeminjaman"
         :key="data.user_id"

@@ -5,6 +5,7 @@ import router from "@/router/index.js"
 import { supabase } from "@/lib/supabase"
 import { kembalikanBukuDariISBN } from "@/lib/utils"
 
+import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import BaseLayout from "@/layouts/BaseLayout.vue"
 import CTA from "@/components/CTA.vue"
 import TheDialog from "@/components/TheDialog.vue"
@@ -93,22 +94,12 @@ async function ambilBukuYangDipinjam() {
 }
 
 onMounted(async () => {
-  await muatUlangBuku()
+  bukuYangDipinjam.value = await ambilBukuYangDipinjam()
 })
 
-async function muatUlangBuku() {
-  bukuYangDipinjam.value = await ambilBukuYangDipinjam()
-}
-
 async function kembalikanBuku(buku) {
-  try {
-    await kembalikanBukuDariISBN(buku.no_isbn)
-
-    const found = bukuYangDipinjam.value.indexOf(buku)
-    bukuYangDipinjam.value.splice(found, 1)
-  } catch (err) {
-    console.error(err.message)
-  }
+  const found = bukuYangDipinjam.value.indexOf(buku)
+  bukuYangDipinjam.value.splice(found, 1)
 }
 </script>
 
@@ -180,7 +171,7 @@ async function kembalikanBuku(buku) {
 
     <section>
       <h2>Buku yang dipinjam</h2>
-      <p v-if="isLoading">Bukunya lagi diambil, tunggu sebentar ya</p>
+      <LoadingSpinner v-if="isLoading" />
       <p v-else-if="!isLoading && bukuYangDipinjam.length === 0">Ga ada buku yang dipinjam</p>
 
       <h3>Belum dikonfirmasi</h3>
@@ -196,9 +187,8 @@ async function kembalikanBuku(buku) {
         <ProfileBook
           v-for="buku in bukuSudahDikonfirmasi"
           :key="buku.no_isbn"
-          :buku="buku"
-          @kembalikan-buku="kembalikanBuku"
-        />
+          @someEvent="kembalikanBuku(buku)"
+        ></ProfileBook>
       </ul>
     </section>
 

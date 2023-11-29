@@ -1,13 +1,13 @@
 <script setup>
 import { ref, onMounted } from "vue"
-import { ambilGambarBukuDariISBN } from "@/lib/utils"
+import { kembalikanBukuDariISBN, ambilGambarBukuDariISBN } from "@/lib/utils"
 import CTA from "@/components/CTA.vue"
 
 const props = defineProps({
   buku: Object,
 })
 
-const emit = defineEmits(["kembalikanBuku"])
+const emit = defineEmits(["someEvent"])
 
 // object buku hasil join ada di dalam object
 const dataBuku = props.buku.buku
@@ -19,7 +19,12 @@ onMounted(async () => {
 })
 
 async function kembalikanBuku() {
-  emit("kembalikanBuku", props.buku)
+  const dataBuku = props.buku.buku
+  try {
+    await kembalikanBukuDariISBN(dataBuku.no_isbn)
+  } catch (err) {
+    console.error(err.message)
+  }
 }
 </script>
 

@@ -3,6 +3,7 @@ import { inject, onMounted, ref } from "vue"
 import { supabase } from "@/lib/supabase"
 
 import BaseLayout from "@/layouts/BaseLayout.vue"
+import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import BookItem from "@/components/BookItem.vue"
 import SearchBar from "@/components/SearchBar.vue"
 
@@ -45,7 +46,7 @@ onMounted(async () => {
 
     <h2>Hasil pencarian</h2>
     <ul class="book-list">
-      <li v-show="isLoading">Sedang mengambil buku, sebentar ya</li>
+      <LoadingSpinner v-show="isLoading" />
       <li class="mesasge" v-show="!isLoading && !books.length">ga ada buku woi</li>
       <BookItem v-for="buku in books" :key="buku.no_isbn" :buku="buku"></BookItem>
     </ul>
