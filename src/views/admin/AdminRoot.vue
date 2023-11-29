@@ -58,8 +58,8 @@ function konfirmasiPengembalian(no_isbn) {
         v-for="data in dataPeminjaman"
         :key="data.user_id"
         :data="data"
-        @konfirmasiPeminjaman="konfirmasiPeminjaman(data.no_isbn)"
-        @konfirmasiPengembalian="konfirmasiPengembalian(data.no_isbn)"
+        @konfirmasi-peminjaman="konfirmasiPeminjaman(data.no_isbn)"
+        @konfirmasi-pengembalian="konfirmasiPengembalian(data.no_isbn)"
       />
     </ul>
   </section>

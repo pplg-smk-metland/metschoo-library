@@ -7,8 +7,8 @@ const emit = defineEmits(["search"])
 const bukuYangDicari = inject("searchTerm")
 
 async function cariBuku() {
-  if (router.currentRoute.value.name !== "search") {
-    router.push({ name: "search" })
+  if (router.currentRoute.value.name !== "pustaka") {
+    router.push({ name: "pustaka" })
   } else {
     emit("search")
   }
