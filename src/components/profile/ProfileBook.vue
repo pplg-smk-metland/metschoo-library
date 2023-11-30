@@ -69,8 +69,16 @@ async function kembalikanBuku() {
 <style scoped>
 .buku {
   border-radius: 0.5rem;
-  padding: 1rem;
   outline: 2px solid #ddd;
+}
+
+.buku__info {
+  padding: 1rem;
+}
+
+.buku__gambar {
+  width: 100%;
+  object-fit: cover;
 }
 
 .tanggal {

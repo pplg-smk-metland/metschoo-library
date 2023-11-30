@@ -38,35 +38,66 @@ onMounted(async () => {
 <template>
   <li class="buku">
     <figure>
-      <img
-        :src="imgURL"
-        class="buku__gambar"
-        alt="gambar buku"
-        loading="lazy"
-        width="200"
-        height="300"
-      />
+      <routerLink :to="`/buku/${buku.no_isbn}`">
+        <img
+          :src="imgURL"
+          class="buku__gambar"
+          alt="gambar buku"
+          loading="lazy"
+          width="200"
+          height="300"
+        />
+      </routerLink>
     </figure>
     <figcaption class="buku__info">
-      <div class="buku__metadata">
-        <h3 class="buku__judul">{{ buku.judul }}</h3>
-        <p class="buku__penulis">{{ buku.penulis }}</p>
-        <p class="buku__tahun-terbit">{{ buku.tahun_terbit }}</p>
+      <h3 class="judul">{{ buku.judul }}</h3>
+      <p>
+        <span class="penulis">{{ buku.penulis }}</span> -
+        <span class="tahun-terbit">{{ buku.tahun_terbit }}</span>
+      </p>
+
+      <div class="button-container">
+        <CTA @click="pinjamBuku">Pinjam buku</CTA>
+        <CTA @click="hapusBukuDariWishlist">Hapus dari wishlist</CTA>
       </div>
-      <CTA @click="pinjamBuku">Pinjam buku</CTA>
-      <CTA @click="hapusBukuDariWishlist">Hapus buku dari wishlist</CTA>
     </figcaption>
   </li>
 </template>
 
-<style>
+<style scoped>
 .buku {
   outline: 2px solid #ddd;
-  padding: 1rem;
   border-radius: 0.5rem;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.buku__info {
+  padding: 1rem;
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
 }
 
 .buku img {
+  width: 100%;
   object-fit: cover;
+}
+
+.button-container {
+  margin-block-start: auto;
+}
+
+.button-container .btn {
+  margin: 0;
+  text-align: center;
+  display: block;
+  width: 100%;
+}
+
+.button-container .btn + .btn {
+  margin-block-start: 0.5rem;
 }
 </style>

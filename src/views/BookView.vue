@@ -169,8 +169,8 @@ supabase
     </div>
 
     <div class="buku" v-else>
-      <figure class="buku__gambar">
-        <img :src="imgURL" alt="" width="400" height="600" />
+      <figure>
+        <img class="buku__gambar" :src="imgURL" alt="" width="400" height="600" />
       </figure>
 
       <figcaption class="buku__info">
@@ -242,7 +242,7 @@ supabase
   flex-wrap: wrap;
 }
 
-.buku__gambar img {
+.buku__gambar {
   object-fit: cover;
 }
 
