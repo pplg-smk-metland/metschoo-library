@@ -1,7 +1,7 @@
 <template>
   <nav class="sidebar">
     <div class="sidebar__header">
-      <p>ceritanya nama admin</p>
+      <p>Nama Admin</p>
     </div>
 
     <ul class="sidebar__list">
@@ -9,7 +9,7 @@
         <routerLink :to="{ name: 'admin' }">Dashboard</routerLink>
         <ul class="sidebar__sub-list">
           <li><routerLink :to="{ name: 'manajemen-pengguna' }">Manajemen pengguna</routerLink></li>
-          <li><routerLink :to="{ name: 'peminjaman' }">peminjaman</routerLink></li>
+          <li><routerLink :to="{ name: 'peminjaman' }">Peminjaman</routerLink></li>
         </ul>
       </li>
       <li>
@@ -41,6 +41,11 @@
   display: block;
 }
 
+.sidebar a:hover {
+  display: block;
+  background: var(--primary-200);
+}
+
 .sidebar ul {
   list-style: none;
   padding: 0;
@@ -61,5 +66,9 @@
 
 .sidebar__sub-list {
   background: var(--secondary-100);
+}
+
+.sidebar__sub-list a:hover {
+  background: var(--secondary-500);
 }
 </style>
