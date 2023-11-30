@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted } from "vue"
 import { supabase } from "@/lib/supabase"
+
+import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import BookItem from "@/components/BookItem.vue"
 
 const bukuKoleksi = ref([])
@@ -32,7 +34,7 @@ onMounted(async () => {
 <template>
   <h2>Koleksi</h2>
   <ul class="book-list">
-    <li v-if="isLoading">memuat buku...</li>
+    <LoadingSpinner v-if="isLoading" />
     <li v-if="!isLoading && !bukuKoleksi.length">Bukunya ga ada gaes</li>
     <BookItem v-else v-for="buku in bukuKoleksi" :key="buku.isbn" :buku="buku" />
   </ul>

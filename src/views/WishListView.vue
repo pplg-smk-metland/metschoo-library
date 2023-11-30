@@ -4,6 +4,7 @@ import { useAuthStore } from "@/stores/auth.js"
 import { supabase } from "@/lib/supabase"
 
 import BaseLayout from "@/layouts/BaseLayout.vue"
+import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import WishlistBook from "@/components/wishlist/WishlistBook.vue"
 import TheDialog from "@/components/TheDialog.vue"
 
@@ -51,23 +52,28 @@ function openDialog(message) {
 <template>
   <BaseLayout>
     <h1>Wishlist</h1>
-    <p v-if="authStore.session">
-      Kamu sudah login tapi kami belom selesai buat aplikasinya sabar yah
-    </p>
-    <p v-else>Kamu harus login dlu</p>
+    <section v-if="!authStore.session">
+      <p>Kamu harus login dlu ya untuk menambahkan buku ke wishlist</p>
+      <p>
+        <routerLink :to="{ name: 'home' }">Kembali ke beranda</routerLink>
+      </p>
+    </section>
 
-    <p v-if="isLoading">memuat...</p>
-    <p v-if="!isLoading && !wishlist.length">Kamu belum punya apa-apa dalam wishlist kamu.</p>
-    <ul v-if="wishlist.length" class="book-list">
-      <WishlistBook
-        v-for="wishlistItem in wishlist"
-        :key="wishlistItem.no_isbn"
-        :buku="wishlistItem.buku"
-        @pinjam-buku="hapusItem(wishlistItem)"
-        @hapus-buku="hapusItem"
-      >
-      </WishlistBook>
-    </ul>
+    <section class="main-section" v-else>
+      <LoadingSpinner v-if="isLoading" />
+      <p v-if="!isLoading && !wishlist.length">Kamu belum punya apa-apa dalam wishlist kamu.</p>
+      <ul v-if="wishlist.length" class="book-list">
+        <WishlistBook
+          v-for="wishlistItem in wishlist"
+          :key="wishlistItem.no_isbn"
+          :buku="wishlistItem.buku"
+          @pinjam-buku="hapusItem(wishlistItem)"
+          @hapus-buku="hapusItem"
+        >
+        </WishlistBook>
+      </ul>
+    </section>
+
     <TheDialog ref="dialog" :is-open="dialogIsOpen" @dialog-close="dialogIsOpen = false">
       <h2>Info!!!</h2>
       {{ dialogMessage }}
