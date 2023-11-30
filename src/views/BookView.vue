@@ -155,7 +155,7 @@ supabase
 
 <template>
   <BaseLayout>
-    <div class="buku">
+    <div class="buku" v-if="dataBuku !== undefined">
       <figure class="buku__gambar">
         <img :src="imgURL" alt="" width="400" height="600" />
       </figure>
@@ -179,6 +179,11 @@ supabase
           </CTA>
         </div>
       </figcaption>
+    </div>
+
+    <div class="not-found" v-else>
+      <h1>Tidak ada buku!</h1>
+      <p>Bukunya ga ada brok</p>
     </div>
 
     <TheDialog :is-open="dialogIsOpen" @dialog-close="dialogIsOpen = false">
