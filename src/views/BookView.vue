@@ -6,6 +6,7 @@ import { useRoute } from "vue-router"
 import { useAuthStore } from "@/stores/auth"
 import { ambilGambarBukuDariISBN, pinjamBukuDariISBN, kembalikanBukuDariISBN } from "@/lib/utils"
 
+import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import BaseLayout from "@/layouts/BaseLayout.vue"
 import TheDialog from "@/components/TheDialog.vue"
 import CTA from "@/components/CTA.vue"
@@ -13,8 +14,10 @@ import CTA from "@/components/CTA.vue"
 const authStore = useAuthStore()
 const dataBuku = ref({})
 
+const isLoading = ref(false)
 async function ambilDataBuku(isbn) {
   try {
+    isLoading.value = true
     const { data, error } = await supabase
       .from("buku")
       .select("*")
@@ -26,6 +29,8 @@ async function ambilDataBuku(isbn) {
     return data
   } catch (err) {
     console.error(err.message)
+  } finally {
+    isLoading.value = false
   }
 }
 
@@ -116,20 +121,21 @@ async function pinjamBuku(buku) {
   }
 }
 
-async function kembalikanBuku(isbn) {
+async function kembalikanBuku(buku) {
   try {
-    await kembalikanBukuDariISBN(isbn)
+    await kembalikanBukuDariISBN(buku.no_isbn)
+    openDialog(`sukses mengembalikan buku ${buku.judul}`)
   } catch (err) {
     openDialog(`Gagal mengembalikan buku! ${err.message}`)
     console.error(err.message)
   }
 }
 
-async function masukkanWishlist(isbn) {
+async function masukkanWishlist(buku) {
   try {
     const { data, error } = await supabase
       .from("wishlist")
-      .insert([{ user_id: authStore.session.user.id, no_isbn: isbn }])
+      .insert([{ user_id: authStore.session.user.id, no_isbn: buku.no_isbn }])
     if (error) throw error
 
     openDialog(`buku berhasil ditambahkan ke dalam wishlist`)
@@ -155,36 +161,72 @@ supabase
 
 <template>
   <BaseLayout>
-    <div class="buku" v-if="dataBuku !== undefined">
+    <LoadingSpinner v-if="isLoading" />
+
+    <div class="not-found" v-if="!isLoading && dataBuku === undefined">
+      <h1>Tidak ada buku!</h1>
+      <p>Bukunya ga ada brok</p>
+    </div>
+
+    <div class="buku" v-else>
       <figure class="buku__gambar">
         <img :src="imgURL" alt="" width="400" height="600" />
       </figure>
 
       <figcaption class="buku__info">
-        <h1>{{ dataBuku.judul }}</h1>
-        <p>{{ dataBuku.no_isbn }}</p>
-        <p>{{ dataBuku.penulis }}</p>
-        <p>{{ dataBuku.penerbit }} - {{ dataBuku.alamat_terbit }} {{ dataBuku.tahun_terbit }}</p>
-        <p>{{ dataBuku.jumlah_exspl }}</p>
+        <h1 class="judul">{{ dataBuku.judul }}</h1>
+        <p>
+          <span class="penulis">{{ dataBuku.penulis }}</span> -
+          <span class="tahun-terbit">{{ dataBuku.tahun_terbit }}</span>
+        </p>
+        <p>{{ dataBuku.penerbit }} - {{ dataBuku.alamat_terbit }}</p>
+        <p>Jumlah eksemplar: {{ dataBuku.jumlah_exspl }}</p>
 
         <div class="button-container">
           <CTA @click="pinjamBuku(dataBuku)" v-show="bukuBisaDipinjam" :fill="true">
             Pinjam buku
           </CTA>
-          <CTA @click="kembalikanBuku(dataBuku.no_isbn)" v-show="!bukuBisaDipinjam" :fill="true">
+          <CTA @click="kembalikanBuku(dataBuku)" v-show="!bukuBisaDipinjam" :fill="true">
             Kembalikan buku
           </CTA>
-          <CTA @click="masukkanWishlist(dataBuku.no_isbn)" :disabled="bukuAdaDiWishlist">
+          <CTA
+            @click="masukkanWishlist(dataBuku)"
+            :disabled="bukuAdaDiWishlist || !bukuBisaDipinjam"
+          >
             tambahkan ke wishlist
           </CTA>
         </div>
       </figcaption>
     </div>
 
-    <div class="not-found" v-else>
-      <h1>Tidak ada buku!</h1>
-      <p>Bukunya ga ada brok</p>
-    </div>
+    <article>
+      <h2>Informasi bibliografi</h2>
+      <table class="tabel-bibliografi">
+        <tbody>
+          <tr>
+            <td>judul</td>
+            <td>{{ dataBuku.judul }}</td>
+          </tr>
+
+          <tr>
+            <td>Penulis</td>
+            <td>
+              {{ dataBuku.penulis }}
+            </td>
+          </tr>
+
+          <tr>
+            <td>ISBN</td>
+            <td>{{ dataBuku.no_isbn }}</td>
+          </tr>
+
+          <tr>
+            <td>Penerbit</td>
+            <td>{{ dataBuku.penerbit }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </article>
 
     <TheDialog :is-open="dialogIsOpen" @dialog-close="dialogIsOpen = false">
       <h2>Info!!</h2>
@@ -202,5 +244,26 @@ supabase
 
 .buku__gambar img {
   object-fit: cover;
+}
+
+.button-container {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.penulis {
+  color: #777;
+}
+
+.tabel-bibliografi {
+  border-collapse: collapse;
+}
+
+.tabel-bibliografi tr:nth-child(even) {
+  backdrop-filter: invert(0.2);
+}
+
+.tabel-bibliografi td {
+  padding: 0.5rem;
 }
 </style>

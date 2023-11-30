@@ -19,6 +19,7 @@
 
   --background: var(--white);
   --text: var(--dark);
+  --text-light: var(--dark-grey);
 
   --nav-link-active: var(--primary-200);
 }

@@ -203,7 +203,7 @@ async function kembalikanBuku(buku) {
   </BaseLayout>
 </template>
 
-<style>
+<style scoped>
 @media screen and (max-width: 50em) {
   .profile {
     flex-direction: column;
