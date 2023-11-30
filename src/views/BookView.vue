@@ -67,7 +67,7 @@ async function cekStatusPeminjaman(isbn) {
 
 // wishlist
 const bukuAdaDiWishlist = ref(false)
-async function CekWishlist(isbn) {
+async function cekWishlist(isbn) {
   try {
     const { count, error } = await supabase
       .from("wishlist")
@@ -93,7 +93,7 @@ onMounted(async () => {
   dataBuku.value = await ambilDataBuku(isbn)
 
   bukuBisaDipinjam.value = await cekStatusPeminjaman(isbn)
-  bukuAdaDiWishlist.value = await CekWishlist(isbn)
+  bukuAdaDiWishlist.value = await cekWishlist(isbn)
 })
 
 const dialogIsOpen = ref(false)
@@ -114,6 +114,9 @@ async function pinjamBuku(buku) {
   if (confirm(`Beneran mau pinjem buku ${buku.judul}?`)) {
     try {
       await pinjamBukuDariISBN(buku.no_isbn)
+      if (bukuAdaDiWishlist.value === true) {
+        await supabase.from("wishlist").delete().eq("no_isbn", buku.no_isbn)
+      }
       openDialog(`sukses meminjam buku ${buku.judul}`)
     } catch (err) {
       openDialog(err.message)
@@ -151,11 +154,21 @@ async function masukkanWishlist(buku) {
 
 async function perbaruiDataBuku(payload) {
   bukuBisaDipinjam.value = await cekStatusPeminjaman(payload.new.no_isbn)
+  bukuAdaDiWishlist.value = await cekWishlist(payload.new.no_isbn)
 }
 
 supabase
   .channel("peminjaman")
-  .on("postgres_changes", { event: "*", schema: "public", table: "peminjaman" }, perbaruiDataBuku)
+  .on(
+    "postgres_changes",
+    {
+      event: "*",
+      schema: "public",
+      table: "peminjaman",
+      filter: `no_isbn=eq.${dataBuku.value?.no_isbn}`,
+    },
+    perbaruiDataBuku
+  )
   .subscribe()
 </script>
 
@@ -164,7 +177,7 @@ supabase
     <section class="main-section">
       <LoadingSpinner v-if="isLoading" />
 
-      <div class="not-found" v-if="!isLoading && dataBuku === undefined">
+      <div class="not-found" v-else-if="!isLoading && dataBuku === undefined">
         <h1>Tidak ada buku!</h1>
         <p>Bukunya ga ada brok</p>
       </div>
