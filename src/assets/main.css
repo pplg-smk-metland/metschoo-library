@@ -100,3 +100,7 @@ a {
   flex-direction: column;
   align-items: center;
 }
+
+.main-section {
+  padding-block: 1rem;
+}

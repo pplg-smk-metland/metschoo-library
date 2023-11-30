@@ -161,73 +161,83 @@ supabase
 
 <template>
   <BaseLayout>
-    <LoadingSpinner v-if="isLoading" />
+    <section class="main-section">
+      <LoadingSpinner v-if="isLoading" />
 
-    <div class="not-found" v-if="!isLoading && dataBuku === undefined">
-      <h1>Tidak ada buku!</h1>
-      <p>Bukunya ga ada brok</p>
-    </div>
+      <div class="not-found" v-if="!isLoading && dataBuku === undefined">
+        <h1>Tidak ada buku!</h1>
+        <p>Bukunya ga ada brok</p>
+      </div>
 
-    <div class="buku" v-else>
-      <figure>
-        <img class="buku__gambar" :src="imgURL" alt="" width="400" height="600" />
-      </figure>
+      <div class="buku" v-else>
+        <figure>
+          <img class="buku__gambar" :src="imgURL" alt="" width="400" height="600" />
+          <img
+            class="buku__gambar buku__gambar--bayangan"
+            :src="imgURL"
+            alt=""
+            width="400"
+            height="600"
+          />
+        </figure>
 
-      <figcaption class="buku__info">
-        <h1 class="judul">{{ dataBuku.judul }}</h1>
-        <p>
-          <span class="penulis">{{ dataBuku.penulis }}</span> -
-          <span class="tahun-terbit">{{ dataBuku.tahun_terbit }}</span>
-        </p>
-        <p>{{ dataBuku.penerbit }} - {{ dataBuku.alamat_terbit }}</p>
-        <p>Jumlah eksemplar: {{ dataBuku.jumlah_exspl }}</p>
+        <figcaption class="buku__info">
+          <h1 class="judul">{{ dataBuku.judul }}</h1>
+          <p>
+            <span class="penulis">{{ dataBuku.penulis }}</span> -
+            <span class="tahun-terbit">{{ dataBuku.tahun_terbit }}</span>
+          </p>
+          <p>{{ dataBuku.penerbit }} - {{ dataBuku.alamat_terbit }}</p>
+          <p>Jumlah eksemplar: {{ dataBuku.jumlah_exspl }}</p>
 
-        <div class="button-container">
-          <CTA @click="pinjamBuku(dataBuku)" v-show="bukuBisaDipinjam" :fill="true">
-            Pinjam buku
-          </CTA>
-          <CTA @click="kembalikanBuku(dataBuku)" v-show="!bukuBisaDipinjam" :fill="true">
-            Kembalikan buku
-          </CTA>
-          <CTA
-            @click="masukkanWishlist(dataBuku)"
-            :disabled="bukuAdaDiWishlist || !bukuBisaDipinjam"
-          >
-            tambahkan ke wishlist
-          </CTA>
-        </div>
-      </figcaption>
-    </div>
+          <div class="button-container">
+            <CTA @click="pinjamBuku(dataBuku)" v-show="bukuBisaDipinjam" :fill="true">
+              Pinjam buku
+            </CTA>
+            <CTA @click="kembalikanBuku(dataBuku)" v-show="!bukuBisaDipinjam" :fill="true">
+              Kembalikan buku
+            </CTA>
+            <CTA
+              @click="masukkanWishlist(dataBuku)"
+              :disabled="bukuAdaDiWishlist || !bukuBisaDipinjam"
+            >
+              tambahkan ke wishlist
+            </CTA>
+          </div>
+        </figcaption>
+      </div>
+    </section>
 
-    <article>
-      <h2>Informasi bibliografi</h2>
-      <table class="tabel-bibliografi">
-        <tbody>
-          <tr>
-            <td>judul</td>
-            <td>{{ dataBuku.judul }}</td>
-          </tr>
+    <section class="main-section">
+      <article>
+        <h2>Informasi bibliografi</h2>
+        <table class="tabel-bibliografi">
+          <tbody>
+            <tr>
+              <td>judul</td>
+              <td>{{ dataBuku.judul }}</td>
+            </tr>
 
-          <tr>
-            <td>Penulis</td>
-            <td>
-              {{ dataBuku.penulis }}
-            </td>
-          </tr>
+            <tr>
+              <td>Penulis</td>
+              <td>
+                {{ dataBuku.penulis }}
+              </td>
+            </tr>
 
-          <tr>
-            <td>ISBN</td>
-            <td>{{ dataBuku.no_isbn }}</td>
-          </tr>
+            <tr>
+              <td>ISBN</td>
+              <td>{{ dataBuku.no_isbn }}</td>
+            </tr>
 
-          <tr>
-            <td>Penerbit</td>
-            <td>{{ dataBuku.penerbit }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </article>
-
+            <tr>
+              <td>Penerbit</td>
+              <td>{{ dataBuku.penerbit }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
     <TheDialog :is-open="dialogIsOpen" @dialog-close="dialogIsOpen = false">
       <h2>Info!!</h2>
       {{ dialogMessage }}
@@ -238,17 +248,39 @@ supabase
 <style scoped>
 .buku {
   display: flex;
-  gap: 1rem;
+  gap: 2rem;
   flex-wrap: wrap;
+}
+
+.buku figure {
+  position: relative;
 }
 
 .buku__gambar {
   object-fit: cover;
 }
 
+.buku__gambar--bayangan {
+  position: absolute;
+  bottom: -10px;
+  left: 10px;
+  opacity: 80%;
+  z-index: -2;
+  filter: blur(10px);
+}
+
+.buku__info {
+  max-width: 100ch;
+}
+
 .button-container {
   display: flex;
   gap: 0.5rem;
+}
+
+.judul {
+  font-size: 2.8rem;
+  line-height: 1.1;
 }
 
 .penulis {
