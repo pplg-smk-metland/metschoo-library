@@ -60,6 +60,12 @@ onMounted(async () => {
 </template>
 
 <style>
+.buku {
+  outline: 2px solid #ddd;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
 .buku img {
   object-fit: cover;
 }

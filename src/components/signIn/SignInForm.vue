@@ -130,7 +130,7 @@ function closeErrorDialog() {
   flex-basis: 60ch;
   max-width: 60ch;
   padding: 2rem;
-  border: solid 2px #444;
+  outline: 2px solid #ddd;
   border-radius: 0.5rem;
 
   display: flex;
