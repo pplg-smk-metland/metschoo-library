@@ -2,6 +2,8 @@
 import { ref } from "vue"
 import { useAuthStore } from "@/stores/auth"
 import { supabase } from "@/lib/supabase"
+import { useDialog } from "@/lib/composables"
+
 import TheDialog from "@/components/TheDialog.vue"
 import CTA from "@/components/CTA.vue"
 
@@ -19,15 +21,14 @@ const data = ref({
   confirmPassword: "",
 })
 
-const errorDialogOpen = ref(false)
-const errorMessage = ref("")
+const { dialog } = useDialog()
 
 async function handleSignIn() {
   try {
     await authStore.handleSignIn(data.value.email, data.value.password)
   } catch (err) {
-    errorDialogOpen.value = true
-    errorMessage.value = err.message
+    dialog.value.open(err.message)
+    console.error(err.message)
   }
 }
 
@@ -42,19 +43,14 @@ async function handleSignUp() {
   try {
     await authStore.handleSignUp(email, password)
   } catch (err) {
-    errorDialogOpen.value = true
-    errorMessage.value = err.message
+    dialog.value.open(err.message)
+    console.error(err.message)
   }
 
   await supabase
     .from("pengguna")
     .update({ nama: data.value.nama })
     .eq("user_id", authStore.session.user.id)
-}
-
-function closeErrorDialog() {
-  errorDialogOpen.value = false
-  errorMessage.value = ""
 }
 </script>
 
@@ -118,9 +114,9 @@ function closeErrorDialog() {
     </CTA>
   </div>
 
-  <TheDialog :isOpen="errorDialogOpen" @dialogClose="closeErrorDialog">
+  <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">
     <h2>Error!</h2>
-    {{ errorMessage }}
+    {{ dialog.message }}
   </TheDialog>
 </template>
 

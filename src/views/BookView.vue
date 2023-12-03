@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase"
 import { useRoute } from "vue-router"
 import { useAuthStore } from "@/stores/auth"
 import { ambilGambarBukuDariISBN, pinjamBukuDariISBN, kembalikanBukuDariISBN } from "@/lib/utils"
+import { useDialog } from "@/lib/composables"
 
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import BaseLayout from "@/layouts/BaseLayout.vue"
@@ -96,17 +97,11 @@ onMounted(async () => {
   bukuBisaDipinjam.value = (await cekStatusPeminjaman(isbn)) && !bukuAdaDiWishlist.value
 })
 
-const dialogIsOpen = ref(false)
-const dialogMessage = ref("")
-
-function openDialog(message) {
-  dialogIsOpen.value = true
-  dialogMessage.value = message
-}
+const { dialog } = useDialog()
 
 async function pinjamBuku(buku) {
   if (!authStore.session) {
-    openDialog("kalau mau pinjam buku, buat akun dulu ya")
+    dialog.value.open("kalau mau pinjam buku, buat akun dulu ya")
     router.push({ name: "sign-in" })
     return
   }
@@ -121,18 +116,18 @@ async function pinjamBuku(buku) {
         .eq("user_id", authStore.session.user.id)
         .eq("no_isbn", buku.no_isbn)
     }
-    openDialog(`sukses meminjam buku ${buku.judul}`)
+    dialog.value.open(`sukses meminjam buku ${buku.judul}`)
   } catch (err) {
-    openDialog(err.message)
+    dialog.value.open(err.message)
   }
 }
 
 async function kembalikanBuku(buku) {
   try {
     await kembalikanBukuDariISBN(buku.no_isbn)
-    openDialog(`sukses mengembalikan buku ${buku.judul}`)
+    dialog.value.open(`sukses mengembalikan buku ${buku.judul}`)
   } catch (err) {
-    openDialog(`Gagal mengembalikan buku! ${err.message}`)
+    dialog.value.open(`Gagal mengembalikan buku! ${err.message}`)
     console.error(err.message)
   }
 }
@@ -144,11 +139,11 @@ async function masukkanWishlist(buku) {
       .insert([{ user_id: authStore.session.user.id, no_isbn: buku.no_isbn }])
     if (error) throw error
 
-    openDialog(`buku berhasil ditambahkan ke dalam wishlist`)
+    dialog.value.open(`buku berhasil ditambahkan ke dalam wishlist`)
     bukuAdaDiWishlist.value = true
     return data
   } catch (err) {
-    openDialog(
+    dialog.value.open(
       `Ada yang salah ketika menambahkan buku ke dalam wishlist. Silahkan coba beberapa saat lagi.`
     )
     console.error(err.message)
@@ -254,9 +249,10 @@ supabase
         </table>
       </article>
     </section>
-    <TheDialog :is-open="dialogIsOpen" @dialog-close="dialogIsOpen = false">
+
+    <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">
       <h2>Info!!</h2>
-      {{ dialogMessage }}
+      <p>{{ dialog.message }}</p>
     </TheDialog>
   </BaseLayout>
 </template>

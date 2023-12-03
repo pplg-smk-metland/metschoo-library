@@ -2,6 +2,7 @@
 import { onMounted, ref } from "vue"
 import { useAuthStore } from "@/stores/auth.js"
 import { supabase } from "@/lib/supabase"
+import { useDialog } from "@/lib/composables"
 
 import BaseLayout from "@/layouts/BaseLayout.vue"
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
@@ -29,24 +30,17 @@ async function ambilWishlist() {
   }
 }
 
+const { dialog } = useDialog()
+
 function hapusItem(item) {
   const found = wishlist.value.indexOf(item)
   wishlist.value.splice(found, 1)
-  openDialog(`menghapus buku ${item.judul} dari wishlist...`)
+  dialog.value.open(`menghapus buku ${item.judul} dari wishlist...`)
 }
 
 onMounted(async () => {
   wishlist.value = await ambilWishlist()
 })
-
-const dialog = ref(null)
-const dialogIsOpen = ref(false)
-const dialogMessage = ref("")
-
-function openDialog(message) {
-  dialogIsOpen.value = true
-  dialogMessage.value = message
-}
 </script>
 
 <template>
@@ -74,9 +68,9 @@ function openDialog(message) {
       </ul>
     </section>
 
-    <TheDialog ref="dialog" :is-open="dialogIsOpen" @dialog-close="dialogIsOpen = false">
+    <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">
       <h2>Info!!!</h2>
-      {{ dialogMessage }}
+      <p>{{ dialog.message }}</p>
     </TheDialog>
   </BaseLayout>
 </template>

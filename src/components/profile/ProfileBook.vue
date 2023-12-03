@@ -19,7 +19,6 @@ onMounted(async () => {
 })
 
 async function kembalikanBuku() {
-  const dataBuku = props.buku.buku
   try {
     await kembalikanBukuDariISBN(dataBuku.no_isbn)
   } catch (err) {

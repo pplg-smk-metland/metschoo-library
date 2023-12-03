@@ -3,7 +3,7 @@ import { ref, onMounted, computed } from "vue"
 import { useAuthStore } from "@/stores/auth"
 import router from "@/router/index.js"
 import { supabase } from "@/lib/supabase"
-import { kembalikanBukuDariISBN } from "@/lib/utils"
+import { useDialog } from "@/lib/composables"
 
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import BaseLayout from "@/layouts/BaseLayout.vue"
@@ -22,19 +22,15 @@ function changeDisplayForm() {
     : (displayForm.value = displayFormKeys[0])
 }
 
-const dialogIsOpen = ref(false)
-const dialogMessage = ref("")
-
+const dialog = useDialog()
 const dataPengguna = ref({})
 
 async function updateUserInfo() {
   try {
     await authStore.handleUpdateProfile(dataPengguna.value)
-    dialogIsOpen.value = true
-    dialogMessage.value = "sukses memperbarui data pengguna."
+    dialog.open("sukses memperbarui data pengguna.")
   } catch (err) {
-    dialogIsOpen.value = true
-    dialogMessage.value = err.message
+    dialog.open(err.message)
   }
 }
 
@@ -196,9 +192,9 @@ async function kembalikanBuku(buku) {
       <CTA class="button-keluar" @click="signOut">Keluar akun</CTA>
     </div>
 
-    <TheDialog :is-open="dialogIsOpen" @dialog-close="dialogIsOpen = false">
+    <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close">
       <h2>Info</h2>
-      <p>{{ dialogMessage }}</p>
+      <p>{{ dialog.message }}</p>
     </TheDialog>
   </BaseLayout>
 </template>
