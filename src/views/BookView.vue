@@ -92,8 +92,8 @@ onMounted(async () => {
   imgURL.value = await ambilGambarBukuDariISBN(isbn)
   dataBuku.value = await ambilDataBuku(isbn)
 
-  bukuBisaDipinjam.value = await cekStatusPeminjaman(isbn)
   bukuAdaDiWishlist.value = await cekWishlist(isbn)
+  bukuBisaDipinjam.value = (await cekStatusPeminjaman(isbn)) && !bukuAdaDiWishlist.value
 })
 
 const dialogIsOpen = ref(false)
@@ -111,16 +111,19 @@ async function pinjamBuku(buku) {
     return
   }
 
-  if (confirm(`Beneran mau pinjem buku ${buku.judul}?`)) {
-    try {
-      await pinjamBukuDariISBN(buku.no_isbn)
-      if (bukuAdaDiWishlist.value === true) {
-        await supabase.from("wishlist").delete().eq("no_isbn", buku.no_isbn)
-      }
-      openDialog(`sukses meminjam buku ${buku.judul}`)
-    } catch (err) {
-      openDialog(err.message)
+  if (!confirm(`Beneran mau pinjem buku ${buku.judul}?`)) return
+  try {
+    await pinjamBukuDariISBN(buku.no_isbn)
+    if (bukuAdaDiWishlist.value) {
+      await supabase
+        .from("wishlist")
+        .delete()
+        .eq("user_id", authStore.session.user.id)
+        .eq("no_isbn", buku.no_isbn)
     }
+    openDialog(`sukses meminjam buku ${buku.judul}`)
+  } catch (err) {
+    openDialog(err.message)
   }
 }
 
@@ -153,8 +156,9 @@ async function masukkanWishlist(buku) {
 }
 
 async function perbaruiDataBuku(payload) {
-  bukuBisaDipinjam.value = await cekStatusPeminjaman(payload.new.no_isbn)
   bukuAdaDiWishlist.value = await cekWishlist(payload.new.no_isbn)
+  bukuBisaDipinjam.value =
+    (await cekStatusPeminjaman(payload.new.no_isbn)) && !bukuAdaDiWishlist.value
 }
 
 supabase
@@ -165,7 +169,6 @@ supabase
       event: "*",
       schema: "public",
       table: "peminjaman",
-      filter: `no_isbn=eq.${dataBuku.value?.no_isbn}`,
     },
     perbaruiDataBuku
   )
