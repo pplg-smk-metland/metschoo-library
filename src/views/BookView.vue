@@ -83,6 +83,22 @@ async function cekWishlist(isbn) {
   }
 }
 
+const jumlahBuku = ref(0)
+async function ambilJumlahBukuTersedia(isbn) {
+  try {
+    const { count, error } = await supabase
+      .from("peminjaman")
+      .select("*", { count: "exact", head: true })
+      .eq("no_isbn", isbn)
+      .eq("sudah_dikembalikan", false)
+    if (error) throw error
+
+    return dataBuku.value.jumlah_exspl - count
+  } catch (err) {
+    console.error(err.message)
+  }
+}
+
 const imgURL = ref("")
 
 // ambil data dan gambar buku
@@ -92,6 +108,7 @@ onMounted(async () => {
 
   imgURL.value = await ambilGambarBukuDariISBN(isbn)
   dataBuku.value = await ambilDataBuku(isbn)
+  jumlahBuku.value = await ambilJumlahBukuTersedia(isbn)
 
   bukuAdaDiWishlist.value = await cekWishlist(isbn)
   bukuBisaDipinjam.value = (await cekStatusPeminjaman(isbn)) && !bukuAdaDiWishlist.value
@@ -154,6 +171,7 @@ async function perbaruiDataBuku(payload) {
   bukuAdaDiWishlist.value = await cekWishlist(payload.new.no_isbn)
   bukuBisaDipinjam.value =
     (await cekStatusPeminjaman(payload.new.no_isbn)) && !bukuAdaDiWishlist.value
+  jumlahBuku.value = await ambilJumlahBukuTersedia(payload.new.no_isbn)
 }
 
 supabase
@@ -199,7 +217,7 @@ supabase
             <span class="tahun-terbit">{{ dataBuku.tahun_terbit }}</span>
           </p>
           <p>{{ dataBuku.penerbit }} - {{ dataBuku.alamat_terbit }}</p>
-          <p>Jumlah eksemplar: {{ dataBuku.jumlah_exspl }}</p>
+          <p>Jumlah tersedia: {{ jumlahBuku }}</p>
 
           <div class="button-container">
             <CTA @click="pinjamBuku(dataBuku)" v-show="bukuBisaDipinjam" :fill="true">

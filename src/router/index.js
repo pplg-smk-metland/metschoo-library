@@ -30,8 +30,24 @@ const routes = [
   },
   {
     path: "/profile",
-    name: "profile",
     component: () => import("../views/ProfileView.vue"),
+    children: [
+      {
+        path: "",
+        name: "profile",
+        component: () => import("../views/profile/ProfileRoot.vue"),
+      },
+      {
+        path: "edit",
+        name: "profile-edit",
+        component: () => import("../views/profile/ProfileEdit.vue"),
+      },
+      {
+        path: "credentials",
+        name: "profile-credentials",
+        component: () => import("../views/profile/ProfileCredentials.vue"),
+      },
+    ],
   },
 
   {
