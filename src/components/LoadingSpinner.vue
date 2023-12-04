@@ -1,13 +1,26 @@
 <template>
-  <div class="loader">
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
+  <div class="loader-wrapper">
+    <p>sebentar ya...</p>
+
+    <div class="loader">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
   </div>
 </template>
 
 <style scoped>
+.loader-wrapper {
+  min-height: 20vh;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 .loader {
   --loader-size: 100px;
   display: block;
