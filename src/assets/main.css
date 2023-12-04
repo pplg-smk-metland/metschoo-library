@@ -86,7 +86,7 @@ button:disabled {
 a {
   text-decoration: none;
   color: var(--primary);
-  transition: 0.4s;
+  transition: color 400ms ease;
 }
 
 #app {
