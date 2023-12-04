@@ -46,6 +46,10 @@ onMounted(async () => {
   outline: 2px solid #ddd;
 }
 
+.buku:hover {
+  background: var(--dark-grey);
+}
+
 .buku__gambar {
   width: 100%;
   object-fit: cover;
