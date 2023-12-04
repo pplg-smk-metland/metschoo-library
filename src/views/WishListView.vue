@@ -63,8 +63,7 @@ onMounted(async () => {
           :buku="wishlistItem.buku"
           @pinjam-buku="hapusItem(wishlistItem)"
           @hapus-buku="hapusItem"
-        >
-        </WishlistBook>
+        />
       </ul>
     </section>
 

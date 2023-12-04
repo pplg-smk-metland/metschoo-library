@@ -1,13 +1,13 @@
 <script setup>
 import { ref, onMounted } from "vue"
-import { kembalikanBukuDariISBN, ambilGambarBukuDariISBN } from "@/lib/utils"
+import { ambilGambarBukuDariISBN } from "@/lib/utils"
 import CTA from "@/components/CTA.vue"
 
 const props = defineProps({
   buku: Object,
 })
 
-const emit = defineEmits(["someEvent"])
+const emit = defineEmits(["kembalikanBuku"])
 
 // object buku hasil join ada di dalam object
 const dataBuku = props.buku.buku
@@ -17,14 +17,6 @@ const imgURL = ref("")
 onMounted(async () => {
   imgURL.value = await ambilGambarBukuDariISBN(dataBuku.no_isbn)
 })
-
-async function kembalikanBuku() {
-  try {
-    await kembalikanBukuDariISBN(dataBuku.no_isbn)
-  } catch (err) {
-    console.error(err.message)
-  }
-}
 </script>
 
 <template>
@@ -60,7 +52,7 @@ async function kembalikanBuku() {
       <p class="buku__status-peminjaman" v-if="!buku.sudah_dikonfirmasi">
         menunggu konfirmasi peminjaman buku
       </p>
-      <CTA @click="kembalikanBuku">Kembalikan buku</CTA>
+      <CTA @click="$emit('kembalikanBuku')">Kembalikan buku</CTA>
     </figcaption>
   </li>
 </template>

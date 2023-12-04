@@ -51,10 +51,12 @@ onMounted(async () => {
 })
 
 async function kembalikanBuku(buku) {
+  if (!confirm(`beneran mau kembalikan buku ${buku.judul}?`)) return
+
   try {
     await kembalikanBukuDariISBN(buku.no_isbn)
-    // hapus buku dari tampilan
 
+    // hapus buku dari tampilan
     const found = bukuYangDipinjam.value.indexOf(buku)
     bukuYangDipinjam.value.splice(found, 1)
   } catch (err) {
@@ -103,7 +105,7 @@ async function kembalikanBuku(buku) {
         v-for="buku in bukuBlumDikonfirmasi"
         :key="buku.no_isbn"
         :buku="buku"
-        @kembalikan-buku="kembalikanBuku(buku)"
+        @kembalikan-buku="kembalikanBuku(buku.buku)"
       />
     </ul>
 
@@ -114,7 +116,7 @@ async function kembalikanBuku(buku) {
       <ProfileBook
         v-for="buku in bukuSudahDikonfirmasi"
         :key="buku.no_isbn"
-        @kembalikan-buku="kembalikanBuku(buku)"
+        @kembalikan-buku="kembalikanBuku(buku.buku)"
       />
     </ul>
   </section>
