@@ -29,7 +29,7 @@ const routes = [
     component: () => import("../views/SignInView.vue"),
   },
   {
-    path: "/profile",
+    path: "/profil",
     component: () => import("../views/ProfileView.vue"),
     children: [
       {
@@ -43,9 +43,9 @@ const routes = [
         component: () => import("../views/profile/ProfileEdit.vue"),
       },
       {
-        path: "credentials",
-        name: "profile-credentials",
-        component: () => import("../views/profile/ProfileCredentials.vue"),
+        path: "keamanan",
+        name: "profile-security",
+        component: () => import("../views/profile/ProfileSecurity.vue"),
       },
     ],
   },

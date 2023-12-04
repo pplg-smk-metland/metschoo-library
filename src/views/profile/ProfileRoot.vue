@@ -1,24 +1,15 @@
 <script setup>
 import { ref, onMounted, computed } from "vue"
 import { useAuthStore } from "@/stores/auth"
-import router from "@/router/index.js"
 import { supabase } from "@/lib/supabase"
+import { kembalikanBukuDariISBN } from "@/lib/utils"
 
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
-import CTA from "@/components/CTA.vue"
 import ProfileBook from "@/components/profile/ProfileBook.vue"
 
 const authStore = useAuthStore()
 
 const dataPengguna = ref({})
-
-function signOut() {
-  const reallySigningOut = confirm("Beneran nih mau keluar akun?")
-  if (reallySigningOut) {
-    authStore.handleSignOut()
-    router.push({})
-  }
-}
 
 onMounted(async () => {
   const data = await authStore.getProfile()
@@ -60,8 +51,15 @@ onMounted(async () => {
 })
 
 async function kembalikanBuku(buku) {
-  const found = bukuYangDipinjam.value.indexOf(buku)
-  bukuYangDipinjam.value.splice(found, 1)
+  try {
+    await kembalikanBukuDariISBN(buku.no_isbn)
+    // hapus buku dari tampilan
+
+    const found = bukuYangDipinjam.value.indexOf(buku)
+    bukuYangDipinjam.value.splice(found, 1)
+  } catch (err) {
+    console.error(err.message)
+  }
 }
 </script>
 
@@ -73,7 +71,13 @@ async function kembalikanBuku(buku) {
 
   <section class="profile">
     <figure class="profile__picture-container">
-      <img class="profile-picture" src="../assets/profilepicture.svg" alt="Foto kamu disini" />
+      <img
+        class="profile-picture"
+        src="../../assets/profilepicture.svg"
+        width="300"
+        height="300"
+        alt="Foto kamu disini"
+      />
     </figure>
 
     <div class="profile__details">
@@ -82,9 +86,7 @@ async function kembalikanBuku(buku) {
       <p>{{ dataPengguna.email }}</p>
 
       <routerLink :to="{ name: 'profile-edit' }" class="nav-link">Edit profil</routerLink>
-      <routerLink :to="{ name: 'profile-credentials' }" class="nav-link">
-        Edit kredensial
-      </routerLink>
+      <routerLink :to="{ name: 'profile-security' }" class="nav-link"> Keamanan </routerLink>
     </div>
     <RouterView />
   </section>
@@ -97,7 +99,12 @@ async function kembalikanBuku(buku) {
     <h3>Belum dikonfirmasi</h3>
     <ul class="book-list">
       <li v-if="!bukuBlumDikonfirmasi.length">ga ada bukunya nih</li>
-      <ProfileBook v-for="buku in bukuBlumDikonfirmasi" :key="buku.no_isbn" :buku="buku" />
+      <ProfileBook
+        v-for="buku in bukuBlumDikonfirmasi"
+        :key="buku.no_isbn"
+        :buku="buku"
+        @kembalikan-buku="kembalikanBuku(buku)"
+      />
     </ul>
 
     <h3>Sudah dikonfirmasi</h3>
@@ -107,14 +114,10 @@ async function kembalikanBuku(buku) {
       <ProfileBook
         v-for="buku in bukuSudahDikonfirmasi"
         :key="buku.no_isbn"
-        @someEvent="kembalikanBuku(buku)"
-      ></ProfileBook>
+        @kembalikan-buku="kembalikanBuku(buku)"
+      />
     </ul>
   </section>
-
-  <div class="button-container">
-    <CTA class="button-keluar" @click="signOut">Keluar akun</CTA>
-  </div>
 </template>
 
 <style scoped>
@@ -123,9 +126,9 @@ async function kembalikanBuku(buku) {
     flex-direction: column;
   }
 }
+
 .profile {
   display: flex;
-  margin-bottom: 200px;
   gap: 2rem;
 }
 
@@ -135,12 +138,6 @@ async function kembalikanBuku(buku) {
 
 .profile-form {
   flex-grow: 1;
-}
-
-.button-container {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
 }
 
 .nav-link {

@@ -33,11 +33,12 @@ onMounted(async () => {
   </section>
 
   <section class="profile">
-    <figure>
-      <img class="profile-picture" src="../assets/profilepicture.svg" alt="Foto kamu disini" />
+    <figure class="profile__picture-wrapper">
+      <img class="profile__picture" src="../../assets/profilepicture.svg" alt="Foto kamu disini" />
+      <CTA>Edit foto profil</CTA>
     </figure>
 
-    <form class="profile-form" @submit.prevent="updateUserInfo">
+    <form class="profile__details" @submit.prevent="updateUserInfo">
       <label for="name">Nama</label>
       <input type="text" placeholder="Masukan Nama" v-model="dataPengguna.nama" />
 
