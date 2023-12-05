@@ -3,6 +3,7 @@ import { onMounted, ref } from "vue"
 import { useDialog } from "@/lib/composables"
 import { useAuthStore } from "@/stores/auth"
 import router from "@/router"
+import { supabase } from "@/lib/supabase"
 
 import TheDialog from "@/components/TheDialog.vue"
 import CTA from "@/components/CTA.vue"
@@ -14,12 +15,39 @@ const kredensialPengguna = ref({
   email: "",
 })
 
-function ubahKredensial() {
-  dialog.value.open("memperbarui kredensial...")
+async function ubahKredensial() {
+  const { password, passwordKonfirmasi } = kredensialPengguna.value
+
+  if (password !== passwordKonfirmasi) {
+    dialog.value.open("Password tidak sama! coba lagi")
+    return
+  }
+
+  try {
+    const { error } = await supabase.auth.updateUser({
+      password,
+    })
+
+    if (error) throw error
+    dialog.value.open("memperbarui kredensial...")
+  } catch (err) {
+    console.error(err.message)
+  }
 }
 
-function ubahEmail() {
-  dialog.value.open("memperbarui email...")
+async function ubahEmail() {
+  if (!confirm("beneran mau ubah email?")) return
+
+  try {
+    const { error } = await supabase.auth.updateUser({
+      email: kredensialPengguna.value.email,
+    })
+    if (error) throw error
+
+    dialog.value.open("Cek email LAMA dan email BARU kamu ya, linknya ada dua...")
+  } catch (err) {
+    console.error(err.message)
+  }
 }
 
 function signOut() {
@@ -40,13 +68,12 @@ onMounted(async () => {
 
 <template>
   <section class="nav">
-    <h1>Keamanan</h1>
+    <h1>Ubah kredensial</h1>
     <routerLink :to="{ name: 'profile' }">Kembali</routerLink>
   </section>
 
   <section class="main-section">
-    <h2>Ubah Kredensial</h2>
-
+    <h2>Ubah password</h2>
     <form class="profile-form" @submit.prevent="ubahKredensial">
       <label for="password">Password</label>
       <input
@@ -107,3 +134,9 @@ onMounted(async () => {
     <p>{{ dialog.message }}</p>
   </TheDialog>
 </template>
+
+<style scoped>
+.main-section {
+  max-width: 100ch;
+}
+</style>
