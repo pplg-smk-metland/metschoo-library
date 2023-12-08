@@ -1,16 +1,25 @@
 <script setup>
+import { onMounted, ref } from "vue"
+import { useAuthStore } from "../stores/auth"
+
 import BaseLayout from "@/layouts/BaseLayout.vue"
 import CollectionBooks from "@/components/home/CollectionBooks.vue"
 import ReccomendationBooks from "@/components/home/ReccomendationBooks.vue"
-import SearchBar from "@/components/SearchBar.vue"
+import TheHeader from "../components/TheHeader.vue"
+
+const user = ref({})
+
+onMounted(async () => {
+  const authStore = useAuthStore()
+  user.value = await authStore.getProfile()
+})
 </script>
 
 <template>
   <BaseLayout>
-    <section class="search">
-      <h1>Metschoo Library</h1>
-      <SearchBar></SearchBar>
-    </section>
+    <TheHeader>
+      <template #header-heading> Halo, {{ user.nama }}. </template>
+    </TheHeader>
 
     <section class="main-section">
       <ReccomendationBooks />

@@ -35,13 +35,15 @@ function closeNav() {
           <i class="fa-solid fa-xmark"></i>
         </button>
       </li>
-      <li><router-link :to="{ name: 'home' }">Beranda</router-link></li>
-      <li><router-link :to="{ name: 'pustaka' }">Pustaka</router-link></li>
-      <li><router-link :to="{ name: 'wishlist' }">Wishlist</router-link></li>
+      <li><router-link class="nav-link" :to="{ name: 'home' }">Beranda</router-link></li>
+      <li><router-link class="nav-link" :to="{ name: 'pustaka' }">Pustaka</router-link></li>
+      <li><router-link class="nav-link" :to="{ name: 'wishlist' }">Wishlist</router-link></li>
       <li v-if="!authStore.session">
-        <router-link :to="{ name: 'sign-in' }">Masuk</router-link>
+        <router-link :to="{ name: 'sign-in' }" class="nav-link nav-link--cta">Masuk</router-link>
       </li>
-      <li v-else><router-link :to="{ name: 'profile' }">Profil</router-link></li>
+      <li v-else>
+        <router-link :to="{ name: 'profile' }" class="nav-link nav-link--cta">Profil</router-link>
+      </li>
     </ul>
 
     <button class="nav-btn open" ref="openNavBtn" @click="openNav">
@@ -103,7 +105,7 @@ function closeNav() {
   align-items: center;
 }
 
-.navbar a,
+.nav-link,
 .nav-btn {
   color: inherit;
   text-decoration: none;
@@ -112,7 +114,11 @@ function closeNav() {
   position: relative;
 }
 
-.nav-links a.active::before {
+.nav-link--cta {
+  background: var(--primary-200);
+}
+
+.nav-link.active::before {
   content: "";
   position: absolute;
   bottom: 0;
@@ -129,7 +135,7 @@ function closeNav() {
 }
 
 @media screen and (min-width: 50em) {
-  .nav-links a.active::before {
+  .nav-link.active::before {
     height: 0.4rem;
     width: 100%;
   }

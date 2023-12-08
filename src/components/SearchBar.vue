@@ -20,12 +20,12 @@ async function cariBuku() {
     <input
       type="search"
       name="search"
-      id="search"
+      id="search-input"
       placeholder="Cari buku disini"
       v-model="bukuYangDicari"
       required
     />
-    <CTA :is-button="true">Search</CTA>
+    <CTA id="search-submit" :is-button="true">Search</CTA>
   </form>
 </template>
 
@@ -34,7 +34,16 @@ async function cariBuku() {
   display: flex;
   gap: 1rem;
 }
-#search {
-  margin: 20px 0px;
+
+#search-input {
+  flex: 4 0 0;
+}
+
+#search-submit {
+  flex: 1 0 0;
+}
+
+#search-form .btn {
+  margin: 0;
 }
 </style>

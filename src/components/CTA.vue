@@ -18,6 +18,7 @@ const props = defineProps({
 <style scoped>
 .cta {
   outline: 2px solid var(--primary);
+  text-align: center;
 }
 
 .cta:hover,
