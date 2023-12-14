@@ -20,14 +20,7 @@ onMounted(async () => {
   <li class="buku">
     <routerLink :to="`/buku/${buku.no_isbn}`">
       <figure>
-        <img
-          :src="imgURL"
-          class="buku__gambar"
-          alt="gambar buku"
-          loading="lazy"
-          width="200"
-          height="300"
-        />
+        <img :src="imgURL" class="buku__gambar" alt="gambar buku" loading="lazy" height="400" />
       </figure>
       <figcaption class="buku__info">
         <div class="metadata">
@@ -42,8 +35,8 @@ onMounted(async () => {
 
 <style scoped>
 .buku {
+  padding: 0.5rem;
   border-radius: 0.5rem;
-  outline: 2px solid #ddd;
 }
 
 .buku:hover {
@@ -51,24 +44,24 @@ onMounted(async () => {
 }
 
 .buku__gambar {
+  border-radius: 0.5rem;
   width: 100%;
   object-fit: cover;
   background-repeat: no-repeat;
 }
 
 .buku__info {
-  padding: 1rem;
-  flex-grow: 1;
+  margin-block-start: 1rem;
 }
 
 .buku__judul {
-  font-weight: normal;
+  font-size: 1.5rem;
   margin: 0;
   line-height: 1;
 }
 
 .buku__penulis {
-  margin-block: 1rem 0;
+  margin-block: 0.5rem 0;
   line-height: 1.2;
 }
 

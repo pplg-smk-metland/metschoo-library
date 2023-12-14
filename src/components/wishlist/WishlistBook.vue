@@ -50,10 +50,10 @@ onMounted(async () => {
       </routerLink>
     </figure>
     <figcaption class="buku__info">
-      <h3 class="judul">{{ buku.judul }}</h3>
+      <h3 class="buku__judul">{{ buku.judul }}</h3>
       <p>
-        <span class="penulis">{{ buku.penulis }}</span> -
-        <span class="tahun-terbit">{{ buku.tahun_terbit }}</span>
+        <span class="buku__penulis">{{ buku.penulis }}</span> -
+        <span class="buku__tahun-terbit">{{ buku.tahun_terbit }}</span>
       </p>
 
       <div class="button-container">
@@ -66,24 +66,24 @@ onMounted(async () => {
 
 <style scoped>
 .buku {
-  outline: 2px solid #ddd;
   border-radius: 0.5rem;
+  padding: 1rem;
 
   display: flex;
   flex-direction: column;
 }
 
 .buku__info {
-  padding: 1rem;
   flex: 1;
 
   display: flex;
   flex-direction: column;
 }
 
-.buku img {
+.buku__gambar {
   width: 100%;
   object-fit: cover;
+  border-radius: 0.5rem;
 }
 
 .button-container {
