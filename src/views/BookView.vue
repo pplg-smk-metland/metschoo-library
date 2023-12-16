@@ -109,7 +109,7 @@ onMounted(async () => {
   jumlahBuku.value = await ambilJumlahBukuTersedia(isbn)
 
   bukuAdaDiWishlist.value = await cekWishlist(isbn)
-  bukuBisaDipinjam.value = (await cekStatusPeminjaman(isbn)) && !bukuAdaDiWishlist.value
+  bukuBisaDipinjam.value = (await cekStatusPeminjaman(isbn)) && jumlahBuku.value > 0
 })
 
 const { dialog } = useDialog()
