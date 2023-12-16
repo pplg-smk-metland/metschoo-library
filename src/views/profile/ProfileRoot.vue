@@ -46,8 +46,27 @@ async function ambilBukuYangDipinjam() {
   }
 }
 
+const riwayatPeminjaman = ref([])
+async function ambilRiwayatPeminjaman() {
+  try {
+    isLoading.value = true
+    const { data, error } = await supabase
+      .from("peminjaman")
+      .select("*, buku(*)")
+      .eq("sudah_dikembalikan", true)
+
+    if (error) throw error
+    return data
+  } catch (err) {
+    console.error(err.message)
+  } finally {
+    isLoading.value = false
+  }
+}
+
 onMounted(async () => {
   bukuYangDipinjam.value = await ambilBukuYangDipinjam()
+  riwayatPeminjaman.value = await ambilRiwayatPeminjaman()
 })
 
 async function kembalikanBuku(buku) {
@@ -66,64 +85,106 @@ async function kembalikanBuku(buku) {
 </script>
 
 <template>
-  <header>
-    <h1>Profil</h1>
-    <p>Selamat Datang di Profil kamu</p>
-  </header>
+  <main class="wrapper">
+    <div class="profile-view">
+      <header>
+        <h1>Profil</h1>
+        <p>Selamat Datang di Profil kamu</p>
+      </header>
 
-  <section class="profile">
-    <figure class="profile__picture-container">
-      <img
-        class="profile-picture"
-        src="../../assets/profilepicture.svg"
-        width="300"
-        height="300"
-        alt="Foto kamu disini"
-      />
-    </figure>
+      <section class="profile">
+        <figure class="profile__picture-container">
+          <img
+            class="profile-picture"
+            src="../../assets/profilepicture.svg"
+            width="300"
+            height="300"
+            alt="Foto kamu disini"
+          />
+        </figure>
 
-    <div class="profile__details">
-      <h2>{{ dataPengguna.nama }}</h2>
-      <p>{{ dataPengguna.kelas }} - {{ dataPengguna.jurusan }}</p>
-      <p>{{ dataPengguna.email }}</p>
+        <div class="profile__details">
+          <h2>{{ dataPengguna.nama }}</h2>
+          <p>{{ dataPengguna.kelas }} - {{ dataPengguna.jurusan }}</p>
+          <p>{{ dataPengguna.email }}</p>
 
-      <routerLink :to="{ name: 'profile-edit' }" class="nav-link">Edit profil</routerLink>
-      <routerLink :to="{ name: 'profile-security' }" class="nav-link"> Keamanan </routerLink>
+          <routerLink :to="{ name: 'profile-edit' }" class="nav-link">Edit profil</routerLink>
+          <routerLink :to="{ name: 'profile-security' }" class="nav-link"> Keamanan </routerLink>
+        </div>
+        <RouterView />
+      </section>
+
+      <section>
+        <h2>Buku yang dipinjam</h2>
+        <LoadingSpinner v-if="isLoading" />
+        <p v-else-if="!isLoading && bukuYangDipinjam.length === 0">Ga ada buku yang dipinjam</p>
+
+        <h3>Belum dikonfirmasi</h3>
+        <ul class="book-list">
+          <li v-if="!bukuBlumDikonfirmasi.length">ga ada bukunya nih</li>
+          <ProfileBook
+            v-for="buku in bukuBlumDikonfirmasi"
+            :key="buku.no_isbn"
+            :buku="buku"
+            @kembalikan-buku="kembalikanBuku(buku.buku)"
+          />
+        </ul>
+
+        <h3>Sudah dikonfirmasi</h3>
+
+        <ul class="book-list">
+          <li v-if="!bukuSudahDikonfirmasi.length">ga ada bukunya nih</li>
+          <ProfileBook
+            v-for="buku in bukuSudahDikonfirmasi"
+            :key="buku.no_isbn"
+            @kembalikan-buku="kembalikanBuku(buku.buku)"
+          />
+        </ul>
+      </section>
     </div>
-    <RouterView />
-  </section>
 
-  <section>
-    <h2>Buku yang dipinjam</h2>
-    <LoadingSpinner v-if="isLoading" />
-    <p v-else-if="!isLoading && bukuYangDipinjam.length === 0">Ga ada buku yang dipinjam</p>
+    <aside class="history">
+      <h2>Riwayat Peminjaman</h2>
 
-    <h3>Belum dikonfirmasi</h3>
-    <ul class="book-list">
-      <li v-if="!bukuBlumDikonfirmasi.length">ga ada bukunya nih</li>
-      <ProfileBook
-        v-for="buku in bukuBlumDikonfirmasi"
-        :key="buku.no_isbn"
-        :buku="buku"
-        @kembalikan-buku="kembalikanBuku(buku.buku)"
-      />
-    </ul>
-
-    <h3>Sudah dikonfirmasi</h3>
-
-    <ul class="book-list">
-      <li v-if="!bukuSudahDikonfirmasi.length">ga ada bukunya nih</li>
-      <ProfileBook
-        v-for="buku in bukuSudahDikonfirmasi"
-        :key="buku.no_isbn"
-        @kembalikan-buku="kembalikanBuku(buku.buku)"
-      />
-    </ul>
-  </section>
+      <ul class="history-list">
+        <li v-if="!riwayatPeminjaman.length" class="message">bukunya ga ada ges</li>
+        <li class="history-list__item" v-for="buku in riwayatPeminjaman" :key="buku.no_isbn">
+          <p>{{ buku.buku?.judul }}</p>
+        </li>
+      </ul>
+    </aside>
+  </main>
 </template>
 
 <style scoped>
+.wrapper {
+  padding: 0;
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+}
+
+.profile-view {
+  padding: 2rem;
+}
+
+.history {
+  padding: 2rem 1.5rem;
+  outline: 2px solid var(--neutral, --grey);
+}
+
+.history h2 {
+  text-align: center;
+}
+
 @media screen and (max-width: 50em) {
+  .wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .history h2 {
+    text-align: center;
+  }
+
   .profile {
     flex-direction: column;
   }
