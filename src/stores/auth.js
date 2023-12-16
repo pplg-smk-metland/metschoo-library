@@ -55,13 +55,8 @@ export const useAuthStore = defineStore("auth", {
     },
 
     async getProfile() {
-      const { user } = this.session
       try {
-        const { data, error, status } = await supabase
-          .from("pengguna")
-          .select("*")
-          .eq("user_id", user.id)
-          .single()
+        const { data, error, status } = await supabase.from("pengguna").select("*").single()
         if (error && status !== 406) throw error
         return data
       } catch (err) {

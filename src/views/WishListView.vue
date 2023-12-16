@@ -17,10 +17,7 @@ const isLoading = ref(false)
 async function ambilWishlist() {
   try {
     isLoading.value = true
-    const { data, error } = await supabase
-      .from("wishlist")
-      .select("*, buku(*)")
-      .eq("user_id", authStore.session.user.id)
+    const { data, error } = await supabase.from("wishlist").select("*, buku(*)")
     if (error) throw error
     return data
   } catch (err) {
