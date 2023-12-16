@@ -22,14 +22,16 @@ onMounted(async () => {
 <template>
   <li class="buku">
     <figure>
-      <img
-        :src="imgURL"
-        class="buku__gambar"
-        alt="gambar buku"
-        loading="lazy"
-        width="200"
-        height="300"
-      />
+      <routerLink :to="`/buku/${dataBuku.no_isbn}`">
+        <img
+          :src="imgURL"
+          class="buku__gambar"
+          alt="gambar buku"
+          loading="lazy"
+          width="200"
+          height="300"
+        />
+      </routerLink>
     </figure>
     <figcaption class="buku__info">
       <div class="buku__metadata">
