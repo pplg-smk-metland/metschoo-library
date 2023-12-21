@@ -145,9 +145,7 @@ async function kembalikanBuku(buku) {
 
 async function masukkanWishlist(buku) {
   try {
-    const { data, error } = await supabase
-      .from("wishlist")
-      .insert([{ user_id: authStore.session.user.id, no_isbn: buku.no_isbn }])
+    const { data, error } = await supabase.from("wishlist").insert({ no_isbn: buku.no_isbn })
     if (error) throw error
 
     dialog.value.open(`buku berhasil ditambahkan ke dalam wishlist`)

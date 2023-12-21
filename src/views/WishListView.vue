@@ -56,7 +56,7 @@ onMounted(async () => {
       <ul v-if="wishlist.length" class="book-list">
         <WishlistBook
           v-for="wishlistItem in wishlist"
-          :key="wishlistItem.no_isbn"
+          :key="wishlistItem.wishlist_id"
           :buku="wishlistItem.buku"
           @pinjam-buku="hapusItem(wishlistItem)"
           @hapus-buku="hapusItem"
