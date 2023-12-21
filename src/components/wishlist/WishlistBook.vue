@@ -1,33 +1,13 @@
 <script setup>
-import { ambilGambarBukuDariISBN, pinjamBukuDariISBN } from "@/lib/utils"
+import { ambilGambarBukuDariISBN } from "@/lib/utils"
 import { onMounted, ref } from "vue"
-import { supabase } from "@/lib/supabase"
 import CTA from "@/components/CTA.vue"
 
 const props = defineProps({
   buku: Object,
 })
 
-const emit = defineEmits(["pinjamBuku", "hapusBuku"])
-
-async function pinjamBuku() {
-  emit("pinjamBuku")
-  try {
-    await pinjamBukuDariISBN(props.buku.no_isbn)
-    await supabase.from("wishlist").delete().eq("no_isbn", props.buku.no_isbn)
-  } catch (err) {
-    console.error(err.message)
-  }
-}
-
-async function hapusBukuDariWishlist() {
-  emit("hapusBuku", props.buku)
-  try {
-    await supabase.from("wishlist").delete().eq("no_isbn", props.buku.no_isbn)
-  } catch (err) {
-    console.error(err.message)
-  }
-}
+defineEmits(["pinjamBuku", "hapusBuku"])
 
 const imgURL = ref("")
 onMounted(async () => {
@@ -57,8 +37,8 @@ onMounted(async () => {
       </p>
 
       <div class="button-container">
-        <CTA @click="pinjamBuku">Pinjam buku</CTA>
-        <CTA @click="hapusBukuDariWishlist">Hapus dari wishlist</CTA>
+        <CTA @click="$emit('pinjamBuku')">Pinjam buku</CTA>
+        <CTA @click="$emit('hapusBuku')">Hapus dari wishlist</CTA>
       </div>
     </figcaption>
   </li>
