@@ -53,6 +53,10 @@ onMounted(async () => {
   flex-direction: column;
 }
 
+.buku:hover {
+  background: var(--dark-grey);
+}
+
 .buku__info {
   flex: 1;
 

@@ -61,8 +61,12 @@ onMounted(async () => {
 
 <style scoped>
 .buku {
+  padding: 0.5rem;
   border-radius: 0.5rem;
-  outline: 2px solid #ddd;
+}
+
+.buku:hover {
+  background: var(--dark-grey);
 }
 
 .buku__info {
