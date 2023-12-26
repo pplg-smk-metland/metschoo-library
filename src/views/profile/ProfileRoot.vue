@@ -6,6 +6,7 @@ import { kembalikanBukuDariISBN } from "@/lib/utils"
 
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import ProfileBook from "@/components/profile/ProfileBook.vue"
+import ProfileHistoryBook from "../../components/profile/ProfileHistoryBook.vue"
 
 const authStore = useAuthStore()
 
@@ -148,9 +149,12 @@ async function kembalikanBuku(buku) {
 
       <ul class="history-list">
         <li v-if="!riwayatPeminjaman.length" class="message">bukunya ga ada ges</li>
-        <li class="history-list__item" v-for="buku in riwayatPeminjaman" :key="buku.no_isbn">
-          <p>{{ buku.buku?.judul }}</p>
-        </li>
+        <ProfileHistoryBook
+          class="history-list__item"
+          v-for="buku in riwayatPeminjaman"
+          :key="buku.no_isbn"
+          :buku="buku"
+        />
       </ul>
     </aside>
   </main>
@@ -209,5 +213,14 @@ async function kembalikanBuku(buku) {
 
 .nav-link:hover {
   background-color: var(--dark-grey);
+}
+
+.history-list {
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 </style>
