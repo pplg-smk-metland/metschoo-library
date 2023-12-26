@@ -10,7 +10,8 @@
   --white: hsl(180, 54%, 95%);
   --grey: hsl(180, 25%, 90%);
   --dark-grey: hsl(180, 20%, 80%);
-  --neutral: #d0d0d0;
+  --neutral: hsl(0 0% 82%);
+  --neutral-transparent: hsla(0 0% 94% / 85%);
   --dark: var(--secondary-500);
 
   --color-confirm: hsl(100, 50%, 50%);
