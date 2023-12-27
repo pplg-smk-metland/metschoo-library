@@ -3,6 +3,7 @@ import { onMounted, ref } from "vue"
 import { useDialog } from "@/lib/composables"
 import { useAuthStore } from "@/stores/auth"
 
+import ProfileEditLayout from "@/layouts/ProfileEditLayout.vue"
 import TheDialog from "@/components/TheDialog.vue"
 import CTA from "@/components/CTA.vue"
 
@@ -27,39 +28,45 @@ onMounted(async () => {
 </script>
 
 <template>
-  <section class="header">
-    <h1>Edit profil</h1>
-    <routerLink :to="{ name: 'profile' }">Kembali</routerLink>
-  </section>
+  <ProfileEditLayout>
+    <section class="header">
+      <h1>Edit profil</h1>
+      <routerLink :to="{ name: 'profile' }">Kembali</routerLink>
+    </section>
 
-  <section class="profile">
-    <figure class="profile__picture-wrapper">
-      <img class="profile__picture" src="../../assets/profilepicture.svg" alt="Foto kamu disini" />
-      <CTA>Edit foto profil</CTA>
-    </figure>
+    <section class="profile">
+      <figure class="profile__picture-wrapper">
+        <img
+          class="profile__picture"
+          src="../../assets/profilepicture.svg"
+          alt="Foto kamu disini"
+        />
+        <CTA>Edit foto profil</CTA>
+      </figure>
 
-    <form class="profile__details" @submit.prevent="updateUserInfo">
-      <label for="name">Nama</label>
-      <input type="text" placeholder="Masukan Nama" v-model="dataPengguna.nama" />
+      <form class="profile__details" @submit.prevent="updateUserInfo">
+        <label for="name">Nama</label>
+        <input type="text" placeholder="Masukan Nama" v-model="dataPengguna.nama" />
 
-      <label for="kelas">Kelas</label>
-      <select name="kelas" id="kelas" v-model="dataPengguna.kelas">
-        <option value="X">X</option>
-        <option value="XI">XI</option>
-        <option value="XII">XII</option>
-      </select>
+        <label for="kelas">Kelas</label>
+        <select name="kelas" id="kelas" v-model="dataPengguna.kelas">
+          <option value="X">X</option>
+          <option value="XI">XI</option>
+          <option value="XII">XII</option>
+        </select>
 
-      <label for="jurusan">Jurusan</label>
-      <input type="text" placeholder="Masukkan Jurusan" v-model="dataPengguna.jurusan" />
+        <label for="jurusan">Jurusan</label>
+        <input type="text" placeholder="Masukkan Jurusan" v-model="dataPengguna.jurusan" />
 
-      <div class="button-container">
-        <CTA :fill="true">Edit profil</CTA>
-      </div>
-    </form>
-  </section>
+        <div class="button-container">
+          <CTA :fill="true">Edit profil</CTA>
+        </div>
+      </form>
+    </section>
 
-  <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">
-    <h2>Info!!!</h2>
-    <p>{{ dialog.message }}</p>
-  </TheDialog>
+    <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">
+      <h2>Info!!!</h2>
+      <p>{{ dialog.message }}</p>
+    </TheDialog>
+  </ProfileEditLayout>
 </template>
