@@ -71,17 +71,6 @@ onMounted(async () => {
 }
 
 .button-container {
-  margin-block-start: auto;
-}
-
-.button-container .btn {
-  margin: 0;
-  text-align: center;
-  display: block;
-  width: 100%;
-}
-
-.button-container .btn + .btn {
-  margin-block-start: 0.5rem;
+  flex-direction: column;
 }
 </style>

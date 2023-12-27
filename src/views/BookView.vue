@@ -295,11 +295,6 @@ supabase
   max-width: 100ch;
 }
 
-.button-container {
-  display: flex;
-  gap: 0.5rem;
-}
-
 .judul {
   font-size: 2.8rem;
   line-height: 1.1;

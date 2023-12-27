@@ -6,9 +6,9 @@ const props = defineProps({
 </script>
 
 <template>
-  <a href="#" v-if="isLink">
+  <routerLink v-if="isLink">
     <slot />
-  </a>
+  </routerLink>
 
   <button v-else :class="['btn', 'cta', { 'cta--fill': fill }]">
     <slot />

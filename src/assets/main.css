@@ -65,8 +65,12 @@ button:disabled {
   cursor: not-allowed;
 }
 
+.button-container {
+  display: flex;
+  gap: 0.5rem;
+}
+
 .btn {
-  margin: 20px 0px;
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
 }
