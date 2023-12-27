@@ -7,6 +7,7 @@ import { kembalikanBukuDariISBN } from "@/lib/utils"
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import ProfileBook from "@/components/profile/ProfileBook.vue"
 import ProfileHistoryBook from "../../components/profile/ProfileHistoryBook.vue"
+import CTA from "../../components/CTA.vue"
 
 const authStore = useAuthStore()
 
@@ -109,8 +110,10 @@ async function kembalikanBuku(buku) {
           <p>{{ dataPengguna.kelas }} - {{ dataPengguna.jurusan }}</p>
           <p>{{ dataPengguna.email }}</p>
 
-          <routerLink :to="{ name: 'profile-edit' }" class="nav-link">Edit profil</routerLink>
-          <routerLink :to="{ name: 'profile-security' }" class="nav-link"> Keamanan </routerLink>
+          <div class="button-container">
+            <CTA :to="{ name: 'profile-edit' }" class="btn cta">Edit profil</CTA>
+            <CTA :to="{ name: 'profile-security' }" class="btn cta"> Keamanan </CTA>
+          </div>
         </div>
         <RouterView />
       </section>
@@ -205,14 +208,6 @@ async function kembalikanBuku(buku) {
 
 .profile-form {
   flex-grow: 1;
-}
-
-.nav-link {
-  padding: 0.5rem;
-}
-
-.nav-link:hover {
-  background-color: var(--dark-grey);
 }
 
 .history-list {
