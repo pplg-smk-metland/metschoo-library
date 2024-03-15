@@ -18,7 +18,8 @@ onMounted(async () => {
 <template>
   <BaseLayout>
     <TheHeader>
-      <template #header-heading> Halo, {{ user.nama }}. </template>
+      <template #header-heading v-if="user"> Halo, {{ user.nama }}. </template>
+      <template #header-heading v-else> Halo kamu! </template>
     </TheHeader>
 
     <section class="main-section">
