@@ -111,8 +111,8 @@ async function kembalikanBuku(buku) {
           <p>{{ dataPengguna.email }}</p>
 
           <div class="button-container">
-            <CTA :to="{ name: 'profile-edit' }" class="btn cta">Edit profil</CTA>
-            <CTA :to="{ name: 'profile-security' }" class="btn cta"> Keamanan </CTA>
+            <CTA :to="{ name: 'profile-edit' }" class="btn cta" :is-link="true">Edit profil</CTA>
+            <CTA :to="{ name: 'profile-security' }" class="btn cta" :is-link="true"> Keamanan </CTA>
           </div>
         </div>
         <RouterView />
