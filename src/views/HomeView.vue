@@ -7,7 +7,7 @@ import CollectionBooks from "@/components/home/CollectionBooks.vue"
 import ReccomendationBooks from "@/components/home/ReccomendationBooks.vue"
 import TheHeader from "../components/TheHeader.vue"
 
-const user = ref({})
+const user = ref(null)
 
 onMounted(async () => {
   const authStore = useAuthStore()
@@ -18,7 +18,7 @@ onMounted(async () => {
 <template>
   <BaseLayout>
     <TheHeader>
-      <template #header-heading v-if="user"> Halo, {{ user.nama }}. </template>
+      <template #header-heading v-if="user"> Halo, {{ user?.nama }}. </template>
       <template #header-heading v-else> Halo kamu! </template>
     </TheHeader>
 

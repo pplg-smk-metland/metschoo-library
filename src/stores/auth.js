@@ -55,6 +55,8 @@ export const useAuthStore = defineStore("auth", {
     },
 
     async getProfile() {
+      if (!this.session) return null
+
       try {
         const { data, error, status } = await supabase
           .from("pengguna")
@@ -64,7 +66,7 @@ export const useAuthStore = defineStore("auth", {
         if (error && status !== 406) throw error
         return data
       } catch (err) {
-        alert(err.message)
+        console.trace(err.message)
       }
     },
 
