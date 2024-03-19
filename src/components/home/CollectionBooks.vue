@@ -20,7 +20,7 @@ async function ambilBukuKoleksi() {
     if (error) throw error
     return data
   } catch (err) {
-    alert(err.message)
+    console.trace(err.message)
   } finally {
     isLoading.value = false
   }
