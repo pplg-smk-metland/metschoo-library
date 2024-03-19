@@ -4,7 +4,10 @@ import { ambilGambarBukuDariISBN } from "@/lib/utils"
 import CTA from "@/components/CTA.vue"
 
 const props = defineProps({
-  buku: Object,
+  buku: {
+    type: Object,
+    required: true,
+  },
 })
 
 const emit = defineEmits(["kembalikanBuku"])

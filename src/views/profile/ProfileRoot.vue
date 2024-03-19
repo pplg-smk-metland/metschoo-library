@@ -35,8 +35,7 @@ async function ambilBukuYangDipinjam() {
     isLoading.value = true
     const { data, error } = await supabase
       .from("peminjaman")
-      .select(`tgl_pinjam, tgl_kembali, sudah_dikembalikan, buku(*)`)
-      .eq("user_id", authStore.session.user.id)
+      .select(`tgl_pinjam, tgl_kembali, sudah_dikembalikan, sudah_dikonfirmasi, buku(*)`)
       .eq("sudah_dikembalikan", false)
 
     if (error) throw error
@@ -141,6 +140,7 @@ async function kembalikanBuku(buku) {
           <ProfileBook
             v-for="buku in bukuSudahDikonfirmasi"
             :key="buku.no_isbn"
+            :buku="buku"
             @kembalikan-buku="kembalikanBuku(buku.buku)"
           />
         </ul>
