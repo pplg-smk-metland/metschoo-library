@@ -47,12 +47,16 @@ onMounted(async () => {
   bukuDipinjam.value = await ambilBukuYangDipinjam()
 })
 
-async function konfirmasiPeminjaman(no_isbn) {
+async function konfirmasiPeminjaman(no_isbn, jumlah_exspl) {
   try {
     if (!confirm("beneran nih mau konfirmasi peminjaman buku")) return
     const { error } = await supabase
       .from("peminjaman")
-      .update({ sudah_dikonfirmasi: true, tgl_pinjam: new Date().toISOString() })
+      .update({
+        sudah_dikonfirmasi: true,
+        tgl_pinjam: new Date().toISOString(),
+        jumlah_exspl: Number(jumlah_exspl) - 1,
+      })
       .eq("no_isbn", no_isbn)
     if (error) throw error
 
@@ -81,7 +85,7 @@ function konfirmasiPengembalian(no_isbn) {
         v-for="data in dataPeminjaman"
         :key="data.user_id"
         :data="data"
-        @konfirmasi-peminjaman="konfirmasiPeminjaman(data.no_isbn)"
+        @konfirmasi-peminjaman="konfirmasiPeminjaman(data.no_isbn, data.buku.jumlah_exspl)"
         @konfirmasi-pengembalian="konfirmasiPengembalian(data.no_isbn)"
       />
     </ul>
