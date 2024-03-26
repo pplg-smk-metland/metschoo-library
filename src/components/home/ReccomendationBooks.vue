@@ -13,8 +13,8 @@ async function ambilBukuBiasa() {
     isLoading.value = true
     const { data, error } = await supabase
       .from("buku")
-      .select(`*`)
-      .eq("kategori", "paket")
+      .select(`*, kategori_buku(kategori)`)
+      .eq("kategori_buku.kategori", "paket")
       .limit(20)
 
     if (error) throw error
