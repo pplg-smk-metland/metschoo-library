@@ -1,7 +1,8 @@
 <script setup>
-const props = defineProps({
+defineProps({
   isLink: Boolean,
   fill: Boolean,
+  danger: Boolean,
 })
 </script>
 
@@ -10,7 +11,7 @@ const props = defineProps({
     <slot />
   </routerLink>
 
-  <button v-else :class="['btn', 'cta', { 'cta--fill': fill }]">
+  <button v-else :class="['btn', 'cta', { 'cta--fill': fill }, { 'cta--danger': danger }]">
     <slot />
   </button>
 </template>
@@ -33,6 +34,11 @@ const props = defineProps({
 
 .cta--fill:is(:hover, :focus-visible) {
   background: var(--secondary-100);
+  color: var(--white);
+}
+
+.cta--danger {
+  background: var(--color-danger);
   color: var(--white);
 }
 
