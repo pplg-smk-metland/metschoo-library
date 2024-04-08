@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue"
 import { supabase } from "@/lib/supabase"
+import { getAllAvailableCategories } from "../../lib/utils"
 import CTA from "@/components/CTA.vue"
 
 const daftarBuku = ref([])
@@ -16,16 +17,6 @@ async function ambilBuku() {
 
 const availableCategories = ref([])
 const selectedCategory = ref(null)
-
-async function getCategories() {
-  try {
-    const { data, error } = await supabase.from("kategori_buku").select("*")
-    if (error) throw error
-    return data
-  } catch (err) {
-    console.trace(err.message)
-  }
-}
 
 async function searchBooks() {
   try {
@@ -44,7 +35,7 @@ async function searchBooks() {
 
 onMounted(async () => {
   daftarBuku.value = await ambilBuku()
-  availableCategories.value = await getCategories()
+  availableCategories.value = await getAllAvailableCategories()
 })
 
 const searchTerm = ref("")

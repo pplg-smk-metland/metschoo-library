@@ -2,6 +2,7 @@
 import CTA from "@/components/CTA.vue"
 import { onMounted, ref } from "vue"
 import { supabase } from "../../lib/supabase"
+import { getAllAvailableCategories } from "../../lib/utils"
 
 const buku = ref({
   no_isbn: "",
@@ -61,18 +62,9 @@ function previewBookImage(bukuGambarEl: HTMLInputElement) {
 }
 
 const availableCategories = ref([])
-const getAvailableCategories = async () => {
-  try {
-    const { data, error } = await supabase.from("kategori_buku").select("id, kategori")
-    if (error) throw error
-    return data
-  } catch (err) {
-    console.trace(err.message)
-  }
-}
 
 onMounted(async () => {
-  availableCategories.value = await getAvailableCategories()
+  availableCategories.value = await getAllAvailableCategories()
 })
 </script>
 

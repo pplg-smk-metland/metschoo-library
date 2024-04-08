@@ -2,6 +2,7 @@
 import { onMounted, ref } from "vue"
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import { supabase } from "../../lib/supabase"
+import { getAllAvailableCategories } from "../../lib/utils"
 import { useRouter } from "vue-router"
 import CTA from "@/components/CTA.vue"
 
@@ -10,16 +11,6 @@ const isLoading = ref(false)
 const buku = ref({})
 const availableCategories = ref([])
 const router = useRouter()
-
-async function getCategories() {
-  try {
-    const { data, error } = await supabase.from("kategori_buku").select("*")
-    if (error) throw error
-    return data
-  } catch (err) {
-    console.trace(err.message)
-  }
-}
 
 async function ambilBuku() {
   try {
@@ -41,7 +32,7 @@ async function ambilBuku() {
 
 onMounted(async () => {
   buku.value = await ambilBuku()
-  availableCategories.value = await getCategories()
+  availableCategories.value = await getAllAvailableCategories()
 })
 
 async function editBook() {

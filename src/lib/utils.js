@@ -34,3 +34,13 @@ export async function kembalikanBukuDariISBN(isbn) {
     .eq("no_isbn", isbn)
   if (error) throw error
 }
+
+export async function getAllAvailableCategories() {
+  try {
+    const { data, error } = await supabase.from("kategori_buku").select("id, kategori")
+    if (error) throw error
+    return data
+  } catch (err) {
+    console.trace(err.message)
+  }
+}
