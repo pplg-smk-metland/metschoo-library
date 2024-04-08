@@ -2,14 +2,14 @@
 import { onMounted, ref } from "vue"
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import { supabase } from "../../lib/supabase"
-import { useRoute } from "vue-router"
+import { useRouter } from "vue-router"
 import CTA from "@/components/CTA.vue"
 
 const isLoading = ref(false)
 
 const buku = ref({})
 const availableCategories = ref([])
-const router = useRoute()
+const router = useRouter()
 
 async function getCategories() {
   try {
@@ -33,6 +33,7 @@ async function ambilBuku() {
     return data
   } catch (err) {
     console.trace(err.message)
+    router.push({ name: "data-buku" })
   } finally {
     isLoading.value = false
   }
@@ -65,8 +66,17 @@ async function editBook() {
   }
 }
 
-function deleteBook() {
-  alert("not implemented yet")
+async function deleteBook(isbn) {
+  isLoading.value = true
+  try {
+    const { error } = await supabase.from("buku").delete().eq("no_isbn", isbn)
+    if (error) throw error
+    router.push({ name: "data-buku" })
+  } catch (err) {
+    console.trace(err.message)
+  } finally {
+    isLoading.value = false
+  }
 }
 
 const formIsVisible = ref(false)
@@ -142,7 +152,7 @@ function toggleFormVisibility() {
   </article>
 
   <div class="button-container">
-    <CTA @click="deleteBook" danger>Delete</CTA>
+    <CTA @click="deleteBook(buku.no_isbn)" danger>Delete</CTA>
     <CTA @click="toggleFormVisibility" v-show="!formIsVisible">Edit</CTA>
   </div>
 </template>
