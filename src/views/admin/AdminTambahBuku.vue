@@ -18,7 +18,26 @@ const buku = ref({
 
 const isLoading = ref(false)
 
-async function insertBook() {
+function previewBookImage() {
+  bukuGambarFile.value = bukuGambarEl.value.files[0]
+  bukuGambarURL.value = URL.createObjectURL(bukuGambarFile.value)
+}
+
+async function uploadBookImage(isbn: string, file: File) {
+  isLoading.value = true
+  try {
+    const { error } = await supabase.storage.from("Buku").upload(`${isbn}/${isbn}`, file, {
+      upsert: false,
+    })
+    if (error) throw error
+  } catch (error) {
+    console.trace(error.message)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+async function addNewBook() {
   isLoading.value = true
   const {
     no_isbn,
@@ -45,21 +64,19 @@ async function insertBook() {
       kategori_id,
     })
 
-    if (error) error
+    if (error) throw error
+
+    await uploadBookImage(no_isbn, bukuGambarFile.value)
   } catch (err) {
-    console.err(err.message)
+    console.trace(err.message)
   } finally {
     isLoading.value = false
   }
 }
 
 const bukuGambarEl = ref(null)
-const bukuGambar = ref("")
-
-function previewBookImage(bukuGambarEl: HTMLInputElement) {
-  const file = bukuGambarEl.files[0]
-  bukuGambar.value = URL.createObjectURL(file)
-}
+const bukuGambarURL = ref("")
+const bukuGambarFile = ref(null)
 
 const availableCategories = ref([])
 
@@ -72,10 +89,16 @@ onMounted(async () => {
   <h1>Tambah buku</h1>
 
   <div class="buku-gambar">
-    <img :src="bukuGambar" width="800" height="450" alt="" v-if="bukuGambarEl && bukuGambar" />
+    <img
+      :src="bukuGambarURL"
+      width="800"
+      height="450"
+      alt=""
+      v-if="bukuGambarEl && bukuGambarFile"
+    />
   </div>
 
-  <form @submit.prevent="insertBook">
+  <form @submit.prevent="addNewBook">
     <label for="buku-gambar">Gambar buku</label>
     <input
       type="file"
@@ -83,7 +106,7 @@ onMounted(async () => {
       name="buku-gambar"
       accept="image/*"
       ref="bukuGambarEl"
-      @change="previewBookImage(bukuGambarEl)"
+      @change="previewBookImage(bukuGambarEl, bukuGambarFile)"
       required
     />
 
