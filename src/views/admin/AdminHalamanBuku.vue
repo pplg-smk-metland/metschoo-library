@@ -1,30 +1,38 @@
 <script setup>
 import { onMounted, ref } from "vue"
-import LoadingSpinner from "@/components/LoadingSpinner.vue"
+import { StorageError } from "@supabase/storage-js"
 import { supabase } from "../../lib/supabase"
 import { getAllAvailableCategories } from "../../lib/utils"
-import { useRouter } from "vue-router"
+import { useDialog } from "../../lib/composables"
+import { useRoute, useRouter } from "vue-router"
+
+import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import CTA from "@/components/CTA.vue"
+import TheDialog from "../../components/TheDialog.vue"
 
 const isLoading = ref(false)
 
 const buku = ref({})
 const availableCategories = ref([])
 const router = useRouter()
+const currentRoute = useRoute()
+const { dialog } = useDialog()
+const { dialog: errDialog } = useDialog()
 
 async function ambilBuku() {
+  const isbn = currentRoute.params.isbn
   try {
     isLoading.value = true
     const { data, error } = await supabase
       .from("buku")
       .select("*, kategori_buku(kategori)")
-      .eq("no_isbn", router.params.isbn)
+      .eq("no_isbn", isbn)
       .single()
     if (error) throw error
     return data
   } catch (err) {
     console.trace(err.message)
-    router.push({ name: "data-buku" })
+    errDialog.value.open(`Buku dengan ISBN ${isbn} tidak ditemukan.`)
   } finally {
     isLoading.value = false
   }
@@ -60,11 +68,22 @@ async function editBook() {
 async function deleteBook(isbn) {
   isLoading.value = true
   try {
-    const { error } = await supabase.from("buku").delete().eq("no_isbn", isbn)
+    let { error } = await supabase.from("buku").delete().eq("no_isbn", isbn)
     if (error) throw error
-    router.push({ name: "data-buku" })
+
+    const response = await supabase.storage.from("Buku").remove([`${isbn}/${isbn}`])
+    error = response.error
+    if (error) throw error
+    dialog.value.open("Buku sukses dihapus.")
   } catch (err) {
     console.trace(err.message)
+    if (err instanceof StorageError) {
+      errDialog.value.open(
+        "Kesalahan terjadi saat menghapus gambar sampul buku. Silahkan coba lagi dalam beberapa saat."
+      )
+    }
+
+    errDialog.value.open("Kesalahan terjadi saat menghapus data buku. Silahkan coba lagi.")
   } finally {
     isLoading.value = false
   }
@@ -80,7 +99,7 @@ function toggleFormVisibility() {
 <template>
   <LoadingSpinner v-if="isLoading" />
 
-  <article class="buku" v-else v-show="!formIsVisible">
+  <article class="buku" v-else v-show="!formIsVisible && buku">
     <h1>Data {{ buku.judul }} - {{ buku.jumlah_exspl }}</h1>
     <p>{{ buku.penulis }}</p>
     <p>{{ buku.asal }}</p>
@@ -146,6 +165,19 @@ function toggleFormVisibility() {
     <CTA @click="deleteBook(buku.no_isbn)" danger>Delete</CTA>
     <CTA @click="toggleFormVisibility" v-show="!formIsVisible">Edit</CTA>
   </div>
+
+  <TheDialog :is-open="errDialog.isOpen" @dialog-close="router.push({ name: 'data-buku' })">
+    <h2>Ada kesalahan!</h2>
+    <p>
+      {{ errDialog.message }}
+    </p>
+  </TheDialog>
+  <TheDialog :is-open="dialog.isOpen" @dialog-close="router.push({ name: 'data-buku' })">
+    <h2>Sukses!</h2>
+    <p>
+      {{ dialog.message }}
+    </p>
+  </TheDialog>
 </template>
 
 <style scoped>
