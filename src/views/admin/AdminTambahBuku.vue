@@ -1,10 +1,25 @@
 <script setup lang="ts">
-import CTA from "@/components/CTA.vue"
+import { StorageError } from "@supabase/storage-js"
+import CTA from "../../components/CTA.vue"
+import TheDialog from "../../components/TheDialog.vue"
+import { useDialog } from "../../lib/composables"
 import { onMounted, ref } from "vue"
 import { supabase } from "../../lib/supabase"
 import { getAllAvailableCategories } from "../../lib/utils"
 
-const buku = ref({
+interface Buku {
+  no_isbn: string
+  judul: string
+  penulis: string
+  penerbit: string
+  tahun_terbit: string
+  alamat_terbit: string
+  asal: string
+  jumlah_exspl: number
+  kategori_id: number
+}
+
+const buku = ref<Buku>({
   no_isbn: "",
   judul: "",
   penulis: "",
@@ -17,8 +32,15 @@ const buku = ref({
 })
 
 const isLoading = ref(false)
+const { dialog } = useDialog()
+const { dialog: errDialog } = useDialog()
+
+const bukuGambarEl = ref(null)
+const bukuGambarURL = ref("")
+const bukuGambarFile = ref()
 
 function previewBookImage() {
+  //@ts-ignore
   bukuGambarFile.value = bukuGambarEl.value.files[0]
   bukuGambarURL.value = URL.createObjectURL(bukuGambarFile.value)
 }
@@ -29,16 +51,13 @@ async function uploadBookImage(isbn: string, file: File) {
     const { error } = await supabase.storage.from("Buku").upload(`${isbn}/${isbn}`, file, {
       upsert: false,
     })
-    if (error) throw error
-  } catch (error) {
-    console.trace(error.message)
+    return error
   } finally {
     isLoading.value = false
   }
 }
 
-async function addNewBook() {
-  isLoading.value = true
+async function insertBookData(buku: Buku) {
   const {
     no_isbn,
     judul,
@@ -49,34 +68,48 @@ async function addNewBook() {
     asal,
     jumlah_exspl,
     kategori_id,
-  } = buku.value
+  } = buku
+
+  const { error } = await supabase.from("buku").insert({
+    no_isbn,
+    judul,
+    penulis,
+    penerbit,
+    tahun_terbit,
+    alamat_terbit,
+    asal,
+    jumlah_exspl,
+    kategori_id,
+  })
+  return error
+}
+
+async function addNewBook() {
+  isLoading.value = true
+
+  const { no_isbn } = buku.value
 
   try {
-    const { error } = await supabase.from("buku").insert({
-      no_isbn,
-      judul,
-      penulis,
-      penerbit,
-      tahun_terbit,
-      alamat_terbit,
-      asal,
-      jumlah_exspl,
-      kategori_id,
-    })
-
-    if (error) throw error
-
-    await uploadBookImage(no_isbn, bukuGambarFile.value)
-  } catch (err) {
-    console.trace(err.message)
+    const insertError = await insertBookData(buku.value)
+    if (insertError) throw insertError
+    const uploadError = await uploadBookImage(no_isbn, bukuGambarFile.value)
+    if (uploadError) throw uploadError
+    dialog.value.open("Buku berhasil ditambahkan!")
+  } catch (error) {
+    console.trace(error.message)
+    if (error instanceof StorageError) {
+      errDialog.value.open(
+        `Ada kesalahan saat mengunggah sampul buku. Silahkan coba lagi dalam beberapa saat. ${error.message}`
+      )
+    } else {
+      errDialog.value.open(
+        `Ada kesalahan saat mengunggah buku. Mungkin ISBNnya sudah ada? ${error.message}`
+      )
+    }
   } finally {
     isLoading.value = false
   }
 }
-
-const bukuGambarEl = ref(null)
-const bukuGambarURL = ref("")
-const bukuGambarFile = ref(null)
 
 const availableCategories = ref([])
 
@@ -157,7 +190,20 @@ onMounted(async () => {
     <label for="buku-asal"> Asal </label>
     <input type="text" name="buku-asal" id="buku-asal" required v-model="buku.asal" />
 
-    <CTA>Tambah buku baru</CTA>
+    <CTA :disabled="isLoading">Tambah buku baru</CTA>
+
+    <TheDialog :is-open="errDialog.isOpen" @dialog-close="errDialog.close()">
+      <h2>Ada kesalahan!</h2>
+      <p>{{ errDialog.message }}</p>
+    </TheDialog>
+
+    <TheDialog
+      :is-open="dialog.isOpen"
+      @dialog-close="router.push({ name: 'buku', params: { isbn: buku.no_isbn } })"
+    >
+      <h2>Sukses!</h2>
+      <p>{{ dialog.message }}</p>
+    </TheDialog>
   </form>
 </template>
 
