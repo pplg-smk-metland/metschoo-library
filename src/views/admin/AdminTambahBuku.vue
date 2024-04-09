@@ -214,4 +214,8 @@ onMounted(async () => {
   object-fit: cover;
   aspect-ratio: 16/9;
 }
+
+form .cta {
+  margin-block: 1rem;
+}
 </style>
