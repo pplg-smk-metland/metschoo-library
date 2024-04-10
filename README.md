@@ -1,6 +1,6 @@
-# metschoo-library-real
+# Metschoo Library
 
-Source code of Metschoo Library web app, made with Vue 3.
+Source code of Metschoo Library web app, made with Vue 3 and Supabase.
 
 ## Recommended IDE Setup
 
@@ -48,8 +48,10 @@ some tasks, ordered by priority:
 - style
   - change function names and variables into English
   - make sure all UI elements are written in Indonesian
-- add types (TypeScript)
-- set up TypeScript config for dynamic imports (`@`)
+- Make the ugly admin routes pretty
+- set up TypeScript
+  - add types
+  - set up config for dynamic imports (`@`)
 - implement unit testing with Vitest
 
 In the future we would also like to write a full documentation of some sorts.
