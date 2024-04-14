@@ -74,17 +74,17 @@ const routes = [
         component: () => import("../views/admin/AdminPeminjaman.vue"),
       },
       {
-        path: "data-buku",
+        path: "buku",
         name: "data-buku",
         component: () => import("../views/admin/AdminDataBuku.vue"),
       },
       {
-        path: "daftar-buku",
-        name: "daftar-buku",
-        component: () => import("../views/admin/AdminDaftarBuku.vue"),
+        path: "buku/:isbn",
+        name: "buku",
+        component: () => import("../views/admin/AdminHalamanBuku.vue"),
       },
       {
-        path: "tambah-buku",
+        path: "buku/tambah",
         name: "tambah-buku",
         component: () => import("../views/admin/AdminTambahBuku.vue"),
       },

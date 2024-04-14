@@ -4,7 +4,10 @@ import { ambilGambarBukuDariISBN } from "@/lib/utils"
 import CTA from "@/components/CTA.vue"
 
 const props = defineProps({
-  buku: Object,
+  buku: {
+    type: Object,
+    required: true,
+  },
 })
 
 const emit = defineEmits(["kembalikanBuku"])
@@ -22,14 +25,16 @@ onMounted(async () => {
 <template>
   <li class="buku">
     <figure>
-      <img
-        :src="imgURL"
-        class="buku__gambar"
-        alt="gambar buku"
-        loading="lazy"
-        width="200"
-        height="300"
-      />
+      <routerLink :to="`/buku/${dataBuku.no_isbn}`">
+        <img
+          :src="imgURL"
+          class="buku__gambar"
+          alt="gambar buku"
+          loading="lazy"
+          width="200"
+          height="300"
+        />
+      </routerLink>
     </figure>
     <figcaption class="buku__info">
       <div class="buku__metadata">
@@ -59,8 +64,12 @@ onMounted(async () => {
 
 <style scoped>
 .buku {
+  padding: 0.5rem;
   border-radius: 0.5rem;
-  outline: 2px solid #ddd;
+}
+
+.buku:hover {
+  background: var(--dark-grey);
 }
 
 .buku__info {

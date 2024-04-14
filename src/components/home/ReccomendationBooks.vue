@@ -13,14 +13,14 @@ async function ambilBukuBiasa() {
     isLoading.value = true
     const { data, error } = await supabase
       .from("buku")
-      .select(`*`)
-      .eq("kategori", "paket")
+      .select(`no_isbn, judul, penulis, tahun_terbit, kategori_id`)
+      .eq("kategori_id", 1)
       .limit(20)
 
     if (error) throw error
     return data
   } catch (err) {
-    alert(err.message)
+    console.trace(err.message)
   } finally {
     isLoading.value = false
   }

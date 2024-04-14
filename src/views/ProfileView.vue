@@ -1,9 +1,8 @@
 <script setup>
-import BaseLayout from "@/layouts/BaseLayout.vue"
+import TheNavbar from "@/components/TheNavbar.vue"
 </script>
 
 <template>
-  <BaseLayout>
-    <RouterView />
-  </BaseLayout>
+  <TheNavbar />
+  <RouterView />
 </template>

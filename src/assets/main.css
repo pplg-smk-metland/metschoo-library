@@ -31,17 +31,19 @@ label {
 }
 
 input {
-  background: var(--grey);
+  background: var(--neutral-transparent);
+  outline: 2px solid var(--neutral);
   padding: 1rem;
   width: 100%;
   border-radius: 0.5rem;
 }
 
 input:hover {
-  background: var(--dark-grey);
+  outline-color: var(--primary);
 }
 
 input:focus-visible {
+  background: var(--dark-grey);
   outline: 2px solid var(--primary);
 }
 
@@ -63,8 +65,12 @@ button:disabled {
   cursor: not-allowed;
 }
 
+.button-container {
+  display: flex;
+  gap: 0.5rem;
+}
+
 .btn {
-  margin: 20px 0px;
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
 }

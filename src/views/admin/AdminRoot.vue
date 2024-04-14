@@ -7,11 +7,32 @@ import DataRow from "@/components/admin/DataRow.vue"
 
 const isLoading = ref(false)
 const dataPeminjaman = ref([])
+const bukuDipinjam = ref([])
 
 async function ambilDataPeminjaman() {
   try {
     isLoading.value = true
-    const { data, error } = await supabase.from("peminjaman").select("*, pengguna(*), buku(*)")
+    const { data, error } = await supabase
+      .from("peminjaman")
+      .select("*, pengguna(*), buku(*)")
+      .eq("sudah_dikonfirmasi", false)
+    if (error) throw error
+    return data
+  } catch (err) {
+    console.error(err.message)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+async function ambilBukuYangDipinjam() {
+  try {
+    isLoading.value = true
+    const { data, error } = await supabase
+      .from("peminjaman")
+      .select("*, pengguna(nama, jurusan), buku(*)")
+      .eq("sudah_dikonfirmasi", true)
+      .eq("sudah_dikembalikan", false)
     if (error) throw error
     return data
   } catch (err) {
@@ -23,19 +44,23 @@ async function ambilDataPeminjaman() {
 
 onMounted(async () => {
   dataPeminjaman.value = await ambilDataPeminjaman()
+  bukuDipinjam.value = await ambilBukuYangDipinjam()
 })
 
-async function konfirmasiPeminjaman(no_isbn) {
+async function konfirmasiPeminjaman(no_isbn, jumlah_exspl) {
   try {
     if (!confirm("beneran nih mau konfirmasi peminjaman buku")) return
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("peminjaman")
-      .update({ sudah_dikonfirmasi: true })
+      .update({
+        sudah_dikonfirmasi: true,
+        tgl_pinjam: new Date().toISOString(),
+        jumlah_exspl: Number(jumlah_exspl) - 1,
+      })
       .eq("no_isbn", no_isbn)
-      .select()
     if (error) throw error
 
-    dataPeminjaman.value = data
+    dataPeminjaman.value = dataPeminjaman.value.filter((buku) => buku.no_isbn !== no_isbn)
   } catch (err) {
     console.error(err.message)
   }
@@ -51,7 +76,7 @@ function konfirmasiPengembalian(no_isbn) {
   <p>Halo admin</p>
 
   <section class="main-section">
-    <h2>Data peminjaman buku</h2>
+    <h2>Buku yang belum dikonfirmasi</h2>
 
     <ul class="data-list">
       <LoadingSpinner v-if="isLoading" />
@@ -60,9 +85,19 @@ function konfirmasiPengembalian(no_isbn) {
         v-for="data in dataPeminjaman"
         :key="data.user_id"
         :data="data"
-        @konfirmasi-peminjaman="konfirmasiPeminjaman(data.no_isbn)"
+        @konfirmasi-peminjaman="konfirmasiPeminjaman(data.no_isbn, data.buku.jumlah_exspl)"
         @konfirmasi-pengembalian="konfirmasiPengembalian(data.no_isbn)"
       />
+    </ul>
+  </section>
+
+  <section class="main-section">
+    <h2>Buku yang sedang dipinjam</h2>
+
+    <ul class="data-list">
+      <LoadingSpinner v-if="isLoading" />
+      <li v-if="!isLoading && !bukuDipinjam.length">Tidak ada buku yang sedang dipinjam</li>
+      <DataRow v-else v-for="data in bukuDipinjam" :key="data.no_isbn" :data="data" />
     </ul>
   </section>
 </template>

@@ -5,6 +5,7 @@ import { useAuthStore } from "@/stores/auth"
 import router from "@/router"
 import { supabase } from "@/lib/supabase"
 
+import ProfileEditLayout from "@/layouts/ProfileEditLayout.vue"
 import TheDialog from "@/components/TheDialog.vue"
 import CTA from "@/components/CTA.vue"
 
@@ -67,76 +68,72 @@ onMounted(async () => {
 </script>
 
 <template>
-  <section class="nav">
-    <h1>Ubah kredensial</h1>
-    <routerLink :to="{ name: 'profile' }">Kembali</routerLink>
-  </section>
+  <ProfileEditLayout>
+    <section class="nav">
+      <h1>Ubah kredensial</h1>
+      <routerLink :to="{ name: 'profile' }">Kembali</routerLink>
+    </section>
 
-  <section class="main-section">
-    <h2>Ubah password</h2>
-    <form class="profile-form" @submit.prevent="ubahKredensial">
-      <label for="password">Password</label>
-      <input
-        type="password"
-        name="password"
-        id="password"
-        placeholder="Password rahasia anda"
-        required
-        v-model="kredensialPengguna.password"
-      />
+    <section class="main-section">
+      <h2>Ubah password</h2>
+      <form class="profile-form" @submit.prevent="ubahKredensial">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          name="password"
+          id="password"
+          placeholder="Password rahasia anda"
+          required
+          v-model="kredensialPengguna.password"
+        />
 
-      <label for="confirm-password">konfirmasi password</label>
-      <input
-        type="password"
-        name="confirm-password"
-        id="confirm-password"
-        placeholder="Password rahasia anda"
-        required
-        v-model="kredensialPengguna.passwordKonfirmasi"
-      />
+        <label for="confirm-password">konfirmasi password</label>
+        <input
+          type="password"
+          name="confirm-password"
+          id="confirm-password"
+          placeholder="Password rahasia anda"
+          required
+          v-model="kredensialPengguna.passwordKonfirmasi"
+        />
+        <div class="button-container">
+          <CTA>Ubah kredensial</CTA>
+        </div>
+      </form>
+    </section>
+
+    <section class="main-section">
+      <h2>Ubah email</h2>
+
+      <form @submit.prevent="ubahEmail">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          name="email"
+          id="email"
+          placeholder="emailanda@apa.com"
+          required
+          v-model="kredensialPengguna.email"
+        />
+
+        <div class="button-container">
+          <CTA>Ubah email</CTA>
+        </div>
+      </form>
+    </section>
+
+    <section class="main-section">
+      <h2>Keluar dari akun</h2>
+      <p>Klik disini untuk keluar dari akun anda</p>
+
       <div class="button-container">
-        <CTA>Ubah kredensial</CTA>
+        <CTA @click="signOut">Keluar dari akun</CTA>
       </div>
-    </form>
-  </section>
+    </section>
 
-  <section class="main-section">
-    <h2>Ubah email</h2>
-
-    <form @submit.prevent="ubahEmail">
-      <label for="email">Email</label>
-      <input
-        type="email"
-        name="email"
-        id="email"
-        placeholder="emailanda@apa.com"
-        required
-        v-model="kredensialPengguna.email"
-      />
-
-      <div class="button-container">
-        <CTA>Ubah email</CTA>
-      </div>
-    </form>
-  </section>
-
-  <section class="main-section">
-    <h2>Keluar dari akun</h2>
-    <p>Klik disini untuk keluar dari akun anda</p>
-
-    <div class="button-container">
-      <CTA @click="signOut">Keluar dari akun</CTA>
-    </div>
-  </section>
-
-  <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">
-    <h2>Info!!!</h2>
-    <p>{{ dialog.message }}</p>
-  </TheDialog>
+    <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">
+      <h2>Info!!!</h2>
+      <p>{{ dialog.message }}</p>
+    </TheDialog>
+  </ProfileEditLayout>
 </template>
-
-<style scoped>
-.main-section {
-  max-width: 100ch;
-}
-</style>

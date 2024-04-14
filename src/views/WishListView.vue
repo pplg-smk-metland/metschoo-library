@@ -4,6 +4,8 @@ import { useAuthStore } from "@/stores/auth.js"
 import { supabase } from "@/lib/supabase"
 import { useDialog } from "@/lib/composables"
 
+import { pinjamBukuDariISBN } from "@/lib/utils"
+
 import BaseLayout from "@/layouts/BaseLayout.vue"
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import WishlistBook from "@/components/wishlist/WishlistBook.vue"
@@ -17,10 +19,7 @@ const isLoading = ref(false)
 async function ambilWishlist() {
   try {
     isLoading.value = true
-    const { data, error } = await supabase
-      .from("wishlist")
-      .select("*, buku(*)")
-      .eq("user_id", authStore.session.user.id)
+    const { data, error } = await supabase.from("wishlist").select("*, buku(*)")
     if (error) throw error
     return data
   } catch (err) {
@@ -32,10 +31,31 @@ async function ambilWishlist() {
 
 const { dialog } = useDialog()
 
-function hapusItem(item) {
-  const found = wishlist.value.indexOf(item)
+async function pinjamBuku(buku) {
+  try {
+    await pinjamBukuDariISBN(buku.no_isbn)
+    await supabase.from("wishlist").delete().eq("no_isbn", buku.no_isbn)
+
+    dialog.value.open(`meminjam buku ${buku.judul}...`)
+    hapusBuku(buku)
+  } catch (err) {
+    console.error(err.message)
+  }
+}
+
+async function hapusBukuDariWishlist(buku) {
+  try {
+    await supabase.from("wishlist").delete().eq("no_isbn", buku.no_isbn)
+    hapusBuku(buku)
+  } catch (err) {
+    console.error(err.message)
+  }
+}
+
+function hapusBuku(buku) {
+  const found = wishlist.value.indexOf(buku)
   wishlist.value.splice(found, 1)
-  dialog.value.open(`menghapus buku ${item.judul} dari wishlist...`)
+  dialog.value.open(`menghapus buku ${buku.judul} dari wishlist...`)
 }
 
 onMounted(async () => {
@@ -59,10 +79,10 @@ onMounted(async () => {
       <ul v-if="wishlist.length" class="book-list">
         <WishlistBook
           v-for="wishlistItem in wishlist"
-          :key="wishlistItem.no_isbn"
+          :key="wishlistItem.wishlist_id"
           :buku="wishlistItem.buku"
-          @pinjam-buku="hapusItem(wishlistItem)"
-          @hapus-buku="hapusItem"
+          @pinjam-buku="pinjamBuku(wishlistItem.buku)"
+          @hapus-buku="hapusBukuDariWishlist(wishlistItem.buku)"
         />
       </ul>
     </section>

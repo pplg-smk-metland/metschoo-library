@@ -42,7 +42,6 @@ async function cekStatusPeminjaman(isbn) {
     const { data, error } = await supabase
       .from("peminjaman")
       .select("tgl_pinjam, sudah_dikembalikan")
-      .eq("user_id", authStore.session.user.id)
       .eq("no_isbn", isbn)
     if (error) throw error
 
@@ -73,7 +72,6 @@ async function cekWishlist(isbn) {
     const { count, error } = await supabase
       .from("wishlist")
       .select("no_isbn", { count: "exact", head: true })
-      .eq("user_id", authStore.session.user.id)
       .eq("no_isbn", isbn)
     if (error) throw error
 
@@ -111,7 +109,7 @@ onMounted(async () => {
   jumlahBuku.value = await ambilJumlahBukuTersedia(isbn)
 
   bukuAdaDiWishlist.value = await cekWishlist(isbn)
-  bukuBisaDipinjam.value = (await cekStatusPeminjaman(isbn)) && !bukuAdaDiWishlist.value
+  bukuBisaDipinjam.value = (await cekStatusPeminjaman(isbn)) && jumlahBuku.value > 0
 })
 
 const { dialog } = useDialog()
@@ -125,14 +123,10 @@ async function pinjamBuku(buku) {
 
   if (!confirm(`Beneran mau pinjem buku ${buku.judul}?`)) return
   try {
-    await pinjamBukuDariISBN(buku.no_isbn)
     if (bukuAdaDiWishlist.value) {
-      await supabase
-        .from("wishlist")
-        .delete()
-        .eq("user_id", authStore.session.user.id)
-        .eq("no_isbn", buku.no_isbn)
+      await supabase.from("wishlist").delete().eq("no_isbn", buku.no_isbn)
     }
+    await pinjamBukuDariISBN(buku.no_isbn)
     dialog.value.open(`sukses meminjam buku ${buku.judul}`)
   } catch (err) {
     dialog.value.open(err.message)
@@ -151,9 +145,7 @@ async function kembalikanBuku(buku) {
 
 async function masukkanWishlist(buku) {
   try {
-    const { data, error } = await supabase
-      .from("wishlist")
-      .insert([{ user_id: authStore.session.user.id, no_isbn: buku.no_isbn }])
+    const { data, error } = await supabase.from("wishlist").insert({ no_isbn: buku.no_isbn })
     if (error) throw error
 
     dialog.value.open(`buku berhasil ditambahkan ke dalam wishlist`)
@@ -301,11 +293,6 @@ supabase
 
 .buku__info {
   max-width: 100ch;
-}
-
-.button-container {
-  display: flex;
-  gap: 0.5rem;
 }
 
 .judul {

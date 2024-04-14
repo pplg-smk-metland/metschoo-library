@@ -55,17 +55,18 @@ export const useAuthStore = defineStore("auth", {
     },
 
     async getProfile() {
-      const { user } = this.session
+      if (!this.session) return null
+
       try {
         const { data, error, status } = await supabase
           .from("pengguna")
-          .select("*")
-          .eq("user_id", user.id)
+          .select("nama, email, kelas, jurusan")
+          .eq("user_id", this.session.user.id)
           .single()
         if (error && status !== 406) throw error
         return data
       } catch (err) {
-        alert(err.message)
+        console.trace(err.message)
       }
     },
 

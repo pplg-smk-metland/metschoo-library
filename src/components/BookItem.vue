@@ -20,7 +20,13 @@ onMounted(async () => {
   <li class="buku">
     <routerLink :to="`/buku/${buku.no_isbn}`">
       <figure>
-        <img :src="imgURL" class="buku__gambar" alt="gambar buku" loading="lazy" height="400" />
+        <img
+          :src="imgURL"
+          class="buku__gambar"
+          :alt="`cover buku ${buku.judul}`"
+          loading="lazy"
+          height="400"
+        />
       </figure>
       <figcaption class="buku__info">
         <div class="metadata">

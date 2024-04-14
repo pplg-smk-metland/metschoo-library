@@ -1,6 +1,6 @@
-# metschoo-library-real
+# Metschoo Library
 
-Source code of Metschoo Library web app, made with Vue 3.
+Source code of Metschoo Library web app, made with Vue 3 and Supabase.
 
 ## Recommended IDE Setup
 
@@ -9,7 +9,7 @@ Source code of Metschoo Library web app, made with Vue 3.
 
 ## Development
 
-THe example .env file is included under the name .env.example, there are two variables: `SUPABASE_URL` and
+The example .env file is included under the name .env.example, there are two variables: `SUPABASE_URL` and
 `SUPABASE_ANON_KEY`. When developing, make copy of the file and rename the file to .env.local so git can ignore it.
 
 ```sh
@@ -28,8 +28,30 @@ npm run dev
 npm run build
 ```
 
+You can preview the build with
+
+```sh
+npm run preview
+```
+
 ### Lint with [ESLint](https://eslint.org/)
 
 ```sh
 npm run lint
 ```
+
+### Todo
+
+The codebase is really messy at the moment. If you would like to help, here are
+some tasks, ordered by priority:
+
+- style
+  - change function names and variables into English
+  - make sure all UI elements are written in Indonesian
+- Make the ugly admin routes pretty
+- set up TypeScript
+  - add types
+  - set up config for dynamic imports (`@`)
+- implement unit testing with Vitest
+
+In the future we would also like to write a full documentation of some sorts.

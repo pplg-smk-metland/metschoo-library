@@ -4,8 +4,8 @@ import { supabase } from "@/lib/supabase"
 
 import BaseLayout from "@/layouts/BaseLayout.vue"
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
+import TheHeader from "../components/TheHeader.vue"
 import BookItem from "@/components/BookItem.vue"
-import SearchBar from "@/components/SearchBar.vue"
 
 const bukuYangDicari = inject("searchTerm")
 
@@ -37,12 +37,10 @@ onMounted(async () => {
 
 <template>
   <BaseLayout>
-    <h1>Pustaka</h1>
-
-    <h2>Cari buku</h2>
-    <section class="search">
-      <SearchBar @search="cariBuku"></SearchBar>
-    </section>
+    <TheHeader>
+      <template #header-heading>Pustaka</template>
+      <template #header-text>Eksplor buku disini</template>
+    </TheHeader>
 
     <h2>Hasil pencarian</h2>
     <ul class="book-list">
