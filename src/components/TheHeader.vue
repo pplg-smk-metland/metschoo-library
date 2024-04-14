@@ -18,7 +18,10 @@ import SearchBar from "@/components/SearchBar.vue"
 <style scoped>
 header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-wrap: wrap;
+}
+
+header > * {
+  flex-grow: 1;
 }
 </style>

@@ -36,11 +36,7 @@ async function cariBuku() {
 }
 
 #search-input {
-  flex: 4 0 0;
-}
-
-#search-submit {
-  flex: 1 0 0;
+  flex-grow: 1;
 }
 
 #search-form .btn {
