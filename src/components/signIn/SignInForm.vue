@@ -78,7 +78,7 @@ async function handleSignUp() {
           placeholder="Password Anda"
           v-model="data.password"
         />
-        <CTA type="submit" :is-button="true" :fill="true">Masuk</CTA>
+        <CTA type="submit" :fill="true">Masuk</CTA>
       </form>
     </div>
 
@@ -104,11 +104,11 @@ async function handleSignUp() {
           v-model="data.confirmPassword"
         />
 
-        <CTA type="submit" :is-button="true" :fill="true">Daftar</CTA>
+        <CTA type="submit" :fill="true">Daftar</CTA>
       </form>
     </div>
 
-    <CTA @click="handleSwitchForm" :is-button="true">
+    <CTA @click="handleSwitchForm">
       <span v-if="isSigningIn">Belum punya akun? Daftar</span>
       <span v-else>Sudah punya akun? Masuk</span>
     </CTA>

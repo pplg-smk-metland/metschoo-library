@@ -25,7 +25,7 @@ async function cariBuku() {
       v-model="bukuYangDicari"
       required
     />
-    <CTA id="search-submit" :is-button="true">Search</CTA>
+    <CTA id="search-submit">Search</CTA>
   </form>
 </template>
 
