@@ -9,7 +9,7 @@ export function useDialog() {
      * opens the dialog.
      * @param {string} message  message to be displayed in the dialog
      * */
-    open(message) {
+    open(message: string) {
       this.isOpen = true
       this.message = message
     },

@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { watch, ref } from "vue"
 
 const props = defineProps({
@@ -20,7 +20,7 @@ function closeDialog() {
 
 watch(
   () => props.isOpen,
-  (newValue, oldValue) => {
+  (newValue, _) => {
     // newValue is passed when dialog opens, aka props.isOpen changes to true
     if (newValue) openDialog()
   }
