@@ -1,8 +1,7 @@
 {
+  "extends": "@vue/tsconfig/tsconfig.json",
   "compilerOptions": {
-    "module": "esnext",
-    "moduleResolution": "nodenext",
-    "target": "es2020",
+    "types": ["node", "vite/client"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
