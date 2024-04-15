@@ -1,7 +1,8 @@
 import { supabase } from "@/lib/supabase"
 import { useAuthStore } from "@/stores/auth"
+import type { PostgrestError } from "@supabase/supabase-js"
 
-export async function ambilGambarBukuDariISBN(isbn) {
+export async function ambilGambarBukuDariISBN(isbn: string) {
   const cdnURL = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/Buku`
 
   try {
@@ -13,24 +14,24 @@ export async function ambilGambarBukuDariISBN(isbn) {
     if (data.length) return `${cdnURL}/${isbn}/${data[0]?.name}`
     else return "../../assets/Image_not_available.png"
   } catch (err) {
-    console.error(err.message)
+    console.error((err as PostgrestError).message)
   }
 }
 
-export async function pinjamBukuDariISBN(isbn) {
+export async function pinjamBukuDariISBN(isbn: string) {
   const authStore = useAuthStore()
   const { error } = await supabase
     .from("peminjaman")
-    .insert({ user_id: authStore.session.user.id, no_isbn: isbn })
+    .insert({ user_id: authStore.session!.user.id, no_isbn: isbn })
   if (error) throw error
 }
 
-export async function kembalikanBukuDariISBN(isbn) {
+export async function kembalikanBukuDariISBN(isbn: string) {
   const authStore = useAuthStore()
   const { error } = await supabase
     .from("peminjaman")
     .update({ sudah_dikembalikan: true })
-    .eq("user_id", authStore.session.user.id)
+    .eq("user_id", authStore.session!.user.id)
     .eq("no_isbn", isbn)
   if (error) throw error
 }
@@ -41,6 +42,6 @@ export async function getAllAvailableCategories() {
     if (error) throw error
     return data
   } catch (err) {
-    console.trace(err.message)
+    console.trace((err as PostgrestError).message)
   }
 }
