@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue"
-import { useAuthStore } from "@/stores/auth.js"
+import { useAuthStore } from "@/stores/auth"
 import { supabase } from "@/lib/supabase"
 import { useDialog } from "@/lib/composables"
 
