@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import CTA from "@/components/CTA.vue"
 
 const props = defineProps({

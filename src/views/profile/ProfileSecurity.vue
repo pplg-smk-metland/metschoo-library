@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref } from "vue"
 import { useDialog } from "@/lib/composables"
 import { useAuthStore } from "@/stores/auth"

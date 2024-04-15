@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import SearchBar from "@/components/SearchBar.vue"
 
 defineEmits(["search"])

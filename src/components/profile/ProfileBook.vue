@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from "vue"
 import { ambilGambarBukuDariISBN } from "@/lib/utils"
 import CTA from "@/components/CTA.vue"

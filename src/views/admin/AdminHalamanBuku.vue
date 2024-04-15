@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref } from "vue"
 import { StorageError } from "@supabase/storage-js"
 import { supabase } from "../../lib/supabase"
