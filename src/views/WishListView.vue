@@ -55,9 +55,8 @@ async function hapusBukuDariWishlist(buku: Buku) {
   }
 }
 
-function hapusBuku(buku) {
-  const found = wishlist.value.indexOf(buku)
-  wishlist.value.splice(found, 1)
+function hapusBuku(buku: Buku) {
+  wishlist.value = wishlist.value.filter(({ no_isbn }) => no_isbn !== buku.no_isbn)
   dialog.value.open(`menghapus buku ${buku.judul} dari wishlist...`)
 }
 
