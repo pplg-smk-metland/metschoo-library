@@ -6,9 +6,10 @@ import { useAuthStore } from "@/stores/auth"
 import ProfileEditLayout from "@/layouts/ProfileEditLayout.vue"
 import TheDialog from "@/components/TheDialog.vue"
 import CTA from "@/components/CTA.vue"
+import type { Pengguna } from "@/types"
 
 const dialog = useDialog()
-const dataPengguna = ref({})
+const dataPengguna = ref<Pengguna | null>()
 
 async function updateUserInfo() {
   try {
@@ -23,7 +24,7 @@ const authStore = useAuthStore()
 
 onMounted(async () => {
   const data = await authStore.getProfile()
-  dataPengguna.value = data
+  if (data) dataPengguna.value = data
 })
 </script>
 
@@ -46,17 +47,17 @@ onMounted(async () => {
 
       <form class="profile__details" @submit.prevent="updateUserInfo">
         <label for="name">Nama</label>
-        <input type="text" placeholder="Masukan Nama" v-model="dataPengguna.nama" />
+        <input type="text" placeholder="Masukan Nama" v-model="dataPengguna?.nama" />
 
         <label for="kelas">Kelas</label>
-        <select name="kelas" id="kelas" v-model="dataPengguna.kelas">
+        <select name="kelas" id="kelas" v-model="dataPengguna?.kelas">
           <option value="X">X</option>
           <option value="XI">XI</option>
           <option value="XII">XII</option>
         </select>
 
         <label for="jurusan">Jurusan</label>
-        <input type="text" placeholder="Masukkan Jurusan" v-model="dataPengguna.jurusan" />
+        <input type="text" placeholder="Masukkan Jurusan" v-model="dataPengguna?.jurusan" />
 
         <div class="button-container">
           <CTA :fill="true">Edit profil</CTA>

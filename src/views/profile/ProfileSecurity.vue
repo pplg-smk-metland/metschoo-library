@@ -63,7 +63,7 @@ function signOut() {
 onMounted(async () => {
   const authStore = useAuthStore()
   const data = await authStore.getProfile()
-  kredensialPengguna.value.email = data.email
+  kredensialPengguna.value.email = data!.email
 })
 </script>
 
