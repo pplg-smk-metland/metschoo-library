@@ -1,4 +1,10 @@
-export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
 
 export type Database = {
   public: {
@@ -20,40 +26,40 @@ export type Database = {
       }
       buku: {
         Row: {
-          alamat_terbit: string | null
-          asal: string | null
+          alamat_terbit: string
+          asal: string
           fts: unknown | null
-          judul: string | null
-          jumlah_exspl: number | null
+          judul: string
+          jumlah_exspl: number
           kategori_id: number
           no_isbn: string
           penerbit: string | null
-          penulis: string | null
-          tahun_terbit: string | null
+          penulis: string
+          tahun_terbit: string
         }
         Insert: {
-          alamat_terbit?: string | null
-          asal?: string | null
+          alamat_terbit: string
+          asal: string
           fts?: unknown | null
-          judul?: string | null
-          jumlah_exspl?: number | null
+          judul: string
+          jumlah_exspl?: number
           kategori_id: number
           no_isbn: string
           penerbit?: string | null
-          penulis?: string | null
-          tahun_terbit?: string | null
+          penulis: string
+          tahun_terbit: string
         }
         Update: {
-          alamat_terbit?: string | null
-          asal?: string | null
+          alamat_terbit?: string
+          asal?: string
           fts?: unknown | null
-          judul?: string | null
-          jumlah_exspl?: number | null
+          judul?: string
+          jumlah_exspl?: number
           kategori_id?: number
           no_isbn?: string
           penerbit?: string | null
-          penulis?: string | null
-          tahun_terbit?: string | null
+          penulis?: string
+          tahun_terbit?: string
         }
         Relationships: [
           {
@@ -68,15 +74,15 @@ export type Database = {
       kategori_buku: {
         Row: {
           id: number
-          kategori: string | null
+          kategori: string
         }
         Insert: {
           id?: number
-          kategori?: string | null
+          kategori: string
         }
         Update: {
           id?: number
-          kategori?: string | null
+          kategori?: string
         }
         Relationships: []
       }
@@ -124,24 +130,24 @@ export type Database = {
       }
       pengguna: {
         Row: {
-          email: string | null
+          email: string
           jurusan: string | null
           kelas: string | null
-          nama: string | null
+          nama: string
           user_id: string
         }
         Insert: {
-          email?: string | null
+          email: string
           jurusan?: string | null
           kelas?: string | null
-          nama?: string | null
+          nama: string
           user_id: string
         }
         Update: {
-          email?: string | null
+          email?: string
           jurusan?: string | null
           kelas?: string | null
-          nama?: string | null
+          nama?: string
           user_id?: string
         }
         Relationships: [
@@ -213,16 +219,20 @@ export type Tables<
     }
     ? R
     : never
-  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] & PublicSchema["Views"])
-  ? (PublicSchema["Tables"] & PublicSchema["Views"])[PublicTableNameOrOptions] extends {
-      Row: infer R
-    }
-    ? R
+  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
+        PublicSchema["Views"])
+    ? (PublicSchema["Tables"] &
+        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
     : never
-  : never
 
 export type TablesInsert<
-  PublicTableNameOrOptions extends keyof PublicSchema["Tables"] | { schema: keyof Database },
+  PublicTableNameOrOptions extends
+    | keyof PublicSchema["Tables"]
+    | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
     : never = never,
@@ -233,15 +243,17 @@ export type TablesInsert<
     ? I
     : never
   : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-  ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
-      Insert: infer I
-    }
-    ? I
+    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
     : never
-  : never
 
 export type TablesUpdate<
-  PublicTableNameOrOptions extends keyof PublicSchema["Tables"] | { schema: keyof Database },
+  PublicTableNameOrOptions extends
+    | keyof PublicSchema["Tables"]
+    | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
     : never = never,
@@ -252,20 +264,22 @@ export type TablesUpdate<
     ? U
     : never
   : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-  ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
-      Update: infer U
-    }
-    ? U
+    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
     : never
-  : never
 
 export type Enums<
-  PublicEnumNameOrOptions extends keyof PublicSchema["Enums"] | { schema: keyof Database },
+  PublicEnumNameOrOptions extends
+    | keyof PublicSchema["Enums"]
+    | { schema: keyof Database },
   EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
 > = PublicEnumNameOrOptions extends { schema: keyof Database }
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
-  ? PublicSchema["Enums"][PublicEnumNameOrOptions]
-  : never
+    ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never
