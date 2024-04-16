@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue"
 import { StorageError } from "@supabase/storage-js"
-import { supabase } from "../../lib/supabase"
-import { getAllAvailableCategories } from "../../lib/utils"
+import { supabase } from "@/lib/supabase"
+import { getAllAvailableCategories } from "@/lib/utils"
 import { useDialog } from "../../lib/composables"
 import { useRoute, useRouter } from "vue-router"
 
@@ -14,7 +14,7 @@ import type { PostgrestError, QueryData } from "@supabase/supabase-js"
 
 const isLoading = ref(false)
 
-const availableCategories = ref<Kategori[]>([])
+const availableCategories = ref<Kategori[] | null>([])
 const route = useRoute()
 const router = useRouter()
 const currentRoute = useRoute()

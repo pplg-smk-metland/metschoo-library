@@ -6,30 +6,11 @@ import { useDialog } from "../../lib/composables"
 import { onMounted, ref } from "vue"
 import { supabase } from "../../lib/supabase"
 import { getAllAvailableCategories } from "../../lib/utils"
+import type { Buku, Kategori } from "@/types"
+import type { PostgrestError } from "@supabase/supabase-js"
+import { useRouter } from "vue-router"
 
-interface Buku {
-  no_isbn: string
-  judul: string
-  penulis: string
-  penerbit: string
-  tahun_terbit: string
-  alamat_terbit: string
-  asal: string
-  jumlah_exspl: number
-  kategori_id: number
-}
-
-const buku = ref<Buku>({
-  no_isbn: "",
-  judul: "",
-  penulis: "",
-  penerbit: "",
-  tahun_terbit: "",
-  alamat_terbit: "",
-  asal: "",
-  jumlah_exspl: 0,
-  kategori_id: 0,
-})
+const buku = ref<Buku | null>(null)
 
 const isLoading = ref(false)
 const { dialog } = useDialog()
@@ -87,23 +68,25 @@ async function insertBookData(buku: Buku) {
 async function addNewBook() {
   isLoading.value = true
 
-  const { no_isbn } = buku.value
+  const { no_isbn } = buku.value!
 
   try {
-    const insertError = await insertBookData(buku.value)
+    const insertError = await insertBookData(buku.value!)
     if (insertError) throw insertError
     const uploadError = await uploadBookImage(no_isbn, bukuGambarFile.value)
     if (uploadError) throw uploadError
     dialog.value.open("Buku berhasil ditambahkan!")
   } catch (error) {
-    console.trace(error.message)
+    console.trace((error as Error).message)
     if (error instanceof StorageError) {
       errDialog.value.open(
         `Ada kesalahan saat mengunggah sampul buku. Silahkan coba lagi dalam beberapa saat. ${error.message}`
       )
     } else {
       errDialog.value.open(
-        `Ada kesalahan saat mengunggah buku. Mungkin ISBNnya sudah ada? ${error.message}`
+        `Ada kesalahan saat mengunggah buku. Mungkin ISBNnya sudah ada? ${
+          (error as PostgrestError).message
+        }`
       )
     }
   } finally {
@@ -111,11 +94,13 @@ async function addNewBook() {
   }
 }
 
-const availableCategories = ref([])
+const availableCategories = ref<Kategori[] | null>([])
 
 onMounted(async () => {
   availableCategories.value = await getAllAvailableCategories()
 })
+
+const router = useRouter()
 </script>
 
 <template>
@@ -131,7 +116,7 @@ onMounted(async () => {
     />
   </div>
 
-  <form @submit.prevent="addNewBook">
+  <form v-if="buku" @submit.prevent="addNewBook">
     <label for="buku-gambar">Gambar buku</label>
     <input
       type="file"
@@ -139,7 +124,7 @@ onMounted(async () => {
       name="buku-gambar"
       accept="image/*"
       ref="bukuGambarEl"
-      @change="previewBookImage(bukuGambarEl, bukuGambarFile)"
+      @change="previewBookImage()"
       required
     />
 
