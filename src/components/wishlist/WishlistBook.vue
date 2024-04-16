@@ -2,10 +2,12 @@
 import { ambilGambarBukuDariISBN } from "@/lib/utils"
 import { onMounted, ref } from "vue"
 import CTA from "@/components/CTA.vue"
+import { type Buku } from "@/types/index"
 
-const props = defineProps({
-  buku: Object,
-})
+interface Props {
+  buku: Buku
+}
+const props = defineProps<Props>()
 
 defineEmits(["pinjamBuku", "hapusBuku"])
 

@@ -56,7 +56,7 @@ async function hapusBukuDariWishlist(buku: Buku) {
 }
 
 function hapusBuku(buku: Buku) {
-  wishlist.value = wishlist.value.filter(({ no_isbn }) => no_isbn !== buku.no_isbn)
+  wishlist.value = wishlist.value?.filter(({ no_isbn }) => no_isbn !== buku.no_isbn)
   dialog.value.open(`menghapus buku ${buku.judul} dari wishlist...`)
 }
 
@@ -77,14 +77,14 @@ onMounted(async () => {
 
     <section class="main-section" v-else>
       <LoadingSpinner v-if="isLoading" />
-      <p v-if="!isLoading && !wishlist.length">Kamu belum punya apa-apa dalam wishlist kamu.</p>
-      <ul v-if="wishlist.length" class="book-list">
+      <p v-if="!isLoading && !wishlist?.length">Kamu belum punya apa-apa dalam wishlist kamu.</p>
+      <ul v-if="wishlist?.length" class="book-list">
         <WishlistBook
           v-for="wishlistItem in wishlist"
           :key="wishlistItem.wishlist_id"
-          :buku="wishlistItem.buku"
-          @pinjam-buku="pinjamBuku(wishlistItem.buku)"
-          @hapus-buku="hapusBukuDariWishlist(wishlistItem.buku)"
+          :buku="wishlistItem.buku!"
+          @pinjam-buku="pinjamBuku(wishlistItem.buku!)"
+          @hapus-buku="hapusBukuDariWishlist(wishlistItem.buku!)"
         />
       </ul>
     </section>
