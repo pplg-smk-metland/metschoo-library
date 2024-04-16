@@ -3,17 +3,18 @@ import { useAuthStore } from "@/stores/auth"
 import type { PostgrestError } from "@supabase/supabase-js"
 
 export async function ambilGambarBukuDariISBN(isbn: string) {
-  const cdnURL = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/Buku`
+  try {
+    const cdnURL = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/Buku`
 
-  const { data, error } = await supabase.storage
-    .from("Buku")
-    .list(`${isbn}/`, { limit: 1, offset: 0, search: isbn })
-  if (!data?.length || error) {
-    if (error) console.error(error.message)
+    const { data, error } = await supabase.storage
+      .from("Buku")
+      .list(`${isbn}/`, { limit: 1, offset: 0, search: isbn })
+    if (error) throw error
+    return `${cdnURL}/${isbn}/${data[0]?.name}`
+  } catch (err) {
+    console.error((err as PostgrestError).message)
     return "../../assets/Image_not_available.png"
   }
-
-  return `${cdnURL}/${isbn}/${data[0]?.name}`
 }
 
 export async function pinjamBukuDariISBN(isbn: string) {
@@ -41,5 +42,6 @@ export async function getAllAvailableCategories() {
     return data
   } catch (err) {
     console.trace((err as PostgrestError).message)
+    return null
   }
 }
