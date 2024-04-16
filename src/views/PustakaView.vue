@@ -7,7 +7,7 @@ import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import TheHeader from "../components/TheHeader.vue"
 import BookItem from "@/components/BookItem.vue"
 
-const bukuYangDicari = inject("searchTerm")
+const bukuYangDicari = inject<Ref<string>>("searchTerm", "")
 
 const books = ref([])
 const isLoading = ref(false)
