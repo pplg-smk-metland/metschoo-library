@@ -3,7 +3,8 @@ import { onMounted, ref } from "vue"
 import { useAuthStore } from "@/stores/auth"
 import { supabase } from "@/lib/supabase"
 import { useDialog } from "@/lib/composables"
-
+import { type Buku } from "@/types/index"
+import { type PostgrestError, type QueryData } from "@supabase/supabase-js"
 import { pinjamBukuDariISBN } from "@/lib/utils"
 
 import BaseLayout from "@/layouts/BaseLayout.vue"
@@ -13,17 +14,19 @@ import TheDialog from "@/components/TheDialog.vue"
 
 const authStore = useAuthStore()
 
-const wishlist = ref([])
+const wishlistQuery = supabase.from("wishlist").select("*, buku(*)")
+type Wishlist = QueryData<typeof wishlistQuery>
+const wishlist = ref<Wishlist>()
 
 const isLoading = ref(false)
 async function ambilWishlist() {
   try {
     isLoading.value = true
-    const { data, error } = await supabase.from("wishlist").select("*, buku(*)")
+    const { data, error } = await wishlistQuery
     if (error) throw error
     return data
   } catch (err) {
-    console.error(err.message)
+    console.error((err as PostgrestError).message)
   } finally {
     isLoading.value = false
   }
@@ -31,7 +34,7 @@ async function ambilWishlist() {
 
 const { dialog } = useDialog()
 
-async function pinjamBuku(buku) {
+async function pinjamBuku(buku: Buku) {
   try {
     await pinjamBukuDariISBN(buku.no_isbn)
     await supabase.from("wishlist").delete().eq("no_isbn", buku.no_isbn)
@@ -39,16 +42,16 @@ async function pinjamBuku(buku) {
     dialog.value.open(`meminjam buku ${buku.judul}...`)
     hapusBuku(buku)
   } catch (err) {
-    console.error(err.message)
+    console.error((err as PostgrestError).message)
   }
 }
 
-async function hapusBukuDariWishlist(buku) {
+async function hapusBukuDariWishlist(buku: Buku) {
   try {
     await supabase.from("wishlist").delete().eq("no_isbn", buku.no_isbn)
     hapusBuku(buku)
   } catch (err) {
-    console.error(err.message)
+    console.error((err as PostgrestError).message)
   }
 }
 
