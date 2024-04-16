@@ -7,14 +7,14 @@ const authStore = useAuthStore()
 
 const openNavBtn = ref(null)
 const closeNavBtn = ref(null)
-const navlinks = ref(null)
+const navlinks = ref<HTMLUListElement | null>(null)
 
 function openNav() {
-  navlinks.value.classList.add("active")
+  navlinks.value?.classList.add("active")
 }
 
 function closeNav() {
-  navlinks.value.classList.remove("active")
+  navlinks.value?.classList.remove("active")
 }
 </script>
 
