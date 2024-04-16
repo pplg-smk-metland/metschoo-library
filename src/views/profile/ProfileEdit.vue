@@ -2,21 +2,22 @@
 import { onMounted, ref } from "vue"
 import { useDialog } from "@/lib/composables"
 import { useAuthStore } from "@/stores/auth"
+import { type PostgrestError } from "@supabase/supabase-js"
 
 import ProfileEditLayout from "@/layouts/ProfileEditLayout.vue"
 import TheDialog from "@/components/TheDialog.vue"
 import CTA from "@/components/CTA.vue"
 import type { Pengguna } from "@/types"
 
-const dialog = useDialog()
+const { dialog } = useDialog()
 const dataPengguna = ref<Pengguna | null>()
 
 async function updateUserInfo() {
   try {
-    await authStore.handleUpdateProfile(dataPengguna.value)
-    dialog.open("sukses memperbarui data pengguna.")
+    await authStore.handleUpdateProfile(dataPengguna.value!)
+    dialog.value.open("sukses memperbarui data pengguna.")
   } catch (err) {
-    dialog.open(err.message)
+    console.error((err as PostgrestError).message)
   }
 }
 
