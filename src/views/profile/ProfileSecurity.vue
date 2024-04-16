@@ -8,6 +8,7 @@ import { supabase } from "@/lib/supabase"
 import ProfileEditLayout from "@/layouts/ProfileEditLayout.vue"
 import TheDialog from "@/components/TheDialog.vue"
 import CTA from "@/components/CTA.vue"
+import type { AuthError } from "@supabase/supabase-js"
 
 const { dialog } = useDialog()
 const kredensialPengguna = ref({
@@ -32,7 +33,7 @@ async function ubahKredensial() {
     if (error) throw error
     dialog.value.open("memperbarui kredensial...")
   } catch (err) {
-    console.error(err.message)
+    console.error((err as AuthError).message)
   }
 }
 
@@ -47,7 +48,7 @@ async function ubahEmail() {
 
     dialog.value.open("Cek email LAMA dan email BARU kamu ya, linknya ada dua...")
   } catch (err) {
-    console.error(err.message)
+    console.table(err as AuthError)
   }
 }
 
@@ -56,7 +57,7 @@ function signOut() {
   const reallySigningOut = confirm("Beneran nih mau keluar akun?")
   if (reallySigningOut) {
     authStore.handleSignOut()
-    router.push({})
+    router.push({ name: "home" })
   }
 }
 

@@ -6,8 +6,11 @@ import { useDialog } from "@/lib/composables"
 
 import TheDialog from "@/components/TheDialog.vue"
 import CTA from "@/components/CTA.vue"
+import { useRouter } from "vue-router"
+import { AuthError } from "@supabase/supabase-js"
 
 const authStore = useAuthStore()
+const router = useRouter()
 
 const isSigningIn = ref(false)
 
@@ -26,9 +29,10 @@ const { dialog } = useDialog()
 async function handleSignIn() {
   try {
     await authStore.handleSignIn(data.value.email, data.value.password)
+    router.push({ name: "home" })
   } catch (err) {
-    dialog.value.open(err.message)
-    console.error(err.message)
+    if (err instanceof AuthError) dialog.value.open(err.message)
+    else console.error((err as Error).message)
   }
 }
 
@@ -42,9 +46,9 @@ async function handleSignUp() {
 
   try {
     await authStore.handleSignUp(email, password)
+    alert("Cek email lu ya buat verifikasi email!")
   } catch (err) {
-    dialog.value.open(err.message)
-    console.error(err.message)
+    if (err instanceof AuthError) dialog.value.open(err.message)
   }
 
   await supabase

@@ -1,8 +1,9 @@
 import { defineStore } from "pinia"
 import { supabase } from "@/lib/supabase"
-import { type PostgrestError, type Session } from "@supabase/supabase-js"
+import { AuthError, type PostgrestError, type Session } from "@supabase/supabase-js"
 import router from "@/router"
 import { ref } from "vue"
+import type { Pengguna } from "@/types"
 
 export const useAuthStore = defineStore("auth", () => {
   const session = ref<Session | null>(null)
@@ -18,28 +19,37 @@ export const useAuthStore = defineStore("auth", () => {
     })
   }
 
-  async function handleSignUp(email, password) {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    })
-    if (error) throw error
+  async function handleSignUp(email: string, password: string) {
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+      })
+      if (error) throw error
+    } catch (err) {
+      if (err instanceof AuthError) console.error(err.message)
+    }
   }
 
-  async function handleSignIn(email, password) {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-    if (error) throw error
-    router.push({ name: "home" })
+  async function handleSignIn(email: string, password: string) {
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+      if (error) throw error
+    } catch (err) {
+      if (err instanceof AuthError) console.error(err.message)
+    }
   }
 
   async function handleSignOut() {
-    const { error } = await supabase.auth.signOut()
-    if (error) throw error
-    router.push({ name: "home" })
-    if (error) throw error
+    try {
+      const { error } = await supabase.auth.signOut()
+      if (error) throw error
+    } catch (err) {
+      if (err instanceof AuthError) console.table(err)
+    }
   }
 
   async function getProfile() {
@@ -58,19 +68,14 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
-  async function handleUpdateProfile(profileUpdates) {
+  async function handleUpdateProfile(profileUpdates: Pengguna) {
     if (session.value === null) throw Error("session does not exist")
 
     const updates = {
-      user_id: session.value.user.id,
       ...profileUpdates,
     }
-    try {
-      const { error } = await supabase.from("pengguna").upsert(updates)
-      if (error) throw error
-    } catch (err) {
-      console.error((err as PostgrestError).message)
-    }
+    const { error } = await supabase.from("pengguna").upsert(updates)
+    if (error) throw error
   }
 
   return {
