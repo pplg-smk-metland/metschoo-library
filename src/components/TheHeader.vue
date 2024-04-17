@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import SearchBar from "@/components/SearchBar.vue"
 
-defineEmits(["search"])
+const emit = defineEmits(["search"])
 </script>
 
 <template>
@@ -12,7 +12,7 @@ defineEmits(["search"])
     </div>
 
     <div class="header__search-bar">
-      <SearchBar @search="$emit('search')" />
+      <SearchBar @search="emit('search')" />
     </div>
   </header>
 </template>

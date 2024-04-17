@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { inject, type Ref } from "vue"
+import { inject, ref } from "vue"
+import { searchTermKey } from "@/stores/search"
 import router from "@/router"
+
 import CTA from "@/components/CTA.vue"
 
 const emit = defineEmits(["search"])
-const bukuYangDicari = inject<Ref<string>>("searchTerm")
+const bukuYangDicari = inject(searchTermKey, ref(""))
 
 async function cariBuku() {
   if (router.currentRoute.value.name !== "pustaka") {
