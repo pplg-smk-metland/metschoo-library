@@ -6,6 +6,8 @@ import { useRoute } from "vue-router"
 import { useAuthStore } from "@/stores/auth"
 import { ambilGambarBukuDariISBN, pinjamBukuDariISBN, kembalikanBukuDariISBN } from "@/lib/utils"
 import { useDialog } from "@/lib/composables"
+import type { Buku } from "@/types"
+import type { PostgrestError } from "@supabase/supabase-js"
 
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import BaseLayout from "@/layouts/BaseLayout.vue"
@@ -13,10 +15,10 @@ import TheDialog from "@/components/TheDialog.vue"
 import CTA from "@/components/CTA.vue"
 
 const authStore = useAuthStore()
-const dataBuku = ref({})
+const buku = ref<Buku | null>(null)
 
 const isLoading = ref(false)
-async function ambilDataBuku(isbn) {
+async function ambilDataBuku(isbn: string): Promise<Buku | null> {
   try {
     isLoading.value = true
     const { data, error } = await supabase
@@ -29,71 +31,69 @@ async function ambilDataBuku(isbn) {
 
     return data
   } catch (err) {
-    console.error(err.message)
+    console.error((err as PostgrestError).message)
+    return null
   } finally {
     isLoading.value = false
   }
 }
 
-// cek jika buku sudah dipinjam
 const bukuBisaDipinjam = ref(true)
-async function cekStatusPeminjaman(isbn) {
+async function cekStatusPeminjaman(isbn: string) {
   try {
     const { data, error } = await supabase
       .from("peminjaman")
       .select("tgl_pinjam, sudah_dikembalikan")
       .eq("no_isbn", isbn)
+
     if (error) throw error
 
     if (!data || !data.length) return true
 
-    // cek data peminjaman paling baru
-    const bukuPalingBaru = ref({ tgl_pinjam: new Date(0) })
+    // cek data peminjaman paling baru.
+    // User bisa saja meminjam buku yang sama berulang kali
+    interface BukuPeminjaman {
+      tgl_pinjam: string
+      sudah_dikembalikan: boolean
+    }
 
-    data.forEach((buku) => {
+    const bukuPalingBaru = ref<BukuPeminjaman>({
+      tgl_pinjam: String(new Date(0)),
+      sudah_dikembalikan: false,
+    })
+
+    for (const buku of data) {
       if (
-        new Date(bukuPalingBaru.value.tgl_pinjam).getTime() < new Date(buku.tgl_pinjam).getTime()
+        new Date(bukuPalingBaru.value.tgl_pinjam!).getTime() < new Date(buku.tgl_pinjam).getTime()
       ) {
         bukuPalingBaru.value = buku
       }
-    })
+    }
 
     // kalau sudah dikembalikan bisa dipinjam
     return bukuPalingBaru.value.sudah_dikembalikan
   } catch (err) {
-    console.error(err.message)
+    console.error((err as PostgrestError).message)
+    return false
   }
 }
 
-// wishlist
 const bukuAdaDiWishlist = ref(false)
-async function cekWishlist(isbn) {
+
+async function cekWishlist(isbn: string) {
   try {
     const { count, error } = await supabase
       .from("wishlist")
       .select("no_isbn", { count: "exact", head: true })
       .eq("no_isbn", isbn)
+
     if (error) throw error
+    if (!count) return false
 
     return count !== null && count !== 0
   } catch (err) {
-    console.error(err.message)
-  }
-}
-
-const jumlahBuku = ref(0)
-async function ambilJumlahBukuTersedia(isbn) {
-  try {
-    const { count, error } = await supabase
-      .from("peminjaman")
-      .select("*", { count: "exact", head: true })
-      .eq("no_isbn", isbn)
-      .eq("sudah_dikembalikan", false)
-    if (error) throw error
-
-    return dataBuku.value.jumlah_exspl - count
-  } catch (err) {
-    console.error(err.message)
+    console.trace(err as PostgrestError)
+    return false
   }
 }
 
@@ -102,68 +102,66 @@ const imgURL = ref("")
 // ambil data dan gambar buku
 onMounted(async () => {
   const route = useRoute()
-  const { isbn } = route.params
+  const isbn = route.params.isbn as string
 
   imgURL.value = await ambilGambarBukuDariISBN(isbn)
-  dataBuku.value = await ambilDataBuku(isbn)
-  jumlahBuku.value = await ambilJumlahBukuTersedia(isbn)
+  buku.value = await ambilDataBuku(isbn)
 
   bukuAdaDiWishlist.value = await cekWishlist(isbn)
-  bukuBisaDipinjam.value = (await cekStatusPeminjaman(isbn)) && jumlahBuku.value > 0
+  bukuBisaDipinjam.value = await cekStatusPeminjaman(isbn)
 })
 
 const { dialog } = useDialog()
 
-async function pinjamBuku(buku) {
+async function pinjamBuku({ judul, no_isbn }: { judul: string; no_isbn: string }) {
   if (!authStore.session) {
     dialog.value.open("kalau mau pinjam buku, buat akun dulu ya")
     router.push({ name: "sign-in" })
     return
   }
 
-  if (!confirm(`Beneran mau pinjem buku ${buku.judul}?`)) return
+  if (!confirm(`Beneran mau pinjem buku ${judul}?`)) return
   try {
     if (bukuAdaDiWishlist.value) {
-      await supabase.from("wishlist").delete().eq("no_isbn", buku.no_isbn)
+      await supabase.from("wishlist").delete().eq("no_isbn", no_isbn)
     }
-    await pinjamBukuDariISBN(buku.no_isbn)
-    dialog.value.open(`sukses meminjam buku ${buku.judul}`)
+    await pinjamBukuDariISBN(no_isbn)
+    dialog.value.open(`sukses meminjam buku ${judul}`)
   } catch (err) {
-    dialog.value.open(err.message)
+    dialog.value.open((err as PostgrestError).message)
   }
 }
 
-async function kembalikanBuku(buku) {
+async function kembalikanBuku({ judul, no_isbn }: { judul: string; no_isbn: string }) {
   try {
-    await kembalikanBukuDariISBN(buku.no_isbn)
-    dialog.value.open(`sukses mengembalikan buku ${buku.judul}`)
+    await kembalikanBukuDariISBN(no_isbn)
+    dialog.value.open(`sukses mengembalikan buku ${judul}`)
   } catch (err) {
-    dialog.value.open(`Gagal mengembalikan buku! ${err.message}`)
-    console.error(err.message)
+    dialog.value.open(`Gagal mengembalikan buku! ${(err as PostgrestError).message}`)
+    console.error((err as PostgrestError).message)
   }
 }
 
-async function masukkanWishlist(buku) {
+async function masukkanWishlist({ judul, no_isbn }: { judul: string; no_isbn: string }) {
   try {
-    const { data, error } = await supabase.from("wishlist").insert({ no_isbn: buku.no_isbn })
+    const { data, error } = await supabase.from("wishlist").insert({ no_isbn })
     if (error) throw error
 
-    dialog.value.open(`buku berhasil ditambahkan ke dalam wishlist`)
+    dialog.value.open(`buku ${judul} berhasil ditambahkan ke dalam wishlist`)
     bukuAdaDiWishlist.value = true
     return data
   } catch (err) {
     dialog.value.open(
-      `Ada yang salah ketika menambahkan buku ke dalam wishlist. Silahkan coba beberapa saat lagi.`
+      `Ada yang salah ketika menambahkan buku ${judul} ke dalam wishlist. Silahkan coba beberapa saat lagi.`
     )
-    console.error(err.message)
+    console.error((err as PostgrestError).message)
   }
 }
 
-async function perbaruiDataBuku(payload) {
+async function perbaruiDataBuku(payload: any) {
   bukuAdaDiWishlist.value = await cekWishlist(payload.new.no_isbn)
   bukuBisaDipinjam.value =
     (await cekStatusPeminjaman(payload.new.no_isbn)) && !bukuAdaDiWishlist.value
-  jumlahBuku.value = await ambilJumlahBukuTersedia(payload.new.no_isbn)
 }
 
 supabase
@@ -185,12 +183,7 @@ supabase
     <section class="main-section">
       <LoadingSpinner v-if="isLoading" />
 
-      <div class="not-found" v-else-if="!isLoading && dataBuku === undefined">
-        <h1>Tidak ada buku!</h1>
-        <p>Bukunya ga ada brok</p>
-      </div>
-
-      <div class="buku" v-else>
+      <div class="buku" v-if="buku">
         <figure>
           <img class="buku__gambar" :src="imgURL" alt="" width="400" height="600" />
           <img
@@ -203,29 +196,42 @@ supabase
         </figure>
 
         <figcaption class="buku__info">
-          <h1 class="judul">{{ dataBuku.judul }}</h1>
+          <h1 class="judul">{{ buku.judul }}</h1>
           <p>
-            <span class="penulis">{{ dataBuku.penulis }}</span> -
-            <span class="tahun-terbit">{{ dataBuku.tahun_terbit }}</span>
+            <span class="penulis">{{ buku.penulis }}</span> -
+            <span class="tahun-terbit">{{ buku.tahun_terbit }}</span>
           </p>
-          <p>{{ dataBuku.penerbit }} - {{ dataBuku.alamat_terbit }}</p>
-          <p>Jumlah tersedia: {{ jumlahBuku }}</p>
+          <p>{{ buku.penerbit }} - {{ buku.alamat_terbit }}</p>
+          <p>Jumlah tersedia: {{ buku.jumlah_exspl }}</p>
 
           <div class="button-container">
-            <CTA @click="pinjamBuku(dataBuku)" v-show="bukuBisaDipinjam" :fill="true">
+            <CTA
+              @click="pinjamBuku({ judul: buku.judul, no_isbn: buku.no_isbn })"
+              v-show="bukuBisaDipinjam"
+              :fill="true"
+            >
               Pinjam buku
             </CTA>
-            <CTA @click="kembalikanBuku(dataBuku)" v-show="!bukuBisaDipinjam" :fill="true">
+            <CTA
+              @click="kembalikanBuku({ judul: buku.judul, no_isbn: buku.no_isbn })"
+              v-show="!bukuBisaDipinjam"
+              :fill="true"
+            >
               Kembalikan buku
             </CTA>
             <CTA
-              @click="masukkanWishlist(dataBuku)"
-              :disabled="bukuAdaDiWishlist || !bukuBisaDipinjam"
+              @click="masukkanWishlist({ judul: buku.judul, no_isbn: buku.no_isbn })"
+              :disabled="bukuAdaDiWishlist || bukuBisaDipinjam"
             >
               tambahkan ke wishlist
             </CTA>
           </div>
         </figcaption>
+      </div>
+
+      <div class="not-found" v-else>
+        <h1>Tidak ada buku!</h1>
+        <p>Bukunya ga ada brok</p>
       </div>
     </section>
 
@@ -236,24 +242,24 @@ supabase
           <tbody>
             <tr>
               <td>judul</td>
-              <td>{{ dataBuku.judul }}</td>
+              <td>{{ buku?.judul }}</td>
             </tr>
 
             <tr>
               <td>Penulis</td>
               <td>
-                {{ dataBuku.penulis }}
+                {{ buku?.penulis }}
               </td>
             </tr>
 
             <tr>
               <td>ISBN</td>
-              <td>{{ dataBuku.no_isbn }}</td>
+              <td>{{ buku?.no_isbn }}</td>
             </tr>
 
             <tr>
               <td>Penerbit</td>
-              <td>{{ dataBuku.penerbit }}</td>
+              <td>{{ buku?.penerbit }}</td>
             </tr>
           </tbody>
         </table>
