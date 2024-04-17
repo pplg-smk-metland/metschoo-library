@@ -277,15 +277,21 @@ supabase
 .buku {
   display: flex;
   gap: 2rem;
-  flex-wrap: wrap;
 }
 
 .buku figure {
   position: relative;
+
+  flex: 0 1 max-content;
+  align-self: flex-start;
+
+  @media screen and (max-width: 50em) {
+    flex: 1 0 10ch;
+  }
 }
 
 .buku__gambar {
-  object-fit: cover;
+  height: 100%;
 }
 
 .buku__gambar--bayangan {
@@ -302,7 +308,7 @@ supabase
 }
 
 .judul {
-  font-size: 2.8rem;
+  font-size: clamp(2rem, 2.5vw, 3.5rem);
   line-height: 1.1;
 }
 
