@@ -3,7 +3,7 @@ import { ref, onMounted, computed } from "vue"
 import { useAuthStore } from "@/stores/auth"
 import { supabase } from "@/lib/supabase"
 import { kembalikanBukuDariISBN } from "@/lib/utils"
-import type { Pengguna } from "@/types"
+import type { Peminjaman, Pengguna } from "@/types"
 import type { PostgrestError, QueryData } from "@supabase/supabase-js"
 
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
@@ -54,17 +54,24 @@ async function ambilBukuYangDipinjam() {
   }
 }
 
-const riwayatPeminjaman = ref<BukuPinjam | null>(null)
+const riwayatQuery = supabase
+  .from("peminjaman")
+  .select("sudah_dikembalikan, buku(no_isbn, judul, penulis)")
+  .eq("sudah_dikembalikan", true)
+
+export type Riwayat = QueryData<typeof riwayatQuery>
+const riwayat = ref<Riwayat | never>([])
+
 async function ambilRiwayatPeminjaman() {
   try {
     isLoading.value = true
-    const { data, error } = await pinjamQuery.eq("sudah_dikembalikan", true)
+    const { data, error } = await riwayatQuery
 
     if (error) throw error
     return data
   } catch (err) {
     console.error((err as PostgrestError).message)
-    return null
+    return []
   } finally {
     isLoading.value = false
   }
@@ -72,7 +79,7 @@ async function ambilRiwayatPeminjaman() {
 
 onMounted(async () => {
   bukuYangDipinjam.value = await ambilBukuYangDipinjam()
-  riwayatPeminjaman.value = await ambilRiwayatPeminjaman()
+  riwayat.value = await ambilRiwayatPeminjaman()
 })
 
 interface KembalikanBuku {
@@ -177,11 +184,11 @@ async function kembalikanBuku({ judul, no_isbn, jumlah_exspl }: KembalikanBuku) 
       <h2>Riwayat Peminjaman</h2>
 
       <ul class="history-list">
-        <li v-if="!riwayatPeminjaman?.length" class="message">bukunya ga ada ges</li>
+        <li v-if="!riwayat?.length" class="message">bukunya ga ada ges</li>
         <ProfileHistoryBook
           class="history-list__item"
-          v-for="buku in riwayatPeminjaman"
-          :key="buku.no_isbn"
+          v-for="{ buku } in riwayat"
+          :key="buku?.no_isbn"
           :buku="buku"
         />
       </ul>
