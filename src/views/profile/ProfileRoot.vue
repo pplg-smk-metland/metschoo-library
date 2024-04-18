@@ -3,7 +3,7 @@ import { ref, onMounted, computed } from "vue"
 import { useAuthStore } from "@/stores/auth"
 import { supabase } from "@/lib/supabase"
 import { kembalikanBukuDariISBN } from "@/lib/utils"
-import type { Peminjaman, Pengguna } from "@/types"
+import type { Pengguna } from "@/types"
 import type { PostgrestError, QueryData } from "@supabase/supabase-js"
 
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
@@ -54,10 +54,7 @@ async function ambilBukuYangDipinjam() {
   }
 }
 
-const riwayatQuery = supabase
-  .from("peminjaman")
-  .select("sudah_dikembalikan, buku(no_isbn, judul, penulis)")
-  .eq("sudah_dikembalikan", true)
+const riwayatQuery = supabase.from("distinct_riwayat").select("*")
 
 export type Riwayat = QueryData<typeof riwayatQuery>
 const riwayat = ref<Riwayat | never>([])

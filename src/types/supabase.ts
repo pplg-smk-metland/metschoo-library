@@ -188,7 +188,13 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      distinct_riwayat: {
+        Row: {
+          buku: Database["public"]["Tables"]["buku"]["Row"] | null
+          sudah_dikembalikan: boolean | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never
