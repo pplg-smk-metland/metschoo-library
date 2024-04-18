@@ -17,22 +17,32 @@ export async function ambilGambarBukuDariISBN(isbn: string) {
   }
 }
 
-export async function pinjamBukuDariISBN(isbn: string) {
+export async function pinjamBukuDariISBN(isbn: string, jumlah_exspl: number) {
   const authStore = useAuthStore()
   const { error } = await supabase
     .from("peminjaman")
     .insert({ user_id: authStore.session!.user.id, no_isbn: isbn })
   if (error) throw error
+
+  const { error: updateError } = await supabase
+    .from("buku")
+    .update({ jumlah_exspl: jumlah_exspl - 1 })
+    .eq("no_isbn", isbn)
+  if (updateError) throw error
 }
 
-export async function kembalikanBukuDariISBN(isbn: string) {
-  const authStore = useAuthStore()
+export async function kembalikanBukuDariISBN(isbn: string, jumlah_exspl: number) {
   const { error } = await supabase
     .from("peminjaman")
-    .update({ sudah_dikembalikan: true })
-    .eq("user_id", authStore.session!.user.id)
+    .update({ sudah_dikembalikan: true, tgl_kembali: new Date().toISOString() })
     .eq("no_isbn", isbn)
   if (error) throw error
+
+  const { error: updateError } = await supabase
+    .from("buku")
+    .update({ jumlah_exspl: jumlah_exspl - 1 })
+    .eq("no_isbn", isbn)
+  if (updateError) throw error
 }
 
 export async function getAllAvailableCategories() {

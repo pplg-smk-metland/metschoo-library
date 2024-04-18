@@ -113,28 +113,49 @@ onMounted(async () => {
 
 const { dialog } = useDialog()
 
-async function pinjamBuku({ judul, no_isbn }: { judul: string; no_isbn: string }) {
+async function pinjamBuku({
+  judul,
+  no_isbn,
+  jumlah_exspl,
+}: {
+  judul: string
+  no_isbn: string
+  jumlah_exspl: number
+}) {
   if (!authStore.session) {
     dialog.value.open("kalau mau pinjam buku, buat akun dulu ya")
     router.push({ name: "sign-in" })
     return
   }
 
+  if (jumlah_exspl === 0) {
+    dialog.value.open("Maaf, buku ini tidak tersedia untuk saat ini.")
+  }
+
   if (!confirm(`Beneran mau pinjem buku ${judul}?`)) return
+
   try {
     if (bukuAdaDiWishlist.value) {
       await supabase.from("wishlist").delete().eq("no_isbn", no_isbn)
     }
-    await pinjamBukuDariISBN(no_isbn)
+    await pinjamBukuDariISBN(no_isbn, jumlah_exspl)
     dialog.value.open(`sukses meminjam buku ${judul}`)
   } catch (err) {
     dialog.value.open((err as PostgrestError).message)
   }
 }
 
-async function kembalikanBuku({ judul, no_isbn }: { judul: string; no_isbn: string }) {
+async function kembalikanBuku({
+  judul,
+  no_isbn,
+  jumlah_exspl,
+}: {
+  judul: string
+  no_isbn: string
+  jumlah_exspl: number
+}) {
   try {
-    await kembalikanBukuDariISBN(no_isbn)
+    await kembalikanBukuDariISBN(no_isbn, jumlah_exspl)
     dialog.value.open(`sukses mengembalikan buku ${judul}`)
   } catch (err) {
     dialog.value.open(`Gagal mengembalikan buku! ${(err as PostgrestError).message}`)
@@ -206,14 +227,26 @@ supabase
 
           <div class="button-container">
             <CTA
-              @click="pinjamBuku({ judul: buku.judul, no_isbn: buku.no_isbn })"
+              @click="
+                pinjamBuku({
+                  judul: buku.judul,
+                  no_isbn: buku.no_isbn,
+                  jumlah_exspl: buku.jumlah_exspl,
+                })
+              "
               v-show="bukuBisaDipinjam"
               :fill="true"
             >
               Pinjam buku
             </CTA>
             <CTA
-              @click="kembalikanBuku({ judul: buku.judul, no_isbn: buku.no_isbn })"
+              @click="
+                kembalikanBuku({
+                  judul: buku.judul,
+                  no_isbn: buku.no_isbn,
+                  jumlah_exspl: buku.jumlah_exspl,
+                })
+              "
               v-show="!bukuBisaDipinjam"
               :fill="true"
             >
@@ -221,7 +254,7 @@ supabase
             </CTA>
             <CTA
               @click="masukkanWishlist({ judul: buku.judul, no_isbn: buku.no_isbn })"
-              :disabled="bukuAdaDiWishlist || bukuBisaDipinjam"
+              :disabled="bukuAdaDiWishlist || !bukuBisaDipinjam"
             >
               tambahkan ke wishlist
             </CTA>

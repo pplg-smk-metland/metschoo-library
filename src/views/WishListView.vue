@@ -36,7 +36,7 @@ const { dialog } = useDialog()
 
 async function pinjamBuku(buku: Buku) {
   try {
-    await pinjamBukuDariISBN(buku.no_isbn)
+    await pinjamBukuDariISBN(buku.no_isbn, buku.jumlah_exspl)
     await supabase.from("wishlist").delete().eq("no_isbn", buku.no_isbn)
 
     dialog.value.open(`meminjam buku ${buku.judul}...`)
