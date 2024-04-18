@@ -2,30 +2,30 @@
 import { ref, onMounted } from "vue"
 import { ambilGambarBukuDariISBN } from "@/lib/utils"
 import CTA from "@/components/CTA.vue"
+import type { BukuPinjam } from "@/views/profile/ProfileRoot.vue"
 
-const props = defineProps({
-  buku: {
-    type: Object,
-    required: true,
-  },
-})
+interface Props {
+  data: BukuPinjam[0]
+}
 
+const props = defineProps<Props>()
 const emit = defineEmits(["kembalikanBuku"])
 
 // object buku hasil join ada di dalam object
-const dataBuku = props.buku.buku
+const { data } = props
+const { buku } = data
 
 const imgURL = ref("")
 
 onMounted(async () => {
-  imgURL.value = await ambilGambarBukuDariISBN(dataBuku.no_isbn)
+  imgURL.value = await ambilGambarBukuDariISBN(buku!.no_isbn)
 })
 </script>
 
 <template>
-  <li class="buku">
+  <li class="buku" v-if="buku">
     <figure>
-      <routerLink :to="`/buku/${dataBuku.no_isbn}`">
+      <routerLink :to="`/buku/${buku.no_isbn}`">
         <img
           :src="imgURL"
           class="buku__gambar"
@@ -38,23 +38,23 @@ onMounted(async () => {
     </figure>
     <figcaption class="buku__info">
       <div class="buku__metadata">
-        <h3 class="buku__judul">{{ dataBuku.judul }}</h3>
-        <p>{{ dataBuku.no_isbn }}</p>
-        <p class="buku__penulis">{{ dataBuku.penulis }}</p>
-        <p class="buku__tahun-terbit">{{ dataBuku.tahun_terbit }}</p>
+        <h3 class="buku__judul">{{ buku.judul }}</h3>
+        <p>{{ buku.no_isbn }}</p>
+        <p class="buku__penulis">{{ buku.penulis }}</p>
+        <p class="buku__tahun-terbit">{{ buku.tahun_terbit }}</p>
       </div>
 
       <div class="tanggal">
         <p>
           Tanggal pinjam:
-          {{ new Date(buku.tgl_pinjam).toLocaleDateString() }}
+          {{ new Date(data.tgl_pinjam).toLocaleDateString() }}
         </p>
         <p>
           Tanggal kembali:
-          {{ new Date(buku.tgl_kembali).toLocaleDateString() }}
+          {{ data.tgl_kembali ? new Date(data.tgl_kembali).toLocaleDateString() : "-" }}
         </p>
       </div>
-      <p class="buku__status-peminjaman" v-if="!buku.sudah_dikonfirmasi">
+      <p class="buku__status-peminjaman" v-if="!data.sudah_dikonfirmasi">
         menunggu konfirmasi peminjaman buku
       </p>
       <CTA @click="$emit('kembalikanBuku')">Kembalikan buku</CTA>

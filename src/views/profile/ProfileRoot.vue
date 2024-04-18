@@ -3,6 +3,8 @@ import { ref, onMounted, computed } from "vue"
 import { useAuthStore } from "@/stores/auth"
 import { supabase } from "@/lib/supabase"
 import { kembalikanBukuDariISBN } from "@/lib/utils"
+import type { Pengguna } from "@/types"
+import type { PostgrestError, QueryData } from "@supabase/supabase-js"
 
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import ProfileBook from "@/components/profile/ProfileBook.vue"
@@ -11,15 +13,22 @@ import CTA from "../../components/CTA.vue"
 
 const authStore = useAuthStore()
 
-const dataPengguna = ref({})
+const pengguna = ref<Pengguna | null>(null)
 
 onMounted(async () => {
   const data = await authStore.getProfile()
-  dataPengguna.value = data
+  pengguna.value = data
 })
 
 // ambil buku yang dipinjam
-const bukuYangDipinjam = ref([])
+const pinjamQuery = supabase
+  .from("peminjaman")
+  .select(`no_isbn, tgl_pinjam, tgl_kembali, sudah_dikembalikan, sudah_dikonfirmasi, buku(*)`)
+  .eq("sudah_dikembalikan", false)
+
+export type BukuPinjam = QueryData<typeof pinjamQuery>
+const bukuYangDipinjam = ref<BukuPinjam>([])
+
 const bukuBlumDikonfirmasi = computed(() => {
   return bukuYangDipinjam.value.filter((buku) => !buku.sudah_dikonfirmasi)
 })
@@ -33,33 +42,29 @@ const isLoading = ref(false)
 async function ambilBukuYangDipinjam() {
   try {
     isLoading.value = true
-    const { data, error } = await supabase
-      .from("peminjaman")
-      .select(`tgl_pinjam, tgl_kembali, sudah_dikembalikan, sudah_dikonfirmasi, buku(*)`)
-      .eq("sudah_dikembalikan", false)
+    const { data, error } = await pinjamQuery
 
     if (error) throw error
     return data
   } catch (err) {
-    console.error(err.message)
+    console.error((err as PostgrestError).message)
+    return []
   } finally {
     isLoading.value = false
   }
 }
 
-const riwayatPeminjaman = ref([])
+const riwayatPeminjaman = ref<BukuPinjam | null>(null)
 async function ambilRiwayatPeminjaman() {
   try {
     isLoading.value = true
-    const { data, error } = await supabase
-      .from("peminjaman")
-      .select("*, buku(*)")
-      .eq("sudah_dikembalikan", true)
+    const { data, error } = await pinjamQuery.eq("sudah_dikembalikan", true)
 
     if (error) throw error
     return data
   } catch (err) {
-    console.error(err.message)
+    console.error((err as PostgrestError).message)
+    return null
   } finally {
     isLoading.value = false
   }
@@ -70,17 +75,20 @@ onMounted(async () => {
   riwayatPeminjaman.value = await ambilRiwayatPeminjaman()
 })
 
-async function kembalikanBuku(buku) {
-  if (!confirm(`beneran mau kembalikan buku ${buku.judul}?`)) return
+interface KembalikanBuku {
+  judul: string
+  no_isbn: string
+  jumlah_exspl: number
+}
+
+async function kembalikanBuku({ judul, no_isbn, jumlah_exspl }: KembalikanBuku) {
+  if (!confirm(`beneran mau kembalikan buku ${judul}?`)) return
 
   try {
-    await kembalikanBukuDariISBN(buku.no_isbn)
-
-    // hapus buku dari tampilan
-    const found = bukuYangDipinjam.value.indexOf(buku)
-    bukuYangDipinjam.value.splice(found, 1)
+    await kembalikanBukuDariISBN(no_isbn, jumlah_exspl)
+    bukuYangDipinjam.value = bukuYangDipinjam.value!.filter(({ buku }) => buku?.no_isbn !== no_isbn)
   } catch (err) {
-    console.error(err.message)
+    console.error((err as PostgrestError).message)
   }
 }
 </script>
@@ -104,16 +112,22 @@ async function kembalikanBuku(buku) {
           />
         </figure>
 
-        <div class="profile__details">
-          <h2>{{ dataPengguna.nama }}</h2>
-          <p>{{ dataPengguna.kelas }} - {{ dataPengguna.jurusan }}</p>
-          <p>{{ dataPengguna.email }}</p>
+        <div class="profile__details" v-if="pengguna">
+          <h2>{{ pengguna.nama }}</h2>
+          <p>{{ pengguna.kelas }} - {{ pengguna.jurusan }}</p>
+          <p>{{ pengguna.email }}</p>
 
           <div class="button-container">
             <CTA :to="{ name: 'profile-edit' }" class="btn cta" :is-link="true">Edit profil</CTA>
             <CTA :to="{ name: 'profile-security' }" class="btn cta" :is-link="true"> Keamanan </CTA>
           </div>
         </div>
+
+        <div class="not-found" v-else>
+          <h1>Pengguna tidak ditemukan!</h1>
+          <p>Silahkan coba beberapa saat lagi, atau hubungi admin Metschoo Library.</p>
+        </div>
+
         <RouterView />
       </section>
 
@@ -126,10 +140,16 @@ async function kembalikanBuku(buku) {
         <ul class="book-list">
           <li v-if="!bukuBlumDikonfirmasi.length">ga ada bukunya nih</li>
           <ProfileBook
-            v-for="buku in bukuBlumDikonfirmasi"
-            :key="buku.no_isbn"
-            :buku="buku"
-            @kembalikan-buku="kembalikanBuku(buku.buku)"
+            v-for="data in bukuBlumDikonfirmasi"
+            :key="data.no_isbn"
+            :data="data"
+            @kembalikan-buku="
+              kembalikanBuku({
+                judul: data.buku!.judul,
+                no_isbn: data.buku!.no_isbn,
+                jumlah_exspl: data.buku!.jumlah_exspl,
+              })
+            "
           />
         </ul>
 
@@ -138,10 +158,16 @@ async function kembalikanBuku(buku) {
         <ul class="book-list">
           <li v-if="!bukuSudahDikonfirmasi.length">ga ada bukunya nih</li>
           <ProfileBook
-            v-for="buku in bukuSudahDikonfirmasi"
-            :key="buku.no_isbn"
-            :buku="buku"
-            @kembalikan-buku="kembalikanBuku(buku.buku)"
+            v-for="data in bukuSudahDikonfirmasi"
+            :key="data.no_isbn"
+            :data="data"
+            @kembalikan-buku="
+              kembalikanBuku({
+                judul: data.buku!.judul,
+                no_isbn: data.no_isbn,
+                jumlah_exspl: data.buku!.jumlah_exspl,
+              })
+            "
           />
         </ul>
       </section>
@@ -151,7 +177,7 @@ async function kembalikanBuku(buku) {
       <h2>Riwayat Peminjaman</h2>
 
       <ul class="history-list">
-        <li v-if="!riwayatPeminjaman.length" class="message">bukunya ga ada ges</li>
+        <li v-if="!riwayatPeminjaman?.length" class="message">bukunya ga ada ges</li>
         <ProfileHistoryBook
           class="history-list__item"
           v-for="buku in riwayatPeminjaman"
