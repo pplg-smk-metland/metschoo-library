@@ -50,11 +50,6 @@ async function handleSignUp() {
   } catch (err) {
     if (err instanceof AuthError) dialog.value.open(err.message)
   }
-
-  await supabase
-    .from("pengguna")
-    .update({ nama: data.value.nama })
-    .eq("user_id", authStore.session.user.id)
 }
 </script>
 
