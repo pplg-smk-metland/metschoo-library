@@ -49,9 +49,9 @@ some tasks, ordered by priority:
   - change function names and variables into English
   - make sure all UI elements are written in Indonesian
 - Make the ugly admin routes pretty
-- set up TypeScript
-  - add types
-  - set up config for dynamic imports (`@`)
+- ~~set up TypeScript~~
+  - ~~add types~~
+  - ~~set up config for dynamic imports (`@`)~~
 - implement unit testing with Vitest
 
 In the future we would also like to write a full documentation of some sorts.
