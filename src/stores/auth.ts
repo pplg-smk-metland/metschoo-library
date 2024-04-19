@@ -1,8 +1,7 @@
 import { defineStore } from "pinia"
+import { ref } from "vue"
 import { supabase } from "@/lib/supabase"
 import { AuthError, type PostgrestError, type Session } from "@supabase/supabase-js"
-import router from "@/router"
-import { ref } from "vue"
 import type { Pengguna } from "@/types"
 
 export const useAuthStore = defineStore("auth", () => {
@@ -46,6 +45,8 @@ export const useAuthStore = defineStore("auth", () => {
   async function handleSignOut() {
     try {
       const { error } = await supabase.auth.signOut()
+      session.value = null
+
       if (error) throw error
     } catch (err) {
       if (err instanceof AuthError) console.table(err)
@@ -65,6 +66,7 @@ export const useAuthStore = defineStore("auth", () => {
       return data
     } catch (err) {
       console.trace((err as PostgrestError).message)
+      return null
     }
   }
 
