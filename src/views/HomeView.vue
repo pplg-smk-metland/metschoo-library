@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue"
+import { ref } from "vue"
 import { useAuthStore } from "@/stores/auth"
 import { type Pengguna } from "@/types/index"
 
@@ -10,18 +10,20 @@ import TheHeader from "@/components/TheHeader.vue"
 
 const user = ref<Pengguna | null>(null)
 
-onMounted(async () => {
-  const authStore = useAuthStore()
-  const profile = await authStore.getProfile()
-  if (profile) user.value = profile
+const authStore = useAuthStore()
+
+authStore.$subscribe(async (_, state) => {
+  if (state.session) user.value = await authStore.getProfile()
 })
 </script>
 
 <template>
   <BaseLayout>
     <TheHeader>
-      <template #header-heading v-if="user"> Halo, {{ user?.nama }}. </template>
-      <template #header-heading v-else> Halo kamu! </template>
+      <template #header-heading>
+        Halo, <span v-if="user">{{ user.nama }}.</span>
+        <span v-else>kamu!</span>
+      </template>
     </TheHeader>
 
     <section class="main-section">

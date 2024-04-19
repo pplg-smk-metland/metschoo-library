@@ -6,11 +6,10 @@ import { RouterView } from "vue-router"
 import TheFooter from "@/components/TheFooter.vue"
 
 provide(searchTermKey, ref(""))
+const authStore = useAuthStore()
 
-provide(searchTermKey, searchTerm)
-
-onMounted(() => {
-  useAuthStore().init()
+onMounted(async () => {
+  await authStore.init()
 })
 </script>
 
