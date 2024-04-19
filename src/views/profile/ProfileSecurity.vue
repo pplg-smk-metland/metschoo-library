@@ -52,17 +52,17 @@ async function ubahEmail() {
   }
 }
 
-function signOut() {
-  const authStore = useAuthStore()
+const authStore = useAuthStore()
+async function signOut() {
   const reallySigningOut = confirm("Beneran nih mau keluar akun?")
+
   if (reallySigningOut) {
-    authStore.handleSignOut()
+    await authStore.handleSignOut()
     router.push({ name: "home" })
   }
 }
 
 onMounted(async () => {
-  const authStore = useAuthStore()
   const data = await authStore.getProfile()
   kredensialPengguna.value.email = data!.email
 })
