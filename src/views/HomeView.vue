@@ -4,8 +4,7 @@ import { useAuthStore } from "@/stores/auth"
 import { type Pengguna } from "@/types/index"
 
 import BaseLayout from "@/layouts/BaseLayout.vue"
-import CollectionBooks from "@/components/home/CollectionBooks.vue"
-import ReccomendationBooks from "@/components/home/ReccomendationBooks.vue"
+import BookList from "@/components/home/BookList.vue"
 import TheHeader from "@/components/TheHeader.vue"
 
 const user = ref<Pengguna | null>(null)
@@ -27,11 +26,13 @@ authStore.$subscribe(async (_, state) => {
     </TheHeader>
 
     <section class="main-section">
-      <ReccomendationBooks />
+      <h2>Rekomendasi</h2>
+      <BookList :type-id="1" />
     </section>
 
     <section class="main-section">
-      <CollectionBooks />
+      <h2>Koleksi</h2>
+      <BookList :type-id="2" />
     </section>
   </BaseLayout>
 </template>
