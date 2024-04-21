@@ -18,7 +18,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: "/wishlist",
     name: "wishlist",
-    component: () => import("@/views/WishlistView.vue"),
+    component: () => import("@/views/WishListView.vue"),
   },
   {
     path: "/sign-in",
@@ -65,27 +65,27 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: "manajemen-pengguna",
-        name: "manajemen-pengguna",
+        name: "admin-manajemen-pengguna",
         component: () => import("@/views/admin/AdminManajemenPengguna.vue"),
       },
       {
         path: "peminjaman",
-        name: "peminjaman",
+        name: "admin-peminjaman",
         component: () => import("@/views/admin/AdminPeminjaman.vue"),
       },
       {
         path: "buku",
-        name: "data-buku",
+        name: "admin-data-buku",
         component: () => import("@/views/admin/AdminDataBuku.vue"),
       },
       {
         path: "buku/:isbn",
-        name: "buku",
+        name: "admin-halaman-buku",
         component: () => import("@/views/admin/AdminHalamanBuku.vue"),
       },
       {
         path: "buku/tambah",
-        name: "tambah-buku",
+        name: "admin-tambah-buku",
         component: () => import("@/views/admin/AdminTambahBuku.vue"),
       },
     ],
@@ -98,7 +98,7 @@ const router = createRouter({
   linkActiveClass: "active",
 })
 
-router.beforeEach(async (to, from) => {
+router.beforeEach(async (to, _) => {
   const authStore = useAuthStore()
   const user = authStore.session?.user
   if (user) {

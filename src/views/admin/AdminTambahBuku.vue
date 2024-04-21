@@ -184,7 +184,7 @@ const router = useRouter()
 
     <TheDialog
       :is-open="dialog.isOpen"
-      @dialog-close="router.push({ name: 'buku', params: { isbn: buku.no_isbn } })"
+      @dialog-close="router.push({ name: 'admin-buku', params: { isbn: buku.no_isbn } })"
     >
       <h2>Sukses!</h2>
       <p>{{ dialog.message }}</p>

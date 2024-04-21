@@ -26,11 +26,11 @@ const bukuQuery = supabase
   .eq("no_isbn", isbn)
   .single()
 
-type Buku = QueryData<typeof bukuQuery>
-const buku = ref<Buku | null>(null)
-
 const { dialog } = useDialog()
 const { dialog: errDialog } = useDialog()
+
+type Buku = QueryData<typeof bukuQuery>
+const buku = ref<Buku | null>(null)
 
 async function ambilBuku(): Promise<Buku | null> {
   try {
@@ -102,7 +102,7 @@ function toggleFormVisibility() {
   <LoadingSpinner v-if="isLoading" />
 
   <article class="buku" v-else v-show="!formIsVisible && buku">
-    <h1>Data {{ buku?.judul }} - {{ buku?.jumlah_exspl }}</h1>
+    <h1>{{ buku?.judul }} - {{ buku?.jumlah_exspl }}</h1>
     <p>{{ buku?.penulis }}</p>
     <p>{{ buku?.asal }}</p>
     <p>{{ buku?.penerbit }}</p>
@@ -110,34 +110,28 @@ function toggleFormVisibility() {
     <p>{{ buku?.kategori_buku?.kategori }}</p>
   </article>
 
-  <article v-show="formIsVisible">
+  <article v-if="formIsVisible && buku">
     <h1>Edit</h1>
     <CTA @click="toggleFormVisibility">Go back</CTA>
 
     <form class="buku-edit" @submit.prevent="editBook">
       <label for="buku-judul">Judul</label>
-      <input type="text" name="buku-judul" id="buku-judul" required v-model="buku?.judul" />
+      <input type="text" name="buku-judul" id="buku-judul" required v-model="buku.judul" />
       <label for="buku-asal">Asal</label>
-      <input type="text" name="buku-asal" id="buku-asal" required v-model="buku?.asal" />
+      <input type="text" name="buku-asal" id="buku-asal" required v-model="buku.asal" />
       <label for="buku-penulis">ISBN</label>
-      <input type="text" name="buku-isbn" id="buku-isbn" required v-model="buku?.no_isbn" />
+      <input type="text" name="buku-isbn" id="buku-isbn" required v-model="buku.no_isbn" />
       <label for="buku-penulis">Penulis</label>
-      <input type="text" name="buku-penulis" id="buku-penulis" required v-model="buku?.penulis" />
+      <input type="text" name="buku-penulis" id="buku-penulis" required v-model="buku.penulis" />
       <label for="buku-penerbit">Penerbit</label>
-      <input
-        type="text"
-        name="buku-penerbit"
-        id="buku-penerbit"
-        required
-        v-model="buku?.penerbit"
-      />
+      <input type="text" name="buku-penerbit" id="buku-penerbit" required v-model="buku.penerbit" />
       <label for="buku-tahun-terbit">Tahun terbit</label>
       <input
         type="text"
         name="buku-tahun-terbit"
         id="buku-tahun-terbit"
         required
-        v-model="buku?.tahun_terbit"
+        v-model="buku.tahun_terbit"
       />
       <label for="buku-alamat-terbit">Alamat terbit</label>
       <input
@@ -145,7 +139,7 @@ function toggleFormVisibility() {
         name="buku-alamat-terbit"
         id="buku-alamat-terbit"
         required
-        v-model="buku?.alamat_terbit"
+        v-model="buku.alamat_terbit"
       />
       <label for="buku-jumlah">Jumlah</label>
       <input
@@ -155,10 +149,10 @@ function toggleFormVisibility() {
         min="0"
         max="10000"
         required
-        v-model="buku?.jumlah_exspl"
+        v-model="buku.jumlah_exspl"
       />
       <label for="buku-kategori">Kategori</label>
-      <select name="buku-kategori" id="buku-kategori" v-model="buku?.kategori_id" required>
+      <select name="buku-kategori" id="buku-kategori" v-model="buku.kategori_id" required>
         <option value="" disabled>Please select one</option>
         <option v-for="category in availableCategories" :key="category.id" :value="category.id">
           {{ category.id }} - {{ category.kategori }}
@@ -174,13 +168,13 @@ function toggleFormVisibility() {
     <CTA @click="toggleFormVisibility" v-show="!formIsVisible">Edit</CTA>
   </div>
 
-  <TheDialog :is-open="errDialog.isOpen" @dialog-close="router.push({ name: 'data-buku' })">
+  <TheDialog :is-open="errDialog.isOpen" @dialog-close="router.push({ name: 'admin-data-buku' })">
     <h2>Ada kesalahan!</h2>
     <p>
       {{ errDialog.message }}
     </p>
   </TheDialog>
-  <TheDialog :is-open="dialog.isOpen" @dialog-close="router.push({ name: 'data-buku' })">
+  <TheDialog :is-open="dialog.isOpen" @dialog-close="router.push({ name: 'admin-data-buku' })">
     <h2>Sukses!</h2>
     <p>
       {{ dialog.message }}

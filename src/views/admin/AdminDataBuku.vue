@@ -69,7 +69,7 @@ onMounted(async () => {
   <ul>
     <li v-if="!daftarBuku.length">No book found</li>
     <li v-for="buku in daftarBuku" :key="buku.no_isbn" v-else>
-      <routerLink :to="`/admin/buku/${buku.no_isbn}`">
+      <routerLink :to="{ name: 'admin-halaman-buku', params: { isbn: buku.no_isbn } }">
         <p>{{ buku.judul }}</p>
         <p>{{ buku.penulis }}</p>
         <p>{{ buku.kategori_buku?.kategori }}</p>
