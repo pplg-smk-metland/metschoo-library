@@ -3,14 +3,19 @@ import { useAuthStore } from "@/stores/auth"
 import type { PostgrestError } from "@supabase/supabase-js"
 
 export async function ambilGambarBukuDariISBN(isbn: string) {
+  // TODO: store cover array in localStorage
+  // TODO: also implement expiry time (24 hours or so)
+  // TODO: if null or expired, get from storage
+
   try {
     const cdnURL = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/Buku`
 
     const { data, error } = await supabase.storage
       .from("Buku")
-      .list(`${isbn}/`, { limit: 1, offset: 0, search: isbn })
+      .list(`public/`, { limit: 1, search: isbn })
     if (error) throw error
-    return `${cdnURL}/${isbn}/${data[0]?.name}`
+    if (data.length) return `${cdnURL}/public/${data[0].name}`
+    return "../../assets/Image_not_available.png"
   } catch (err) {
     console.error((err as PostgrestError).message)
     return "../../assets/Image_not_available.png"
