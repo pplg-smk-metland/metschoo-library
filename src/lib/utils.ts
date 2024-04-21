@@ -1,8 +1,9 @@
 import { supabase } from "@/lib/supabase"
 import { useAuthStore } from "@/stores/auth"
+import type { Buku } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
 
-export async function ambilGambarBukuDariISBN(isbn: string) {
+export async function ambilGambarBukuDariISBN(isbn: Buku["no_isbn"]) {
   // TODO: store cover array in localStorage
   // TODO: also implement expiry time (24 hours or so)
   // TODO: if null or expired, get from storage
@@ -22,7 +23,10 @@ export async function ambilGambarBukuDariISBN(isbn: string) {
   }
 }
 
-export async function pinjamBukuDariISBN(isbn: string, jumlah_exspl: number) {
+export async function pinjamBukuDariISBN(
+  isbn: Buku["no_isbn"],
+  jumlah_exspl: Buku["jumlah_exspl"]
+) {
   const authStore = useAuthStore()
   const { error } = await supabase
     .from("peminjaman")
@@ -36,7 +40,10 @@ export async function pinjamBukuDariISBN(isbn: string, jumlah_exspl: number) {
   if (updateError) throw error
 }
 
-export async function kembalikanBukuDariISBN(isbn: string, jumlah_exspl: number) {
+export async function kembalikanBukuDariISBN(
+  isbn: Buku["no_isbn"],
+  jumlah_exspl: Buku["jumlah_exspl"]
+) {
   const { error } = await supabase
     .from("peminjaman")
     .update({ sudah_dikembalikan: true, tgl_kembali: new Date().toISOString() })
