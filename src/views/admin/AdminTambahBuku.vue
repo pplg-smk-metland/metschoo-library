@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { StorageError } from "@supabase/storage-js"
-import { useDialog } from "@/lib/composables"
 import { onMounted, ref } from "vue"
+import { useRouter } from "vue-router"
+import { useBuku, useDialog } from "@/lib/composables"
 import { supabase } from "@/lib/supabase"
-import { getAllAvailableCategories } from "@/lib/utils"
+import { StorageError } from "@supabase/storage-js"
 import type { Buku, Kategori } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
-import { useRouter } from "vue-router"
+import { getAllAvailableCategories } from "@/lib/utils"
 
 import CTA from "@/components/CTA.vue"
 import TheDialog from "@/components/TheDialog.vue"
 
-const buku = ref<Buku | null>(null)
+const { buku } = useBuku()
 
 const isLoading = ref(false)
 const { dialog } = useDialog()
@@ -29,7 +29,7 @@ function previewBookImage(bukuGambarEl: HTMLInputElement) {
 async function uploadBookImage(isbn: string, file: File) {
   isLoading.value = true
   try {
-    const { error } = await supabase.storage.from("Buku").upload(`${isbn}/${isbn}`, file, {
+    const { error } = await supabase.storage.from("Buku").upload(`public/${isbn}`, file, {
       upsert: false,
     })
     return error
@@ -39,45 +39,24 @@ async function uploadBookImage(isbn: string, file: File) {
 }
 
 async function insertBookData(buku: Buku) {
-  const {
-    no_isbn,
-    judul,
-    penulis,
-    penerbit,
-    tahun_terbit,
-    alamat_terbit,
-    asal,
-    jumlah_exspl,
-    kategori_id,
-  } = buku
-
-  const { error } = await supabase.from("buku").insert({
-    no_isbn,
-    judul,
-    penulis,
-    penerbit,
-    tahun_terbit,
-    alamat_terbit,
-    asal,
-    jumlah_exspl,
-    kategori_id,
-  })
+  const { error } = await supabase.from("buku").insert({ ...buku })
   return error
 }
 
-async function addNewBook() {
+async function addNewBook(buku: Buku) {
   isLoading.value = true
 
-  const { no_isbn } = buku.value!
+  const { no_isbn } = buku
 
   try {
-    const insertError = await insertBookData(buku.value!)
+    const insertError = await insertBookData(buku)
     if (insertError) throw insertError
+
     const uploadError = await uploadBookImage(no_isbn, bukuGambarFile.value)
     if (uploadError) throw uploadError
     dialog.value.open("Buku berhasil ditambahkan!")
   } catch (error) {
-    console.trace((error as Error).message)
+    console.table(error as Error)
     if (error instanceof StorageError) {
       errDialog.value.open(
         `Ada kesalahan saat mengunggah sampul buku. Silahkan coba lagi dalam beberapa saat. ${error.message}`
@@ -116,7 +95,7 @@ const router = useRouter()
     />
   </div>
 
-  <form v-if="buku" @submit.prevent="addNewBook">
+  <form @submit.prevent="addNewBook(buku)">
     <label for="buku-gambar">Gambar buku</label>
     <input
       type="file"
@@ -129,10 +108,24 @@ const router = useRouter()
     />
 
     <label for="buku-judul">Judul</label>
-    <input type="text" name="buku-judul" id="buku-judul" required v-model="buku.judul" />
+    <input
+      type="text"
+      name="buku-judul"
+      id="buku-judul"
+      placeholder="judul buku"
+      required
+      v-model="buku.judul"
+    />
     <label for="buku-isbn">ISBN</label>
-    <input type="text" name="buku-isbn" id="buku-isbn" required v-model="buku.no_isbn" />
-    <label for="buku-penulis">penulis</label>
+    <input
+      type="text"
+      name="buku-isbn"
+      id="buku-isbn"
+      placeholder="judul buku"
+      required
+      v-model="buku.no_isbn"
+    />
+    <label for="buku-kategori">Kategori</label>
     <select name="buku-kategori" id="buku-kategori" v-model="buku.kategori_id" required>
       <option value="" disabled>Pilih salah satu</option>
       <option
@@ -143,14 +136,30 @@ const router = useRouter()
         {{ kategori.kategori }}
       </option>
     </select>
-    <input type="text" name="buku-penulis" id="buku-penulis" required v-model="buku.penulis" />
+    <label for="buku-penulis">penulis</label>
+    <input
+      type="text"
+      name="buku-penulis"
+      id="buku-penulis"
+      placeholder="judul buku"
+      required
+      v-model="buku.penulis"
+    />
     <label for="buku-penerbit">penerbit</label>
-    <input type="text" name="buku-penerbit" id="buku-penerbit" required v-model="buku.penerbit" />
+    <input
+      type="text"
+      name="buku-penerbit"
+      id="buku-penerbit"
+      placeholder="penerbit"
+      required
+      v-model="buku.penerbit"
+    />
     <label for="buku-tahun-terbit">Tahun terbit</label>
     <input
       type="text"
       name="buku-tahun-terbit"
       id="buku-tahun-terbit"
+      placeholder="tahun terbit"
       required
       v-model="buku.tahun_terbit"
     />
@@ -159,6 +168,7 @@ const router = useRouter()
       type="text"
       name="buku-alamat-terbit"
       id="buku-alamat-terbit"
+      placeholder="alamat terbit"
       required
       v-model="buku.alamat_terbit"
     />
@@ -169,11 +179,19 @@ const router = useRouter()
       id="buku-jumlah"
       min="0"
       max="10000"
+      placeholder="jumlah buku"
       required
       v-model="buku.jumlah_exspl"
     />
     <label for="buku-asal"> Asal </label>
-    <input type="text" name="buku-asal" id="buku-asal" required v-model="buku.asal" />
+    <input
+      type="text"
+      name="buku-asal"
+      id="buku-asal"
+      placeholder="asal buku"
+      required
+      v-model="buku.asal"
+    />
 
     <CTA :disabled="isLoading">Tambah buku baru</CTA>
 
