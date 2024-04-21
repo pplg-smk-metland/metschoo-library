@@ -1,4 +1,21 @@
+import type { Buku } from "@/types"
 import { ref } from "vue"
+
+export function useBuku() {
+  const buku = ref<Buku>({
+    judul: "",
+    no_isbn: "",
+    penulis: "",
+    penerbit: "",
+    tahun_terbit: "",
+    alamat_terbit: "",
+    asal: "",
+    jumlah_exspl: 0,
+    kategori_id: 0,
+  })
+
+  return { buku }
+}
 
 export function useDialog() {
   const dialog = ref({

@@ -1,44 +1,55 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue"
 import { supabase } from "@/lib/supabase"
+import type { PostgrestError, QueryData } from "@supabase/supabase-js"
+import type { Buku } from "@/types"
 
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import DataRow from "@/components/admin/DataRow.vue"
 
 const isLoading = ref(false)
-const dataPeminjaman = ref([])
-const bukuDipinjam = ref([])
+
+const dataPeminjamanQuery = supabase
+  .from("peminjaman")
+  .select("*, pengguna(nama), buku(judul, penulis, jumlah_exspl, no_isbn)")
+  .eq("sudah_dikonfirmasi", false)
+
+type DataPeminjaman = QueryData<typeof dataPeminjamanQuery>
+const dataPeminjaman = ref<DataPeminjaman>([])
 
 async function ambilDataPeminjaman() {
   try {
     isLoading.value = true
-    const { data, error } = await supabase
-      .from("peminjaman")
-      .select("*, pengguna(*), buku(*)")
-      .eq("sudah_dikonfirmasi", false)
+    const { data, error } = await dataPeminjamanQuery
     if (error) throw error
     return data
   } catch (err) {
-    console.error(err.message)
+    console.error((err as PostgrestError).message)
+    return []
   } finally {
     isLoading.value = false
   }
 }
+const bukuDipinjamQuery = supabase
+  .from("peminjaman")
+  .select("*, pengguna(nama, jurusan), buku(*)")
+  .eq("sudah_dikonfirmasi", true)
+  .eq("sudah_dikembalikan", false)
+
+type BukuDipinjam = QueryData<typeof bukuDipinjamQuery>
+const bukuDipinjam = ref<BukuDipinjam>([])
 
 async function ambilBukuYangDipinjam() {
   try {
     isLoading.value = true
-    const { data, error } = await supabase
-      .from("peminjaman")
-      .select("*, pengguna(nama, jurusan), buku(*)")
-      .eq("sudah_dikonfirmasi", true)
-      .eq("sudah_dikembalikan", false)
+    const { data, error } = await bukuDipinjamQuery
     if (error) throw error
     return data
   } catch (err) {
-    console.error(err.message)
+    console.error((err as PostgrestError).message)
   } finally {
     isLoading.value = false
+    return []
   }
 }
 
@@ -47,7 +58,7 @@ onMounted(async () => {
   bukuDipinjam.value = await ambilBukuYangDipinjam()
 })
 
-async function konfirmasiPeminjaman(no_isbn, jumlah_exspl) {
+async function konfirmasiPeminjaman(no_isbn: Buku["no_isbn"], jumlah_exspl: Buku["jumlah_exspl"]) {
   try {
     if (!confirm("beneran nih mau konfirmasi peminjaman buku")) return
     const { error } = await supabase
@@ -62,11 +73,11 @@ async function konfirmasiPeminjaman(no_isbn, jumlah_exspl) {
 
     dataPeminjaman.value = dataPeminjaman.value.filter((buku) => buku.no_isbn !== no_isbn)
   } catch (err) {
-    console.error(err.message)
+    console.error((err as PostgrestError).message)
   }
 }
 
-function konfirmasiPengembalian(no_isbn) {
+function konfirmasiPengembalian(no_isbn: Buku["no_isbn"]) {
   alert(`kembalikan buku dengan no isbn ${no_isbn}`)
 }
 </script>
@@ -85,7 +96,7 @@ function konfirmasiPengembalian(no_isbn) {
         v-for="data in dataPeminjaman"
         :key="data.user_id"
         :data="data"
-        @konfirmasi-peminjaman="konfirmasiPeminjaman(data.no_isbn, data.buku.jumlah_exspl)"
+        @konfirmasi-peminjaman="konfirmasiPeminjaman(data.no_isbn, data.buku!.jumlah_exspl)"
         @konfirmasi-pengembalian="konfirmasiPengembalian(data.no_isbn)"
       />
     </ul>

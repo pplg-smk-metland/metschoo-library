@@ -2,6 +2,7 @@ import { useAuthStore } from "@/stores/auth"
 import { type RouteRecordRaw, createRouter, createWebHistory } from "vue-router"
 import HomeView from "@/views/HomeView.vue"
 import NotFound from "@/views/NotFound.vue"
+import BookView from "@/views/BookView.vue"
 
 const routes: RouteRecordRaw[] = [
   {
@@ -52,7 +53,7 @@ const routes: RouteRecordRaw[] = [
 
   {
     path: "/buku/:isbn",
-    component: () => import("@/views/BookView.vue"),
+    component: BookView,
   },
   {
     path: "/admin",

@@ -64,6 +64,6 @@ export async function getAllAvailableCategories() {
     return data
   } catch (err) {
     console.trace((err as PostgrestError).message)
-    return null
+    return []
   }
 }
