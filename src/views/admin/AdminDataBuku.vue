@@ -4,21 +4,22 @@ import { supabase } from "@/lib/supabase"
 import { getAllAvailableCategories } from "@/lib/utils"
 import CTA from "@/components/CTA.vue"
 import type { Kategori } from "@/types"
-import type { PostgrestError, QueryData } from "@supabase/supabase-js"
+import type { PostgrestError } from "@supabase/supabase-js"
 
 const searchTerm = ref("")
 
 const availableCategories = ref<Kategori[]>([])
-const selectedCategory = ref<Kategori | null>(null)
+const selectedCategory = ref<Kategori["id"]>(1)
 
-const daftarBukuQuery = supabase
-  .from("buku")
-  .select(`no_isbn, judul, penulis, kategori_buku(kategori)`)
-  .textSearch("judul", searchTerm.value, { type: "websearch" })
-  .eq("kategori_id", selectedCategory.value?.id!)
-  .limit(30)
-type Buku = QueryData<typeof daftarBukuQuery>
-const daftarBuku = ref<Buku>([])
+interface SearchedBuku {
+  no_isbn: string
+  judul: string
+  penulis: string
+  kategori_buku: {
+    kategori: string
+  } | null
+}
+const daftarBuku = ref<SearchedBuku[] | never>([])
 
 async function ambilBuku() {
   const { data, error } = await supabase
@@ -31,7 +32,13 @@ async function ambilBuku() {
 
 async function searchBooks() {
   try {
-    const { data, error } = await daftarBukuQuery
+    const { data, error } = await supabase
+      .from("buku")
+      .select(`no_isbn, judul, penulis, kategori_buku(kategori)`)
+      .textSearch("judul", searchTerm.value, { type: "websearch" })
+      .eq("kategori_id", selectedCategory.value)
+      .limit(30)
+
     if (error) throw error
     daftarBuku.value = data
   } catch (err) {
