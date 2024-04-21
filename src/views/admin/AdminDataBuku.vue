@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue"
 import { supabase } from "@/lib/supabase"
-import { getAllAvailableCategories } from "../../lib/utils"
+import { getAllAvailableCategories } from "@/lib/utils"
 import CTA from "@/components/CTA.vue"
 import type { Kategori } from "@/types"
 import type { PostgrestError, QueryData } from "@supabase/supabase-js"

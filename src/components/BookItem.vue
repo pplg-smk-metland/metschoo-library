@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue"
-import { ambilGambarBukuDariISBN } from "@/lib/utils.js"
+import { ambilGambarBukuDariISBN } from "@/lib/utils"
 import type { Buku } from "@/types"
 
 interface Props {

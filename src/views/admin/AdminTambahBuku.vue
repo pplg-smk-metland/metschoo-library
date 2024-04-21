@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { StorageError } from "@supabase/storage-js"
-import CTA from "../../components/CTA.vue"
-import TheDialog from "../../components/TheDialog.vue"
-import { useDialog } from "../../lib/composables"
+import { useDialog } from "@/lib/composables"
 import { onMounted, ref } from "vue"
-import { supabase } from "../../lib/supabase"
-import { getAllAvailableCategories } from "../../lib/utils"
+import { supabase } from "@/lib/supabase"
+import { getAllAvailableCategories } from "@/lib/utils"
 import type { Buku, Kategori } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
 import { useRouter } from "vue-router"
+
+import CTA from "@/components/CTA.vue"
+import TheDialog from "@/components/TheDialog.vue"
 
 const buku = ref<Buku | null>(null)
 
@@ -16,13 +17,12 @@ const isLoading = ref(false)
 const { dialog } = useDialog()
 const { dialog: errDialog } = useDialog()
 
-const bukuGambarEl = ref(null)
+const bukuGambarEl = ref<HTMLInputElement | null>(null)
 const bukuGambarURL = ref("")
 const bukuGambarFile = ref()
 
-function previewBookImage() {
-  //@ts-ignore
-  bukuGambarFile.value = bukuGambarEl.value.files[0]
+function previewBookImage(bukuGambarEl: HTMLInputElement) {
+  bukuGambarFile.value = bukuGambarEl.files?.[0]
   bukuGambarURL.value = URL.createObjectURL(bukuGambarFile.value)
 }
 
@@ -124,7 +124,7 @@ const router = useRouter()
       name="buku-gambar"
       accept="image/*"
       ref="bukuGambarEl"
-      @change="previewBookImage()"
+      @change="previewBookImage(bukuGambarEl!)"
       required
     />
 

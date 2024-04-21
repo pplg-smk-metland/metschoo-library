@@ -3,14 +3,14 @@ import { onMounted, ref } from "vue"
 import { StorageError } from "@supabase/storage-js"
 import { supabase } from "@/lib/supabase"
 import { getAllAvailableCategories } from "@/lib/utils"
-import { useDialog } from "../../lib/composables"
+import { useDialog } from "@/lib/composables"
 import { useRoute, useRouter } from "vue-router"
+import type { Kategori } from "@/types"
+import type { PostgrestError, QueryData } from "@supabase/supabase-js"
 
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import CTA from "@/components/CTA.vue"
-import TheDialog from "../../components/TheDialog.vue"
-import type { Kategori } from "@/types"
-import type { PostgrestError, QueryData } from "@supabase/supabase-js"
+import TheDialog from "@/components/TheDialog.vue"
 
 const isLoading = ref(false)
 

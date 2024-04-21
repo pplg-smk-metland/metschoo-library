@@ -3,7 +3,7 @@ import { ref, onMounted } from "vue"
 import { ambilGambarBukuDariISBN } from "@/lib/utils"
 import type { Riwayat } from "@/views/profile/ProfileRoot.vue"
 
-import CTA from "../../components/CTA.vue"
+import CTA from "@/components/CTA.vue"
 
 interface Props {
   buku: Riwayat[0]["buku"]

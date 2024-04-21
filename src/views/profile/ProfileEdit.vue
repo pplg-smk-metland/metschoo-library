@@ -38,11 +38,7 @@ onMounted(async () => {
 
     <section class="profile">
       <figure class="profile__picture-wrapper">
-        <img
-          class="profile__picture"
-          src="../../assets/profilepicture.svg"
-          alt="Foto kamu disini"
-        />
+        <img class="profile__picture" src="@/assets/profilepicture.svg" alt="Foto kamu disini" />
         <CTA>Edit foto profil</CTA>
       </figure>
 

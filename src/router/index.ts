@@ -13,12 +13,12 @@ const routes: RouteRecordRaw[] = [
   {
     path: "/pustaka",
     name: "pustaka",
-    component: () => import("../views/PustakaView.vue"),
+    component: () => import("@/views/PustakaView.vue"),
   },
   {
     path: "/wishlist",
     name: "wishlist",
-    component: () => import("../views/WishListView.vue"),
+    component: () => import("@/views/WishlistView.vue"),
   },
   {
     path: "/sign-in",
@@ -26,67 +26,67 @@ const routes: RouteRecordRaw[] = [
     // route level code-splitting
     // this generates a separate chunk (About.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import("../views/SignInView.vue"),
+    component: () => import("@/views/SignInView.vue"),
   },
   {
     path: "/profil",
-    component: () => import("../views/ProfileView.vue"),
+    component: () => import("@/views/ProfileView.vue"),
     children: [
       {
         path: "",
         name: "profile",
-        component: () => import("../views/profile/ProfileRoot.vue"),
+        component: () => import("@/views/profile/ProfileRoot.vue"),
       },
       {
         path: "edit",
         name: "profile-edit",
-        component: () => import("../views/profile/ProfileEdit.vue"),
+        component: () => import("@/views/profile/ProfileEdit.vue"),
       },
       {
         path: "keamanan",
         name: "profile-security",
-        component: () => import("../views/profile/ProfileSecurity.vue"),
+        component: () => import("@/views/profile/ProfileSecurity.vue"),
       },
     ],
   },
 
   {
     path: "/buku/:isbn",
-    component: () => import("../views/BookView.vue"),
+    component: () => import("@/views/BookView.vue"),
   },
   {
     path: "/admin",
-    component: () => import("../views/AdminView.vue"),
+    component: () => import("@/views/AdminView.vue"),
     children: [
       {
         path: "",
         name: "admin",
-        component: () => import("../views/admin/AdminRoot.vue"),
+        component: () => import("@/views/admin/AdminRoot.vue"),
       },
       {
         path: "manajemen-pengguna",
         name: "manajemen-pengguna",
-        component: () => import("../views/admin/AdminManajemenPengguna.vue"),
+        component: () => import("@/views/admin/AdminManajemenPengguna.vue"),
       },
       {
         path: "peminjaman",
         name: "peminjaman",
-        component: () => import("../views/admin/AdminPeminjaman.vue"),
+        component: () => import("@/views/admin/AdminPeminjaman.vue"),
       },
       {
         path: "buku",
         name: "data-buku",
-        component: () => import("../views/admin/AdminDataBuku.vue"),
+        component: () => import("@/views/admin/AdminDataBuku.vue"),
       },
       {
         path: "buku/:isbn",
         name: "buku",
-        component: () => import("../views/admin/AdminHalamanBuku.vue"),
+        component: () => import("@/views/admin/AdminHalamanBuku.vue"),
       },
       {
         path: "buku/tambah",
         name: "tambah-buku",
-        component: () => import("../views/admin/AdminTambahBuku.vue"),
+        component: () => import("@/views/admin/AdminTambahBuku.vue"),
       },
     ],
   },

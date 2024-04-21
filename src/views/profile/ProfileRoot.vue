@@ -8,8 +8,8 @@ import type { PostgrestError, QueryData } from "@supabase/supabase-js"
 
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import ProfileBook from "@/components/profile/ProfileBook.vue"
-import ProfileHistoryBook from "../../components/profile/ProfileHistoryBook.vue"
-import CTA from "../../components/CTA.vue"
+import ProfileHistoryBook from "@/components/profile/ProfileHistoryBook.vue"
+import CTA from "@/components/CTA.vue"
 
 const authStore = useAuthStore()
 
@@ -109,7 +109,7 @@ async function kembalikanBuku({ judul, no_isbn, jumlah_exspl }: KembalikanBuku) 
         <figure class="profile__picture-container">
           <img
             class="profile-picture"
-            src="../../assets/profilepicture.svg"
+            src="@/assets/profilepicture.svg"
             width="300"
             height="300"
             alt="Foto kamu disini"
