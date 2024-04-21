@@ -74,7 +74,10 @@ onMounted(async () => {
   </form>
 
   <ul>
-    <li v-if="!daftarBuku.length">No book found</li>
+    <li v-if="!daftarBuku.length" class="not-found">
+      Bukunya ga ketemu. Coba lagi, mungkin salah ketik atau salah kategori. Atau bukunya memang ga
+      ada.
+    </li>
     <li v-for="buku in daftarBuku" :key="buku.no_isbn" v-else>
       <routerLink :to="{ name: 'admin-halaman-buku', params: { isbn: buku.no_isbn } }">
         <p>{{ buku.judul }}</p>
