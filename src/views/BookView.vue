@@ -123,7 +123,12 @@ const formattedDate = computed(() => {
 
 const isValidDate = computed(() => (date.value as Date) > new Date())
 
-function konfirmasiPinjamBuku() {
+function konfirmasiPinjamBuku({ jumlah_exspl }: Buku) {
+  if (jumlah_exspl === 0) {
+    dialog.value.open("Maaf, buku ini tidak tersedia untuk saat ini.")
+    return
+  }
+
   dialogConfirm.value.open("Mau dikembalikan kapan?")
 }
 
@@ -132,10 +137,6 @@ async function pinjamBuku({ judul, no_isbn, jumlah_exspl }: Buku, tanggal: Date)
     dialog.value.open("kalau mau pinjam buku, buat akun dulu ya")
     router.push({ name: "sign-in" })
     return
-  }
-
-  if (jumlah_exspl === 0) {
-    dialog.value.open("Maaf, buku ini tidak tersedia untuk saat ini.")
   }
 
   if (!confirm(`Beneran mau pinjem buku ${judul}?`)) return
@@ -224,7 +225,7 @@ supabase
           <p>Jumlah tersedia: {{ buku.jumlah_exspl }}</p>
 
           <div class="button-container">
-            <CTA @click="konfirmasiPinjamBuku" v-show="bukuBisaDipinjam" :fill="true">
+            <CTA @click="konfirmasiPinjamBuku(buku)" v-show="bukuBisaDipinjam" :fill="true">
               Pinjam buku
             </CTA>
             <CTA @click="kembalikanBuku(buku)" v-show="!bukuBisaDipinjam" :fill="true">
