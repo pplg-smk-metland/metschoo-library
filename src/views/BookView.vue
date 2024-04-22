@@ -52,26 +52,16 @@ async function cekStatusPeminjaman(isbn: string) {
 
     // cek data peminjaman paling baru.
     // User bisa saja meminjam buku yang sama berulang kali
-    interface BukuPeminjaman {
-      tgl_pinjam: string
-      sudah_dikembalikan: boolean
-    }
+    const initialValue = { tgl_pinjam: "0", sudah_dikembalikan: true }
 
-    const bukuPalingBaru = ref<BukuPeminjaman>({
-      tgl_pinjam: String(new Date(0)),
-      sudah_dikembalikan: false,
-    })
-
-    for (const buku of data) {
-      if (
-        new Date(bukuPalingBaru.value.tgl_pinjam!).getTime() < new Date(buku.tgl_pinjam).getTime()
-      ) {
-        bukuPalingBaru.value = buku
+    const { sudah_dikembalikan } = data.reduce((initial, current) => {
+      if (new Date(initial.tgl_pinjam).getTime() < new Date(current.tgl_pinjam).getTime()) {
+        return current
       }
-    }
+      return initial
+    }, initialValue)
 
-    // kalau sudah dikembalikan bisa dipinjam
-    return bukuPalingBaru.value.sudah_dikembalikan
+    return sudah_dikembalikan
   } catch (err) {
     console.error((err as PostgrestError).message)
     return false
