@@ -25,12 +25,13 @@ export async function ambilGambarBukuDariISBN(isbn: Buku["no_isbn"]) {
 
 export async function pinjamBukuDariISBN(
   isbn: Buku["no_isbn"],
-  jumlah_exspl: Buku["jumlah_exspl"]
+  jumlah_exspl: Buku["jumlah_exspl"],
+  tenggat_waktu: Date
 ) {
   const authStore = useAuthStore()
   const { error } = await supabase
     .from("peminjaman")
-    .insert({ user_id: authStore.session!.user.id, no_isbn: isbn })
+    .insert({ user_id: authStore.session!.user.id, no_isbn: isbn, tenggat_waktu })
   if (error) throw error
 
   const { error: updateError } = await supabase

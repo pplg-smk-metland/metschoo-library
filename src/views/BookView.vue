@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue"
+import { computed, onMounted, ref } from "vue"
 import router from "@/router"
 import { supabase } from "@/lib/supabase"
 import { useRoute } from "vue-router"
@@ -13,6 +13,8 @@ import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import BaseLayout from "@/layouts/BaseLayout.vue"
 import TheDialog from "@/components/TheDialog.vue"
 import CTA from "@/components/CTA.vue"
+import VueDatePicker from "@vuepic/vue-datepicker"
+import "@vuepic/vue-datepicker/dist/main.css"
 
 const authStore = useAuthStore()
 const buku = ref<Buku | null>(null)
@@ -52,7 +54,11 @@ async function cekStatusPeminjaman(isbn: string) {
 
     // cek data peminjaman paling baru.
     // User bisa saja meminjam buku yang sama berulang kali
-    const initialValue = { tgl_pinjam: "0", sudah_dikembalikan: true }
+    const initialValue = {
+      tgl_pinjam: "0",
+      sudah_dikembalikan: false,
+      buku: { jumlah_exspl: 0 },
+    }
 
     const { sudah_dikembalikan } = data.reduce((initial, current) => {
       if (new Date(initial.tgl_pinjam).getTime() < new Date(current.tgl_pinjam).getTime()) {
@@ -61,7 +67,7 @@ async function cekStatusPeminjaman(isbn: string) {
       return initial
     }, initialValue)
 
-    return sudah_dikembalikan
+    return sudah_dikembalikan && buku.value!.jumlah_exspl > 0
   } catch (err) {
     console.error((err as PostgrestError).message)
     return false
@@ -102,16 +108,26 @@ onMounted(async () => {
 })
 
 const { dialog } = useDialog()
+const { dialog: dialogConfirm } = useDialog()
 
-async function pinjamBuku({
-  judul,
-  no_isbn,
-  jumlah_exspl,
-}: {
-  judul: string
-  no_isbn: string
-  jumlah_exspl: number
-}) {
+const date = ref<Date | null>(new Date())
+const formattedDate = computed(() => {
+  if (!date) return ""
+
+  return new Intl.DateTimeFormat(undefined, {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+  }).format(date.value as Date)
+})
+
+const isValidDate = computed(() => (date.value as Date) > new Date())
+
+function konfirmasiPinjamBuku() {
+  dialogConfirm.value.open("Mau dikembalikan kapan?")
+}
+
+async function pinjamBuku({ judul, no_isbn, jumlah_exspl }: Buku, tanggal: Date) {
   if (!authStore.session) {
     dialog.value.open("kalau mau pinjam buku, buat akun dulu ya")
     router.push({ name: "sign-in" })
@@ -128,22 +144,14 @@ async function pinjamBuku({
     if (bukuAdaDiWishlist.value) {
       await supabase.from("wishlist").delete().eq("no_isbn", no_isbn)
     }
-    await pinjamBukuDariISBN(no_isbn, jumlah_exspl)
+    await pinjamBukuDariISBN(no_isbn, jumlah_exspl, tanggal)
     dialog.value.open(`sukses meminjam buku ${judul}`)
   } catch (err) {
     dialog.value.open((err as PostgrestError).message)
   }
 }
 
-async function kembalikanBuku({
-  judul,
-  no_isbn,
-  jumlah_exspl,
-}: {
-  judul: string
-  no_isbn: string
-  jumlah_exspl: number
-}) {
+async function kembalikanBuku({ judul, no_isbn, jumlah_exspl }: Buku) {
   try {
     await kembalikanBukuDariISBN(no_isbn, jumlah_exspl)
     dialog.value.open(`sukses mengembalikan buku ${judul}`)
@@ -216,30 +224,10 @@ supabase
           <p>Jumlah tersedia: {{ buku.jumlah_exspl }}</p>
 
           <div class="button-container">
-            <CTA
-              @click="
-                pinjamBuku({
-                  judul: buku.judul,
-                  no_isbn: buku.no_isbn,
-                  jumlah_exspl: buku.jumlah_exspl,
-                })
-              "
-              v-show="bukuBisaDipinjam"
-              :fill="true"
-            >
+            <CTA @click="konfirmasiPinjamBuku" v-show="bukuBisaDipinjam" :fill="true">
               Pinjam buku
             </CTA>
-            <CTA
-              @click="
-                kembalikanBuku({
-                  judul: buku.judul,
-                  no_isbn: buku.no_isbn,
-                  jumlah_exspl: buku.jumlah_exspl,
-                })
-              "
-              v-show="!bukuBisaDipinjam"
-              :fill="true"
-            >
+            <CTA @click="kembalikanBuku(buku)" v-show="!bukuBisaDipinjam" :fill="true">
               Kembalikan buku
             </CTA>
             <CTA
@@ -250,6 +238,29 @@ supabase
             </CTA>
           </div>
         </figcaption>
+
+        <TheDialog :is-open="dialogConfirm.isOpen" @dialog-close="dialogConfirm.close()">
+          <h2>{{ dialogConfirm.message }}</h2>
+
+          <VueDatePicker
+            v-model="date"
+            locale="id"
+            cancel-text="Batalkan"
+            select-text="Pilih"
+            :min-date="new Date()"
+          />
+
+          <p>Saya akan mengembalikan buku ini pada</p>
+
+          <p class="tanggal">
+            <time :datetime="date?.toISOString()" v-if="date">{{ formattedDate }}</time>
+            <span v-else> pilih dulu tanggalnya. </span>
+          </p>
+
+          <CTA @click="pinjamBuku({ ...buku }, date!)" :disabled="!isValidDate"
+            >tambahkan ke wishlist</CTA
+          >
+        </TheDialog>
       </div>
 
       <div class="not-found" v-else>
@@ -349,5 +360,9 @@ supabase
 
 .tabel-bibliografi td {
   padding: 0.5rem;
+}
+
+.tanggal {
+  font-weight: bold;
 }
 </style>
