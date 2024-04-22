@@ -12,32 +12,40 @@ Source code of Metschoo Library web app, made with Vue 3 and Supabase.
 The example .env file is included under the name .env.example, there are two variables: `SUPABASE_URL` and
 `SUPABASE_ANON_KEY`. When developing, make copy of the file and rename the file to .env.local so git can ignore it.
 
+This project uses PNPM. install it first on your machine if you don't have it:
+
 ```sh
-npm install
+npm i -g pnpm
+```
+
+Then install dependencies:
+
+```sh
+pnpm install
 ```
 
 ### Compile and Hot-Reload for Development
 
 ```sh
-npm run dev
+pnpm dev
 ```
 
 ### Compile and Minify for Production
 
 ```sh
-npm run build
+pnpm build
 ```
 
 You can preview the build with
 
 ```sh
-npm run preview
+pnpm preview
 ```
 
 ### Lint with [ESLint](https://eslint.org/)
 
 ```sh
-npm run lint
+pnpm lint
 ```
 
 ### Todo
