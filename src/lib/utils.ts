@@ -16,10 +16,10 @@ export async function ambilGambarBukuDariISBN(isbn: Buku["no_isbn"]) {
       .list(`public/`, { limit: 1, search: isbn })
     if (error) throw error
     if (data.length) return `${cdnURL}/public/${data[0].name}`
-    return "@/assets/Image_not_available.png"
+    return "assets/Image_not_available.png"
   } catch (err) {
     console.error((err as PostgrestError).message)
-    return "@/assets/Image_not_available.png"
+    return "assets/Image_not_available.png"
   }
 }
 
