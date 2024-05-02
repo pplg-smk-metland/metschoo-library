@@ -102,6 +102,8 @@ function toggleFormVisibility() {
   <LoadingSpinner v-if="isLoading" />
 
   <article class="buku" v-else v-show="!formIsVisible && buku">
+    <routerLink :to="{ name: 'admin' }">Kembali</routerLink>
+
     <h1>{{ buku?.judul }} - {{ buku?.jumlah_exspl }}</h1>
     <p>{{ buku?.penulis }}</p>
     <p>{{ buku?.asal }}</p>
