@@ -14,7 +14,7 @@ const dataPeminjamanQuery = supabase
   .select("*, pengguna(nama), buku(judul, penulis, jumlah_exspl, no_isbn)")
   .eq("sudah_dikonfirmasi", false)
 
-type DataPeminjaman = QueryData<typeof dataPeminjamanQuery>
+export type DataPeminjaman = QueryData<typeof dataPeminjamanQuery>
 const dataPeminjaman = ref<DataPeminjaman>([])
 
 async function ambilDataPeminjaman() {
@@ -32,11 +32,10 @@ async function ambilDataPeminjaman() {
 }
 const bukuDipinjamQuery = supabase
   .from("peminjaman")
-  .select("*, pengguna(nama, jurusan), buku(*)")
+  .select("*, pengguna(nama, kelas, jurusan), buku(judul, penulis, jumlah_exspl, no_isbn)")
   .eq("sudah_dikonfirmasi", true)
-  .eq("sudah_dikembalikan", false)
 
-type BukuDipinjam = QueryData<typeof bukuDipinjamQuery>
+export type BukuDipinjam = QueryData<typeof bukuDipinjamQuery>
 const bukuDipinjam = ref<BukuDipinjam>([])
 
 async function ambilBukuYangDipinjam() {
@@ -47,9 +46,9 @@ async function ambilBukuYangDipinjam() {
     return data
   } catch (err) {
     console.error((err as PostgrestError).message)
+    return []
   } finally {
     isLoading.value = false
-    return []
   }
 }
 
@@ -58,16 +57,12 @@ onMounted(async () => {
   bukuDipinjam.value = await ambilBukuYangDipinjam()
 })
 
-async function konfirmasiPeminjaman(no_isbn: Buku["no_isbn"], jumlah_exspl: Buku["jumlah_exspl"]) {
+async function konfirmasiPeminjaman(no_isbn: Buku["no_isbn"]) {
   try {
     if (!confirm("beneran nih mau konfirmasi peminjaman buku")) return
     const { error } = await supabase
       .from("peminjaman")
-      .update({
-        sudah_dikonfirmasi: true,
-        tgl_pinjam: new Date().toISOString(),
-        jumlah_exspl: Number(jumlah_exspl) - 1,
-      })
+      .update({ sudah_dikonfirmasi: true })
       .eq("no_isbn", no_isbn)
     if (error) throw error
 
@@ -96,7 +91,8 @@ function konfirmasiPengembalian(no_isbn: Buku["no_isbn"]) {
         v-for="data in dataPeminjaman"
         :key="data.user_id"
         :data="data"
-        @konfirmasi-peminjaman="konfirmasiPeminjaman(data.no_isbn, data.buku!.jumlah_exspl)"
+        :buku="data.buku!"
+        @konfirmasi-peminjaman="konfirmasiPeminjaman(data.no_isbn)"
         @konfirmasi-pengembalian="konfirmasiPengembalian(data.no_isbn)"
       />
     </ul>
@@ -108,7 +104,13 @@ function konfirmasiPengembalian(no_isbn: Buku["no_isbn"]) {
     <ul class="data-list">
       <LoadingSpinner v-if="isLoading" />
       <li v-if="!isLoading && !bukuDipinjam.length">Tidak ada buku yang sedang dipinjam</li>
-      <DataRow v-else v-for="data in bukuDipinjam" :key="data.no_isbn" :data="data" />
+      <DataRow
+        v-else
+        v-for="data in bukuDipinjam"
+        :key="data.no_isbn"
+        :data="data"
+        :buku="data.buku!"
+      />
     </ul>
   </section>
 </template>

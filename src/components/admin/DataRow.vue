@@ -1,37 +1,33 @@
 <script setup lang="ts">
 import CTA from "@/components/CTA.vue"
+import type { BukuDipinjam, DataPeminjaman } from "@/views/admin/AdminRoot.vue"
 
-const props = defineProps({
-  data: Object,
-})
-
-defineEmits(["konfirmasiPeminjaman", "konfirmasiPengembalian"])
-
-/* function konfirmasiPeminjaman() {
-  emit("konfirmasiPeminjaman")
+interface Props {
+  data: BukuDipinjam[number] | DataPeminjaman[number]
+  buku: BukuDipinjam[number]["buku"] | DataPeminjaman[number]["buku"]
 }
 
-function konfirmasiPengembalian() {
-  emit("konfirmasiPengembalian")
-} */
+defineProps<Props>()
+defineEmits(["konfirmasiPeminjaman", "konfirmasiPengembalian"])
 </script>
 
 <template>
   <li class="data-row">
     <div class="data-buku">
-      <h1>{{ data.buku.judul }}</h1>
-      <p>{{ data.no_isbn }}</p>
-      <p>{{ data.buku.penerbit }}</p>
-      <p>{{ data.buku.jumlah_exspl }}</p>
-      <p>
-        <span v-if="data.sudah_dikonfirmasi === true">sudah dikonfirmasi</span
-        ><span v-else>belum dipinjam</span>
-      </p>
+      <routerLink :to="{ name: 'admin-halaman-buku', params: { isbn: buku.no_isbn } }">
+        <h1>{{ buku.judul }}</h1>
+        <p>{{ buku.no_isbn }}</p>
+        <p>{{ buku.jumlah_exspl }}</p>
+        <p>
+          <span v-if="data.sudah_dikonfirmasi === true">sudah dikonfirmasi</span
+          ><span v-else>belum dipinjam</span>
+        </p>
+      </routerLink>
     </div>
 
     <div class="data-pengguna">
-      <p>{{ data.pengguna.nama }}</p>
-      <p>{{ data.pengguna.kelas }} - {{ data.pengguna.jurusan }}</p>
+      <p>{{ data.pengguna!.nama }}</p>
+      <!-- <p>{{ data.pengguna!.kelas }} - {{ data.pengguna!.jurusan }}</p> -->
     </div>
 
     <CTA @click="$emit('konfirmasiPeminjaman')" v-show="!data.sudah_dikonfirmasi">
