@@ -1,17 +1,12 @@
 <script setup lang="ts">
 defineProps({
-  isLink: Boolean,
   fill: Boolean,
   danger: Boolean,
 })
 </script>
 
 <template>
-  <routerLink v-if="isLink">
-    <slot />
-  </routerLink>
-
-  <button v-else :class="['btn', 'cta', { 'cta--fill': fill }, { 'cta--danger': danger }]">
+  <button :class="['btn', 'cta', { 'cta--fill': fill }, { 'cta--danger': danger }]">
     <slot />
   </button>
 </template>
