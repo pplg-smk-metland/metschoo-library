@@ -53,7 +53,7 @@ export async function kembalikanBukuDariISBN(
 
   const { error: updateError } = await supabase
     .from("buku")
-    .update({ jumlah_exspl: jumlah_exspl - 1 })
+    .update({ jumlah_exspl: jumlah_exspl + 1 })
     .eq("no_isbn", isbn)
   if (updateError) throw error
 }
