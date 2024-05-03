@@ -101,73 +101,86 @@ function toggleFormVisibility() {
 <template>
   <LoadingSpinner v-if="isLoading" />
 
-  <article class="buku" v-else v-show="!formIsVisible && buku">
-    <routerLink :to="{ name: 'admin' }">Kembali</routerLink>
+  <header v-if="!buku">
+    <h1>Ada yang salah!</h1>
+    <p>Silahkan coba lagi dalam beberapa saat.</p>
+  </header>
 
-    <h1>{{ buku?.judul }} - {{ buku?.jumlah_exspl }}</h1>
-    <p>{{ buku?.penulis }}</p>
-    <p>{{ buku?.asal }}</p>
-    <p>{{ buku?.penerbit }}</p>
-    <p>{{ buku?.tahun_terbit }} - {{ buku?.alamat_terbit }}</p>
-    <p>{{ buku?.kategori_buku?.kategori }}</p>
-  </article>
+  <div class="wrapper" v-else>
+    <article class="buku" v-if="!formIsVisible">
+      <routerLink :to="{ name: 'admin' }">Kembali</routerLink>
 
-  <article v-if="formIsVisible && buku">
-    <h1>Edit</h1>
-    <CTA @click="toggleFormVisibility">Go back</CTA>
+      <h1>{{ buku.judul }} - {{ buku.jumlah_exspl }}</h1>
+      <p>{{ buku.penulis }}</p>
+      <p>{{ buku.asal }}</p>
+      <p>{{ buku.penerbit }}</p>
+      <p>{{ buku.tahun_terbit }} - {{ buku.alamat_terbit }}</p>
+      <p>{{ buku.kategori_buku?.kategori }}</p>
+    </article>
 
-    <form class="buku-edit" @submit.prevent="editBook">
-      <label for="buku-judul">Judul</label>
-      <input type="text" name="buku-judul" id="buku-judul" required v-model="buku.judul" />
-      <label for="buku-asal">Asal</label>
-      <input type="text" name="buku-asal" id="buku-asal" required v-model="buku.asal" />
-      <label for="buku-penulis">ISBN</label>
-      <input type="text" name="buku-isbn" id="buku-isbn" required v-model="buku.no_isbn" />
-      <label for="buku-penulis">Penulis</label>
-      <input type="text" name="buku-penulis" id="buku-penulis" required v-model="buku.penulis" />
-      <label for="buku-penerbit">Penerbit</label>
-      <input type="text" name="buku-penerbit" id="buku-penerbit" required v-model="buku.penerbit" />
-      <label for="buku-tahun-terbit">Tahun terbit</label>
-      <input
-        type="text"
-        name="buku-tahun-terbit"
-        id="buku-tahun-terbit"
-        required
-        v-model="buku.tahun_terbit"
-      />
-      <label for="buku-alamat-terbit">Alamat terbit</label>
-      <input
-        type="text"
-        name="buku-alamat-terbit"
-        id="buku-alamat-terbit"
-        required
-        v-model="buku.alamat_terbit"
-      />
-      <label for="buku-jumlah">Jumlah</label>
-      <input
-        type="number"
-        name="buku-jumlah"
-        id="buku-jumlah"
-        min="0"
-        max="10000"
-        required
-        v-model="buku.jumlah_exspl"
-      />
-      <label for="buku-kategori">Kategori</label>
-      <select name="buku-kategori" id="buku-kategori" v-model="buku.kategori_id" required>
-        <option value="" disabled>Please select one</option>
-        <option v-for="category in availableCategories" :key="category.id" :value="category.id">
-          {{ category.id }} - {{ category.kategori }}
-        </option>
-      </select>
+    <article v-else>
+      <h1>Edit</h1>
+      <CTA @click="toggleFormVisibility">Go back</CTA>
 
-      <CTA>Save changes</CTA>
-    </form>
-  </article>
+      <form class="buku-edit" @submit.prevent="editBook">
+        <label for="buku-judul">Judul</label>
+        <input type="text" name="buku-judul" id="buku-judul" required v-model="buku.judul" />
+        <label for="buku-asal">Asal</label>
+        <input type="text" name="buku-asal" id="buku-asal" required v-model="buku.asal" />
+        <label for="buku-penulis">ISBN</label>
+        <input type="text" name="buku-isbn" id="buku-isbn" required v-model="buku.no_isbn" />
+        <label for="buku-penulis">Penulis</label>
+        <input type="text" name="buku-penulis" id="buku-penulis" required v-model="buku.penulis" />
+        <label for="buku-penerbit">Penerbit</label>
+        <input
+          type="text"
+          name="buku-penerbit"
+          id="buku-penerbit"
+          required
+          v-model="buku.penerbit"
+        />
+        <label for="buku-tahun-terbit">Tahun terbit</label>
+        <input
+          type="text"
+          name="buku-tahun-terbit"
+          id="buku-tahun-terbit"
+          required
+          v-model="buku.tahun_terbit"
+        />
+        <label for="buku-alamat-terbit">Alamat terbit</label>
+        <input
+          type="text"
+          name="buku-alamat-terbit"
+          id="buku-alamat-terbit"
+          required
+          v-model="buku.alamat_terbit"
+        />
+        <label for="buku-jumlah">Jumlah</label>
+        <input
+          type="number"
+          name="buku-jumlah"
+          id="buku-jumlah"
+          min="0"
+          max="10000"
+          required
+          v-model="buku.jumlah_exspl"
+        />
+        <label for="buku-kategori">Kategori</label>
+        <select name="buku-kategori" id="buku-kategori" v-model="buku.kategori_id" required>
+          <option value="" disabled>Please select one</option>
+          <option v-for="category in availableCategories" :key="category.id" :value="category.id">
+            {{ category.id }} - {{ category.kategori }}
+          </option>
+        </select>
 
-  <div class="button-container">
-    <CTA @click="deleteBook(buku?.no_isbn!)" danger>Delete</CTA>
-    <CTA @click="toggleFormVisibility" v-show="!formIsVisible">Edit</CTA>
+        <CTA>Save changes</CTA>
+      </form>
+    </article>
+
+    <div class="button-container">
+      <CTA @click="deleteBook(buku.no_isbn)" danger>Delete</CTA>
+      <CTA @click="toggleFormVisibility" v-show="!formIsVisible">Edit</CTA>
+    </div>
   </div>
 
   <TheDialog :is-open="errDialog.isOpen" @dialog-close="router.push({ name: 'admin-data-buku' })">
