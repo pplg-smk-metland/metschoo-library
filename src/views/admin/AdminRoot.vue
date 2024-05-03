@@ -6,8 +6,11 @@ import type { Buku } from "@/types"
 
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import DataRow from "@/components/admin/DataRow.vue"
+import TheDialog from "@/components/TheDialog.vue"
+import { useDialog } from "@/lib/composables"
 
 const isLoading = ref(false)
+const { dialog } = useDialog()
 
 const dataPeminjamanQuery = supabase
   .from("peminjaman")
@@ -34,6 +37,7 @@ const bukuDipinjamQuery = supabase
   .from("peminjaman")
   .select("*, pengguna(nama, kelas, jurusan), buku(judul, penulis, jumlah_exspl, no_isbn)")
   .eq("sudah_dikonfirmasi", true)
+  .eq("sudah_dikembalikan", false)
 
 export type BukuDipinjam = QueryData<typeof bukuDipinjamQuery>
 const bukuDipinjam = ref<BukuDipinjam>([])
@@ -67,13 +71,25 @@ async function konfirmasiPeminjaman(no_isbn: Buku["no_isbn"]) {
     if (error) throw error
 
     dataPeminjaman.value = dataPeminjaman.value.filter((buku) => buku.no_isbn !== no_isbn)
+
+    dialog.value.open(`Sukses mengkonfirmasi peminjaman buku`)
   } catch (err) {
     console.error((err as PostgrestError).message)
   }
 }
 
-function konfirmasiPengembalian(no_isbn: Buku["no_isbn"]) {
-  alert(`kembalikan buku dengan no isbn ${no_isbn}`)
+async function konfirmasiPengembalian(no_isbn: Buku["no_isbn"]) {
+  try {
+    const { error } = await supabase
+      .from("peminjaman")
+      .update({ sudah_dikembalikan: true })
+      .eq("no_isbn", no_isbn)
+    if (error) throw error
+
+    dialog.value.open(`Sukses mengkonfirmasi pengembalian buku`)
+  } catch (err) {
+    console.error((err as PostgrestError).message)
+  }
 }
 </script>
 
@@ -110,9 +126,16 @@ function konfirmasiPengembalian(no_isbn: Buku["no_isbn"]) {
         :key="data.no_isbn"
         :data="data"
         :buku="data.buku!"
+        @konfirmasi-peminjaman="konfirmasiPeminjaman(data.no_isbn)"
+        @konfirmasi-pengembalian="konfirmasiPengembalian(data.no_isbn)"
       />
     </ul>
   </section>
+
+  <TheDialog :is-open="dialog.isOpen" :dialog-close="dialog.close">
+    <h2>Sukses!</h2>
+    <p>{{ dialog.message }}</p>
+  </TheDialog>
 </template>
 
 <style scoped>
