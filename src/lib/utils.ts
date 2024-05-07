@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabase"
 import { useAuthStore } from "@/stores/auth"
-import type { Buku } from "@/types"
+import type { Buku, Peminjaman } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
 
 export async function ambilGambarBukuDariISBN(isbn: Buku["no_isbn"]) {
@@ -26,7 +26,7 @@ export async function ambilGambarBukuDariISBN(isbn: Buku["no_isbn"]) {
 export async function pinjamBukuDariISBN(
   isbn: Buku["no_isbn"],
   jumlah_exspl: Buku["jumlah_exspl"],
-  tenggat_waktu: Date
+  tenggat_waktu: Peminjaman["tenggat_waktu"]
 ) {
   const authStore = useAuthStore()
   const { error } = await supabase
@@ -43,11 +43,15 @@ export async function pinjamBukuDariISBN(
 
 export async function kembalikanBukuDariISBN(
   isbn: Buku["no_isbn"],
-  jumlah_exspl: Buku["jumlah_exspl"]
+  jumlah_exspl: Buku["jumlah_exspl"],
+  tenggat_waktu: Peminjaman["tenggat_waktu"]
 ) {
+  let state_id = 5
+  if (tenggat_waktu < new Date().toISOString()) state_id = 6
+
   const { error } = await supabase
     .from("peminjaman")
-    .update({ sudah_dikembalikan: true, tgl_kembali: new Date().toISOString() })
+    .update({ state_id, tgl_kembali: new Date().toISOString() })
     .eq("no_isbn", isbn)
   if (error) throw error
 
