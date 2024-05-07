@@ -9,21 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      admin: {
-        Row: {
-          email: string
-          password: string
-        }
-        Insert: {
-          email: string
-          password: string
-        }
-        Update: {
-          email?: string
-          password?: string
-        }
-        Relationships: []
-      }
       buku: {
         Row: {
           alamat_terbit: string
@@ -33,7 +18,7 @@ export type Database = {
           jumlah_exspl: number
           kategori_id: number
           no_isbn: string
-          penerbit: string | null
+          penerbit: string
           penulis: string
           tahun_terbit: string
         }
@@ -45,7 +30,7 @@ export type Database = {
           jumlah_exspl?: number
           kategori_id: number
           no_isbn: string
-          penerbit?: string | null
+          penerbit: string
           penulis: string
           tahun_terbit: string
         }
@@ -57,7 +42,7 @@ export type Database = {
           jumlah_exspl?: number
           kategori_id?: number
           no_isbn?: string
-          penerbit?: string | null
+          penerbit?: string
           penulis?: string
           tahun_terbit?: string
         }
@@ -88,25 +73,28 @@ export type Database = {
       }
       peminjaman: {
         Row: {
+          id: string
           no_isbn: string
-          sudah_dikembalikan: boolean
-          sudah_dikonfirmasi: boolean
+          state_id: number
+          tenggat_waktu: string
           tgl_kembali: string | null
           tgl_pinjam: string
           user_id: string
         }
         Insert: {
+          id?: string
           no_isbn: string
-          sudah_dikembalikan?: boolean
-          sudah_dikonfirmasi?: boolean
+          state_id?: number
+          tenggat_waktu: string
           tgl_kembali?: string | null
           tgl_pinjam?: string
           user_id: string
         }
         Update: {
+          id?: string
           no_isbn?: string
-          sudah_dikembalikan?: boolean
-          sudah_dikonfirmasi?: boolean
+          state_id?: number
+          tenggat_waktu?: string
           tgl_kembali?: string | null
           tgl_pinjam?: string
           user_id?: string
@@ -120,6 +108,20 @@ export type Database = {
             referencedColumns: ["no_isbn"]
           },
           {
+            foreignKeyName: "peminjaman_no_isbn_fkey"
+            columns: ["no_isbn"]
+            isOneToOne: false
+            referencedRelation: "distinct_riwayat"
+            referencedColumns: ["no_isbn"]
+          },
+          {
+            foreignKeyName: "peminjaman_state_id_fkey"
+            columns: ["state_id"]
+            isOneToOne: false
+            referencedRelation: "peminjaman_state"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "peminjaman_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -127,6 +129,21 @@ export type Database = {
             referencedColumns: ["user_id"]
           },
         ]
+      }
+      peminjaman_state: {
+        Row: {
+          id: number
+          name: string
+        }
+        Insert: {
+          id?: number
+          name: string
+        }
+        Update: {
+          id?: number
+          name?: string
+        }
+        Relationships: []
       }
       pengguna: {
         Row: {
@@ -184,16 +201,47 @@ export type Database = {
             referencedRelation: "buku"
             referencedColumns: ["no_isbn"]
           },
+          {
+            foreignKeyName: "wishlist_no_isbn_fkey"
+            columns: ["no_isbn"]
+            isOneToOne: true
+            referencedRelation: "distinct_riwayat"
+            referencedColumns: ["no_isbn"]
+          },
         ]
       }
     }
     Views: {
       distinct_riwayat: {
         Row: {
-          buku: Database["public"]["Tables"]["buku"]["Row"] | null
-          sudah_dikembalikan: boolean | null
+          alamat_terbit: string | null
+          asal: string | null
+          fts: unknown | null
+          judul: string | null
+          jumlah_exspl: number | null
+          kategori_id: number | null
+          no_isbn: string | null
+          penerbit: string | null
+          penulis: string | null
+          state_id: number | null
+          tahun_terbit: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "peminjaman_state_id_fkey"
+            columns: ["state_id"]
+            isOneToOne: false
+            referencedRelation: "peminjaman_state"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_buku_kategori_id_fkey"
+            columns: ["kategori_id"]
+            isOneToOne: false
+            referencedRelation: "kategori_buku"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Functions: {

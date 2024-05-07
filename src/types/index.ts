@@ -7,3 +7,4 @@ type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
 export type Buku = PartialBy<Tables<"buku">, "fts">
 export type Pengguna = Tables<"pengguna">
 export type Kategori = Tables<"kategori_buku">
+export type Peminjaman = Tables<"peminjaman">
