@@ -60,6 +60,7 @@ some tasks, ordered by priority:
 - ~~set up TypeScript~~
   - ~~add types~~
   - ~~set up config for dynamic imports (`@`)~~
+- move buku API implentation details in a Pinia store
 - implement unit testing with Vitest
 
 In the future we would also like to write a full documentation of some sorts.
