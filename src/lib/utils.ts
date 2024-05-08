@@ -3,6 +3,23 @@ import { useAuthStore } from "@/stores/auth"
 import type { Buku, Peminjaman } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
 
+export async function getBuku(isbn: Buku["no_isbn"]) {
+  try {
+    const { data, error } = await supabase
+      .from("buku")
+      .select("*")
+      .eq("no_isbn", isbn)
+      .limit(1)
+      .single()
+
+    if (error) throw error
+    return data
+  } catch (err) {
+    console.error((err as PostgrestError).message)
+    return null
+  }
+}
+
 export async function ambilGambarBukuDariISBN(isbn: Buku["no_isbn"]) {
   // TODO: store cover array in localStorage
   // TODO: also implement expiry time (24 hours or so)
