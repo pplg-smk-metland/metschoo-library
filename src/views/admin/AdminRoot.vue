@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue"
 import { supabase } from "@/lib/supabase"
 import type { PostgrestError, QueryData } from "@supabase/supabase-js"
-import type { Buku } from "@/types"
+import type { Buku, Peminjaman } from "@/types"
 
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import DataRow from "@/components/admin/DataRow.vue"
@@ -15,10 +15,10 @@ const { dialog } = useDialog()
 const dataPeminjamanQuery = supabase
   .from("peminjaman")
   .select("*, pengguna(nama), buku(judul, penulis, jumlah_exspl, no_isbn)")
-  .eq("sudah_dikonfirmasi", false)
+  .eq("state_id", 1)
 
 export type DataPeminjaman = QueryData<typeof dataPeminjamanQuery>
-const dataPeminjaman = ref<DataPeminjaman>([])
+const bukuBelumDipinjam = ref<DataPeminjaman>([])
 
 async function ambilDataPeminjaman() {
   try {
@@ -33,11 +33,11 @@ async function ambilDataPeminjaman() {
     isLoading.value = false
   }
 }
+
 const bukuDipinjamQuery = supabase
   .from("peminjaman")
   .select("*, pengguna(nama, kelas, jurusan), buku(judul, penulis, jumlah_exspl, no_isbn)")
-  .eq("sudah_dikonfirmasi", true)
-  .eq("sudah_dikembalikan", false)
+  .eq("state_id", 2)
 
 export type BukuDipinjam = QueryData<typeof bukuDipinjamQuery>
 const bukuDipinjam = ref<BukuDipinjam>([])
@@ -57,20 +57,17 @@ async function ambilBukuYangDipinjam() {
 }
 
 onMounted(async () => {
-  dataPeminjaman.value = await ambilDataPeminjaman()
+  bukuBelumDipinjam.value = await ambilDataPeminjaman()
   bukuDipinjam.value = await ambilBukuYangDipinjam()
 })
 
-async function konfirmasiPeminjaman(no_isbn: Buku["no_isbn"]) {
+async function konfirmasiPeminjaman(id: Peminjaman["id"]) {
   try {
     if (!confirm("beneran nih mau konfirmasi peminjaman buku")) return
-    const { error } = await supabase
-      .from("peminjaman")
-      .update({ sudah_dikonfirmasi: true })
-      .eq("no_isbn", no_isbn)
+    const { error } = await supabase.from("peminjaman").update({ state_id: 2 }).eq("id", id)
     if (error) throw error
 
-    dataPeminjaman.value = dataPeminjaman.value.filter((buku) => buku.no_isbn !== no_isbn)
+    bukuBelumDipinjam.value = bukuBelumDipinjam.value.filter((buku) => buku.id !== id)
 
     dialog.value.open(`Sukses mengkonfirmasi peminjaman buku`)
   } catch (err) {
@@ -82,7 +79,7 @@ async function konfirmasiPengembalian(no_isbn: Buku["no_isbn"]) {
   try {
     const { error } = await supabase
       .from("peminjaman")
-      .update({ sudah_dikembalikan: true })
+      .update({ state_id: 4 })
       .eq("no_isbn", no_isbn)
     if (error) throw error
 
@@ -102,13 +99,13 @@ async function konfirmasiPengembalian(no_isbn: Buku["no_isbn"]) {
 
     <ul class="data-list">
       <LoadingSpinner v-if="isLoading" />
-      <li v-if="!isLoading && !dataPeminjaman.length">ga ada data peminjamannya</li>
+      <li v-if="!isLoading && !bukuBelumDipinjam.length">ga ada data peminjamannya</li>
       <DataRow
-        v-for="data in dataPeminjaman"
+        v-for="data in bukuBelumDipinjam"
         :key="data.user_id"
         :data="data"
         :buku="data.buku!"
-        @konfirmasi-peminjaman="konfirmasiPeminjaman(data.no_isbn)"
+        @konfirmasi-peminjaman="konfirmasiPeminjaman(data.id)"
         @konfirmasi-pengembalian="konfirmasiPengembalian(data.no_isbn)"
       />
     </ul>
@@ -126,7 +123,7 @@ async function konfirmasiPengembalian(no_isbn: Buku["no_isbn"]) {
         :key="data.no_isbn"
         :data="data"
         :buku="data.buku!"
-        @konfirmasi-peminjaman="konfirmasiPeminjaman(data.no_isbn)"
+        @konfirmasi-peminjaman="konfirmasiPeminjaman(data.id)"
         @konfirmasi-pengembalian="konfirmasiPengembalian(data.no_isbn)"
       />
     </ul>
