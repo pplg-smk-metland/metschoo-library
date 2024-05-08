@@ -89,7 +89,7 @@ async function kembalikanBuku({ judul, no_isbn, jumlah_exspl }: KembalikanBuku) 
   if (!confirm(`beneran mau kembalikan buku ${judul}?`)) return
 
   try {
-    await kembalikanBukuDariISBN(no_isbn, jumlah_exspl)
+    await kembalikanBukuDariISBN(no_isbn, jumlah_exspl, new Date())
     bukuYangDipinjam.value = bukuYangDipinjam.value!.filter(({ buku }) => buku?.no_isbn !== no_isbn)
   } catch (err) {
     console.error((err as PostgrestError).message)
