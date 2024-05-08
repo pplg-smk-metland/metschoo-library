@@ -86,10 +86,13 @@ export async function pinjamBukuDariISBN(
 export async function kembalikanBukuDariISBN(
   isbn: Buku["no_isbn"],
   jumlah_exspl: Buku["jumlah_exspl"],
-  tenggat_waktu: Peminjaman["tenggat_waktu"]
+  tgl_kembali: Date
 ) {
+  const dataPeminjaman = await getPeminjamanData(isbn)
+  const { tenggat_waktu } = getNewestPeminjaman(dataPeminjaman)
+
   let state_id = 5
-  if (tenggat_waktu < new Date().toISOString()) state_id = 6
+  if (new Date(tenggat_waktu) < tgl_kembali) state_id = 6
 
   const { error } = await supabase
     .from("peminjaman")
