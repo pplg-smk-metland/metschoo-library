@@ -2,7 +2,7 @@ import type { Buku } from "@/types"
 import { ref } from "vue"
 
 export function useBuku() {
-  const buku = ref<Buku>({
+  const buku = ref<Buku | null>({
     judul: "",
     no_isbn: "",
     penulis: "",
