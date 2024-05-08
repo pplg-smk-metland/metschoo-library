@@ -9,10 +9,13 @@ import {
   pinjamBukuDariISBN,
   kembalikanBukuDariISBN,
   getBuku,
+  type StatusPeminjaman,
+  getPeminjamanData,
+  getNewestPeminjaman,
 } from "@/lib/utils"
-import { useDialog } from "@/lib/composables"
+import { useBuku, useDialog } from "@/lib/composables"
 import type { Buku } from "@/types"
-import type { PostgrestError, QueryData } from "@supabase/supabase-js"
+import type { PostgrestError } from "@supabase/supabase-js"
 
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import BaseLayout from "@/layouts/BaseLayout.vue"
@@ -26,9 +29,8 @@ const isbn = route.params.isbn as string
 
 const authStore = useAuthStore()
 
-const buku = ref<Buku | null>(null)
 const isLoading = ref(false)
-
+const { buku } = useBuku()
 const imgURL = ref("")
 
 onMounted(async () => {
@@ -41,51 +43,24 @@ onMounted(async () => {
   imgURL.value = `../${await ambilGambarBukuDariISBN(isbn)}`
 })
 
-const peminjamanQuery = supabase.from("peminjaman").select("tgl_pinjam, state_id, tenggat_waktu")
-type Peminjaman = QueryData<typeof peminjamanQuery>
-
-async function getPeminjamanData(isbn: string) {
-  try {
-    const { data, error } = await peminjamanQuery.eq("no_isbn", isbn)
-    if (error) throw error
-    return data
-  } catch (err) {
-    console.error((err as PostgrestError).message)
-    return []
-  }
-}
-
-const getNewestPeminjaman = (statusPeminjaman: Peminjaman) => {
-  return statusPeminjaman.reduce((initial, current) => {
-    if (new Date(initial.tgl_pinjam).getTime() < new Date(current.tgl_pinjam).getTime()) {
-      return current
-    }
-    return initial
-  })
-}
-
-const statusPeminjaman = ref<Peminjaman>([])
-const newestPeminjaman = ref()
-
+const statusPeminjaman = ref<StatusPeminjaman | null>(null)
 onMounted(async () => {
   statusPeminjaman.value = await getPeminjamanData(isbn)
-  newestPeminjaman.value = getNewestPeminjaman(statusPeminjaman.value)
 })
 
 const bisaDipinjam = ref(false)
-const cekBisaDipinjam = (statusPeminjaman: Peminjaman, buku: Buku) => {
+const cekBisaDipinjam = (statusPeminjaman: StatusPeminjaman, buku: Buku) => {
   // cek data peminjaman paling baru.
   // User bisa saja meminjam buku yang sama berulang kali
 
   const { state_id } = getNewestPeminjaman(statusPeminjaman)
-  return (state_id === 5 || state_id === 6) && buku.jumlah_exspl > 0 && !bukuAdaDiWishlist.value
+  return state_id !== 1 && buku.jumlah_exspl > 0 && !bukuAdaDiWishlist.value
 }
 
 const bisaDikembalikan = ref(false)
 
-// TODO
-const cekBisaDikembalikan = (statusPeminjaman: Peminjaman) => {
-  return getNewestPeminjaman(statusPeminjaman).state_id !== 1
+const cekBisaDikembalikan = (statusPeminjaman: StatusPeminjaman) => {
+  return getNewestPeminjaman(statusPeminjaman).state_id === 2 && !bisaDipinjam.value
 }
 
 const bukuAdaDiWishlist = ref(false)
@@ -107,12 +82,13 @@ async function checkWishlist(isbn: string) {
   }
 }
 
-watch(buku, async (newBuku, _) => {
-  if (!newBuku) return
-
+// statusPeminjaman is null at first.
+// watch statusPeminjaman and check buku status.
+watch(statusPeminjaman, async (newPeminjaman, _) => {
+  if (newPeminjaman === null) return
   bukuAdaDiWishlist.value = await checkWishlist(isbn)
-  bisaDipinjam.value = cekBisaDipinjam(statusPeminjaman.value, newBuku)
-  bisaDikembalikan.value = cekBisaDikembalikan(statusPeminjaman.value)
+  bisaDipinjam.value = cekBisaDipinjam(newPeminjaman, buku.value)
+  bisaDikembalikan.value = cekBisaDikembalikan(newPeminjaman)
 })
 
 const { dialog } = useDialog()
@@ -160,12 +136,9 @@ async function pinjamBuku({ judul, no_isbn, jumlah_exspl }: Buku, tanggal: Date)
   }
 }
 
-async function kembalikanBuku(
-  { judul, no_isbn, jumlah_exspl }: Buku,
-  tenggat_waktu: Peminjaman[number]["tenggat_waktu"]
-) {
+async function kembalikanBuku({ judul, no_isbn, jumlah_exspl }: Buku) {
   try {
-    await kembalikanBukuDariISBN(no_isbn, jumlah_exspl, tenggat_waktu)
+    await kembalikanBukuDariISBN(no_isbn, jumlah_exspl, new Date())
     dialog.value.open(`sukses mengembalikan buku ${judul}`)
   } catch (err) {
     dialog.value.open(`Gagal mengembalikan buku! ${(err as PostgrestError).message}`)
@@ -237,11 +210,7 @@ supabase
             <CTA @click="konfirmasiPinjamBuku(buku)" v-if="bisaDipinjam" :fill="true">
               Pinjam buku
             </CTA>
-            <CTA
-              @click="kembalikanBuku(buku, newestPeminjaman.tenggat_waktu)"
-              v-else
-              :disabled="!bisaDikembalikan"
-              :fill="true"
+            <CTA @click="kembalikanBuku(buku)" v-else :disabled="!bisaDikembalikan" :fill="true"
               >Kembalikan buku</CTA
             >
             <CTA
@@ -271,9 +240,7 @@ supabase
             <span v-else> pilih dulu tanggalnya. </span>
           </p>
 
-          <CTA @click="pinjamBuku({ ...buku }, date)" :disabled="!isValidDate"
-            >tambahkan ke wishlist</CTA
-          >
+          <CTA @click="pinjamBuku({ ...buku }, date)" :disabled="!isValidDate">Pinjam buku</CTA>
         </TheDialog>
       </div>
 

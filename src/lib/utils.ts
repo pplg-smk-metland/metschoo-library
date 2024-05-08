@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase"
 import { useAuthStore } from "@/stores/auth"
 import type { Buku, Peminjaman } from "@/types"
-import type { PostgrestError } from "@supabase/supabase-js"
+import type { PostgrestError, QueryData } from "@supabase/supabase-js"
 
 export async function getBuku(isbn: Buku["no_isbn"]) {
   try {
@@ -38,6 +38,31 @@ export async function ambilGambarBukuDariISBN(isbn: Buku["no_isbn"]) {
     console.error((err as PostgrestError).message)
     return "assets/Image_not_available.png"
   }
+}
+
+const peminjamanQuery = supabase.from("peminjaman").select("tgl_pinjam, state_id, tenggat_waktu")
+export type StatusPeminjaman = QueryData<typeof peminjamanQuery>
+
+export async function getPeminjamanData(isbn: string) {
+  try {
+    const { data, error } = await peminjamanQuery.eq("no_isbn", isbn)
+    if (error) throw error
+    return data
+  } catch (err) {
+    console.error((err as PostgrestError).message)
+    return []
+  }
+}
+
+export function getNewestPeminjaman(statusPeminjaman: StatusPeminjaman) {
+  if (!statusPeminjaman.length) return { state_id: 0, tenggat_waktu: 0 }
+
+  return statusPeminjaman.reduce((initial, current) => {
+    if (new Date(initial.tgl_pinjam).getTime() < new Date(current.tgl_pinjam).getTime()) {
+      return current
+    }
+    return initial
+  })
 }
 
 export async function pinjamBukuDariISBN(
