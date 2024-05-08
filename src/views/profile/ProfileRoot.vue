@@ -181,11 +181,11 @@ async function kembalikanBuku({ judul, no_isbn, jumlah_exspl }: KembalikanBuku) 
       <h2>Riwayat Peminjaman</h2>
 
       <ul class="history-list">
-        <li v-if="riwayat.length" class="message">bukunya ga ada ges</li>
+        <li v-if="!riwayat.length" class="message">bukunya ga ada ges</li>
         <ProfileHistoryBook
           class="history-list__item"
-          v-for="buku in riwayat"
-          :key="buku!.no_isbn!"
+          v-for="{ buku } in riwayat"
+          :key="buku?.no_isbn"
           :buku="buku"
         />
       </ul>
