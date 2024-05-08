@@ -23,18 +23,18 @@ onMounted(async () => {
 // ambil buku yang dipinjam
 const pinjamQuery = supabase
   .from("peminjaman")
-  .select(`no_isbn, tgl_pinjam, tgl_kembali, sudah_dikembalikan, sudah_dikonfirmasi, buku(*)`)
-  .eq("sudah_dikembalikan", false)
+  .select(`no_isbn, tgl_pinjam, tgl_kembali, state_id, buku(*)`)
 
 export type BukuPinjam = QueryData<typeof pinjamQuery>
 const bukuYangDipinjam = ref<BukuPinjam>([])
 
+/** daftar buku yang belum dikonfirmasi */
 const bukuBlumDikonfirmasi = computed(() => {
-  return bukuYangDipinjam.value.filter((buku) => !buku.sudah_dikonfirmasi)
+  return bukuYangDipinjam.value.filter(({ state_id }) => state_id === 1)
 })
 
 const bukuSudahDikonfirmasi = computed(() => {
-  return bukuYangDipinjam.value.filter((buku) => buku.sudah_dikonfirmasi)
+  return bukuYangDipinjam.value.filter(({ state_id }) => state_id === 2)
 })
 
 const isLoading = ref(false)
@@ -181,11 +181,11 @@ async function kembalikanBuku({ judul, no_isbn, jumlah_exspl }: KembalikanBuku) 
       <h2>Riwayat Peminjaman</h2>
 
       <ul class="history-list">
-        <li v-if="!riwayat?.length" class="message">bukunya ga ada ges</li>
+        <li v-if="riwayat.length" class="message">bukunya ga ada ges</li>
         <ProfileHistoryBook
           class="history-list__item"
-          v-for="{ buku } in riwayat"
-          :key="buku?.no_isbn"
+          v-for="buku in riwayat"
+          :key="buku!.no_isbn!"
           :buku="buku"
         />
       </ul>
