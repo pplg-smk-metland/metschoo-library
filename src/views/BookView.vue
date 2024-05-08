@@ -44,7 +44,7 @@ onMounted(async () => {
 const peminjamanQuery = supabase.from("peminjaman").select("tgl_pinjam, state_id, tenggat_waktu")
 type Peminjaman = QueryData<typeof peminjamanQuery>
 
-async function ambilDataPeminjaman(isbn: string) {
+async function getPeminjamanData(isbn: string) {
   try {
     const { data, error } = await peminjamanQuery.eq("no_isbn", isbn)
     if (error) throw error
@@ -68,7 +68,7 @@ const statusPeminjaman = ref<Peminjaman>([])
 const newestPeminjaman = ref()
 
 onMounted(async () => {
-  statusPeminjaman.value = await ambilDataPeminjaman(isbn)
+  statusPeminjaman.value = await getPeminjamanData(isbn)
   newestPeminjaman.value = getNewestPeminjaman(statusPeminjaman.value)
 })
 
@@ -90,7 +90,7 @@ const cekBisaDikembalikan = (statusPeminjaman: Peminjaman) => {
 
 const bukuAdaDiWishlist = ref(false)
 
-async function cekWishlist(isbn: string) {
+async function checkWishlist(isbn: string) {
   try {
     const { count, error } = await supabase
       .from("wishlist")
@@ -110,7 +110,7 @@ async function cekWishlist(isbn: string) {
 watch(buku, async (newBuku, _) => {
   if (!newBuku) return
 
-  bukuAdaDiWishlist.value = await cekWishlist(isbn)
+  bukuAdaDiWishlist.value = await checkWishlist(isbn)
   bisaDipinjam.value = cekBisaDipinjam(statusPeminjaman.value, newBuku)
   bisaDikembalikan.value = cekBisaDikembalikan(statusPeminjaman.value)
 })
@@ -190,7 +190,7 @@ async function masukkanWishlist({ judul, no_isbn }: { judul: string; no_isbn: st
 }
 
 async function perbaruiDataBuku(payload: any) {
-  bukuAdaDiWishlist.value = await cekWishlist(payload.new.no_isbn)
+  bukuAdaDiWishlist.value = await checkWishlist(payload.new.no_isbn)
 }
 
 supabase
