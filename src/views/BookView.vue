@@ -4,7 +4,12 @@ import router from "@/router"
 import { supabase } from "@/lib/supabase"
 import { useRoute } from "vue-router"
 import { useAuthStore } from "@/stores/auth"
-import { ambilGambarBukuDariISBN, pinjamBukuDariISBN, kembalikanBukuDariISBN } from "@/lib/utils"
+import {
+  ambilGambarBukuDariISBN,
+  pinjamBukuDariISBN,
+  kembalikanBukuDariISBN,
+  getBuku,
+} from "@/lib/utils"
 import { useDialog } from "@/lib/composables"
 import type { Buku } from "@/types"
 import type { PostgrestError, QueryData } from "@supabase/supabase-js"
@@ -24,31 +29,16 @@ const authStore = useAuthStore()
 const buku = ref<Buku | null>(null)
 const isLoading = ref(false)
 
-async function ambilDataBuku(isbn: string): Promise<Buku | null> {
-  try {
-    isLoading.value = true
-    const { data, error } = await supabase
-      .from("buku")
-      .select("*")
-      .eq("no_isbn", isbn)
-      .limit(1)
-      .single()
-    if (error) throw error
-
-    return data
-  } catch (err) {
-    console.error((err as PostgrestError).message)
-    return null
-  } finally {
-    isLoading.value = false
-  }
-}
-
 const imgURL = ref("")
 
 onMounted(async () => {
-  imgURL.value = await ambilGambarBukuDariISBN(isbn)
-  buku.value = await ambilDataBuku(isbn)
+  try {
+    buku.value = await getBuku(isbn)
+  } catch (err) {
+    console.error((err as PostgrestError).message)
+  }
+
+  imgURL.value = `../${await ambilGambarBukuDariISBN(isbn)}`
 })
 
 const peminjamanQuery = supabase.from("peminjaman").select("tgl_pinjam, state_id, tenggat_waktu")
