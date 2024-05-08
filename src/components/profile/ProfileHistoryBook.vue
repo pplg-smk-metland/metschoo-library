@@ -3,8 +3,6 @@ import { ref, onMounted } from "vue"
 import { ambilGambarBukuDariISBN } from "@/lib/utils"
 import type { Riwayat } from "@/views/profile/ProfileRoot.vue"
 
-import CTA from "@/components/CTA.vue"
-
 interface Props {
   buku: Riwayat[0]["buku"]
 }
@@ -19,15 +17,15 @@ onMounted(async () => {
 </script>
 
 <template>
-  <article class="buku" v-if="buku">
+  <RouterLink :to="`/buku/${buku.no_isbn}`" v-if="buku" class="buku">
     <div class="buku__gambar">
       <img :src="imgUrl" :alt="`Cover ${buku.judul}`" width="100" />
     </div>
     <div class="buku__teks">
       <h3>{{ buku.judul }}</h3>
-      <CTA is-link fill :to="`/buku/${buku.no_isbn}`" class="btn cta">pinjam lagi</CTA>
+      <p>{{ buku.penulis }}</p>
     </div>
-  </article>
+  </RouterLink>
 </template>
 
 <style scoped>
