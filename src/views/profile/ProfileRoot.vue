@@ -23,7 +23,7 @@ onMounted(async () => {
 // ambil buku yang dipinjam
 const pinjamQuery = supabase
   .from("peminjaman")
-  .select(`no_isbn, tgl_pinjam, tgl_kembali, state_id, buku(*)`)
+  .select(`no_isbn, tgl_pinjam, tgl_kembali, tenggat_waktu, state_id, buku(*)`)
 
 export type BukuPinjam = QueryData<typeof pinjamQuery>
 const bukuYangDipinjam = ref<BukuPinjam>([])
@@ -78,23 +78,6 @@ onMounted(async () => {
   bukuYangDipinjam.value = await ambilBukuYangDipinjam()
   riwayat.value = await ambilRiwayatPeminjaman()
 })
-
-interface KembalikanBuku {
-  judul: string
-  no_isbn: string
-  jumlah_exspl: number
-}
-
-async function kembalikanBuku({ judul, no_isbn, jumlah_exspl }: KembalikanBuku) {
-  if (!confirm(`beneran mau kembalikan buku ${judul}?`)) return
-
-  try {
-    await kembalikanBukuDariISBN(no_isbn, jumlah_exspl, new Date())
-    bukuYangDipinjam.value = bukuYangDipinjam.value!.filter(({ buku }) => buku?.no_isbn !== no_isbn)
-  } catch (err) {
-    console.error((err as PostgrestError).message)
-  }
-}
 </script>
 
 <template>
@@ -143,36 +126,14 @@ async function kembalikanBuku({ judul, no_isbn, jumlah_exspl }: KembalikanBuku) 
         <h3>Belum dikonfirmasi</h3>
         <ul class="book-list">
           <li v-if="!bukuBlumDikonfirmasi.length">ga ada bukunya nih</li>
-          <ProfileBook
-            v-for="data in bukuBlumDikonfirmasi"
-            :key="data.no_isbn"
-            :data="data"
-            @kembalikan-buku="
-              kembalikanBuku({
-                judul: data.buku!.judul,
-                no_isbn: data.buku!.no_isbn,
-                jumlah_exspl: data.buku!.jumlah_exspl,
-              })
-            "
-          />
+          <ProfileBook v-for="data in bukuBlumDikonfirmasi" :key="data.no_isbn" :data="data" />
         </ul>
 
         <h3>Sudah dikonfirmasi</h3>
 
         <ul class="book-list">
           <li v-if="!bukuSudahDikonfirmasi.length">ga ada bukunya nih</li>
-          <ProfileBook
-            v-for="data in bukuSudahDikonfirmasi"
-            :key="data.no_isbn"
-            :data="data"
-            @kembalikan-buku="
-              kembalikanBuku({
-                judul: data.buku!.judul,
-                no_isbn: data.no_isbn,
-                jumlah_exspl: data.buku!.jumlah_exspl,
-              })
-            "
-          />
+          <ProfileBook v-for="data in bukuSudahDikonfirmasi" :key="data.no_isbn" :data="data" />
         </ul>
       </section>
     </div>
