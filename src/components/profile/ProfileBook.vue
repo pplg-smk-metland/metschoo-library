@@ -7,10 +7,7 @@ interface Props {
   data: BukuPinjam[0]
 }
 
-const props = defineProps<Props>()
-
-// object buku hasil join ada di dalam object
-const { data } = props
+const { data } = defineProps<Props>()
 const { buku } = data
 
 const imgURL = ref("")
@@ -21,9 +18,9 @@ onMounted(async () => {
 </script>
 
 <template>
-  <li class="buku" v-if="buku">
-    <figure>
-      <routerLink :to="`/buku/${buku.no_isbn}`">
+  <li>
+    <routerLink :to="`/buku/${buku.no_isbn}`" class="buku" v-if="buku">
+      <figure>
         <img
           :src="imgURL"
           class="buku__gambar"
@@ -32,20 +29,24 @@ onMounted(async () => {
           width="200"
           height="300"
         />
-      </routerLink>
-    </figure>
-    <figcaption class="buku__info">
-      <div class="buku__metadata">
-        <h3 class="buku__judul">{{ buku.judul }}</h3>
-        <p>{{ buku.no_isbn }}</p>
-        <p class="buku__penulis">{{ buku.penulis }}</p>
-        <p class="buku__tahun-terbit">{{ buku.tahun_terbit }}</p>
-      </div>
+      </figure>
+
+      <figcaption class="buku__info">
+        <div class="buku__metadata">
+          <h3 class="buku__judul">{{ buku.judul }}</h3>
+          <p>{{ buku.no_isbn }}</p>
+          <p class="buku__penulis">
+            {{ buku.penulis }} -<span class="buku__tahun-terbit">{{ buku.tahun_terbit }}</span>
+          </p>
+        </div>
+      </figcaption>
 
       <div class="tanggal">
         <p>
-          Tanggal pinjam:
-          {{ new Date(data.tgl_pinjam).toLocaleDateString() }}
+          Dipinjam pada:
+          <time :datetime="new Date(data.tgl_pinjam).toString()">
+            {{ new Date(data.tgl_pinjam).toLocaleDateString() }}
+          </time>
         </p>
         <p>
           Tenggat pengembalian:
@@ -54,21 +55,25 @@ onMounted(async () => {
           </time>
         </p>
       </div>
+    </routerLink>
   </li>
 </template>
 
 <style scoped>
 .buku {
-  padding: 0.5rem;
+  outline: 1px solid var(--primary);
   border-radius: 0.5rem;
+  overflow: hidden;
+  padding: 1rem;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .buku:hover {
   background: var(--dark-grey);
-}
-
-.buku__info {
-  padding: 1rem;
 }
 
 .buku__gambar {
@@ -76,12 +81,26 @@ onMounted(async () => {
   object-fit: cover;
 }
 
-.tanggal {
-  display: flex;
-  justify-content: space-between;
+.buku__metadata p {
+  line-height: 1;
 }
 
-.buku__status-peminjaman {
-  font-style: italic;
+.buku__judul {
+  margin-block: 0 0.2rem;
+  line-height: 1;
+}
+
+.tanggal {
+  margin-block-start: auto;
+}
+
+.tanggal > * {
+  line-height: 1.2;
+  margin-block: 0.5rem;
+}
+
+.tanggal time {
+  font-weight: bold;
+  display: block;
 }
 </style>
