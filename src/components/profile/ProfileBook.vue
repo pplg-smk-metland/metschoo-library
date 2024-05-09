@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue"
 import { ambilGambarBukuDariISBN } from "@/lib/utils"
-import CTA from "@/components/CTA.vue"
 import type { BukuPinjam } from "@/views/profile/ProfileRoot.vue"
 
 interface Props {
@@ -9,7 +8,6 @@ interface Props {
 }
 
 const props = defineProps<Props>()
-const emit = defineEmits(["kembalikanBuku"])
 
 // object buku hasil join ada di dalam object
 const { data } = props
@@ -50,15 +48,12 @@ onMounted(async () => {
           {{ new Date(data.tgl_pinjam).toLocaleDateString() }}
         </p>
         <p>
-          Tanggal kembali:
-          {{ data.tgl_kembali ? new Date(data.tgl_kembali).toLocaleDateString() : "-" }}
+          Tenggat pengembalian:
+          <time :datetime="new Date(data.tenggat_waktu).toString()">
+            {{ new Date(data.tenggat_waktu).toLocaleDateString() }}
+          </time>
         </p>
       </div>
-      <p class="buku__status-peminjaman" v-if="!data.sudah_dikonfirmasi">
-        menunggu konfirmasi peminjaman buku
-      </p>
-      <CTA @click="$emit('kembalikanBuku')">Kembalikan buku</CTA>
-    </figcaption>
   </li>
 </template>
 
