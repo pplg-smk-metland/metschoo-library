@@ -2,7 +2,6 @@
 import { ref, onMounted, computed } from "vue"
 import { useAuthStore } from "@/stores/auth"
 import { supabase } from "@/lib/supabase"
-import { kembalikanBukuDariISBN } from "@/lib/utils"
 import type { Pengguna } from "@/types"
 import type { PostgrestError, QueryData } from "@supabase/supabase-js"
 

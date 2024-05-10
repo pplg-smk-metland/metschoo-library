@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import CTA from "@/components/CTA.vue"
-import type { BukuDipinjam, DataPeminjaman } from "@/views/admin/AdminRoot.vue"
-
+import type { PeminjamanData } from "@/views/admin/AdminRoot.vue"
+import { computed } from "vue"
 interface Props {
-  data: BukuDipinjam[number] | DataPeminjaman[number]
-  buku: BukuDipinjam[number]["buku"] | DataPeminjaman[number]["buku"]
+  data: PeminjamanData[number]
+  buku: PeminjamanData[number]["buku"]
 }
 
-defineProps<Props>()
+const { data, buku } = defineProps<Props>()
 defineEmits(["konfirmasiPeminjaman", "konfirmasiPengembalian"])
+
+const borrowPending = computed(() => data.state_id === 1)
+const borrowConfirmed = computed(() => data.state_id === 2)
+const returnPending = computed(() => data.state_id === 4)
 </script>
 
 <template>
@@ -18,22 +22,23 @@ defineEmits(["konfirmasiPeminjaman", "konfirmasiPengembalian"])
         <h1>{{ buku.judul }}</h1>
         <p>{{ buku.no_isbn }}</p>
         <p>{{ buku.jumlah_exspl }}</p>
-        <p>
-          <span v-if="data.sudah_dikonfirmasi === true">sudah dikonfirmasi</span
-          ><span v-else>belum dipinjam</span>
+        <p class="status">
+          <span v-if="borrowConfirmed">sudah dikonfirmasi</span>
+          <span v-if="borrowPending">belum dipinjam</span>
+          <span v-if="returnPending">belum dikembalikan</span>
         </p>
       </routerLink>
     </div>
 
     <div class="data-pengguna">
       <p>{{ data.pengguna!.nama }}</p>
-      <!-- <p>{{ data.pengguna!.kelas }} - {{ data.pengguna!.jurusan }}</p> -->
+      <p>{{ data.pengguna!.kelas }} - {{ data.pengguna!.jurusan }}</p>
     </div>
 
-    <CTA @click="$emit('konfirmasiPeminjaman')" v-show="!data.sudah_dikonfirmasi">
+    <CTA @click="$emit('konfirmasiPeminjaman')" v-show="data.state_id === 1">
       Konfirmasi peminjaman
     </CTA>
-    <CTA @click="$emit('konfirmasiPengembalian')" v-show="data.sudah_dikonfirmasi">
+    <CTA @click="$emit('konfirmasiPengembalian')" v-show="data.state_id === 4">
       Konfirmasi pengembalian
     </CTA>
   </li>

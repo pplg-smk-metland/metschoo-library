@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase"
 import { useAuthStore } from "@/stores/auth"
 import type { Buku, Kategori, Peminjaman } from "@/types"
-import type { PostgrestError, QueryData } from "@supabase/supabase-js"
+import type { PostgrestError } from "@supabase/supabase-js"
 
 export async function getBuku(isbn: Buku["no_isbn"]) {
   const { data, error } = await supabase
@@ -47,7 +47,7 @@ export async function ambilGambarBukuDariISBN(isbn: Buku["no_isbn"]) {
 export async function getNewestPeminjaman(isbn: string) {
   const peminjamanQuery = supabase
     .from("peminjaman")
-    .select("tgl_pinjam, state_id, tenggat_waktu")
+    .select("id, tgl_pinjam, state_id, tenggat_waktu")
     .eq("no_isbn", isbn)
     .order("tgl_pinjam", { ascending: false })
     .limit(1)
@@ -73,21 +73,28 @@ export async function pinjamBukuDariISBN(
     .from("buku")
     .update({ jumlah_exspl: jumlah_exspl - 1 })
     .eq("no_isbn", isbn)
-  if (updateError) throw error
+  if (updateError) throw updateError
 }
 
-export async function kembalikanBukuDariISBN(isbn: Buku["no_isbn"]) {
-  const { error } = await supabase.from("peminjaman").update({ state_id: 4 }).eq("no_isbn", isbn)
+export async function kembalikanBukuDariISBN(id: Peminjaman["id"]) {
+  const { error } = await supabase.from("peminjaman").update({ state_id: 4 }).eq("id", id)
   if (error) throw error
 }
 
-export async function confirmReturnBuku({ no_isbn, jumlah_exspl }: Buku, tgl_kembali: Date) {
-  const { tenggat_waktu } = await getNewestPeminjaman(no_isbn)
+export async function confirmBorrowBuku(id: Peminjaman["id"]) {
+  const { error } = await supabase.from("peminjaman").update({ state_id: 2 }).eq("id", id)
+  if (error) throw error
+}
 
+export async function confirmReturnBuku(
+  { id, tenggat_waktu }: Peminjaman,
+  { jumlah_exspl, no_isbn }: Buku,
+  tgl_kembali: Date
+) {
   let state_id = 5
   if (new Date(tenggat_waktu) < new Date(tgl_kembali)) state_id = 6
 
-  const { error } = await supabase.from("peminjaman").update({ state_id }).eq("no_isbn", no_isbn)
+  const { error } = await supabase.from("peminjaman").update({ state_id }).eq("id", id)
   if (error) throw error
 
   const { error: updateError } = await supabase

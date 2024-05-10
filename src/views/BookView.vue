@@ -134,6 +134,7 @@ async function pinjamBuku({ judul, no_isbn, jumlah_exspl }: Buku, tanggal: Date)
     if (bukuAdaDiWishlist.value) {
       await supabase.from("wishlist").delete().eq("no_isbn", no_isbn)
     }
+
     await pinjamBukuDariISBN(no_isbn, jumlah_exspl, tanggal.toISOString())
     dialog.value.open(`sukses meminjam buku ${judul}`)
   } catch (err) {
@@ -141,9 +142,9 @@ async function pinjamBuku({ judul, no_isbn, jumlah_exspl }: Buku, tanggal: Date)
   }
 }
 
-async function kembalikanBuku({ judul, no_isbn }: Buku) {
+async function kembalikanBuku({ judul }: Buku, id: Peminjaman["id"]) {
   try {
-    await kembalikanBukuDariISBN(no_isbn)
+    await kembalikanBukuDariISBN(id)
     dialog.value.open(`sukses mengembalikan buku ${judul}`)
   } catch (err) {
     dialog.value.open(`Gagal mengembalikan buku! ${(err as PostgrestError).message}`)
