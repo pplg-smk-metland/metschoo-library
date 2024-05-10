@@ -141,9 +141,9 @@ async function pinjamBuku({ judul, no_isbn, jumlah_exspl }: Buku, tanggal: Date)
   }
 }
 
-async function kembalikanBuku({ judul, no_isbn, jumlah_exspl }: Buku) {
+async function kembalikanBuku({ judul, no_isbn }: Buku) {
   try {
-    await kembalikanBukuDariISBN(no_isbn, jumlah_exspl, new Date())
+    await kembalikanBukuDariISBN(no_isbn)
     dialog.value.open(`sukses mengembalikan buku ${judul}`)
   } catch (err) {
     dialog.value.open(`Gagal mengembalikan buku! ${(err as PostgrestError).message}`)

@@ -76,26 +76,24 @@ export async function pinjamBukuDariISBN(
   if (updateError) throw error
 }
 
-export async function kembalikanBukuDariISBN(
-  isbn: Buku["no_isbn"],
-  jumlah_exspl: Buku["jumlah_exspl"],
-  tgl_kembali: Date
-) {
-  const { tenggat_waktu } = await getNewestPeminjaman(isbn)
+export async function kembalikanBukuDariISBN(isbn: Buku["no_isbn"]) {
+  const { error } = await supabase.from("peminjaman").update({ state_id: 4 }).eq("no_isbn", isbn)
+  if (error) throw error
+}
+
+export async function confirmReturnBuku({ no_isbn, jumlah_exspl }: Buku, tgl_kembali: Date) {
+  const { tenggat_waktu } = await getNewestPeminjaman(no_isbn)
 
   let state_id = 5
-  if (new Date(tenggat_waktu) < tgl_kembali) state_id = 6
+  if (new Date(tenggat_waktu) < new Date(tgl_kembali)) state_id = 6
 
-  const { error } = await supabase
-    .from("peminjaman")
-    .update({ state_id, tgl_kembali: new Date().toISOString() })
-    .eq("no_isbn", isbn)
+  const { error } = await supabase.from("peminjaman").update({ state_id }).eq("no_isbn", no_isbn)
   if (error) throw error
 
   const { error: updateError } = await supabase
     .from("buku")
     .update({ jumlah_exspl: jumlah_exspl + 1 })
-    .eq("no_isbn", isbn)
+    .eq("no_isbn", no_isbn)
   if (updateError) throw error
 }
 
