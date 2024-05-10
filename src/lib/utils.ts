@@ -54,6 +54,8 @@ export async function getPeminjamanData(isbn: string) {
   }
 }
 
+// cek data peminjaman paling baru.
+// User bisa saja meminjam buku yang sama berulang kali
 export function getNewestPeminjaman(statusPeminjaman: StatusPeminjaman) {
   if (!statusPeminjaman.length) return { state_id: 0, tenggat_waktu: 0 }
 

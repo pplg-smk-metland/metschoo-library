@@ -49,12 +49,13 @@ onMounted(async () => {
 })
 
 const bisaDipinjam = ref(false)
-const cekBisaDipinjam = (statusPeminjaman: StatusPeminjaman, buku: Buku) => {
-  // cek data peminjaman paling baru.
-  // User bisa saja meminjam buku yang sama berulang kali
 
+const cekBisaDipinjam = (
+  statusPeminjaman: StatusPeminjaman,
+  jumlah_exspl: Buku["jumlah_exspl"]
+) => {
   const { state_id } = getNewestPeminjaman(statusPeminjaman)
-  return state_id !== 1 && buku.jumlah_exspl > 0 && !bukuAdaDiWishlist.value
+  return state_id !== 1 && jumlah_exspl > 0 && !bukuAdaDiWishlist.value
 }
 
 const bisaDikembalikan = ref(false)
@@ -86,8 +87,9 @@ async function checkWishlist(isbn: string) {
 // watch statusPeminjaman and check buku status.
 watch(statusPeminjaman, async (newPeminjaman, _) => {
   if (newPeminjaman === null) return
+
   bukuAdaDiWishlist.value = await checkWishlist(isbn)
-  bisaDipinjam.value = cekBisaDipinjam(newPeminjaman, buku.value)
+  bisaDipinjam.value = cekBisaDipinjam(newPeminjaman, (buku.value as Buku).jumlah_exspl)
   bisaDikembalikan.value = cekBisaDikembalikan(newPeminjaman)
 })
 
@@ -105,7 +107,7 @@ const formattedDate = computed(() => {
   }).format(date.value as Date)
 })
 
-const isValidDate = computed(() => (date.value as Date) > new Date())
+const isValidDate = computed(() => date.value > new Date())
 
 function konfirmasiPinjamBuku({ jumlah_exspl }: Buku) {
   if (jumlah_exspl === 0) {
@@ -146,7 +148,7 @@ async function kembalikanBuku({ judul, no_isbn, jumlah_exspl }: Buku) {
   }
 }
 
-async function masukkanWishlist({ judul, no_isbn }: { judul: string; no_isbn: string }) {
+async function masukkanWishlist({ judul, no_isbn }: Buku) {
   try {
     const { data, error } = await supabase.from("wishlist").insert({ no_isbn })
     if (error) throw error
@@ -213,10 +215,7 @@ supabase
             <CTA @click="kembalikanBuku(buku)" v-else :disabled="!bisaDikembalikan" :fill="true"
               >Kembalikan buku</CTA
             >
-            <CTA
-              @click="masukkanWishlist({ judul: buku.judul, no_isbn: buku.no_isbn })"
-              :disabled="bukuAdaDiWishlist || !bisaDipinjam"
-            >
+            <CTA @click="masukkanWishlist(buku)" :disabled="bukuAdaDiWishlist || !bisaDipinjam">
               tambahkan ke wishlist
             </CTA>
           </div>
