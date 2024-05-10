@@ -4,20 +4,13 @@ import type { Buku, Kategori, Peminjaman } from "@/types"
 import type { PostgrestError, QueryData } from "@supabase/supabase-js"
 
 export async function getBuku(isbn: Buku["no_isbn"]) {
-  try {
-    const { data, error } = await supabase
-      .from("buku")
-      .select("*")
-      .eq("no_isbn", isbn)
-      .limit(1)
-      .single()
+  const { data, error } = await supabase
+    .from("buku")
+    .select("*")
+    .eq("no_isbn", isbn)
+    .limit(1)
+    .single()
 
-    if (error) throw error
-    return data
-  } catch (err) {
-    console.error((err as PostgrestError).message)
-    return null
-  }
   if (error) throw error
   return data
 }
