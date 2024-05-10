@@ -15,14 +15,12 @@ export async function getBuku(isbn: Buku["no_isbn"]) {
   return data
 }
 
-const booksQuery = supabase
-  .from("buku")
-  .select(`no_isbn, judul, penulis, tahun_terbit, kategori_id`)
-  .limit(20)
-export type Bukus = QueryData<typeof booksQuery>
-
 export async function getBukus(typeId: Kategori["id"]) {
-  const { data, error } = await booksQuery.eq("kategori_id", typeId)
+  const { data, error } = await supabase
+    .from("buku")
+    .select(`*`)
+    .limit(20)
+    .eq("kategori_id", typeId)
 
   if (error) throw error
   return data
