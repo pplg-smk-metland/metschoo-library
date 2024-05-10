@@ -1,12 +1,25 @@
 <script setup lang="ts">
+import { RouterLink } from "vue-router"
+
 defineProps({
+  //@ts-ignore
+  ...RouterLink.props,
+  isLink: Boolean,
   fill: Boolean,
   danger: Boolean,
 })
 </script>
 
 <template>
-  <button :class="['btn', 'cta', { 'cta--fill': fill }, { 'cta--danger': danger }]">
+  <RouterLink
+    v-bind="$props"
+    :class="['btn', 'cta', { 'cta--fill': fill }, { 'cta--danger': danger }]"
+    v-if="isLink"
+  >
+    <slot />
+  </RouterLink>
+
+  <button :class="['btn', 'cta', { 'cta--fill': fill }, { 'cta--danger': danger }]" v-else>
     <slot />
   </button>
 </template>
