@@ -73,7 +73,7 @@ const cekBisaDipinjam = ({ state_id }: Peminjaman, jumlah_exspl: Buku["jumlah_ex
 const bisaDikembalikan = ref(false)
 
 const cekBisaDikembalikan = ({ state_id }: Peminjaman) => {
-  return [2, 4].includes(state_id) && !bisaDipinjam.value
+  return state_id === 2
 }
 
 const bukuAdaDiWishlist = ref(false)
@@ -216,8 +216,8 @@ supabase
               Pinjam buku
             </CTA>
             <CTA
-              @click="kembalikanBuku(buku)"
-              v-if="bisaDikembalikan"
+              @click="kembalikanBuku(buku, peminjamanTerbaru.id)"
+              v-else
               :disabled="!bisaDikembalikan"
               :fill="true"
               >Kembalikan buku</CTA
