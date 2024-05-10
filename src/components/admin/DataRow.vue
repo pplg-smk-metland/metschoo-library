@@ -35,10 +35,8 @@ const returnPending = computed(() => data.state_id === 4)
       <p>{{ data.pengguna!.kelas }} - {{ data.pengguna!.jurusan }}</p>
     </div>
 
-    <CTA @click="$emit('konfirmasiPeminjaman')" v-show="data.state_id === 1">
-      Konfirmasi peminjaman
-    </CTA>
-    <CTA @click="$emit('konfirmasiPengembalian')" v-show="data.state_id === 4">
+    <CTA @click="$emit('konfirmasiPeminjaman')" v-show="borrowPending"> Konfirmasi peminjaman </CTA>
+    <CTA @click="$emit('konfirmasiPengembalian')" v-show="returnPending">
       Konfirmasi pengembalian
     </CTA>
   </li>
