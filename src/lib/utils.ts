@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabase"
 import { useAuthStore } from "@/stores/auth"
-import type { Buku, Peminjaman } from "@/types"
+import type { Buku, Kategori, Peminjaman } from "@/types"
 import type { PostgrestError, QueryData } from "@supabase/supabase-js"
 
 export async function getBuku(isbn: Buku["no_isbn"]) {
@@ -18,6 +18,21 @@ export async function getBuku(isbn: Buku["no_isbn"]) {
     console.error((err as PostgrestError).message)
     return null
   }
+  if (error) throw error
+  return data
+}
+
+const booksQuery = supabase
+  .from("buku")
+  .select(`no_isbn, judul, penulis, tahun_terbit, kategori_id`)
+  .limit(20)
+export type Bukus = QueryData<typeof booksQuery>
+
+export async function getBukus(typeId: Kategori["id"]) {
+  const { data, error } = await booksQuery.eq("kategori_id", typeId)
+
+  if (error) throw error
+  return data
 }
 
 export async function ambilGambarBukuDariISBN(isbn: Buku["no_isbn"]) {
