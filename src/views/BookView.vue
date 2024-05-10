@@ -13,7 +13,7 @@ import {
 } from "@/lib/utils"
 import { useBuku, useDialog } from "@/lib/composables"
 import type { Buku, Peminjaman } from "@/types"
-import type { PostgrestError } from "@supabase/supabase-js"
+import type { PostgrestError, RealtimePostgresChangesPayload } from "@supabase/supabase-js"
 
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import BaseLayout from "@/layouts/BaseLayout.vue"
@@ -168,8 +168,12 @@ async function masukkanWishlist({ judul, no_isbn }: Buku) {
   }
 }
 
-async function perbaruiDataBuku(payload: any) {
-  bukuAdaDiWishlist.value = await checkWishlist(payload.new.no_isbn)
+async function perbaruiDataBuku(payload: RealtimePostgresChangesPayload<Peminjaman>) {
+  bukuAdaDiWishlist.value = await checkWishlist((payload.new as Peminjaman).no_isbn)
+
+  bukuAdaDiWishlist.value = await checkWishlist(isbn)
+  bisaDipinjam.value = cekBisaDipinjam(payload.new as Peminjaman, buku.value!.jumlah_exspl)
+  bisaDikembalikan.value = cekBisaDikembalikan(payload.new as Peminjaman)
 }
 
 supabase
