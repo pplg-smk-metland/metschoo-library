@@ -55,13 +55,14 @@ const cekBisaDipinjam = (
   jumlah_exspl: Buku["jumlah_exspl"]
 ) => {
   const { state_id } = getNewestPeminjaman(statusPeminjaman)
-  return state_id !== 1 && jumlah_exspl > 0 && !bukuAdaDiWishlist.value
+  return [0, 3, 5, 6].includes(state_id) && jumlah_exspl > 0 && !bukuAdaDiWishlist.value
 }
 
 const bisaDikembalikan = ref(false)
 
 const cekBisaDikembalikan = (statusPeminjaman: StatusPeminjaman) => {
-  return getNewestPeminjaman(statusPeminjaman).state_id === 2 && !bisaDipinjam.value
+  const { state_id } = getNewestPeminjaman(statusPeminjaman)
+  return [2, 4].includes(state_id) && !bisaDipinjam.value
 }
 
 const bukuAdaDiWishlist = ref(false)
@@ -212,7 +213,11 @@ supabase
             <CTA @click="konfirmasiPinjamBuku(buku)" v-if="bisaDipinjam" :fill="true">
               Pinjam buku
             </CTA>
-            <CTA @click="kembalikanBuku(buku)" v-else :disabled="!bisaDikembalikan" :fill="true"
+            <CTA
+              @click="kembalikanBuku(buku)"
+              v-if="bisaDikembalikan"
+              :disabled="!bisaDikembalikan"
+              :fill="true"
               >Kembalikan buku</CTA
             >
             <CTA @click="masukkanWishlist(buku)" :disabled="bukuAdaDiWishlist || !bisaDipinjam">
