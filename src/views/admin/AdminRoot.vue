@@ -85,6 +85,7 @@ async function konfirmasiPengembalian(dataPeminjaman: Peminjaman, buku: Buku) {
       <li v-if="!isLoading && !bukusBorrowPending.length">ga ada data peminjamannya</li>
       <DataRow
         v-for="data in bukusBorrowPending"
+        :key="data.id"
         :data="data"
         :buku="data.buku"
         @konfirmasi-peminjaman="konfirmasiPeminjaman(data.id)"
@@ -100,6 +101,7 @@ async function konfirmasiPengembalian(dataPeminjaman: Peminjaman, buku: Buku) {
     <ul class="data-list">
       <DataRow
         v-for="data in bukusReturnPending"
+        :key="data.id"
         :data="data"
         :buku="data.buku"
         @konfirmasi-pengembalian="konfirmasiPengembalian(data, data.buku!)"
