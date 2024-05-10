@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue"
+import { computed, onMounted, ref } from "vue"
 import router from "@/router"
 import { supabase } from "@/lib/supabase"
 import { useRoute } from "vue-router"
@@ -9,12 +9,10 @@ import {
   pinjamBukuDariISBN,
   kembalikanBukuDariISBN,
   getBuku,
-  type StatusPeminjaman,
-  getPeminjamanData,
   getNewestPeminjaman,
 } from "@/lib/utils"
 import { useBuku, useDialog } from "@/lib/composables"
-import type { Buku } from "@/types"
+import type { Buku, Peminjaman } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
 
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
@@ -37,31 +35,44 @@ onMounted(async () => {
   try {
     buku.value = await getBuku(isbn)
   } catch (err) {
-    console.error((err as PostgrestError).message)
+    console.error(err as PostgrestError)
+
+    buku.value = null
+    dialogError.value.open("Buku tidak ditemukan!")
+    return
   }
 
-  imgURL.value = `../${await ambilGambarBukuDariISBN(isbn)}`
+  imgURL.value = await ambilGambarBukuDariISBN(isbn)
 })
 
-const statusPeminjaman = ref<StatusPeminjaman | null>(null)
+const peminjamanTerbaru = ref<Peminjaman | null>(null)
+
 onMounted(async () => {
-  statusPeminjaman.value = await getPeminjamanData(isbn)
+  try {
+    peminjamanTerbaru.value = await getNewestPeminjaman(isbn)
+
+    bukuAdaDiWishlist.value = await checkWishlist(isbn)
+    bisaDipinjam.value = cekBisaDipinjam(peminjamanTerbaru.value, buku.value!.jumlah_exspl)
+    bisaDikembalikan.value = cekBisaDikembalikan(peminjamanTerbaru.value)
+  } catch (err) {
+    if ((err as PostgrestError).code === "PGRST116") {
+      bisaDipinjam.value = true
+      return
+    }
+
+    console.error(err as PostgrestError)
+  }
 })
 
 const bisaDipinjam = ref(false)
 
-const cekBisaDipinjam = (
-  statusPeminjaman: StatusPeminjaman,
-  jumlah_exspl: Buku["jumlah_exspl"]
-) => {
-  const { state_id } = getNewestPeminjaman(statusPeminjaman)
+const cekBisaDipinjam = ({ state_id }: Peminjaman, jumlah_exspl: Buku["jumlah_exspl"]) => {
   return [0, 3, 5, 6].includes(state_id) && jumlah_exspl > 0 && !bukuAdaDiWishlist.value
 }
 
 const bisaDikembalikan = ref(false)
 
-const cekBisaDikembalikan = (statusPeminjaman: StatusPeminjaman) => {
-  const { state_id } = getNewestPeminjaman(statusPeminjaman)
+const cekBisaDikembalikan = ({ state_id }: Peminjaman) => {
   return [2, 4].includes(state_id) && !bisaDipinjam.value
 }
 
@@ -84,18 +95,9 @@ async function checkWishlist(isbn: string) {
   }
 }
 
-// statusPeminjaman is null at first.
-// watch statusPeminjaman and check buku status.
-watch(statusPeminjaman, async (newPeminjaman, _) => {
-  if (newPeminjaman === null) return
-
-  bukuAdaDiWishlist.value = await checkWishlist(isbn)
-  bisaDipinjam.value = cekBisaDipinjam(newPeminjaman, (buku.value as Buku).jumlah_exspl)
-  bisaDikembalikan.value = cekBisaDikembalikan(newPeminjaman)
-})
-
 const { dialog } = useDialog()
 const { dialog: dialogConfirm } = useDialog()
+const { dialog: dialogError } = useDialog()
 
 const date = ref<Date>(new Date())
 const formattedDate = computed(() => {
@@ -288,6 +290,12 @@ supabase
     <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">
       <h2>Info!!</h2>
       <p>{{ dialog.message }}</p>
+    </TheDialog>
+
+    <TheDialog :is-open="dialogError.isOpen" @dialog-close="dialogError.close()">
+      <h2>Ups, ada yang salah nih.</h2>
+      <p>{{ dialogError.message }}</p>
+      <p>Silahkan coba lagi, atau hubungi admin.</p>
     </TheDialog>
   </BaseLayout>
 </template>

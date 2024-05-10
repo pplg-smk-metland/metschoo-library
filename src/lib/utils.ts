@@ -30,47 +30,32 @@ export async function ambilGambarBukuDariISBN(isbn: Buku["no_isbn"]) {
   // TODO: store cover array in localStorage
   // TODO: also implement expiry time (24 hours or so)
   // TODO: if null or expired, get from storage
+  const cdnURL = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/Buku`
 
-  try {
-    const cdnURL = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/Buku`
-
-    const { data, error } = await supabase.storage
-      .from("Buku")
-      .list(`public/`, { limit: 1, search: isbn })
-    if (error) throw error
-    if (data.length) return `${cdnURL}/public/${data[0].name}`
-    return "assets/Image_not_available.png"
-  } catch (err) {
-    console.error((err as PostgrestError).message)
-    return "assets/Image_not_available.png"
-  }
+  const { data, error } = await supabase.storage
+    .from("Buku")
+    .list(`public/`, { limit: 1, search: isbn })
+  if (error) throw error
+  if (data.length) return `${cdnURL}/public/${data[0].name}`
+  return "assets/Image_not_available.png"
 }
 
-const peminjamanQuery = supabase.from("peminjaman").select("tgl_pinjam, state_id, tenggat_waktu")
-export type StatusPeminjaman = QueryData<typeof peminjamanQuery>
+// const peminjamanQuery = supabase.from("peminjaman").select("tgl_pinjam, state_id, tenggat_waktu")
+// const peminjamanQuery = supabase.from("peminjaman").select("tgl_pinjam, state_id, tenggat_waktu")
+// export type StatusPeminjaman = QueryData<typeof peminjamanQuery>
 
-export async function getPeminjamanData(isbn: string) {
-  try {
-    const { data, error } = await peminjamanQuery.eq("no_isbn", isbn)
-    if (error) throw error
-    return data
-  } catch (err) {
-    console.error((err as PostgrestError).message)
-    return []
-  }
-}
+export async function getNewestPeminjaman(isbn: string) {
+  const peminjamanQuery = supabase
+    .from("peminjaman")
+    .select("tgl_pinjam, state_id, tenggat_waktu")
+    .eq("no_isbn", isbn)
+    .order("tgl_pinjam", { ascending: false })
+    .limit(1)
+    .single()
 
-// cek data peminjaman paling baru.
-// User bisa saja meminjam buku yang sama berulang kali
-export function getNewestPeminjaman(statusPeminjaman: StatusPeminjaman) {
-  if (!statusPeminjaman.length) return { state_id: 0, tenggat_waktu: 0 }
-
-  return statusPeminjaman.reduce((initial, current) => {
-    if (new Date(initial.tgl_pinjam).getTime() < new Date(current.tgl_pinjam).getTime()) {
-      return current
-    }
-    return initial
-  })
+  const { data, error } = await peminjamanQuery
+  if (error) throw error
+  return data as Peminjaman
 }
 
 export async function pinjamBukuDariISBN(
@@ -96,8 +81,7 @@ export async function kembalikanBukuDariISBN(
   jumlah_exspl: Buku["jumlah_exspl"],
   tgl_kembali: Date
 ) {
-  const dataPeminjaman = await getPeminjamanData(isbn)
-  const { tenggat_waktu } = getNewestPeminjaman(dataPeminjaman)
+  const { tenggat_waktu } = await getNewestPeminjaman(isbn)
 
   let state_id = 5
   if (new Date(tenggat_waktu) < tgl_kembali) state_id = 6
