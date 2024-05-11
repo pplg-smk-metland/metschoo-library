@@ -94,7 +94,10 @@ export async function confirmReturnBuku(
   let state_id = 5
   if (new Date(tenggat_waktu) < new Date(tgl_kembali)) state_id = 6
 
-  const { error } = await supabase.from("peminjaman").update({ state_id }).eq("id", id)
+  const { error } = await supabase
+    .from("peminjaman")
+    .update({ state_id, tgl_kembali: tgl_kembali.toISOString() })
+    .eq("id", id)
   if (error) throw error
 
   const { error: updateError } = await supabase

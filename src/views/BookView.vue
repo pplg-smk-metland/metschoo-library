@@ -169,9 +169,13 @@ async function masukkanWishlist({ judul, no_isbn }: Buku) {
 }
 
 async function perbaruiDataBuku(payload: RealtimePostgresChangesPayload<Peminjaman>) {
-  bukuAdaDiWishlist.value = await checkWishlist((payload.new as Peminjaman).no_isbn)
+  try {
+    peminjamanTerbaru.value = await getNewestPeminjaman(isbn)
+  } catch (err) {
+    dialogError.value.open("Gagal mengambil data peminjaman, silahkan coba lagi.")
+    console.error(err as PostgrestError)
+  }
 
-  bukuAdaDiWishlist.value = await checkWishlist(isbn)
   bisaDipinjam.value = cekBisaDipinjam(payload.new as Peminjaman, buku.value!.jumlah_exspl)
   bisaDikembalikan.value = cekBisaDikembalikan(payload.new as Peminjaman)
 }
