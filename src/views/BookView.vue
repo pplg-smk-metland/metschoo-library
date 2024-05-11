@@ -67,7 +67,7 @@ onMounted(async () => {
 const bisaDipinjam = ref(false)
 
 const cekBisaDipinjam = ({ state_id }: Peminjaman, jumlah_exspl: Buku["jumlah_exspl"]) => {
-  return [0, 3, 5, 6].includes(state_id) && jumlah_exspl > 0 && !bukuAdaDiWishlist.value
+  return [0, 3, 5, 6].includes(state_id) && jumlah_exspl > 0
 }
 
 const bisaDikembalikan = ref(false)
