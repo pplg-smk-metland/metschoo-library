@@ -1,5 +1,4 @@
 import { supabase } from "@/lib/supabase"
-import { useAuthStore } from "@/stores/auth"
 import type { Buku, Kategori, Peminjaman } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
 
@@ -58,15 +57,12 @@ export async function getNewestPeminjaman(isbn: string) {
   return data as Peminjaman
 }
 
-export async function pinjamBukuDariISBN(
-  isbn: Buku["no_isbn"],
-  jumlah_exspl: Buku["jumlah_exspl"],
-  tenggat_waktu: Peminjaman["tenggat_waktu"]
-) {
-  const authStore = useAuthStore()
-  const { error } = await supabase
-    .from("peminjaman")
-    .insert({ user_id: authStore.session!.user.id, no_isbn: isbn, tenggat_waktu })
+export async function pinjamBukuDariISBN(no_isbn: Buku["no_isbn"], tenggat_waktu: Date) {
+  const { error } = await supabase.from("peminjaman").insert({
+    no_isbn,
+    tgl_pinjam: new Date().toISOString(),
+    tenggat_waktu: tenggat_waktu.toISOString(),
+  })
   if (error) throw error
 }
 
