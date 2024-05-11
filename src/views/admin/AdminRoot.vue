@@ -120,7 +120,7 @@ supabase
   <section class="main-section" v-else>
     <h2>Buku yang belum dikonfirmasi</h2>
     <ul class="data-list">
-      <li v-if="!isLoading && !bukusBorrowPending.length">ga ada data peminjamannya</li>
+      <li v-if="bukusBorrowPending && !bukusBorrowPending.length">belum ada bukunya</li>
       <DataRow
         v-for="data in bukusBorrowPending"
         :key="data.id"
@@ -132,11 +132,13 @@ supabase
 
     <h2>Buku yang sedang dipinjam</h2>
     <ul class="data-list">
+      <li v-if="bukusBorrowConfirmed && !bukusBorrowConfirmed.length">belum ada bukunya</li>
       <DataRow v-for="data in bukusBorrowConfirmed" :data="data" :buku="data.buku" />
     </ul>
 
     <h2>Buku untuk dikembalikan</h2>
     <ul class="data-list">
+      <li v-if="bukusReturnPending && !bukusReturnPending.length">belum ada bukunya</li>
       <DataRow
         v-for="data in bukusReturnPending"
         :key="data.id"
