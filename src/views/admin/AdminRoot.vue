@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue"
 import { supabase } from "@/lib/supabase"
-import type { PostgrestError, QueryData } from "@supabase/supabase-js"
+import type {
+  PostgrestError,
+  QueryData,
+  RealtimePostgresChangesPayload,
+} from "@supabase/supabase-js"
 import type { Buku, Peminjaman } from "@/types"
 
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
@@ -18,7 +22,7 @@ const peminjamanDataQuery = supabase
   .select("*, pengguna(nama, kelas, jurusan), buku(*)")
 export type PeminjamanData = QueryData<typeof peminjamanDataQuery>
 
-const peminjamanData = ref<PeminjamanData | null>(null)
+const peminjamanData = ref<PeminjamanData>([])
 
 async function getPeminjamanData() {
   try {
@@ -27,23 +31,20 @@ async function getPeminjamanData() {
     return data
   } catch (error) {
     console.log(error as PostgrestError)
-    return null
+    return []
   }
 }
 
 const bukusBorrowPending = computed(() => {
-  if (!peminjamanData.value) return []
-  return peminjamanData.value.filter((data) => data.state_id === 1)
+  if (peminjamanData.value) return peminjamanData.value.filter((data) => data.state_id === 1)
 })
 
 const bukusBorrowConfirmed = computed(() => {
-  if (!peminjamanData.value) return []
-  return peminjamanData.value.filter((data) => data.state_id === 2)
+  if (peminjamanData.value) return peminjamanData.value.filter((data) => data.state_id === 2)
 })
 
 const bukusReturnPending = computed(() => {
-  if (!peminjamanData.value) return []
-  return peminjamanData.value.filter((data) => data.state_id === 4)
+  if (peminjamanData.value) return peminjamanData.value.filter((data) => data.state_id === 4)
 })
 
 onMounted(async () => {
@@ -72,6 +73,43 @@ async function konfirmasiPengembalian(dataPeminjaman: Peminjaman, buku: Buku) {
     console.error((err as PostgrestError).message)
   }
 }
+
+async function insertPeminjamandata(payload: RealtimePostgresChangesPayload<Peminjaman>) {
+  try {
+    const { data, error } = await supabase
+      .from("peminjaman")
+      .select("pengguna(nama, kelas, jurusan), buku(*)")
+      .eq("id", (payload.new as Peminjaman).id)
+      .single()
+    if (error) throw error
+
+    // merge data from payload and data from fetch
+    if (data) peminjamanData.value.push({ ...(payload.new as Peminjaman), ...data })
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+function updatePeminjamanData(payload: RealtimePostgresChangesPayload<Peminjaman>) {
+  const targetData = peminjamanData.value!.find(
+    (data) => data.id === (payload.new as Peminjaman).id
+  )
+  if (targetData) targetData.state_id = (payload.new as Peminjaman).state_id
+}
+
+supabase
+  .channel("new_peminjaman")
+  .on(
+    "postgres_changes",
+    { event: "INSERT", schema: "public", table: "peminjaman" },
+    insertPeminjamandata
+  )
+  .on(
+    "postgres_changes",
+    { event: "UPDATE", schema: "public", table: "peminjaman" },
+    updatePeminjamanData
+  )
+  .subscribe()
 </script>
 
 <template>
