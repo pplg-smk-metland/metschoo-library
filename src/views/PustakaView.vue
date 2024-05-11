@@ -4,7 +4,7 @@ import { supabase } from "@/lib/supabase"
 
 import BaseLayout from "@/layouts/BaseLayout.vue"
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
-import TheHeader from "../components/TheHeader.vue"
+import TheHeader from "@/components/TheHeader.vue"
 import BookItem from "@/components/BookItem.vue"
 import type { PostgrestError } from "@supabase/supabase-js"
 import { searchTermKey } from "@/stores/search"

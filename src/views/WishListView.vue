@@ -5,7 +5,6 @@ import { supabase } from "@/lib/supabase"
 import { useDialog } from "@/lib/composables"
 import { type Buku } from "@/types/index"
 import { type PostgrestError, type QueryData } from "@supabase/supabase-js"
-import { pinjamBukuDariISBN } from "@/lib/utils"
 
 import BaseLayout from "@/layouts/BaseLayout.vue"
 import LoadingSpinner from "@/components/LoadingSpinner.vue"

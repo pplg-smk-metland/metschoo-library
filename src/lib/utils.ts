@@ -39,10 +39,6 @@ export async function ambilGambarBukuDariISBN(isbn: Buku["no_isbn"]) {
   return "assets/Image_not_available.png"
 }
 
-// const peminjamanQuery = supabase.from("peminjaman").select("tgl_pinjam, state_id, tenggat_waktu")
-// const peminjamanQuery = supabase.from("peminjaman").select("tgl_pinjam, state_id, tenggat_waktu")
-// export type StatusPeminjaman = QueryData<typeof peminjamanQuery>
-
 export async function getNewestPeminjaman(isbn: string) {
   const peminjamanQuery = supabase
     .from("peminjaman")
