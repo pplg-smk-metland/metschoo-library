@@ -34,18 +34,6 @@ async function ambilWishlist() {
 
 const { dialog } = useDialog()
 
-async function pinjamBuku(buku: Buku) {
-  try {
-    await pinjamBukuDariISBN(buku.no_isbn, buku.jumlah_exspl)
-    await supabase.from("wishlist").delete().eq("no_isbn", buku.no_isbn)
-
-    dialog.value.open(`meminjam buku ${buku.judul}...`)
-    hapusBuku(buku)
-  } catch (err) {
-    console.error((err as PostgrestError).message)
-  }
-}
-
 async function hapusBukuDariWishlist(buku: Buku) {
   try {
     await supabase.from("wishlist").delete().eq("no_isbn", buku.no_isbn)
@@ -81,9 +69,9 @@ onMounted(async () => {
       <ul v-if="wishlist?.length" class="book-list">
         <WishlistBook
           v-for="wishlistItem in wishlist"
-          :key="wishlistItem.wishlist_id"
+          :key="wishlistItem.id"
           :buku="wishlistItem.buku!"
-          @pinjam-buku="pinjamBuku(wishlistItem.buku!)"
+          @pinjam-buku="$router.push(`/buku/${wishlistItem.no_isbn}`)"
           @hapus-buku="hapusBukuDariWishlist(wishlistItem.buku!)"
         />
       </ul>
