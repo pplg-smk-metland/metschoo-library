@@ -68,12 +68,6 @@ export async function pinjamBukuDariISBN(
     .from("peminjaman")
     .insert({ user_id: authStore.session!.user.id, no_isbn: isbn, tenggat_waktu })
   if (error) throw error
-
-  const { error: updateError } = await supabase
-    .from("buku")
-    .update({ jumlah_exspl: jumlah_exspl - 1 })
-    .eq("no_isbn", isbn)
-  if (updateError) throw updateError
 }
 
 export async function kembalikanBukuDariISBN(id: Peminjaman["id"]) {

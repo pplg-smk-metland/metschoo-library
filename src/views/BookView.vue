@@ -121,7 +121,7 @@ function konfirmasiPinjamBuku({ jumlah_exspl }: Buku) {
   dialogConfirm.value.open("Mau dikembalikan kapan?")
 }
 
-async function pinjamBuku({ judul, no_isbn, jumlah_exspl }: Buku, tanggal: Date) {
+async function pinjamBuku({ judul, no_isbn }: Buku, tanggal: Date) {
   if (!authStore.session) {
     dialog.value.open("kalau mau pinjam buku, buat akun dulu ya")
     router.push({ name: "sign-in" })
@@ -135,7 +135,7 @@ async function pinjamBuku({ judul, no_isbn, jumlah_exspl }: Buku, tanggal: Date)
       await supabase.from("wishlist").delete().eq("no_isbn", no_isbn)
     }
 
-    await pinjamBukuDariISBN(no_isbn, jumlah_exspl, tanggal.toISOString())
+    await pinjamBukuDariISBN(no_isbn, tanggal)
     dialog.value.open(`sukses meminjam buku ${judul}`)
   } catch (err) {
     dialog.value.open((err as PostgrestError).message)
