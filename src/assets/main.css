@@ -68,6 +68,7 @@ button:disabled {
 .button-container {
   display: flex;
   gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .btn {
@@ -86,6 +87,7 @@ button:disabled {
 
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(25ch, 100%), 1fr));
+  gap: 0.5rem;
 }
 
 a {

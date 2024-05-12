@@ -1,105 +1,158 @@
-<script setup>
-import { ref, onMounted } from "vue"
+<script setup lang="ts">
+import { ref, onMounted, computed } from "vue"
 import { supabase } from "@/lib/supabase"
+import type {
+  PostgrestError,
+  QueryData,
+  RealtimePostgresChangesPayload,
+} from "@supabase/supabase-js"
+import type { Buku, Peminjaman } from "@/types"
 
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import DataRow from "@/components/admin/DataRow.vue"
+import TheDialog from "@/components/TheDialog.vue"
+import { useDialog } from "@/lib/composables"
+import { confirmBorrowBuku, confirmReturnBuku } from "@/lib/utils"
 
 const isLoading = ref(false)
-const dataPeminjaman = ref([])
-const bukuDipinjam = ref([])
+const { dialog } = useDialog()
 
-async function ambilDataPeminjaman() {
+const peminjamanDataQuery = supabase
+  .from("peminjaman")
+  .select("*, pengguna(nama, kelas, jurusan), buku(*)")
+export type PeminjamanData = QueryData<typeof peminjamanDataQuery>
+
+const peminjamanData = ref<PeminjamanData>([])
+
+async function getPeminjamanData() {
   try {
-    isLoading.value = true
-    const { data, error } = await supabase
-      .from("peminjaman")
-      .select("*, pengguna(*), buku(*)")
-      .eq("sudah_dikonfirmasi", false)
+    const { data, error } = await peminjamanDataQuery
     if (error) throw error
     return data
-  } catch (err) {
-    console.error(err.message)
-  } finally {
-    isLoading.value = false
+  } catch (error) {
+    console.log(error as PostgrestError)
+    return []
   }
 }
 
-async function ambilBukuYangDipinjam() {
-  try {
-    isLoading.value = true
-    const { data, error } = await supabase
-      .from("peminjaman")
-      .select("*, pengguna(nama, jurusan), buku(*)")
-      .eq("sudah_dikonfirmasi", true)
-      .eq("sudah_dikembalikan", false)
-    if (error) throw error
-    return data
-  } catch (err) {
-    console.error(err.message)
-  } finally {
-    isLoading.value = false
-  }
-}
-
-onMounted(async () => {
-  dataPeminjaman.value = await ambilDataPeminjaman()
-  bukuDipinjam.value = await ambilBukuYangDipinjam()
+const bukusBorrowPending = computed(() => {
+  if (peminjamanData.value) return peminjamanData.value.filter((data) => data.state_id === 1)
 })
 
-async function konfirmasiPeminjaman(no_isbn, jumlah_exspl) {
+const bukusBorrowConfirmed = computed(() => {
+  if (peminjamanData.value) return peminjamanData.value.filter((data) => data.state_id === 2)
+})
+
+const bukusReturnPending = computed(() => {
+  if (peminjamanData.value) return peminjamanData.value.filter((data) => data.state_id === 4)
+})
+
+onMounted(async () => {
+  isLoading.value = true
+  peminjamanData.value = await getPeminjamanData()
+  isLoading.value = false
+})
+
+async function konfirmasiPeminjaman(id: Peminjaman["id"]) {
   try {
     if (!confirm("beneran nih mau konfirmasi peminjaman buku")) return
-    const { error } = await supabase
-      .from("peminjaman")
-      .update({
-        sudah_dikonfirmasi: true,
-        tgl_pinjam: new Date().toISOString(),
-        jumlah_exspl: Number(jumlah_exspl) - 1,
-      })
-      .eq("no_isbn", no_isbn)
-    if (error) throw error
+    await confirmBorrowBuku(id)
 
-    dataPeminjaman.value = dataPeminjaman.value.filter((buku) => buku.no_isbn !== no_isbn)
+    dialog.value.open(`Sukses mengkonfirmasi peminjaman buku`)
   } catch (err) {
-    console.error(err.message)
+    console.error((err as PostgrestError).message)
   }
 }
 
-function konfirmasiPengembalian(no_isbn) {
-  alert(`kembalikan buku dengan no isbn ${no_isbn}`)
+async function konfirmasiPengembalian(dataPeminjaman: Peminjaman, buku: Buku) {
+  try {
+    await confirmReturnBuku(dataPeminjaman, buku, new Date())
+
+    dialog.value.open(`Sukses mengkonfirmasi pengembalian buku`)
+  } catch (err) {
+    console.error((err as PostgrestError).message)
+  }
 }
+
+async function insertPeminjamandata(payload: RealtimePostgresChangesPayload<Peminjaman>) {
+  try {
+    const { data, error } = await supabase
+      .from("peminjaman")
+      .select("pengguna(nama, kelas, jurusan), buku(*)")
+      .eq("id", (payload.new as Peminjaman).id)
+      .single()
+    if (error) throw error
+
+    // merge data from payload and data from fetch
+    if (data) peminjamanData.value.push({ ...(payload.new as Peminjaman), ...data })
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+function updatePeminjamanData(payload: RealtimePostgresChangesPayload<Peminjaman>) {
+  const targetData = peminjamanData.value!.find(
+    (data) => data.id === (payload.new as Peminjaman).id
+  )
+  if (targetData) targetData.state_id = (payload.new as Peminjaman).state_id
+}
+
+supabase
+  .channel("new_peminjaman")
+  .on(
+    "postgres_changes",
+    { event: "INSERT", schema: "public", table: "peminjaman" },
+    insertPeminjamandata
+  )
+  .on(
+    "postgres_changes",
+    { event: "UPDATE", schema: "public", table: "peminjaman" },
+    updatePeminjamanData
+  )
+  .subscribe()
 </script>
 
 <template>
   <h1>Admin</h1>
   <p>Halo admin</p>
 
-  <section class="main-section">
+  <LoadingSpinner v-if="isLoading" />
+  <section class="main-section" v-else>
     <h2>Buku yang belum dikonfirmasi</h2>
-
     <ul class="data-list">
-      <LoadingSpinner v-if="isLoading" />
-      <li v-if="!isLoading && !dataPeminjaman.length">ga ada data peminjamannya</li>
+      <li v-if="bukusBorrowPending && !bukusBorrowPending.length">belum ada bukunya</li>
       <DataRow
-        v-for="data in dataPeminjaman"
-        :key="data.user_id"
+        v-for="data in bukusBorrowPending"
+        :key="data.id"
         :data="data"
-        @konfirmasi-peminjaman="konfirmasiPeminjaman(data.no_isbn, data.buku.jumlah_exspl)"
-        @konfirmasi-pengembalian="konfirmasiPengembalian(data.no_isbn)"
+        :buku="data.buku"
+        @konfirmasi-peminjaman="konfirmasiPeminjaman(data.id)"
+      />
+    </ul>
+
+    <h2>Buku yang sedang dipinjam</h2>
+    <ul class="data-list">
+      <li v-if="bukusBorrowConfirmed && !bukusBorrowConfirmed.length">belum ada bukunya</li>
+      <DataRow v-for="data in bukusBorrowConfirmed" :data="data" :buku="data.buku" />
+    </ul>
+
+    <h2>Buku untuk dikembalikan</h2>
+    <ul class="data-list">
+      <li v-if="bukusReturnPending && !bukusReturnPending.length">belum ada bukunya</li>
+      <DataRow
+        v-for="data in bukusReturnPending"
+        :key="data.id"
+        :data="data"
+        :buku="data.buku"
+        @konfirmasi-pengembalian="konfirmasiPengembalian(data, data.buku!)"
       />
     </ul>
   </section>
 
-  <section class="main-section">
-    <h2>Buku yang sedang dipinjam</h2>
-
-    <ul class="data-list">
-      <LoadingSpinner v-if="isLoading" />
-      <li v-if="!isLoading && !bukuDipinjam.length">Tidak ada buku yang sedang dipinjam</li>
-      <DataRow v-else v-for="data in bukuDipinjam" :key="data.no_isbn" :data="data" />
-    </ul>
-  </section>
+  <TheDialog :is-open="dialog.isOpen" :dialog-close="dialog.close">
+    <h2>Sukses!</h2>
+    <p>{{ dialog.message }}</p>
+  </TheDialog>
 </template>
 
 <style scoped>

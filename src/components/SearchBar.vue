@@ -1,10 +1,12 @@
-<script setup>
-import { inject } from "vue"
+<script setup lang="ts">
+import { inject, ref } from "vue"
+import { searchTermKey } from "@/stores/search"
 import router from "@/router"
+
 import CTA from "@/components/CTA.vue"
 
 const emit = defineEmits(["search"])
-const bukuYangDicari = inject("searchTerm")
+const bukuYangDicari = inject(searchTermKey, ref(""))
 
 async function cariBuku() {
   if (router.currentRoute.value.name !== "pustaka") {
@@ -25,7 +27,7 @@ async function cariBuku() {
       v-model="bukuYangDicari"
       required
     />
-    <CTA id="search-submit" :is-button="true">Search</CTA>
+    <CTA id="search-submit">Search</CTA>
   </form>
 </template>
 
@@ -36,11 +38,7 @@ async function cariBuku() {
 }
 
 #search-input {
-  flex: 4 0 0;
-}
-
-#search-submit {
-  flex: 1 0 0;
+  flex-grow: 1;
 }
 
 #search-form .btn {

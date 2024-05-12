@@ -1,14 +1,15 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, provide, ref } from "vue"
-import { RouterView } from "vue-router"
 import { useAuthStore } from "@/stores/auth"
+import { searchTermKey } from "@/stores/search"
+import { RouterView } from "vue-router"
 import TheFooter from "@/components/TheFooter.vue"
 
-const searchTerm = ref("")
-provide("searchTerm", searchTerm)
+provide(searchTermKey, ref(""))
+const authStore = useAuthStore()
 
-onMounted(() => {
-  useAuthStore().init()
+onMounted(async () => {
+  await authStore.init()
 })
 </script>
 

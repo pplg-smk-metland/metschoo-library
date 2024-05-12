@@ -1,5 +1,7 @@
-<script setup>
+<script setup lang="ts">
 import SearchBar from "@/components/SearchBar.vue"
+
+const emit = defineEmits(["search"])
 </script>
 
 <template>
@@ -10,7 +12,7 @@ import SearchBar from "@/components/SearchBar.vue"
     </div>
 
     <div class="header__search-bar">
-      <SearchBar />
+      <SearchBar @search="emit('search')" />
     </div>
   </header>
 </template>
@@ -18,7 +20,10 @@ import SearchBar from "@/components/SearchBar.vue"
 <style scoped>
 header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-wrap: wrap;
+}
+
+header > * {
+  flex-grow: 1;
 }
 </style>

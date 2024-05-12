@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue"
 import { useAuthStore } from "@/stores/auth"
 import { supabase } from "@/lib/supabase"
@@ -6,8 +6,11 @@ import { useDialog } from "@/lib/composables"
 
 import TheDialog from "@/components/TheDialog.vue"
 import CTA from "@/components/CTA.vue"
+import { useRouter } from "vue-router"
+import { AuthError } from "@supabase/supabase-js"
 
 const authStore = useAuthStore()
+const router = useRouter()
 
 const isSigningIn = ref(false)
 
@@ -26,9 +29,10 @@ const { dialog } = useDialog()
 async function handleSignIn() {
   try {
     await authStore.handleSignIn(data.value.email, data.value.password)
+    router.push({ name: "home" })
   } catch (err) {
-    dialog.value.open(err.message)
-    console.error(err.message)
+    if (err instanceof AuthError) dialog.value.open(err.message)
+    else console.error((err as Error).message)
   }
 }
 
@@ -42,15 +46,10 @@ async function handleSignUp() {
 
   try {
     await authStore.handleSignUp(email, password)
+    alert("Cek email lu ya buat verifikasi email!")
   } catch (err) {
-    dialog.value.open(err.message)
-    console.error(err.message)
+    if (err instanceof AuthError) dialog.value.open(err.message)
   }
-
-  await supabase
-    .from("pengguna")
-    .update({ nama: data.value.nama })
-    .eq("user_id", authStore.session.user.id)
 }
 </script>
 
@@ -78,7 +77,7 @@ async function handleSignUp() {
           placeholder="Password Anda"
           v-model="data.password"
         />
-        <CTA type="submit" :is-button="true" :fill="true">Masuk</CTA>
+        <CTA type="submit" :fill="true">Masuk</CTA>
       </form>
     </div>
 
@@ -104,11 +103,11 @@ async function handleSignUp() {
           v-model="data.confirmPassword"
         />
 
-        <CTA type="submit" :is-button="true" :fill="true">Daftar</CTA>
+        <CTA type="submit" :fill="true">Daftar</CTA>
       </form>
     </div>
 
-    <CTA @click="handleSwitchForm" :is-button="true">
+    <CTA @click="handleSwitchForm">
       <span v-if="isSigningIn">Belum punya akun? Daftar</span>
       <span v-else>Sudah punya akun? Masuk</span>
     </CTA>

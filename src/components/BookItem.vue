@@ -1,12 +1,14 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref } from "vue"
-import { ambilGambarBukuDariISBN } from "@/lib/utils.js"
+import { ambilGambarBukuDariISBN } from "@/lib/utils"
+import type { Buku } from "@/types"
 
-const props = defineProps({
-  buku: Object,
-})
-
+interface Props {
+  buku: Buku
+}
+const props = defineProps<Props>()
 const imgURL = ref("")
+
 onMounted(async () => {
   try {
     imgURL.value = await ambilGambarBukuDariISBN(props.buku.no_isbn)

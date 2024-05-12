@@ -1,43 +1,42 @@
-<script setup>
+<script setup lang="ts">
 import CTA from "@/components/CTA.vue"
-
-const props = defineProps({
-  data: Object,
-})
-
-defineEmits(["konfirmasiPeminjaman", "konfirmasiPengembalian"])
-
-/* function konfirmasiPeminjaman() {
-  emit("konfirmasiPeminjaman")
+import type { PeminjamanData } from "@/views/admin/AdminRoot.vue"
+import { computed } from "vue"
+interface Props {
+  data: PeminjamanData[number]
+  buku: PeminjamanData[number]["buku"]
 }
 
-function konfirmasiPengembalian() {
-  emit("konfirmasiPengembalian")
-} */
+const { data, buku } = defineProps<Props>()
+defineEmits(["konfirmasiPeminjaman", "konfirmasiPengembalian"])
+
+const borrowPending = computed(() => data.state_id === 1)
+const borrowConfirmed = computed(() => data.state_id === 2)
+const returnPending = computed(() => data.state_id === 4)
 </script>
 
 <template>
   <li class="data-row">
     <div class="data-buku">
-      <h1>{{ data.buku.judul }}</h1>
-      <p>{{ data.no_isbn }}</p>
-      <p>{{ data.buku.penerbit }}</p>
-      <p>{{ data.buku.jumlah_exspl }}</p>
-      <p>
-        <span v-if="data.sudah_dikonfirmasi === true">sudah dikonfirmasi</span
-        ><span v-else>belum dipinjam</span>
-      </p>
+      <routerLink :to="{ name: 'admin-halaman-buku', params: { isbn: buku.no_isbn } }">
+        <h1>{{ buku.judul }}</h1>
+        <p>{{ buku.no_isbn }}</p>
+        <p>{{ buku.jumlah_exspl }}</p>
+        <p class="status">
+          <span v-if="borrowConfirmed">sudah dikonfirmasi</span>
+          <span v-if="borrowPending">belum dipinjam</span>
+          <span v-if="returnPending">belum dikembalikan</span>
+        </p>
+      </routerLink>
     </div>
 
     <div class="data-pengguna">
-      <p>{{ data.pengguna.nama }}</p>
-      <p>{{ data.pengguna.kelas }} - {{ data.pengguna.jurusan }}</p>
+      <p>{{ data.pengguna!.nama }}</p>
+      <p>{{ data.pengguna!.kelas }} - {{ data.pengguna!.jurusan }}</p>
     </div>
 
-    <CTA @click="$emit('konfirmasiPeminjaman')" v-show="!data.sudah_dikonfirmasi">
-      Konfirmasi peminjaman
-    </CTA>
-    <CTA @click="$emit('konfirmasiPengembalian')" v-show="data.sudah_dikonfirmasi">
+    <CTA @click="$emit('konfirmasiPeminjaman')" v-show="borrowPending"> Konfirmasi peminjaman </CTA>
+    <CTA @click="$emit('konfirmasiPengembalian')" v-show="returnPending">
       Konfirmasi pengembalian
     </CTA>
   </li>

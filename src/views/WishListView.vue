@@ -1,10 +1,10 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref } from "vue"
-import { useAuthStore } from "@/stores/auth.js"
+import { useAuthStore } from "@/stores/auth"
 import { supabase } from "@/lib/supabase"
 import { useDialog } from "@/lib/composables"
-
-import { pinjamBukuDariISBN } from "@/lib/utils"
+import { type Buku } from "@/types/index"
+import { type PostgrestError, type QueryData } from "@supabase/supabase-js"
 
 import BaseLayout from "@/layouts/BaseLayout.vue"
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
@@ -13,17 +13,19 @@ import TheDialog from "@/components/TheDialog.vue"
 
 const authStore = useAuthStore()
 
-const wishlist = ref([])
+const wishlistQuery = supabase.from("wishlist").select("*, buku(*)")
+type Wishlist = QueryData<typeof wishlistQuery>
+const wishlist = ref<Wishlist>()
 
 const isLoading = ref(false)
 async function ambilWishlist() {
   try {
     isLoading.value = true
-    const { data, error } = await supabase.from("wishlist").select("*, buku(*)")
+    const { data, error } = await wishlistQuery
     if (error) throw error
     return data
   } catch (err) {
-    console.error(err.message)
+    console.error((err as PostgrestError).message)
   } finally {
     isLoading.value = false
   }
@@ -31,30 +33,17 @@ async function ambilWishlist() {
 
 const { dialog } = useDialog()
 
-async function pinjamBuku(buku) {
-  try {
-    await pinjamBukuDariISBN(buku.no_isbn)
-    await supabase.from("wishlist").delete().eq("no_isbn", buku.no_isbn)
-
-    dialog.value.open(`meminjam buku ${buku.judul}...`)
-    hapusBuku(buku)
-  } catch (err) {
-    console.error(err.message)
-  }
-}
-
-async function hapusBukuDariWishlist(buku) {
+async function hapusBukuDariWishlist(buku: Buku) {
   try {
     await supabase.from("wishlist").delete().eq("no_isbn", buku.no_isbn)
     hapusBuku(buku)
   } catch (err) {
-    console.error(err.message)
+    console.error((err as PostgrestError).message)
   }
 }
 
-function hapusBuku(buku) {
-  const found = wishlist.value.indexOf(buku)
-  wishlist.value.splice(found, 1)
+function hapusBuku(buku: Buku) {
+  wishlist.value = wishlist.value?.filter(({ no_isbn }) => no_isbn !== buku.no_isbn)
   dialog.value.open(`menghapus buku ${buku.judul} dari wishlist...`)
 }
 
@@ -75,14 +64,14 @@ onMounted(async () => {
 
     <section class="main-section" v-else>
       <LoadingSpinner v-if="isLoading" />
-      <p v-if="!isLoading && !wishlist.length">Kamu belum punya apa-apa dalam wishlist kamu.</p>
-      <ul v-if="wishlist.length" class="book-list">
+      <p v-if="!isLoading && !wishlist?.length">Kamu belum punya apa-apa dalam wishlist kamu.</p>
+      <ul v-if="wishlist?.length" class="book-list">
         <WishlistBook
           v-for="wishlistItem in wishlist"
-          :key="wishlistItem.wishlist_id"
-          :buku="wishlistItem.buku"
-          @pinjam-buku="pinjamBuku(wishlistItem.buku)"
-          @hapus-buku="hapusBukuDariWishlist(wishlistItem.buku)"
+          :key="wishlistItem.id"
+          :buku="wishlistItem.buku!"
+          @pinjam-buku="$router.push(`/buku/${wishlistItem.no_isbn}`)"
+          @hapus-buku="hapusBukuDariWishlist(wishlistItem.buku!)"
         />
       </ul>
     </section>

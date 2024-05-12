@@ -3,7 +3,7 @@ module.exports = {
     browser: true,
     es2021: true,
   },
-  extends: ["standard", "plugin:vue/vue3-essential"],
+  extends: ["eslint:recommended", "standard", "plugin:vue/vue3-essential"],
   overrides: [
     {
       env: {
@@ -20,5 +20,8 @@ module.exports = {
     sourceType: "module",
   },
   plugins: ["vue"],
-  rules: {},
+  rules: {
+    quotes: "double",
+    semi: "never",
+  },
 }

@@ -1,10 +1,25 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from "vue"
 import { supabase } from "@/lib/supabase"
-import { getAllAvailableCategories } from "../../lib/utils"
+import { getAllAvailableCategories } from "@/lib/utils"
 import CTA from "@/components/CTA.vue"
+import type { Kategori } from "@/types"
+import type { PostgrestError } from "@supabase/supabase-js"
 
-const daftarBuku = ref([])
+const searchTerm = ref("")
+
+const availableCategories = ref<Kategori[]>([])
+const selectedCategory = ref<Kategori["id"]>(1)
+
+interface SearchedBuku {
+  no_isbn: string
+  judul: string
+  penulis: string
+  kategori_buku: {
+    kategori: string
+  } | null
+}
+const daftarBuku = ref<SearchedBuku[] | never>([])
 
 async function ambilBuku() {
   const { data, error } = await supabase
@@ -15,9 +30,6 @@ async function ambilBuku() {
   return data
 }
 
-const availableCategories = ref([])
-const selectedCategory = ref(null)
-
 async function searchBooks() {
   try {
     const { data, error } = await supabase
@@ -26,10 +38,11 @@ async function searchBooks() {
       .textSearch("judul", searchTerm.value, { type: "websearch" })
       .eq("kategori_id", selectedCategory.value)
       .limit(30)
+
     if (error) throw error
     daftarBuku.value = data
   } catch (err) {
-    console.trace(err.message)
+    console.trace((err as PostgrestError).message)
   }
 }
 
@@ -37,8 +50,6 @@ onMounted(async () => {
   daftarBuku.value = await ambilBuku()
   availableCategories.value = await getAllAvailableCategories()
 })
-
-const searchTerm = ref("")
 </script>
 
 <template>
@@ -63,12 +74,15 @@ const searchTerm = ref("")
   </form>
 
   <ul>
-    <li v-if="!daftarBuku.length">No book found</li>
+    <li v-if="!daftarBuku.length" class="not-found">
+      Bukunya ga ketemu. Coba lagi, mungkin salah ketik atau salah kategori. Atau bukunya memang ga
+      ada.
+    </li>
     <li v-for="buku in daftarBuku" :key="buku.no_isbn" v-else>
-      <routerLink :to="`/admin/buku/${buku.no_isbn}`">
+      <routerLink :to="{ name: 'admin-halaman-buku', params: { isbn: buku.no_isbn } }">
         <p>{{ buku.judul }}</p>
         <p>{{ buku.penulis }}</p>
-        <p>{{ buku.kategori_buku.kategori }}</p>
+        <p>{{ buku.kategori_buku?.kategori }}</p>
       </routerLink>
     </li>
   </ul>
