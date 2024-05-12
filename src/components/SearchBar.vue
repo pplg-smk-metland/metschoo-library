@@ -18,10 +18,7 @@ async function cariBuku() {
 </script>
 
 <template>
-  <form
-    id="search-form"
-    @submit.prevent="cariBuku"
-  >
+  <form id="search-form" @submit.prevent="cariBuku">
     <input
       id="search-input"
       v-model="bukuYangDicari"
@@ -29,10 +26,8 @@ async function cariBuku() {
       name="search"
       placeholder="Cari buku disini"
       required
-    >
-    <CTA id="search-submit">
-      Search
-    </CTA>
+    />
+    <CTA id="search-submit"> Search </CTA>
   </form>
 </template>
 

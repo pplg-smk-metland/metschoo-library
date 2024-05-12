@@ -92,7 +92,7 @@ const router = useRouter()
       width="800"
       height="450"
       alt=""
-    >
+    />
   </div>
 
   <form @submit.prevent="addNewBook(buku)">
@@ -105,7 +105,7 @@ const router = useRouter()
       accept="image/*"
       required
       @change="previewBookImage(bukuGambarEl!)"
-    >
+    />
 
     <label for="buku-judul">Judul</label>
     <input
@@ -115,7 +115,7 @@ const router = useRouter()
       name="buku-judul"
       placeholder="judul buku"
       required
-    >
+    />
     <label for="buku-isbn">ISBN</label>
     <input
       id="buku-isbn"
@@ -124,20 +124,10 @@ const router = useRouter()
       name="buku-isbn"
       placeholder="judul buku"
       required
-    >
+    />
     <label for="buku-kategori">Kategori</label>
-    <select
-      id="buku-kategori"
-      v-model="buku.kategori_id"
-      name="buku-kategori"
-      required
-    >
-      <option
-        value=""
-        disabled
-      >
-        Pilih salah satu
-      </option>
+    <select id="buku-kategori" v-model="buku.kategori_id" name="buku-kategori" required>
+      <option value="" disabled>Pilih salah satu</option>
       <option
         v-for="kategori in availableCategories"
         :key="kategori.id"
@@ -154,7 +144,7 @@ const router = useRouter()
       name="buku-penulis"
       placeholder="judul buku"
       required
-    >
+    />
     <label for="buku-penerbit">penerbit</label>
     <input
       id="buku-penerbit"
@@ -163,7 +153,7 @@ const router = useRouter()
       name="buku-penerbit"
       placeholder="penerbit"
       required
-    >
+    />
     <label for="buku-tahun-terbit">Tahun terbit</label>
     <input
       id="buku-tahun-terbit"
@@ -172,7 +162,7 @@ const router = useRouter()
       name="buku-tahun-terbit"
       placeholder="tahun terbit"
       required
-    >
+    />
     <label for="buku-alamat-terbit">Alamat terbit</label>
     <input
       id="buku-alamat-terbit"
@@ -181,7 +171,7 @@ const router = useRouter()
       name="buku-alamat-terbit"
       placeholder="alamat terbit"
       required
-    >
+    />
     <label for="buku-jumlah">Jumlah</label>
     <input
       id="buku-jumlah"
@@ -192,7 +182,7 @@ const router = useRouter()
       max="10000"
       placeholder="jumlah buku"
       required
-    >
+    />
     <label for="buku-asal"> Asal </label>
     <input
       id="buku-asal"
@@ -201,16 +191,11 @@ const router = useRouter()
       name="buku-asal"
       placeholder="asal buku"
       required
-    >
+    />
 
-    <CTA :disabled="isLoading">
-      Tambah buku baru
-    </CTA>
+    <CTA :disabled="isLoading"> Tambah buku baru </CTA>
 
-    <TheDialog
-      :is-open="errDialog.isOpen"
-      @dialog-close="errDialog.close()"
-    >
+    <TheDialog :is-open="errDialog.isOpen" @dialog-close="errDialog.close()">
       <h2>Ada kesalahan!</h2>
       <p>{{ errDialog.message }}</p>
     </TheDialog>

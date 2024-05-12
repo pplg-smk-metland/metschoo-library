@@ -95,39 +95,21 @@ onMounted(async () => {
             width="300"
             height="300"
             alt="Foto kamu disini"
-          >
+          />
         </figure>
 
-        <div
-          v-if="pengguna"
-          class="profile__details"
-        >
+        <div v-if="pengguna" class="profile__details">
           <h2>{{ pengguna.nama }}</h2>
           <p>{{ pengguna.kelas }} - {{ pengguna.jurusan }}</p>
           <p>{{ pengguna.email }}</p>
 
           <div class="button-container">
-            <CTA
-              :to="{ name: 'profile-edit' }"
-              class="btn cta"
-              :is-link="true"
-            >
-              Edit profil
-            </CTA>
-            <CTA
-              :to="{ name: 'profile-security' }"
-              class="btn cta"
-              :is-link="true"
-            >
-              Keamanan
-            </CTA>
+            <CTA :to="{ name: 'profile-edit' }" class="btn cta" :is-link="true"> Edit profil </CTA>
+            <CTA :to="{ name: 'profile-security' }" class="btn cta" :is-link="true"> Keamanan </CTA>
           </div>
         </div>
 
-        <div
-          v-else
-          class="not-found"
-        >
+        <div v-else class="not-found">
           <h1>Pengguna tidak ditemukan!</h1>
           <p>Silahkan coba beberapa saat lagi, atau hubungi admin Metschoo Library.</p>
         </div>
@@ -138,33 +120,19 @@ onMounted(async () => {
       <section>
         <h2>Buku yang dipinjam</h2>
         <LoadingSpinner v-if="isLoading" />
-        <p v-else-if="!isLoading && bukuYangDipinjam.length === 0">
-          Ga ada buku yang dipinjam
-        </p>
+        <p v-else-if="!isLoading && bukuYangDipinjam.length === 0">Ga ada buku yang dipinjam</p>
 
         <h3>Belum dikonfirmasi</h3>
         <ul class="book-list">
-          <li v-if="!bukuBlumDikonfirmasi.length">
-            ga ada bukunya nih
-          </li>
-          <ProfileBook
-            v-for="data in bukuBlumDikonfirmasi"
-            :key="data.no_isbn"
-            :data="data"
-          />
+          <li v-if="!bukuBlumDikonfirmasi.length">ga ada bukunya nih</li>
+          <ProfileBook v-for="data in bukuBlumDikonfirmasi" :key="data.no_isbn" :data="data" />
         </ul>
 
         <h3>Sudah dikonfirmasi</h3>
 
         <ul class="book-list">
-          <li v-if="!bukuSudahDikonfirmasi.length">
-            ga ada bukunya nih
-          </li>
-          <ProfileBook
-            v-for="data in bukuSudahDikonfirmasi"
-            :key="data.no_isbn"
-            :data="data"
-          />
+          <li v-if="!bukuSudahDikonfirmasi.length">ga ada bukunya nih</li>
+          <ProfileBook v-for="data in bukuSudahDikonfirmasi" :key="data.no_isbn" :data="data" />
         </ul>
       </section>
     </div>
@@ -173,12 +141,7 @@ onMounted(async () => {
       <h2>Riwayat Peminjaman</h2>
 
       <ul class="history-list">
-        <li
-          v-if="!riwayat.length"
-          class="message"
-        >
-          bukunya ga ada ges
-        </li>
+        <li v-if="!riwayat.length" class="message">bukunya ga ada ges</li>
         <ProfileHistoryBook
           v-for="{ buku } in riwayat"
           :key="buku?.no_isbn"

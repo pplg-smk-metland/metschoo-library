@@ -28,7 +28,7 @@ onMounted(async () => {
           loading="lazy"
           width="200"
           height="300"
-        >
+        />
       </routerLink>
     </figure>
     <figcaption class="buku__info">
@@ -41,12 +41,8 @@ onMounted(async () => {
       </p>
 
       <div class="button-container">
-        <CTA @click="$emit('pinjamBuku')">
-          Pinjam buku
-        </CTA>
-        <CTA @click="$emit('hapusBuku')">
-          Hapus dari wishlist
-        </CTA>
+        <CTA @click="$emit('pinjamBuku')"> Pinjam buku </CTA>
+        <CTA @click="$emit('hapusBuku')"> Hapus dari wishlist </CTA>
       </div>
     </figcaption>
   </li>

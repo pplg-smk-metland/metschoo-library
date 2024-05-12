@@ -19,10 +19,7 @@ defineProps({
     <slot />
   </RouterLink>
 
-  <button
-    v-else
-    :class="['btn', 'cta', { 'cta--fill': fill }, { 'cta--danger': danger }]"
-  >
+  <button v-else :class="['btn', 'cta', { 'cta--fill': fill }, { 'cta--danger': danger }]">
     <slot />
   </button>
 </template>

@@ -106,17 +106,9 @@ function toggleFormVisibility() {
     <p>Silahkan coba lagi dalam beberapa saat.</p>
   </header>
 
-  <div
-    v-else
-    class="wrapper"
-  >
-    <article
-      v-if="!formIsVisible"
-      class="buku"
-    >
-      <routerLink :to="{ name: 'admin' }">
-        Kembali
-      </routerLink>
+  <div v-else class="wrapper">
+    <article v-if="!formIsVisible" class="buku">
+      <routerLink :to="{ name: 'admin' }"> Kembali </routerLink>
 
       <h1>{{ buku.judul }} - {{ buku.jumlah_exspl }}</h1>
       <p>{{ buku.penulis }}</p>
@@ -128,46 +120,17 @@ function toggleFormVisibility() {
 
     <article v-else>
       <h1>Edit</h1>
-      <CTA @click="toggleFormVisibility">
-        Go back
-      </CTA>
+      <CTA @click="toggleFormVisibility"> Go back </CTA>
 
-      <form
-        class="buku-edit"
-        @submit.prevent="editBook"
-      >
+      <form class="buku-edit" @submit.prevent="editBook">
         <label for="buku-judul">Judul</label>
-        <input
-          id="buku-judul"
-          v-model="buku.judul"
-          type="text"
-          name="buku-judul"
-          required
-        >
+        <input id="buku-judul" v-model="buku.judul" type="text" name="buku-judul" required />
         <label for="buku-asal">Asal</label>
-        <input
-          id="buku-asal"
-          v-model="buku.asal"
-          type="text"
-          name="buku-asal"
-          required
-        >
+        <input id="buku-asal" v-model="buku.asal" type="text" name="buku-asal" required />
         <label for="buku-penulis">ISBN</label>
-        <input
-          id="buku-isbn"
-          v-model="buku.no_isbn"
-          type="text"
-          name="buku-isbn"
-          required
-        >
+        <input id="buku-isbn" v-model="buku.no_isbn" type="text" name="buku-isbn" required />
         <label for="buku-penulis">Penulis</label>
-        <input
-          id="buku-penulis"
-          v-model="buku.penulis"
-          type="text"
-          name="buku-penulis"
-          required
-        >
+        <input id="buku-penulis" v-model="buku.penulis" type="text" name="buku-penulis" required />
         <label for="buku-penerbit">Penerbit</label>
         <input
           id="buku-penerbit"
@@ -175,7 +138,7 @@ function toggleFormVisibility() {
           type="text"
           name="buku-penerbit"
           required
-        >
+        />
         <label for="buku-tahun-terbit">Tahun terbit</label>
         <input
           id="buku-tahun-terbit"
@@ -183,7 +146,7 @@ function toggleFormVisibility() {
           type="text"
           name="buku-tahun-terbit"
           required
-        >
+        />
         <label for="buku-alamat-terbit">Alamat terbit</label>
         <input
           id="buku-alamat-terbit"
@@ -191,7 +154,7 @@ function toggleFormVisibility() {
           type="text"
           name="buku-alamat-terbit"
           required
-        >
+        />
         <label for="buku-jumlah">Jumlah</label>
         <input
           id="buku-jumlah"
@@ -201,25 +164,11 @@ function toggleFormVisibility() {
           min="0"
           max="10000"
           required
-        >
+        />
         <label for="buku-kategori">Kategori</label>
-        <select
-          id="buku-kategori"
-          v-model="buku.kategori_id"
-          name="buku-kategori"
-          required
-        >
-          <option
-            value=""
-            disabled
-          >
-            Please select one
-          </option>
-          <option
-            v-for="category in availableCategories"
-            :key="category.id"
-            :value="category.id"
-          >
+        <select id="buku-kategori" v-model="buku.kategori_id" name="buku-kategori" required>
+          <option value="" disabled>Please select one</option>
+          <option v-for="category in availableCategories" :key="category.id" :value="category.id">
             {{ category.id }} - {{ category.kategori }}
           </option>
         </select>
@@ -229,34 +178,18 @@ function toggleFormVisibility() {
     </article>
 
     <div class="button-container">
-      <CTA
-        danger
-        @click="deleteBook(buku.no_isbn)"
-      >
-        Delete
-      </CTA>
-      <CTA
-        v-show="!formIsVisible"
-        @click="toggleFormVisibility"
-      >
-        Edit
-      </CTA>
+      <CTA danger @click="deleteBook(buku.no_isbn)"> Delete </CTA>
+      <CTA v-show="!formIsVisible" @click="toggleFormVisibility"> Edit </CTA>
     </div>
   </div>
 
-  <TheDialog
-    :is-open="errDialog.isOpen"
-    @dialog-close="router.push({ name: 'admin-data-buku' })"
-  >
+  <TheDialog :is-open="errDialog.isOpen" @dialog-close="router.push({ name: 'admin-data-buku' })">
     <h2>Ada kesalahan!</h2>
     <p>
       {{ errDialog.message }}
     </p>
   </TheDialog>
-  <TheDialog
-    :is-open="dialog.isOpen"
-    @dialog-close="router.push({ name: 'admin-data-buku' })"
-  >
+  <TheDialog :is-open="dialog.isOpen" @dialog-close="router.push({ name: 'admin-data-buku' })">
     <h2>Sukses!</h2>
     <p>
       {{ dialog.message }}

@@ -33,63 +33,31 @@ async function updateUserInfo() {
   <ProfileEditLayout>
     <section class="header">
       <h1>Edit profil</h1>
-      <routerLink :to="{ name: 'profile' }">
-        Kembali
-      </routerLink>
+      <routerLink :to="{ name: 'profile' }"> Kembali </routerLink>
     </section>
 
-    <section
-      v-if="dataPengguna"
-      class="profile"
-    >
+    <section v-if="dataPengguna" class="profile">
       <figure class="profile__picture-wrapper">
-        <img
-          class="profile__picture"
-          src="@/assets/profilepicture.svg"
-          alt="Foto kamu disini"
-        >
+        <img class="profile__picture" src="@/assets/profilepicture.svg" alt="Foto kamu disini" />
         <CTA>Edit foto profil</CTA>
       </figure>
 
-      <form
-        class="profile__details"
-        @submit.prevent="updateUserInfo"
-      >
+      <form class="profile__details" @submit.prevent="updateUserInfo">
         <label for="name">Nama</label>
-        <input
-          v-model="dataPengguna.nama"
-          type="text"
-          placeholder="Masukan Nama"
-        >
+        <input v-model="dataPengguna.nama" type="text" placeholder="Masukan Nama" />
 
         <label for="kelas">Kelas</label>
-        <select
-          id="kelas"
-          v-model="dataPengguna.kelas"
-          name="kelas"
-        >
-          <option value="X">
-            X
-          </option>
-          <option value="XI">
-            XI
-          </option>
-          <option value="XII">
-            XII
-          </option>
+        <select id="kelas" v-model="dataPengguna.kelas" name="kelas">
+          <option value="X">X</option>
+          <option value="XI">XI</option>
+          <option value="XII">XII</option>
         </select>
 
         <label for="jurusan">Jurusan</label>
-        <input
-          v-model="dataPengguna.jurusan"
-          type="text"
-          placeholder="Masukkan Jurusan"
-        >
+        <input v-model="dataPengguna.jurusan" type="text" placeholder="Masukkan Jurusan" />
 
         <div class="button-container">
-          <CTA :fill="true">
-            Edit profil
-          </CTA>
+          <CTA :fill="true"> Edit profil </CTA>
         </div>
       </form>
     </section>
@@ -99,10 +67,7 @@ async function updateUserInfo() {
       <p>silahkan coba lagi.</p>
     </section>
 
-    <TheDialog
-      :is-open="dialog.isOpen"
-      @dialog-close="dialog.close()"
-    >
+    <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">
       <h2>Info!!!</h2>
       <p>{{ dialog.message }}</p>
     </TheDialog>

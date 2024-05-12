@@ -19,11 +19,7 @@ onMounted(async () => {
 
 <template>
   <li>
-    <routerLink
-      v-if="buku"
-      :to="`/buku/${buku.no_isbn}`"
-      class="buku"
-    >
+    <routerLink v-if="buku" :to="`/buku/${buku.no_isbn}`" class="buku">
       <figure>
         <img
           :src="imgURL"
@@ -32,7 +28,7 @@ onMounted(async () => {
           loading="lazy"
           width="200"
           height="300"
-        >
+        />
       </figure>
 
       <figcaption class="buku__info">

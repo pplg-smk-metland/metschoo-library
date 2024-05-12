@@ -2,19 +2,13 @@
   <nav class="sidebar">
     <ul class="sidebar__list">
       <li>
-        <routerLink :to="{ name: 'admin' }">
-          Dashboard
-        </routerLink>
+        <routerLink :to="{ name: 'admin' }"> Dashboard </routerLink>
         <ul class="sidebar__sub-list">
           <li>
-            <routerLink :to="{ name: 'admin-manajemen-pengguna' }">
-              Manajemen pengguna
-            </routerLink>
+            <routerLink :to="{ name: 'admin-manajemen-pengguna' }"> Manajemen pengguna </routerLink>
           </li>
           <li>
-            <routerLink :to="{ name: 'admin-peminjaman' }">
-              Peminjaman
-            </routerLink>
+            <routerLink :to="{ name: 'admin-peminjaman' }"> Peminjaman </routerLink>
           </li>
         </ul>
       </li>
@@ -22,14 +16,10 @@
         <p>Buku</p>
         <ul class="sidebar__sub-list">
           <li>
-            <RouterLink :to="{ name: 'admin-data-buku' }">
-              Data buku
-            </RouterLink>
+            <RouterLink :to="{ name: 'admin-data-buku' }"> Data buku </RouterLink>
           </li>
           <li>
-            <routerLink :to="{ name: 'admin-tambah-buku' }">
-              Tambah buku
-            </routerLink>
+            <routerLink :to="{ name: 'admin-tambah-buku' }"> Tambah buku </routerLink>
           </li>
         </ul>
       </li>

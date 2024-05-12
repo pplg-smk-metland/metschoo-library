@@ -17,17 +17,9 @@ onMounted(async () => {
 </script>
 
 <template>
-  <RouterLink
-    v-if="buku"
-    :to="`/buku/${buku.no_isbn}`"
-    class="buku"
-  >
+  <RouterLink v-if="buku" :to="`/buku/${buku.no_isbn}`" class="buku">
     <div class="buku__gambar">
-      <img
-        :src="imgUrl"
-        :alt="`Cover ${buku.judul}`"
-        width="100"
-      >
+      <img :src="imgUrl" :alt="`Cover ${buku.judul}`" width="100" />
     </div>
     <div class="buku__teks">
       <h3>{{ buku.judul }}</h3>

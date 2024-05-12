@@ -8,14 +8,10 @@ const emit = defineEmits(["search"])
   <header>
     <div class="header__text">
       <h1>
-        <slot name="header-heading">
-          Metschoo Library
-        </slot>
+        <slot name="header-heading"> Metschoo Library </slot>
       </h1>
       <p>
-        <slot name="header-text">
-          Selamat datang di Metschoo Library!
-        </slot>
+        <slot name="header-text"> Selamat datang di Metschoo Library! </slot>
       </p>
     </div>
 

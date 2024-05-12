@@ -72,17 +72,12 @@ onMounted(async () => {
   <ProfileEditLayout>
     <section class="nav">
       <h1>Ubah kredensial</h1>
-      <routerLink :to="{ name: 'profile' }">
-        Kembali
-      </routerLink>
+      <routerLink :to="{ name: 'profile' }"> Kembali </routerLink>
     </section>
 
     <section class="main-section">
       <h2>Ubah password</h2>
-      <form
-        class="profile-form"
-        @submit.prevent="ubahKredensial"
-      >
+      <form class="profile-form" @submit.prevent="ubahKredensial">
         <label for="password">Password</label>
         <input
           id="password"
@@ -91,7 +86,7 @@ onMounted(async () => {
           name="password"
           placeholder="Password rahasia anda"
           required
-        >
+        />
 
         <label for="confirm-password">konfirmasi password</label>
         <input
@@ -101,7 +96,7 @@ onMounted(async () => {
           name="confirm-password"
           placeholder="Password rahasia anda"
           required
-        >
+        />
         <div class="button-container">
           <CTA>Ubah kredensial</CTA>
         </div>
@@ -120,7 +115,7 @@ onMounted(async () => {
           name="email"
           placeholder="emailanda@apa.com"
           required
-        >
+        />
 
         <div class="button-container">
           <CTA>Ubah email</CTA>
@@ -133,16 +128,11 @@ onMounted(async () => {
       <p>Klik disini untuk keluar dari akun anda</p>
 
       <div class="button-container">
-        <CTA @click="signOut">
-          Keluar dari akun
-        </CTA>
+        <CTA @click="signOut"> Keluar dari akun </CTA>
       </div>
     </section>
 
-    <TheDialog
-      :is-open="dialog.isOpen"
-      @dialog-close="dialog.close()"
-    >
+    <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">
       <h2>Info!!!</h2>
       <p>{{ dialog.message }}</p>
     </TheDialog>

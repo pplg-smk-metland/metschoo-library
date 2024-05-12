@@ -63,19 +63,10 @@ async function handleSignUp() {
       <p>Buat akun Metschoo Library yang baru!</p>
     </h1>
 
-    <div
-      v-if="isSigningIn"
-      class="form-container log-in"
-    >
+    <div v-if="isSigningIn" class="form-container log-in">
       <form @submit.prevent="handleSignIn">
         <label for="login-email">Email</label>
-        <input
-          id="login-email"
-          v-model="data.email"
-          required
-          type="email"
-          placeholder="Email"
-        >
+        <input id="login-email" v-model="data.email" required type="email" placeholder="Email" />
 
         <label for="login-password">Password</label>
         <input
@@ -84,37 +75,17 @@ async function handleSignUp() {
           required
           type="password"
           placeholder="Password Anda"
-        >
-        <CTA
-          type="submit"
-          :fill="true"
-        >
-          Masuk
-        </CTA>
+        />
+        <CTA type="submit" :fill="true"> Masuk </CTA>
       </form>
     </div>
 
-    <div
-      v-else
-      class="form-container sign-up"
-    >
+    <div v-else class="form-container sign-up">
       <form @submit.prevent="handleSignUp">
         <label for="nama">Nama</label>
-        <input
-          id="nama"
-          type="text"
-          name="nama"
-          placeholder="Siapa namamu?"
-          required
-        >
+        <input id="nama" type="text" name="nama" placeholder="Siapa namamu?" required />
         <label for="signup-email">Email</label>
-        <input
-          id="signup-email"
-          v-model="data.email"
-          required
-          type="email"
-          placeholder="Email"
-        >
+        <input id="signup-email" v-model="data.email" required type="email" placeholder="Email" />
         <label for="signup-password">Password</label>
         <input
           id="signup-password"
@@ -122,21 +93,16 @@ async function handleSignUp() {
           required
           type="password"
           placeholder="Password Anda"
-        >
+        />
         <label for="confirm-password">Konfirmasi Password</label>
         <input
           v-model="data.confirmPassword"
           type="password"
           placeholder="Ketik Ulang Password"
           required
-        >
+        />
 
-        <CTA
-          type="submit"
-          :fill="true"
-        >
-          Daftar
-        </CTA>
+        <CTA type="submit" :fill="true"> Daftar </CTA>
       </form>
     </div>
 
@@ -146,10 +112,7 @@ async function handleSignUp() {
     </CTA>
   </div>
 
-  <TheDialog
-    :is-open="dialog.isOpen"
-    @dialog-close="dialog.close()"
-  >
+  <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">
     <h2>Error!</h2>
     {{ dialog.message }}
   </TheDialog>

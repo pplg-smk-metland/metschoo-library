@@ -117,15 +117,10 @@ supabase
   <p>Halo admin</p>
 
   <LoadingSpinner v-if="isLoading" />
-  <section
-    v-else
-    class="main-section"
-  >
+  <section v-else class="main-section">
     <h2>Buku yang belum dikonfirmasi</h2>
     <ul class="data-list">
-      <li v-if="bukusBorrowPending && !bukusBorrowPending.length">
-        belum ada bukunya
-      </li>
+      <li v-if="bukusBorrowPending && !bukusBorrowPending.length">belum ada bukunya</li>
       <DataRow
         v-for="data in bukusBorrowPending"
         :key="data.id"
@@ -137,22 +132,13 @@ supabase
 
     <h2>Buku yang sedang dipinjam</h2>
     <ul class="data-list">
-      <li v-if="bukusBorrowConfirmed && !bukusBorrowConfirmed.length">
-        belum ada bukunya
-      </li>
-      <DataRow
-        v-for="data in bukusBorrowConfirmed"
-        :key="data.id"
-        :data="data"
-        :buku="data.buku"
-      />
+      <li v-if="bukusBorrowConfirmed && !bukusBorrowConfirmed.length">belum ada bukunya</li>
+      <DataRow v-for="data in bukusBorrowConfirmed" :key="data.id" :data="data" :buku="data.buku" />
     </ul>
 
     <h2>Buku untuk dikembalikan</h2>
     <ul class="data-list">
-      <li v-if="bukusReturnPending && !bukusReturnPending.length">
-        belum ada bukunya
-      </li>
+      <li v-if="bukusReturnPending && !bukusReturnPending.length">belum ada bukunya</li>
       <DataRow
         v-for="data in bukusReturnPending"
         :key="data.id"
@@ -163,10 +149,7 @@ supabase
     </ul>
   </section>
 
-  <TheDialog
-    :is-open="dialog.isOpen"
-    :dialog-close="dialog.close"
-  >
+  <TheDialog :is-open="dialog.isOpen" :dialog-close="dialog.close">
     <h2>Sukses!</h2>
     <p>{{ dialog.message }}</p>
   </TheDialog>
