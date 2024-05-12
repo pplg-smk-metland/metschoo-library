@@ -71,10 +71,13 @@ This will add the role 'super-admin' to the target user.
 The codebase is really messy at the moment. If you would like to help, here are
 some tasks, ordered by priority:
 
-- style
+- code style
   - change function names and variables into English (TBD don't do it yet)
-  - make sure all UI elements are written in Indonesian
-- Make the ugly admin routes pretty
+- make sure all UI elements are written in Indonesian
+- app styling
+  - move to Tailwind (RFC)
+  - integrate a component/UI library (RFC)
+  - Make the ugly admin routes pretty
 - ~~set up TypeScript~~
   - ~~add types~~
   - ~~set up config for dynamic imports (`@`)~~
