@@ -28,19 +28,25 @@ onMounted(async () => {
           loading="lazy"
           width="200"
           height="300"
-        />
+        >
       </routerLink>
     </figure>
     <figcaption class="buku__info">
-      <h3 class="buku__judul">{{ buku.judul }}</h3>
+      <h3 class="buku__judul">
+        {{ buku.judul }}
+      </h3>
       <p>
         <span class="buku__penulis">{{ buku.penulis }}</span> -
         <span class="buku__tahun-terbit">{{ buku.tahun_terbit }}</span>
       </p>
 
       <div class="button-container">
-        <CTA @click="$emit('pinjamBuku')">Pinjam buku</CTA>
-        <CTA @click="$emit('hapusBuku')">Hapus dari wishlist</CTA>
+        <CTA @click="$emit('pinjamBuku')">
+          Pinjam buku
+        </CTA>
+        <CTA @click="$emit('hapusBuku')">
+          Hapus dari wishlist
+        </CTA>
       </div>
     </figcaption>
   </li>

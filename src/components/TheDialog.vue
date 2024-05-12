@@ -30,10 +30,17 @@ watch(
 </script>
 
 <template>
-  <dialog ref="myDialog" class="dialog" @close="closeDialog">
+  <dialog
+    ref="myDialog"
+    class="dialog"
+    @close="closeDialog"
+  >
     <form method="dialog">
-      <button class="dialog__close-btn" title="close this dialog">
-        <i class="fa-solid fa-xmark"></i>
+      <button
+        class="dialog__close-btn"
+        title="close this dialog"
+      >
+        <i class="fa-solid fa-xmark" />
       </button>
 
       <slot>

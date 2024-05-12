@@ -31,7 +31,14 @@ onMounted(async () => {
 <template>
   <ul class="book-list">
     <LoadingSpinner v-if="isLoading" />
-    <li v-if="!isLoading && !bukus.length">Bukunya ga ada gaes</li>
-    <BookItem v-else v-for="buku in bukus" :key="buku.no_isbn" :buku="buku as Buku" />
+    <li v-if="!isLoading && !bukus.length">
+      Bukunya ga ada gaes
+    </li>
+    <BookItem
+      v-for="buku in bukus"
+      v-else
+      :key="buku.no_isbn"
+      :buku="buku as Buku"
+    />
   </ul>
 </template>

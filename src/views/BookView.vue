@@ -101,7 +101,7 @@ const { dialog: dialogError } = useDialog()
 
 const date = ref<Date>(new Date())
 const formattedDate = computed(() => {
-  if (!date) return ""
+  if (!date.value) return ""
 
   return new Intl.DateTimeFormat(undefined, {
     year: "numeric",
@@ -199,20 +199,31 @@ supabase
     <section class="main-section">
       <LoadingSpinner v-if="isLoading" />
 
-      <div class="buku" v-if="buku">
+      <div
+        v-if="buku"
+        class="buku"
+      >
         <figure>
-          <img class="buku__gambar" :src="imgURL" alt="" width="400" height="600" />
+          <img
+            class="buku__gambar"
+            :src="imgURL"
+            alt=""
+            width="400"
+            height="600"
+          >
           <img
             class="buku__gambar buku__gambar--bayangan"
             :src="imgURL"
             alt=""
             width="400"
             height="600"
-          />
+          >
         </figure>
 
         <figcaption class="buku__info">
-          <h1 class="judul">{{ buku.judul }}</h1>
+          <h1 class="judul">
+            {{ buku.judul }}
+          </h1>
           <p>
             <span class="penulis">{{ buku.penulis }}</span> -
             <span class="tahun-terbit">{{ buku.tahun_terbit }}</span>
@@ -221,23 +232,34 @@ supabase
           <p>Jumlah tersedia: {{ buku.jumlah_exspl }}</p>
 
           <div class="button-container">
-            <CTA @click="konfirmasiPinjamBuku(buku)" v-if="bisaDipinjam" :fill="true">
+            <CTA
+              v-if="bisaDipinjam"
+              :fill="true"
+              @click="konfirmasiPinjamBuku(buku)"
+            >
               Pinjam buku
             </CTA>
             <CTA
-              @click="kembalikanBuku(buku, peminjamanTerbaru.id)"
               v-else
               :disabled="!bisaDikembalikan"
               :fill="true"
-              >Kembalikan buku</CTA
+              @click="kembalikanBuku(buku, peminjamanTerbaru.id)"
             >
-            <CTA @click="masukkanWishlist(buku)" :disabled="bukuAdaDiWishlist || !bisaDipinjam">
+              Kembalikan buku
+            </CTA>
+            <CTA
+              :disabled="bukuAdaDiWishlist || !bisaDipinjam"
+              @click="masukkanWishlist(buku)"
+            >
               tambahkan ke wishlist
             </CTA>
           </div>
         </figcaption>
 
-        <TheDialog :is-open="dialogConfirm.isOpen" @dialog-close="dialogConfirm.close()">
+        <TheDialog
+          :is-open="dialogConfirm.isOpen"
+          @dialog-close="dialogConfirm.close()"
+        >
           <h2>{{ dialogConfirm.message }}</h2>
 
           <VueDatePicker
@@ -251,15 +273,26 @@ supabase
           <p>Saya akan mengembalikan buku ini pada</p>
 
           <p class="tanggal">
-            <time :datetime="date?.toISOString()" v-if="date">{{ formattedDate }}</time>
+            <time
+              v-if="date"
+              :datetime="date?.toISOString()"
+            >{{ formattedDate }}</time>
             <span v-else> pilih dulu tanggalnya. </span>
           </p>
 
-          <CTA @click="pinjamBuku({ ...buku }, date)" :disabled="!isValidDate">Pinjam buku</CTA>
+          <CTA
+            :disabled="!isValidDate"
+            @click="pinjamBuku({ ...buku }, date)"
+          >
+            Pinjam buku
+          </CTA>
         </TheDialog>
       </div>
 
-      <div class="not-found" v-else>
+      <div
+        v-else
+        class="not-found"
+      >
         <h1>Tidak ada buku!</h1>
         <p>Bukunya ga ada brok</p>
       </div>
@@ -296,12 +329,18 @@ supabase
       </article>
     </section>
 
-    <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">
+    <TheDialog
+      :is-open="dialog.isOpen"
+      @dialog-close="dialog.close()"
+    >
       <h2>Info!!</h2>
       <p>{{ dialog.message }}</p>
     </TheDialog>
 
-    <TheDialog :is-open="dialogError.isOpen" @dialog-close="dialogError.close()">
+    <TheDialog
+      :is-open="dialogError.isOpen"
+      @dialog-close="dialogError.close()"
+    >
       <h2>Ups, ada yang salah nih.</h2>
       <p>{{ dialogError.message }}</p>
       <p>Silahkan coba lagi, atau hubungi admin.</p>

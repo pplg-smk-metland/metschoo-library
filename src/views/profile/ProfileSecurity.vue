@@ -8,7 +8,7 @@ import { supabase } from "@/lib/supabase"
 import ProfileEditLayout from "@/layouts/ProfileEditLayout.vue"
 import TheDialog from "@/components/TheDialog.vue"
 import CTA from "@/components/CTA.vue"
-import type { AuthError } from "@supabase/supabase-js"
+import { type AuthError } from "@supabase/supabase-js"
 
 const { dialog } = useDialog()
 const kredensialPengguna = ref({
@@ -72,31 +72,36 @@ onMounted(async () => {
   <ProfileEditLayout>
     <section class="nav">
       <h1>Ubah kredensial</h1>
-      <routerLink :to="{ name: 'profile' }">Kembali</routerLink>
+      <routerLink :to="{ name: 'profile' }">
+        Kembali
+      </routerLink>
     </section>
 
     <section class="main-section">
       <h2>Ubah password</h2>
-      <form class="profile-form" @submit.prevent="ubahKredensial">
+      <form
+        class="profile-form"
+        @submit.prevent="ubahKredensial"
+      >
         <label for="password">Password</label>
         <input
+          id="password"
+          v-model="kredensialPengguna.password"
           type="password"
           name="password"
-          id="password"
           placeholder="Password rahasia anda"
           required
-          v-model="kredensialPengguna.password"
-        />
+        >
 
         <label for="confirm-password">konfirmasi password</label>
         <input
+          id="confirm-password"
+          v-model="kredensialPengguna.passwordKonfirmasi"
           type="password"
           name="confirm-password"
-          id="confirm-password"
           placeholder="Password rahasia anda"
           required
-          v-model="kredensialPengguna.passwordKonfirmasi"
-        />
+        >
         <div class="button-container">
           <CTA>Ubah kredensial</CTA>
         </div>
@@ -109,13 +114,13 @@ onMounted(async () => {
       <form @submit.prevent="ubahEmail">
         <label for="email">Email</label>
         <input
+          id="email"
+          v-model="kredensialPengguna.email"
           type="email"
           name="email"
-          id="email"
           placeholder="emailanda@apa.com"
           required
-          v-model="kredensialPengguna.email"
-        />
+        >
 
         <div class="button-container">
           <CTA>Ubah email</CTA>
@@ -128,11 +133,16 @@ onMounted(async () => {
       <p>Klik disini untuk keluar dari akun anda</p>
 
       <div class="button-container">
-        <CTA @click="signOut">Keluar dari akun</CTA>
+        <CTA @click="signOut">
+          Keluar dari akun
+        </CTA>
       </div>
     </section>
 
-    <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">
+    <TheDialog
+      :is-open="dialog.isOpen"
+      @dialog-close="dialog.close()"
+    >
       <h2>Info!!!</h2>
       <p>{{ dialog.message }}</p>
     </TheDialog>

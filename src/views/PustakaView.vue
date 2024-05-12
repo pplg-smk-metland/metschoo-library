@@ -43,15 +43,29 @@ onMounted(async () => {
 <template>
   <BaseLayout>
     <TheHeader @search="async () => await cariBuku()">
-      <template #header-heading>Pustaka</template>
-      <template #header-text>Eksplor buku disini</template>
+      <template #header-heading>
+        Pustaka
+      </template>
+      <template #header-text>
+        Eksplor buku disini
+      </template>
     </TheHeader>
 
     <h2>Hasil pencarian</h2>
     <ul class="book-list">
       <LoadingSpinner v-show="isLoading" />
-      <li class="mesasge" v-show="!isLoading && !books?.length">ga ada buku woi</li>
-      <BookItem v-show="!isLoading" v-for="buku in books" :key="buku.no_isbn" :buku="buku" />
+      <li
+        v-show="!isLoading && !books?.length"
+        class="mesasge"
+      >
+        ga ada buku woi
+      </li>
+      <BookItem
+        v-for="buku in books"
+        v-show="!isLoading"
+        :key="buku.no_isbn"
+        :buku="buku"
+      />
     </ul>
   </BaseLayout>
 </template>

@@ -18,16 +18,21 @@ async function cariBuku() {
 </script>
 
 <template>
-  <form id="search-form" @submit.prevent="cariBuku">
+  <form
+    id="search-form"
+    @submit.prevent="cariBuku"
+  >
     <input
+      id="search-input"
+      v-model="bukuYangDicari"
       type="search"
       name="search"
-      id="search-input"
       placeholder="Cari buku disini"
-      v-model="bukuYangDicari"
       required
-    />
-    <CTA id="search-submit">Search</CTA>
+    >
+    <CTA id="search-submit">
+      Search
+    </CTA>
   </form>
 </template>
 

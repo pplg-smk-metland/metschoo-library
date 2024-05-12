@@ -58,14 +58,24 @@ onMounted(async () => {
     <section v-if="!authStore.session">
       <p>Kamu harus login dlu ya untuk menambahkan buku ke wishlist</p>
       <p>
-        <routerLink :to="{ name: 'home' }">Kembali ke beranda</routerLink>
+        <routerLink :to="{ name: 'home' }">
+          Kembali ke beranda
+        </routerLink>
       </p>
     </section>
 
-    <section class="main-section" v-else>
+    <section
+      v-else
+      class="main-section"
+    >
       <LoadingSpinner v-if="isLoading" />
-      <p v-if="!isLoading && !wishlist?.length">Kamu belum punya apa-apa dalam wishlist kamu.</p>
-      <ul v-if="wishlist?.length" class="book-list">
+      <p v-if="!isLoading && !wishlist?.length">
+        Kamu belum punya apa-apa dalam wishlist kamu.
+      </p>
+      <ul
+        v-if="wishlist?.length"
+        class="book-list"
+      >
         <WishlistBook
           v-for="wishlistItem in wishlist"
           :key="wishlistItem.id"
@@ -76,7 +86,10 @@ onMounted(async () => {
       </ul>
     </section>
 
-    <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">
+    <TheDialog
+      :is-open="dialog.isOpen"
+      @dialog-close="dialog.close()"
+    >
       <h2>Info!!!</h2>
       <p>{{ dialog.message }}</p>
     </TheDialog>

@@ -12,14 +12,17 @@ defineProps({
 
 <template>
   <RouterLink
+    v-if="isLink"
     v-bind="$props"
     :class="['btn', 'cta', { 'cta--fill': fill }, { 'cta--danger': danger }]"
-    v-if="isLink"
   >
     <slot />
   </RouterLink>
 
-  <button :class="['btn', 'cta', { 'cta--fill': fill }, { 'cta--danger': danger }]" v-else>
+  <button
+    v-else
+    :class="['btn', 'cta', { 'cta--fill': fill }, { 'cta--danger': danger }]"
+  >
     <slot />
   </button>
 </template>

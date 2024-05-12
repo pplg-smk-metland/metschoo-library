@@ -21,33 +21,81 @@ function closeNav() {
 <template>
   <nav class="navbar">
     <div class="logo">
-      <img src="/logo.svg" alt="Logo Metschoo Library" />
+      <img
+        src="/logo.svg"
+        alt="Logo Metschoo Library"
+      >
     </div>
 
-    <ul class="nav-links" ref="navlinks">
+    <ul
+      ref="navlinks"
+      class="nav-links"
+    >
       <li class="nav-links__header">
         <div class="logo">
           <router-link :to="{ name: 'home' }">
-            <img src="/logo.svg" alt="Logo Metschoo Library" />
+            <img
+              src="/logo.svg"
+              alt="Logo Metschoo Library"
+            >
           </router-link>
         </div>
-        <button class="nav-btn close" ref="closeNavBtn" @click="closeNav">
-          <i class="fa-solid fa-xmark"></i>
+        <button
+          ref="closeNavBtn"
+          class="nav-btn close"
+          @click="closeNav"
+        >
+          <i class="fa-solid fa-xmark" />
         </button>
       </li>
-      <li><router-link class="nav-link" :to="{ name: 'home' }">Beranda</router-link></li>
-      <li><router-link class="nav-link" :to="{ name: 'pustaka' }">Pustaka</router-link></li>
-      <li><router-link class="nav-link" :to="{ name: 'wishlist' }">Wishlist</router-link></li>
+      <li>
+        <router-link
+          class="nav-link"
+          :to="{ name: 'home' }"
+        >
+          Beranda
+        </router-link>
+      </li>
+      <li>
+        <router-link
+          class="nav-link"
+          :to="{ name: 'pustaka' }"
+        >
+          Pustaka
+        </router-link>
+      </li>
+      <li>
+        <router-link
+          class="nav-link"
+          :to="{ name: 'wishlist' }"
+        >
+          Wishlist
+        </router-link>
+      </li>
       <li v-if="!authStore.session">
-        <router-link :to="{ name: 'sign-in' }" class="nav-link nav-link--cta">Masuk</router-link>
+        <router-link
+          :to="{ name: 'sign-in' }"
+          class="nav-link nav-link--cta"
+        >
+          Masuk
+        </router-link>
       </li>
       <li v-else>
-        <router-link :to="{ name: 'profile' }" class="nav-link nav-link--cta">Profil</router-link>
+        <router-link
+          :to="{ name: 'profile' }"
+          class="nav-link nav-link--cta"
+        >
+          Profil
+        </router-link>
       </li>
     </ul>
 
-    <button class="nav-btn open" ref="openNavBtn" @click="openNav">
-      <i class="fa-solid fa-bars"></i>
+    <button
+      ref="openNavBtn"
+      class="nav-btn open"
+      @click="openNav"
+    >
+      <i class="fa-solid fa-bars" />
     </button>
   </nav>
 </template>
