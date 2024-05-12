@@ -69,7 +69,7 @@ async function editBook() {
 async function deleteBook(isbn: string) {
   isLoading.value = true
   try {
-    let { error } = await supabase.from("buku").delete().eq("no_isbn", isbn)
+    const { error } = await supabase.from("buku").delete().eq("no_isbn", isbn)
     if (error) throw error
 
     const response = await supabase.storage.from("Buku").remove([`${isbn}/${isbn}`])
@@ -106,9 +106,9 @@ function toggleFormVisibility() {
     <p>Silahkan coba lagi dalam beberapa saat.</p>
   </header>
 
-  <div class="wrapper" v-else>
-    <article class="buku" v-if="!formIsVisible">
-      <routerLink :to="{ name: 'admin' }">Kembali</routerLink>
+  <div v-else class="wrapper">
+    <article v-if="!formIsVisible" class="buku">
+      <routerLink :to="{ name: 'admin' }"> Kembali </routerLink>
 
       <h1>{{ buku.judul }} - {{ buku.jumlah_exspl }}</h1>
       <p>{{ buku.penulis }}</p>
@@ -120,53 +120,53 @@ function toggleFormVisibility() {
 
     <article v-else>
       <h1>Edit</h1>
-      <CTA @click="toggleFormVisibility">Go back</CTA>
+      <CTA @click="toggleFormVisibility"> Go back </CTA>
 
       <form class="buku-edit" @submit.prevent="editBook">
         <label for="buku-judul">Judul</label>
-        <input type="text" name="buku-judul" id="buku-judul" required v-model="buku.judul" />
+        <input id="buku-judul" v-model="buku.judul" type="text" name="buku-judul" required />
         <label for="buku-asal">Asal</label>
-        <input type="text" name="buku-asal" id="buku-asal" required v-model="buku.asal" />
+        <input id="buku-asal" v-model="buku.asal" type="text" name="buku-asal" required />
         <label for="buku-penulis">ISBN</label>
-        <input type="text" name="buku-isbn" id="buku-isbn" required v-model="buku.no_isbn" />
+        <input id="buku-isbn" v-model="buku.no_isbn" type="text" name="buku-isbn" required />
         <label for="buku-penulis">Penulis</label>
-        <input type="text" name="buku-penulis" id="buku-penulis" required v-model="buku.penulis" />
+        <input id="buku-penulis" v-model="buku.penulis" type="text" name="buku-penulis" required />
         <label for="buku-penerbit">Penerbit</label>
         <input
+          id="buku-penerbit"
+          v-model="buku.penerbit"
           type="text"
           name="buku-penerbit"
-          id="buku-penerbit"
           required
-          v-model="buku.penerbit"
         />
         <label for="buku-tahun-terbit">Tahun terbit</label>
         <input
+          id="buku-tahun-terbit"
+          v-model="buku.tahun_terbit"
           type="text"
           name="buku-tahun-terbit"
-          id="buku-tahun-terbit"
           required
-          v-model="buku.tahun_terbit"
         />
         <label for="buku-alamat-terbit">Alamat terbit</label>
         <input
+          id="buku-alamat-terbit"
+          v-model="buku.alamat_terbit"
           type="text"
           name="buku-alamat-terbit"
-          id="buku-alamat-terbit"
           required
-          v-model="buku.alamat_terbit"
         />
         <label for="buku-jumlah">Jumlah</label>
         <input
+          id="buku-jumlah"
+          v-model="buku.jumlah_exspl"
           type="number"
           name="buku-jumlah"
-          id="buku-jumlah"
           min="0"
           max="10000"
           required
-          v-model="buku.jumlah_exspl"
         />
         <label for="buku-kategori">Kategori</label>
-        <select name="buku-kategori" id="buku-kategori" v-model="buku.kategori_id" required>
+        <select id="buku-kategori" v-model="buku.kategori_id" name="buku-kategori" required>
           <option value="" disabled>Please select one</option>
           <option v-for="category in availableCategories" :key="category.id" :value="category.id">
             {{ category.id }} - {{ category.kategori }}
@@ -178,8 +178,8 @@ function toggleFormVisibility() {
     </article>
 
     <div class="button-container">
-      <CTA @click="deleteBook(buku.no_isbn)" danger>Delete</CTA>
-      <CTA @click="toggleFormVisibility" v-show="!formIsVisible">Edit</CTA>
+      <CTA danger @click="deleteBook(buku.no_isbn)"> Delete </CTA>
+      <CTA v-show="!formIsVisible" @click="toggleFormVisibility"> Edit </CTA>
     </div>
   </div>
 

@@ -57,14 +57,14 @@ onMounted(async () => {
 
   <form @submit.prevent="searchBooks">
     <input
-      type="text"
-      name="search-term"
       id="search-term"
       v-model="searchTerm"
+      type="text"
+      name="search-term"
       placeholder="search for book"
       required
     />
-    <select name="search-category" id="search-category" v-model="selectedCategory" required>
+    <select id="search-category" v-model="selectedCategory" name="search-category" required>
       <option value="" disabled>Select one</option>
       <option v-for="category in availableCategories" :key="category.id" :value="category.id">
         {{ category.id }} - {{ category.kategori }}
@@ -78,7 +78,7 @@ onMounted(async () => {
       Bukunya ga ketemu. Coba lagi, mungkin salah ketik atau salah kategori. Atau bukunya memang ga
       ada.
     </li>
-    <li v-for="buku in daftarBuku" :key="buku.no_isbn" v-else>
+    <li v-for="buku in daftarBuku" v-else :key="buku.no_isbn">
       <routerLink :to="{ name: 'admin-halaman-buku', params: { isbn: buku.no_isbn } }">
         <p>{{ buku.judul }}</p>
         <p>{{ buku.penulis }}</p>

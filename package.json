@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
+    "lint": "eslint \"src/**/*.{js,vue}\"",
     "format": "prettier --write src/"
   },
   "dependencies": {
@@ -17,6 +17,7 @@
     "vue-router": "^4.2.4"
   },
   "devDependencies": {
+    "@eslint/js": "^9.2.0",
     "@vitejs/plugin-vue": "^4.3.1",
     "@vue/tsconfig": "^0.5.1",
     "eslint": "^8.57.0",
@@ -25,8 +26,10 @@
     "eslint-plugin-n": "^16.6.2",
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-vue": "^9.24.1",
+    "globals": "^15.2.0",
     "prettier": "^3.0.0",
     "supabase": "^1.153.4",
+    "typescript-eslint": "^7.8.0",
     "vite": "^4.4.9"
   }
 }

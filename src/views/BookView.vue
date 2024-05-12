@@ -101,7 +101,7 @@ const { dialog: dialogError } = useDialog()
 
 const date = ref<Date>(new Date())
 const formattedDate = computed(() => {
-  if (!date) return ""
+  if (!date.value) return ""
 
   return new Intl.DateTimeFormat(undefined, {
     year: "numeric",
@@ -199,7 +199,7 @@ supabase
     <section class="main-section">
       <LoadingSpinner v-if="isLoading" />
 
-      <div class="buku" v-if="buku">
+      <div v-if="buku" class="buku">
         <figure>
           <img class="buku__gambar" :src="imgURL" alt="" width="400" height="600" />
           <img
@@ -212,7 +212,9 @@ supabase
         </figure>
 
         <figcaption class="buku__info">
-          <h1 class="judul">{{ buku.judul }}</h1>
+          <h1 class="judul">
+            {{ buku.judul }}
+          </h1>
           <p>
             <span class="penulis">{{ buku.penulis }}</span> -
             <span class="tahun-terbit">{{ buku.tahun_terbit }}</span>
@@ -221,17 +223,18 @@ supabase
           <p>Jumlah tersedia: {{ buku.jumlah_exspl }}</p>
 
           <div class="button-container">
-            <CTA @click="konfirmasiPinjamBuku(buku)" v-if="bisaDipinjam" :fill="true">
+            <CTA v-if="bisaDipinjam" :fill="true" @click="konfirmasiPinjamBuku(buku)">
               Pinjam buku
             </CTA>
             <CTA
-              @click="kembalikanBuku(buku, peminjamanTerbaru.id)"
               v-else
               :disabled="!bisaDikembalikan"
               :fill="true"
-              >Kembalikan buku</CTA
+              @click="kembalikanBuku(buku, peminjamanTerbaru.id)"
             >
-            <CTA @click="masukkanWishlist(buku)" :disabled="bukuAdaDiWishlist || !bisaDipinjam">
+              Kembalikan buku
+            </CTA>
+            <CTA :disabled="bukuAdaDiWishlist || !bisaDipinjam" @click="masukkanWishlist(buku)">
               tambahkan ke wishlist
             </CTA>
           </div>
@@ -251,15 +254,15 @@ supabase
           <p>Saya akan mengembalikan buku ini pada</p>
 
           <p class="tanggal">
-            <time :datetime="date?.toISOString()" v-if="date">{{ formattedDate }}</time>
+            <time v-if="date" :datetime="date?.toISOString()">{{ formattedDate }}</time>
             <span v-else> pilih dulu tanggalnya. </span>
           </p>
 
-          <CTA @click="pinjamBuku({ ...buku }, date)" :disabled="!isValidDate">Pinjam buku</CTA>
+          <CTA :disabled="!isValidDate" @click="pinjamBuku({ ...buku }, date)"> Pinjam buku </CTA>
         </TheDialog>
       </div>
 
-      <div class="not-found" v-else>
+      <div v-else class="not-found">
         <h1>Tidak ada buku!</h1>
         <p>Bukunya ga ada brok</p>
       </div>

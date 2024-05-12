@@ -36,15 +36,15 @@ async function getPeminjamanData() {
 }
 
 const bukusBorrowPending = computed(() => {
-  if (peminjamanData.value) return peminjamanData.value.filter((data) => data.state_id === 1)
+  return peminjamanData.value.filter((data) => data.state_id === 1)
 })
 
 const bukusBorrowConfirmed = computed(() => {
-  if (peminjamanData.value) return peminjamanData.value.filter((data) => data.state_id === 2)
+  return peminjamanData.value.filter((data) => data.state_id === 2)
 })
 
 const bukusReturnPending = computed(() => {
-  if (peminjamanData.value) return peminjamanData.value.filter((data) => data.state_id === 4)
+  return peminjamanData.value.filter((data) => data.state_id === 4)
 })
 
 onMounted(async () => {
@@ -117,7 +117,7 @@ supabase
   <p>Halo admin</p>
 
   <LoadingSpinner v-if="isLoading" />
-  <section class="main-section" v-else>
+  <section v-else class="main-section">
     <h2>Buku yang belum dikonfirmasi</h2>
     <ul class="data-list">
       <li v-if="bukusBorrowPending && !bukusBorrowPending.length">belum ada bukunya</li>
@@ -133,7 +133,7 @@ supabase
     <h2>Buku yang sedang dipinjam</h2>
     <ul class="data-list">
       <li v-if="bukusBorrowConfirmed && !bukusBorrowConfirmed.length">belum ada bukunya</li>
-      <DataRow v-for="data in bukusBorrowConfirmed" :data="data" :buku="data.buku" />
+      <DataRow v-for="data in bukusBorrowConfirmed" :key="data.id" :data="data" :buku="data.buku" />
     </ul>
 
     <h2>Buku untuk dikembalikan</h2>
