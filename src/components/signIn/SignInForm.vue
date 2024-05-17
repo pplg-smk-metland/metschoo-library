@@ -76,7 +76,7 @@ async function handleSignUp() {
           type="password"
           placeholder="Password Anda"
         />
-        <CTA type="submit" :fill="true"> Masuk </CTA>
+        <CTA type="submit" :fill="true" label="Masuk" />
       </form>
     </div>
 
@@ -102,14 +102,12 @@ async function handleSignUp() {
           required
         />
 
-        <CTA type="submit" :fill="true"> Daftar </CTA>
+        <CTA type="submit" :fill="true" label="Daftar" />
       </form>
     </div>
 
-    <CTA @click="handleSwitchForm">
-      <span v-if="isSigningIn">Belum punya akun? Daftar</span>
-      <span v-else>Sudah punya akun? Masuk</span>
-    </CTA>
+    <CTA @click="handleSwitchForm" label="Belum punya akun? Daftar" v-if="isSigningIn" />
+    <CTA @click="handleSwitchForm" label="Sudah punya akun? Masuk" v-else />
   </div>
 
   <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">

@@ -39,7 +39,7 @@ async function updateUserInfo() {
     <section v-if="dataPengguna" class="profile">
       <figure class="profile__picture-wrapper">
         <img class="profile__picture" src="@/assets/profilepicture.svg" alt="Foto kamu disini" />
-        <CTA>Edit foto profil</CTA>
+        <CTA label="Edit foto profil" />
       </figure>
 
       <form class="profile__details" @submit.prevent="updateUserInfo">
@@ -57,7 +57,7 @@ async function updateUserInfo() {
         <input v-model="dataPengguna.jurusan" type="text" placeholder="Masukkan Jurusan" />
 
         <div class="button-container">
-          <CTA :fill="true"> Edit profil </CTA>
+          <CTA :fill="true" label="Edit profil" />
         </div>
       </form>
     </section>
