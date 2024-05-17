@@ -30,7 +30,12 @@ You would:
 6. After all this, ideally other team members will review and correct any mistakes
    in a code review.
 
-### Installation
+## Recommended IDE Setup
+
+[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
+(and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+
+### Project setup
 
 This project uses PNPM, so install it first locally:
 
