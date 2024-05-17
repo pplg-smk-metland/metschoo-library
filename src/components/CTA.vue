@@ -12,12 +12,13 @@ defineProps({
   <Button
     :label="label"
     :class="['cta', { 'cta--fill': fill }, { 'cta--danger': danger }]"
+    unstyled
   ></Button>
 </template>
 
 <style scoped>
 .cta {
-  outline: 2px solid var(--primary);
+  border: 2px solid var(--primary);
   text-align: center;
   padding: 1rem 1.5rem;
   border-radius: 0.5rem;
