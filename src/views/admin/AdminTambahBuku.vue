@@ -193,7 +193,7 @@ const router = useRouter()
       required
     />
 
-    <CTA :disabled="isLoading"> Tambah buku baru </CTA>
+    <CTA :disabled="isLoading" label="Tambah buku baru" />
 
     <TheDialog :is-open="errDialog.isOpen" @dialog-close="errDialog.close()">
       <h2>Ada kesalahan!</h2>

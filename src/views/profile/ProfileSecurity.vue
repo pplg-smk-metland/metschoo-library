@@ -98,7 +98,7 @@ onMounted(async () => {
           required
         />
         <div class="button-container">
-          <CTA>Ubah kredensial</CTA>
+          <CTA label="Ubah kredensial" />
         </div>
       </form>
     </section>
@@ -118,7 +118,7 @@ onMounted(async () => {
         />
 
         <div class="button-container">
-          <CTA>Ubah email</CTA>
+          <CTA label="Ubah email" />
         </div>
       </form>
     </section>
@@ -128,7 +128,7 @@ onMounted(async () => {
       <p>Klik disini untuk keluar dari akun anda</p>
 
       <div class="button-container">
-        <CTA @click="signOut"> Keluar dari akun </CTA>
+        <CTA @click="signOut" label="Keluar dari akun" />
       </div>
     </section>
 

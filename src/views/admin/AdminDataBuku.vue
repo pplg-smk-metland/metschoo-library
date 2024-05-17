@@ -70,7 +70,7 @@ onMounted(async () => {
         {{ category.id }} - {{ category.kategori }}
       </option>
     </select>
-    <CTA>Search</CTA>
+    <CTA label="Cari" />
   </form>
 
   <ul>

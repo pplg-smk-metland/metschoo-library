@@ -27,7 +27,7 @@ async function cariBuku() {
       placeholder="Cari buku disini"
       required
     />
-    <CTA id="search-submit"> Search </CTA>
+    <CTA id="search-submit" label="Search" />
   </form>
 </template>
 

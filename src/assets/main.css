@@ -71,15 +71,6 @@ button:disabled {
   flex-wrap: wrap;
 }
 
-.btn {
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-}
-
-.btn:active {
-  translate: 0 4px;
-}
-
 .book-list {
   list-style: none;
   margin: 0;

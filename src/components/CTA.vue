@@ -1,38 +1,36 @@
 <script setup lang="ts">
-import { RouterLink } from "vue-router"
+import Button from "primevue/button"
 
 defineProps({
-  //@ts-ignore
-  ...RouterLink.props,
-  isLink: Boolean,
   fill: Boolean,
   danger: Boolean,
+  label: String,
 })
 </script>
 
 <template>
-  <RouterLink
-    v-if="isLink"
-    v-bind="$props"
-    :class="['btn', 'cta', { 'cta--fill': fill }, { 'cta--danger': danger }]"
-  >
-    <slot />
-  </RouterLink>
-
-  <button v-else :class="['btn', 'cta', { 'cta--fill': fill }, { 'cta--danger': danger }]">
-    <slot />
-  </button>
+  <Button
+    :label="label"
+    :class="['cta', { 'cta--fill': fill }, { 'cta--danger': danger }]"
+    unstyled
+  ></Button>
 </template>
 
 <style scoped>
 .cta {
-  outline: 2px solid var(--primary);
+  border: 2px solid var(--primary);
   text-align: center;
+  padding: 1rem 1.5rem;
+  border-radius: 0.5rem;
 }
 
 .cta:hover,
 .cta:focus-visible {
   background: var(--dark-grey);
+}
+
+.cta:active {
+  translate: 0 4px;
 }
 
 .cta--fill {

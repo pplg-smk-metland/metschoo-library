@@ -223,20 +223,24 @@ supabase
           <p>Jumlah tersedia: {{ buku.jumlah_exspl }}</p>
 
           <div class="button-container">
-            <CTA v-if="bisaDipinjam" :fill="true" @click="konfirmasiPinjamBuku(buku)">
-              Pinjam buku
-            </CTA>
+            <CTA
+              v-if="bisaDipinjam"
+              :fill="true"
+              @click="konfirmasiPinjamBuku(buku)"
+              label="Pinjam buku"
+            />
             <CTA
               v-else
               :disabled="!bisaDikembalikan"
               :fill="true"
               @click="kembalikanBuku(buku, peminjamanTerbaru.id)"
-            >
-              Kembalikan buku
-            </CTA>
-            <CTA :disabled="bukuAdaDiWishlist || !bisaDipinjam" @click="masukkanWishlist(buku)">
-              tambahkan ke wishlist
-            </CTA>
+              label="kembalikan buku"
+            />
+            <CTA
+              :disabled="bukuAdaDiWishlist || !bisaDipinjam"
+              @click="masukkanWishlist(buku)"
+              label="tambahkan ke wishlist"
+            />
           </div>
         </figcaption>
 
@@ -258,7 +262,11 @@ supabase
             <span v-else> pilih dulu tanggalnya. </span>
           </p>
 
-          <CTA :disabled="!isValidDate" @click="pinjamBuku({ ...buku }, date)"> Pinjam buku </CTA>
+          <CTA
+            :disabled="!isValidDate"
+            @click="pinjamBuku({ ...buku }, date)"
+            label="Pinjam buku"
+          />
         </TheDialog>
       </div>
 

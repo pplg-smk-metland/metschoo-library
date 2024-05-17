@@ -120,7 +120,7 @@ function toggleFormVisibility() {
 
     <article v-else>
       <h1>Edit</h1>
-      <CTA @click="toggleFormVisibility"> Go back </CTA>
+      <CTA @click="toggleFormVisibility" label="kembali" />
 
       <form class="buku-edit" @submit.prevent="editBook">
         <label for="buku-judul">Judul</label>
@@ -173,13 +173,13 @@ function toggleFormVisibility() {
           </option>
         </select>
 
-        <CTA>Save changes</CTA>
+        <CTA label="Simpan perubahan" />
       </form>
     </article>
 
     <div class="button-container">
-      <CTA danger @click="deleteBook(buku.no_isbn)"> Delete </CTA>
-      <CTA v-show="!formIsVisible" @click="toggleFormVisibility"> Edit </CTA>
+      <CTA danger @click="deleteBook(buku.no_isbn)" label="Hapus " />
+      <CTA v-show="!formIsVisible" @click="toggleFormVisibility" label="Sunting" />
     </div>
   </div>
 
