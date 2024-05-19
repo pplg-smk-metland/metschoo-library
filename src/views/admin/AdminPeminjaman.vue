@@ -29,14 +29,35 @@ onMounted(async () => {
 </script>
 
 <template>
-  <h1>halo</h1>
-
   <div class="table-container">
     <DataTable :value="peminjamanData">
-      <Column field="pengguna.nama" header="Peminjam"></Column>
-      <Column field="pengguna.kelas" header="Kelas"></Column>
-      <Column field="pengguna.jurusan" header="Jurusan"></Column>
-      <Column field="buku.judul" header="Judul"></Column>
+      <template #header>
+        <h1>Data peminjaman</h1>
+      </template>
+
+      <Column field="pengguna.nama" header="Peminjam">
+        <template #body="slotProps">
+          <p>
+            <span>
+              {{ slotProps.data.pengguna.nama }}
+            </span>
+            -
+            <span>
+              {{ slotProps.data.pengguna.kelas }}
+              {{ slotProps.data.pengguna.jurusan }}
+            </span>
+          </p>
+        </template>
+      </Column>
+      <Column field="buku.judul" header="Judul">
+        <template #body="slotProps">
+          <routerLink
+            :to="{ name: 'admin-halaman-buku', params: { isbn: slotProps.data.no_isbn } }"
+          >
+            {{ slotProps.data.buku.judul }}
+          </routerLink>
+        </template>
+      </Column>
       <Column field="no_isbn" header="ISBN"></Column>
       <Column field="tgl_pinjam" header="Tanggal Pinjam"></Column>
       <Column field="tenggat_waktu" header="Tenggat Waktu"></Column>
