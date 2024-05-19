@@ -103,10 +103,6 @@ a {
   padding-block: 1rem;
 }
 
-.table-container {
-  overflow-x: auto;
-}
-
 table {
   min-width: max-content;
 }

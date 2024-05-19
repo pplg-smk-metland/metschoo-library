@@ -91,22 +91,18 @@ onMounted(async () => {
   </form>
 
   <LoadingSpinner v-if="isLoading" />
-  <div class="table-container" v-else>
-    <DataTable :value="searchResults">
-      <Column field="judul" header="Judul">
-        <template #body="slotProps">
-          <routerLink
-            :to="{ name: 'admin-halaman-buku', params: { isbn: slotProps.data.no_isbn } }"
-          >
-            {{ slotProps.data.judul }}
-          </routerLink>
-        </template>
-      </Column>
-      <Column field="no_isbn" header="ISBN"></Column>
-      <Column field="penulis" header="Penulis"></Column>
-      <Column field="penerbit" header="Penerbit"></Column>
-      <Column field="tahun_terbit" header="Tahun Terbit"></Column>
-      <Column field="kategori_buku.kategori" header="Kategori"></Column>
-    </DataTable>
-  </div>
+  <DataTable :value="searchResults" scrollable v-else>
+    <Column field="judul" header="Judul">
+      <template #body="slotProps">
+        <routerLink :to="{ name: 'admin-halaman-buku', params: { isbn: slotProps.data.no_isbn } }">
+          {{ slotProps.data.judul }}
+        </routerLink>
+      </template>
+    </Column>
+    <Column field="no_isbn" header="ISBN"></Column>
+    <Column field="penulis" header="Penulis"></Column>
+    <Column field="penerbit" header="Penerbit"></Column>
+    <Column field="tahun_terbit" header="Tahun Terbit"></Column>
+    <Column field="kategori_buku.kategori" header="Kategori"></Column>
+  </DataTable>
 </template>
