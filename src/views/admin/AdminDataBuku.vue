@@ -26,7 +26,7 @@ interface SearchResult {
 }
 const searchResults = ref<SearchResult[] | never>([])
 
-async function getBukus() {
+async function searchBukus() {
   try {
     const { data, error } = await supabase
       .from("buku")
@@ -62,7 +62,7 @@ async function searchBooks(searchTerm: string, searchCategory: Kategori["id"]) {
 }
 
 onMounted(async () => {
-  searchResults.value = await getBukus()
+  searchResults.value = await searchBukus()
   availableCategories.value = await getAllAvailableCategories()
 })
 </script>
