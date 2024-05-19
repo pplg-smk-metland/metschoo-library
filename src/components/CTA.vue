@@ -12,7 +12,6 @@ defineProps({
   <Button
     :label="label"
     :class="['cta', { 'cta--fill': fill }, { 'cta--danger': danger }]"
-    unstyled
   ></Button>
 </template>
 
