@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue"
 import { supabase } from "@/lib/supabase"
-import type {
-  PostgrestError,
-  QueryData,
-  RealtimePostgresChangesPayload,
-} from "@supabase/supabase-js"
+import type { PostgrestError, RealtimePostgresChangesPayload } from "@supabase/supabase-js"
 import type { Buku, Peminjaman } from "@/types"
 
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
@@ -13,27 +9,12 @@ import DataRow from "@/components/admin/DataRow.vue"
 import TheDialog from "@/components/TheDialog.vue"
 import { useDialog } from "@/lib/composables"
 import { confirmBorrowBuku, confirmReturnBuku } from "@/lib/utils"
+import { getPeminjamanData, type PeminjamanData } from "@/lib/peminjaman"
 
 const isLoading = ref(false)
 const { dialog } = useDialog()
 
-const peminjamanDataQuery = supabase
-  .from("peminjaman")
-  .select("*, pengguna(nama, kelas, jurusan), buku(*)")
-export type PeminjamanData = QueryData<typeof peminjamanDataQuery>
-
 const peminjamanData = ref<PeminjamanData>([])
-
-async function getPeminjamanData() {
-  try {
-    const { data, error } = await peminjamanDataQuery
-    if (error) throw error
-    return data
-  } catch (error) {
-    console.log(error as PostgrestError)
-    return []
-  }
-}
 
 const bukusBorrowPending = computed(() => {
   return peminjamanData.value.filter((data) => data.state_id === 1)
