@@ -30,7 +30,7 @@ onMounted(async () => {
 
 <template>
   <div class="table-container">
-    <DataTable :value="peminjamanData">
+    <DataTable :value="peminjamanData" selection-mode="multiple">
       <template #header>
         <h1>Data peminjaman</h1>
       </template>
@@ -59,9 +59,9 @@ onMounted(async () => {
         </template>
       </Column>
       <Column field="no_isbn" header="ISBN"></Column>
-      <Column field="tgl_pinjam" header="Tanggal Pinjam"></Column>
+      <Column field="tgl_pinjam" header="Tanggal Pinjam" sortable></Column>
       <Column field="tenggat_waktu" header="Tenggat Waktu"></Column>
-      <Column field="tgl_kembali" header="Tanggal Kembali"></Column>
+      <Column field="tgl_kembali" header="Tanggal Kembali" sortable></Column>
     </DataTable>
   </div>
 </template>
@@ -75,9 +75,18 @@ table {
   min-width: max-content;
 }
 
-th,
-td {
+.p-table-header,
+.p-table-cell {
   padding: 0.5rem 1rem;
+}
+
+.p-table-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.p-sort {
+  cursor: pointer;
 }
 
 tr:nth-child(even) {
