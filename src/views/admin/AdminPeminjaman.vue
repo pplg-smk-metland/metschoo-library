@@ -9,23 +9,6 @@ const peminjamanData = ref<PeminjamanData>([])
 onMounted(async () => {
   peminjamanData.value = await getPeminjamanData()
 })
-
-// const tabularPeminjaman = computed(() => {
-//   return peminjamanData.value.map(() => ({
-//     field: "",
-//     header: "",
-//   }))
-// })
-
-// const tabularPeminjaman = [
-//   // column
-//   {
-//     header: "Peminjam",
-//     field: {},
-//   },
-// ]
-
-// peminjam | kelas & jurusan | judul | isbn | tanggal pinjam | tenggat waktu | tanggal kembali
 </script>
 
 <template>
