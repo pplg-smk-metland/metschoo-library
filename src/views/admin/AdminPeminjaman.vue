@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue"
+import { onMounted, ref } from "vue"
 import DataTable from "primevue/datatable"
 import Column from "primevue/column"
 import { getPeminjamanData, type PeminjamanData } from "@/lib/peminjaman"
@@ -48,31 +48,3 @@ onMounted(async () => {
     </DataTable>
   </div>
 </template>
-
-<style>
-.table-container {
-  overflow-x: auto;
-}
-
-table {
-  min-width: max-content;
-}
-
-.p-table-header,
-.p-table-cell {
-  padding: 0.5rem 1rem;
-}
-
-.p-table-header {
-  display: flex;
-  justify-content: space-between;
-}
-
-.p-sort {
-  cursor: pointer;
-}
-
-tr:nth-child(even) {
-  background: var(--grey);
-}
-</style>
