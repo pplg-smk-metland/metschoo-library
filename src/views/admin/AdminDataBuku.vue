@@ -2,14 +2,15 @@
 import { ref, onMounted } from "vue"
 import { supabase } from "@/lib/supabase"
 import { getAllAvailableCategories } from "@/lib/utils"
-import CTA from "@/components/CTA.vue"
 import type { Kategori } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
+
+import CTA from "@/components/CTA.vue"
+import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import DataTable from "primevue/datatable"
 import Column from "primevue/column"
 
 const searchTerm = ref("")
-
 const availableCategories = ref<Kategori[]>([])
 const selectedCategory = ref<Kategori["id"]>(1)
 
@@ -39,8 +40,10 @@ async function getBukus() {
   }
 }
 
+const isLoading = ref(false)
 async function searchBooks(searchTerm: string, searchCategory: Kategori["id"]) {
   try {
+    isLoading.value = true
     const { data, error } = await supabase
       .from("buku")
       .select(`no_isbn, judul, penulis, penerbit, tahun_terbit, kategori_buku(kategori)`)
@@ -53,6 +56,8 @@ async function searchBooks(searchTerm: string, searchCategory: Kategori["id"]) {
   } catch (err) {
     console.trace((err as PostgrestError).message)
     return []
+  } finally {
+    isLoading.value = false
   }
 }
 
@@ -85,7 +90,8 @@ onMounted(async () => {
     <CTA label="Cari" />
   </form>
 
-  <div class="table-container">
+  <LoadingSpinner v-if="isLoading" />
+  <div class="table-container" v-else>
     <DataTable :value="searchResults">
       <Column field="judul" header="Judul">
         <template #body="slotProps">
