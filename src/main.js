@@ -11,6 +11,18 @@ const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
-app.use(PrimeVue)
+app.use(PrimeVue, {
+  unstyled: true,
+  pt: {
+    table: {
+      root: "p-table",
+    },
+    column: {
+      headerContent: "p-table-header",
+      bodyCell: "p-table-cell",
+      sort: "p-sort",
+    },
+  },
+})
 
 app.mount("#app")
