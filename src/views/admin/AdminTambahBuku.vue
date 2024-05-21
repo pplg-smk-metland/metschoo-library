@@ -90,8 +90,8 @@ const router = useRouter()
       <img
         v-if="bukuGambarEl && bukuGambarFile"
         :src="bukuGambarURL"
-        width="800"
-        height="450"
+        width="450"
+        height="800"
         alt=""
       />
     </div>
