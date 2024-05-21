@@ -1,10 +1,18 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue"
+import { computed, onMounted, ref } from "vue"
 import DataTable from "primevue/datatable"
 import Column from "primevue/column"
 import { getPeminjamanData, type PeminjamanData } from "@/lib/peminjaman"
 
 const peminjamanData = ref<PeminjamanData>([])
+
+const borrowPending = computed(() => {
+  return peminjamanData.value.filter(({ state_id }) => state_id === 1)
+})
+
+const returnPending = computed(() => {
+  return peminjamanData.value.filter(({ state_id }) => state_id === 4)
+})
 
 onMounted(async () => {
   peminjamanData.value = await getPeminjamanData()
@@ -12,9 +20,28 @@ onMounted(async () => {
 </script>
 
 <template>
+  <h1>Data peminjaman</h1>
+
+  <DataTable :value="borrowPending" scrollable>
+    <template #header>
+      <h2>Belum dikonfirmasi</h2>
+    </template>
+
+    <template #empty>
+      <p>Belum ada yang meminjam</p>
+    </template>
+
+    <Column field="pengguna.nama" header="Peminjam"></Column>
+    <Column field="buku.judul" header="Judul buku"></Column>
+    <Column field="no_isbn" header="ISBN"></Column>
+    <Column field="tgl_pinjam" header="Tanggal pinjam"></Column>
+    <Column field="tgl_kembali" header="Tanggal kembali"></Column>
+    <Column field="tenggat_waktu" header="Tenggat waktu"></Column>
+  </DataTable>
+
   <DataTable :value="peminjamanData" selection-mode="multiple" scrollable>
     <template #header>
-      <h1>Data peminjaman</h1>
+      <h2>Data peminjaman Seminggu terakhir</h2>
     </template>
 
     <Column field="pengguna.nama" header="Peminjam">
