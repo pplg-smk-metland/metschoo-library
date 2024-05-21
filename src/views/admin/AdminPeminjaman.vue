@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue"
+import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import DataTable from "primevue/datatable"
 import Column from "primevue/column"
 import { getPeminjamanData, type PeminjamanData } from "@/lib/peminjaman"
@@ -14,21 +15,29 @@ const returnPending = computed(() => {
   return peminjamanData.value.filter(({ state_id }) => state_id === 4)
 })
 
+const isLoading = ref(false)
+
 onMounted(async () => {
+  isLoading.value = true
   peminjamanData.value = await getPeminjamanData()
+  isLoading.value = false
 })
 </script>
 
 <template>
   <h1>Data peminjaman</h1>
 
-  <DataTable :value="borrowPending" scrollable>
+  <DataTable :value="borrowPending" scrollable :loading="isLoading">
     <template #header>
       <h2>Belum dikonfirmasi</h2>
     </template>
 
     <template #empty>
       <p>Belum ada yang meminjam</p>
+    </template>
+
+    <template #loading>
+      <LoadingSpinner />
     </template>
 
     <Column field="pengguna.nama" header="Peminjam"></Column>
