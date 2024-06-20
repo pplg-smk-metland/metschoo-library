@@ -153,6 +153,11 @@ async function kembalikanBuku({ judul }: Buku, id: Peminjaman["id"]) {
 }
 
 async function masukkanWishlist({ judul, no_isbn }: Buku) {
+  if (!authStore.session) {
+    alert("silahkan masuk jika anda ingin menambahkan buku ke dalam wishlist")
+    return
+  }
+
   try {
     const { data, error } = await supabase.from("wishlist").insert({ no_isbn })
     if (error) throw error
