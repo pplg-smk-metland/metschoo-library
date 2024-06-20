@@ -31,15 +31,11 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   async function handleSignIn(email: string, password: string) {
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-      if (error) throw error
-    } catch (err) {
-      if (err instanceof AuthError) console.error(err.message)
-    }
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+    return error
   }
 
   async function handleSignOut() {

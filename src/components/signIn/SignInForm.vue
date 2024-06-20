@@ -27,7 +27,8 @@ const { dialog } = useDialog()
 
 async function handleSignIn() {
   try {
-    await authStore.handleSignIn(data.value.email, data.value.password)
+    const error = await authStore.handleSignIn(data.value.email, data.value.password)
+    if (error) throw error
     router.push({ name: "home" })
   } catch (err) {
     if (err instanceof AuthError) dialog.value.open(err.message)
