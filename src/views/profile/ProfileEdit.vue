@@ -57,7 +57,7 @@ async function updateUserInfo() {
         <input v-model="dataPengguna.jurusan" type="text" placeholder="Masukkan Jurusan" />
 
         <div class="button-container">
-          <CTA :fill="true" label="Edit profil" />
+          <CTA @click="updateUserInfo" :fill="true" label="Edit profil" />
         </div>
       </form>
     </section>
