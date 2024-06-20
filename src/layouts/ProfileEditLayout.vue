@@ -4,7 +4,7 @@
   </main>
 </template>
 
-<style>
+<style scoped>
 main {
   padding: 2rem;
   max-width: 100ch;
