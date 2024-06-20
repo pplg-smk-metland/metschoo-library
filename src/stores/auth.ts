@@ -1,11 +1,12 @@
 import { defineStore } from "pinia"
 import { ref } from "vue"
 import { supabase } from "@/lib/supabase"
-import { AuthError, type PostgrestError, type Session } from "@supabase/supabase-js"
+import { AuthError, type PostgrestError, type Session, type User } from "@supabase/supabase-js"
 import type { Pengguna } from "@/types"
 
 export const useAuthStore = defineStore("auth", () => {
   const session = ref<Session | null>(null)
+  const user = ref<User | null>(null)
 
   async function init() {
     const {
@@ -13,9 +14,18 @@ export const useAuthStore = defineStore("auth", () => {
     } = await supabase.auth.getSession()
     session.value = _session
 
-    supabase.auth.onAuthStateChange((_, _session) => {
+    supabase.auth.onAuthStateChange(async (_, _session) => {
       session.value = _session
+
+      if (!session.value) return
+      user.value = await getUser(session.value?.access_token)
     })
+  }
+
+  async function getUser(jwt: string) {
+    const { data, error } = await supabase.auth.getUser(jwt)
+    if (error) throw error
+    return data.user
   }
 
   async function handleSignUp(email: string, password: string) {
@@ -38,6 +48,7 @@ export const useAuthStore = defineStore("auth", () => {
     try {
       const { error } = await supabase.auth.signOut()
       session.value = null
+      user.value = null
 
       if (error) throw error
     } catch (err) {
@@ -74,6 +85,7 @@ export const useAuthStore = defineStore("auth", () => {
 
   return {
     session,
+    user,
     init,
     handleSignUp,
     handleSignIn,

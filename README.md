@@ -57,6 +57,15 @@ connect directly to cloud. To initialize run `pnpm supabase start`, it will take
 a while at first. Then `pnpm supabase db reset` to migrate and seed all local dev
 data. Read more at [supabase's official docs](https://supabase.com/docs/guides/cli/getting-started).
 
+To add a new admin user, add a new user like usual, through the app or Supabase
+dashboard, then run this query in the SQL Editor on the dashboard:
+
+```sql
+update auth.users set raw_app_meta_data = raw_app_meta_data || '{"role": "super-admin"}' where auth.users.id = 'id';
+```
+
+This will add the role 'super-admin' to the target user.
+
 ### Todo
 
 The codebase is really messy at the moment. If you would like to help, here are
