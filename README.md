@@ -48,6 +48,15 @@ pnpm preview
 pnpm lint
 ```
 
+### Supabase
+
+This project already has the Supabase CLI installed as a dependency, you can run
+it with `pnpm supabase`. For local development You have to have Docker installed
+locally. I recommend Docker Desktop. If you don't want to have Docker, you can
+connect directly to cloud. To initialize run `pnpm supabase start`, it will take
+a while at first. Then `pnpm supabase db reset` to migrate and seed all local dev
+data. Read more at [supabase's official docs](https://supabase.com/docs/guides/cli/getting-started).
+
 ### Todo
 
 The codebase is really messy at the moment. If you would like to help, here are
