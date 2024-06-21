@@ -102,10 +102,8 @@ const router = createRouter({
 router.beforeEach(async (to, _) => {
   const authStore = useAuthStore()
   const user = authStore.user
-  if (user) {
-    if (user.app_metadata.role !== "super-admin" && to.name === "admin") {
-      return { name: "home" }
-    }
+  if ((!user || user.app_metadata.role !== "super-admin") && to.name === "admin") {
+    return { name: "home" }
   }
 })
 
