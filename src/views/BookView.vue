@@ -72,9 +72,7 @@ const cekBisaDipinjam = ({ state_id }: Peminjaman, jumlah_exspl: Buku["jumlah_ex
 
 const bisaDikembalikan = ref(false)
 
-const cekBisaDikembalikan = ({ state_id }: Peminjaman) => {
-  return state_id === 2
-}
+const cekBisaDikembalikan = ({ state_id }: Peminjaman) => state_id === 2
 
 const bukuAdaDiWishlist = ref(false)
 
@@ -136,6 +134,7 @@ async function pinjamBuku({ judul, no_isbn }: Buku, tanggal: Date) {
     }
 
     await pinjamBukuDariISBN(no_isbn, tanggal)
+    dialogConfirm.value.close()
     dialog.value.open(`sukses meminjam buku ${judul}`)
   } catch (err) {
     dialog.value.open((err as PostgrestError).message)

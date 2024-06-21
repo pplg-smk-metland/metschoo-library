@@ -15,7 +15,6 @@ import TheDialog from "@/components/TheDialog.vue"
 const isLoading = ref(false)
 
 const availableCategories = ref<Kategori[] | null>([])
-const route = useRoute()
 const router = useRouter()
 const currentRoute = useRoute()
 
@@ -52,15 +51,24 @@ onMounted(async () => {
   availableCategories.value = await getAllAvailableCategories()
 })
 
-async function editBook() {
+async function editBook(buku: Buku) {
   try {
     const { error } = await supabase
       .from("buku")
       .update({
-        ...buku.value,
+        judul: buku.judul,
+        no_isbn: buku.no_isbn,
+        penulis: buku.penulis,
+        asal: buku.asal,
+        kategori_id: buku.kategori_id,
+        jumlah_exspl: buku.jumlah_exspl,
+        penerbit: buku.penerbit,
+        alamat_terbit: buku.alamat_terbit,
+        tahun_terbit: buku.tahun_terbit,
       })
-      .eq("no_isbn", route.params.isbn)
+      .eq("no_isbn", isbn)
     if (error) throw error
+    console.log("updated book")
   } catch (err) {
     console.trace((err as PostgrestError).message)
   }
@@ -122,7 +130,7 @@ function toggleFormVisibility() {
       <h1>Edit</h1>
       <CTA @click="toggleFormVisibility" label="kembali" />
 
-      <form class="buku-edit" @submit.prevent="editBook">
+      <form class="buku-edit" @submit.prevent="editBook(buku)">
         <label for="buku-judul">Judul</label>
         <input id="buku-judul" v-model="buku.judul" type="text" name="buku-judul" required />
         <label for="buku-asal">Asal</label>
@@ -173,7 +181,7 @@ function toggleFormVisibility() {
           </option>
         </select>
 
-        <CTA label="Simpan perubahan" />
+        <CTA type="submit" label="Simpan perubahan" />
       </form>
     </article>
 

@@ -87,7 +87,7 @@ onMounted(async () => {
         {{ category.id }} - {{ category.kategori }}
       </option>
     </select>
-    <CTA label="Cari" />
+    <CTA type="submit" label="Cari" />
   </form>
 
   <LoadingSpinner v-if="isLoading" />

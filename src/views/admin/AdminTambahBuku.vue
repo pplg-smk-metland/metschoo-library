@@ -213,7 +213,7 @@ const router = useRouter()
           required
         />
       </label>
-      <CTA :disabled="isLoading" label="Tambah buku baru" class="buku-form__submit" />
+      <CTA type="submit" :disabled="isLoading" label="Tambah buku baru" class="buku-form__submit" />
 
       <TheDialog :is-open="errDialog.isOpen" @dialog-close="errDialog.close()">
         <h2>Ada kesalahan!</h2>
