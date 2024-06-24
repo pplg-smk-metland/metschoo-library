@@ -15,7 +15,8 @@ const authStore = useAuthStore()
 const pengguna = ref<Pengguna | null>(null)
 
 onMounted(async () => {
-  const data = await authStore.getProfile()
+  if (!authStore.session) return
+  const data = await authStore.getProfile(authStore.session)
   pengguna.value = data
 })
 

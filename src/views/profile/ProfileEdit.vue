@@ -15,8 +15,10 @@ const dataPengguna = ref<Pengguna | null>(null)
 const authStore = useAuthStore()
 
 onMounted(async () => {
-  const data = await authStore.getProfile()
-  dataPengguna.value = data
+  if (authStore.session) {
+    const data = await authStore.getProfile(authStore.session)
+    dataPengguna.value = data
+  }
 })
 
 async function updateUserInfo() {

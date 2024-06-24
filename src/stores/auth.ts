@@ -9,16 +9,11 @@ export const useAuthStore = defineStore("auth", () => {
   const user = ref<User | null>(null)
 
   async function init() {
-    const {
-      data: { session: _session },
-    } = await supabase.auth.getSession()
-    session.value = _session
-
     supabase.auth.onAuthStateChange(async (_, _session) => {
       session.value = _session
 
       if (!session.value) return
-      user.value = await getUser(session.value?.access_token)
+      user.value = await getUser(session.value.access_token)
     })
   }
 
@@ -56,14 +51,12 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
-  async function getProfile() {
-    if (!session.value) return null
-
+  async function getProfile(session: Session) {
     try {
       const { data, error } = await supabase
         .from("pengguna")
         .select("user_id, nama, email, kelas, jurusan, role_id")
-        .eq("user_id", session.value.user.id)
+        .eq("user_id", session.user.id)
         .single()
       if (error) throw error
       return data
