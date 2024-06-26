@@ -104,6 +104,8 @@ onMounted(async () => {
     <Column field="penerbit" header="Penerbit"></Column>
     <Column field="tahun_terbit" header="Tahun Terbit"></Column>
     <Column field="kategori_buku.kategori" header="Kategori"></Column>
+    <template #empty>Tidak ada buku ditemukan.</template>
+    <template #footer>Menampilkan {{ searchResults.length }} buku.</template>
   </DataTable>
 </template>
 
