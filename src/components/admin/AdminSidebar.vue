@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Button from "primevue/button"
+import IconArrowDownDrop from "~icons/mdi/arrow-down-drop"
 import { ref } from "vue"
 import type { RouteLocationRaw } from "vue-router"
 
@@ -56,7 +56,10 @@ const sidebarLinks = ref<SidebarLink[]>([
         </routerLink>
 
         <template v-else>
-          <Button @click="link.isExpanded = !link.isExpanded" :label="link.label" />
+          <button @click="link.isExpanded = !link.isExpanded">
+            {{ link.label }}
+            <icon-arrow-down-drop :class="[{ rotate: link.isExpanded }, 'icon']" />
+          </button>
 
           <ul class="sidebar__sub-list" :class="{ expanded: link.isExpanded }">
             <li v-for="sublink in (link as SidebarSubLink).destination" :key="sublink.label">
@@ -92,8 +95,14 @@ const sidebarLinks = ref<SidebarLink[]>([
   padding: 1rem;
 }
 
-.sidebar p {
-  margin: 0;
+.sidebar button {
+  display: flex;
+  justify-content: space-between;
+}
+
+.sidebar button .icon.rotate {
+  rotate: -180deg;
+  transition: rotate 500ms ease;
 }
 
 .sidebar a {
