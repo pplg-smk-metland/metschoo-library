@@ -1,33 +1,71 @@
+<script setup lang="ts">
+import { ref } from "vue"
+import type { RouteLocationRaw } from "vue-router"
+
+interface SidebarMainLink {
+  label: string
+  destination: RouteLocationRaw | any
+}
+
+interface SidebarSubLink extends SidebarMainLink {
+  destination: SidebarMainLink[]
+}
+
+type SidebarLink = SidebarMainLink | SidebarSubLink
+
+const sidebarLinks = ref<SidebarLink[]>([
+  {
+    label: "Dashboard",
+    destination: {
+      name: "admin",
+    },
+  },
+  {
+    label: "Manajemen pengguna",
+    destination: { name: "admin-manajemen-pengguna" },
+  },
+  {
+    label: "Peminjaman ",
+    destination: { name: "admin-peminjaman" },
+  },
+  {
+    label: "buku",
+    destination: [
+      {
+        label: "Data buku",
+        destination: { name: "admin-data-buku" },
+      },
+      {
+        label: "Tambah buku",
+        destination: { name: "admin-tambah-buku" },
+      },
+    ],
+  },
+])
+</script>
+
 <template>
   <nav class="sidebar">
     <ul class="sidebar__list">
-      <li>
-        <routerLink :to="{ name: 'admin' }"> Dashboard </routerLink>
-        <ul class="sidebar__sub-list">
-          <li>
-            <routerLink :to="{ name: 'admin-manajemen-pengguna' }"> Manajemen pengguna </routerLink>
-          </li>
-          <li>
-            <routerLink :to="{ name: 'admin-peminjaman' }"> Peminjaman </routerLink>
-          </li>
-        </ul>
-      </li>
-      <li>
-        <p>Buku</p>
-        <ul class="sidebar__sub-list">
-          <li>
-            <RouterLink :to="{ name: 'admin-data-buku' }"> Data buku </RouterLink>
-          </li>
-          <li>
-            <routerLink :to="{ name: 'admin-tambah-buku' }"> Tambah buku </routerLink>
-          </li>
-        </ul>
+      <li class="sidebar__item" v-for="link in sidebarLinks" :key="link.label">
+        <routerLink v-if="!link.destination.length" :to="(link as SidebarMainLink).destination">
+          {{ link.label }}
+        </routerLink>
+
+        <template v-else>
+          <p>{{ link.label }}</p>
+          <ul class="sidebar__sub-list">
+            <li v-for="sublink in (link as SidebarSubLink).destination" :key="sublink.label">
+              <routerLink :to="sublink.destination">{{ sublink.label }}</routerLink>
+            </li>
+          </ul>
+        </template>
       </li>
     </ul>
   </nav>
 </template>
 
-<style>
+<style scoped>
 .sidebar {
   background: var(--primary);
   color: var(--white);
@@ -41,9 +79,18 @@
   flex-direction: column;
 }
 
+.sidebar__item > * {
+  padding: 1rem;
+}
+
+.sidebar p {
+  margin: 0;
+}
+
 .sidebar a {
   display: block;
   color: inherit;
+  padding: 1rem;
 }
 
 .sidebar a:hover {
@@ -56,15 +103,7 @@
   margin: 0;
 }
 
-.sidebar__list a {
-  padding: 1rem;
-}
-
-.sidebar__sub-list {
-  background: var(--secondary-100);
-}
-
-.sidebar__sub-list a:hover {
-  background: var(--secondary-500);
+.sidebar__sub-list a {
+  padding-block: 0.5rem;
 }
 </style>
