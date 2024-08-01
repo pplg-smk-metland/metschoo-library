@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import Button from "primevue/button"
 import { ref } from "vue"
 import type { RouteLocationRaw } from "vue-router"
 
 interface SidebarMainLink {
   label: string
   destination: RouteLocationRaw | any
+  isExpanded?: boolean
 }
 
 interface SidebarSubLink extends SidebarMainLink {
@@ -30,6 +32,7 @@ const sidebarLinks = ref<SidebarLink[]>([
   },
   {
     label: "buku",
+    isExpanded: false,
     destination: [
       {
         label: "Data buku",
@@ -53,8 +56,9 @@ const sidebarLinks = ref<SidebarLink[]>([
         </routerLink>
 
         <template v-else>
-          <p>{{ link.label }}</p>
-          <ul class="sidebar__sub-list">
+          <Button @click="link.isExpanded = !link.isExpanded" :label="link.label" />
+
+          <ul class="sidebar__sub-list" :class="{ expanded: link.isExpanded }">
             <li v-for="sublink in (link as SidebarSubLink).destination" :key="sublink.label">
               <routerLink :to="sublink.destination">{{ sublink.label }}</routerLink>
             </li>
@@ -75,6 +79,11 @@ const sidebarLinks = ref<SidebarLink[]>([
 
   grid-area: sidebar;
 
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar__item {
   display: flex;
   flex-direction: column;
 }
@@ -101,6 +110,17 @@ const sidebarLinks = ref<SidebarLink[]>([
   list-style: none;
   padding: 0;
   margin: 0;
+}
+
+.sidebar__sub-list {
+  max-height: 0;
+  overflow-y: hidden;
+  transition: max-height 200ms ease;
+  background: var(--primary-200);
+}
+
+.sidebar__sub-list.expanded {
+  max-height: 200px;
 }
 
 .sidebar__sub-list a {
