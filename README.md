@@ -1,7 +1,7 @@
 # Metschoo Library
 
 Source code of Metschoo Library web app, made with Vue 3 and Supabase. Please see
-[CONTRIBUTING.md](CONTRIBUTING.md) before doing anything
+[DEVELOPMENT.md](DEVELOPMENT.md) before doing anything
 
 ## Development
 
