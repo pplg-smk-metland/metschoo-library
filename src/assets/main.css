@@ -38,6 +38,10 @@ input,
   border-radius: 0.5rem;
 }
 
+input {
+  width: 100%;
+}
+
 input:hover {
   outline-color: var(--primary);
 }

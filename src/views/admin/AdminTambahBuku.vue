@@ -86,16 +86,18 @@ const router = useRouter()
 <template>
   <h1>Tambah buku</h1>
 
-  <div class="buku-container">
-    <div class="buku-gambar">
+  <section class="buku-container">
+    <figure class="buku-gambar">
       <img
         v-if="bukuGambarEl && bukuGambarFile"
         :src="bukuGambarURL"
         width="450"
         height="800"
-        alt=""
+        :alt="`gambar buku ${buku?.judul}`"
       />
-    </div>
+
+      <p v-else class="buku-gambar__placeholder">Gambar buku akan muncul di sini.</p>
+    </figure>
 
     <form @submit.prevent="addNewBook(buku)" class="buku-form">
       <label for="buku-gambar">
@@ -228,7 +230,7 @@ const router = useRouter()
         <p>{{ dialog.message }}</p>
       </TheDialog>
     </form>
-  </div>
+  </section>
 </template>
 
 <style scoped>
@@ -242,18 +244,31 @@ const router = useRouter()
   }
 }
 
+.buku-gambar {
+  outline: 2px solid var(--neutral);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
 .buku-gambar img {
   width: 100%;
+}
+
+.buku-gambar__placeholder {
+  text-align: center;
 }
 
 .buku-form {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  column-gap: 1rem;
+  gap: 1rem;
+}
+
+.buku-form label {
+  padding: 0;
 }
 
 .buku-form__submit {
-  margin-block: 1rem;
   grid-column: span 2;
 }
 </style>
