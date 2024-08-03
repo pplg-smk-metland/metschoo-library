@@ -7,6 +7,15 @@ import { getPeminjamanData, type PeminjamanData } from "@/lib/peminjaman"
 import { formatDate } from "@/lib/utils"
 
 const peminjamanData = ref<PeminjamanData>([])
+const peminjamanDataWeek = computed(() => {
+  const now = new Date()
+  const nowAWeekLater = new Date().setDate(now.getDate() + 7)
+  const weekRange = nowAWeekLater - now.getTime()
+
+  return peminjamanData.value.filter(
+    (data) => now.getTime() - new Date(data.tgl_pinjam).getTime() < weekRange
+  )
+})
 
 const borrowPending = computed(() => {
   return peminjamanData.value.filter(({ state_id }) => state_id === 1)
@@ -49,9 +58,13 @@ onMounted(async () => {
     <Column field="tenggat_waktu" header="Tenggat waktu"></Column>
   </DataTable>
 
-  <DataTable :value="peminjamanData" selection-mode="multiple" scrollable>
+  <DataTable :value="peminjamanDataWeek" sortField="tenggat_waktu" :sortOrder="-1" scrollable>
     <template #header>
       <h2>Data peminjaman Seminggu terakhir</h2>
+    </template>
+
+    <template #empty>
+      <p>Tidak peminjaman selama seminggu terakhir.</p>
     </template>
 
     <Column field="pengguna.nama" header="Peminjam">
@@ -84,7 +97,7 @@ onMounted(async () => {
       </template>
     </Column>
 
-    <Column field="tenggat_waktu" header="Tenggat Waktu">
+    <Column field="tenggat_waktu" header="Tenggat Waktu" :sortable="true">
       <template #body="slotProps">
         {{ formatDate(new Date(slotProps.data.tenggat_waktu)) }}
       </template>
