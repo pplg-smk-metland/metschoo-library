@@ -2,52 +2,67 @@
 import { ref, onMounted } from "vue"
 import { supabase } from "@/lib/supabase"
 import { getAllAvailableCategories } from "@/lib/utils"
-import CTA from "@/components/CTA.vue"
 import type { Kategori } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
 
-const searchTerm = ref("")
+import CTA from "@/components/CTA.vue"
+import LoadingSpinner from "@/components/LoadingSpinner.vue"
+import DataTable from "primevue/datatable"
+import Column from "primevue/column"
 
+const searchTerm = ref("")
 const availableCategories = ref<Kategori[]>([])
 const selectedCategory = ref<Kategori["id"]>(1)
 
-interface SearchedBuku {
+interface SearchResult {
   no_isbn: string
   judul: string
   penulis: string
+  penerbit: string
+  tahun_terbit: string
   kategori_buku: {
     kategori: string
   } | null
 }
-const daftarBuku = ref<SearchedBuku[] | never>([])
+const searchResults = ref<SearchResult[] | never>([])
 
-async function ambilBuku() {
-  const { data, error } = await supabase
-    .from("buku")
-    .select(`no_isbn, judul, penulis, kategori_buku(kategori)`)
-    .limit(20)
-  if (error) throw error
-  return data
-}
-
-async function searchBooks() {
+async function searchBukus() {
   try {
     const { data, error } = await supabase
       .from("buku")
-      .select(`no_isbn, judul, penulis, kategori_buku(kategori)`)
-      .textSearch("judul", searchTerm.value, { type: "websearch" })
-      .eq("kategori_id", selectedCategory.value)
+      .select(`no_isbn, judul, penulis, penerbit, tahun_terbit, kategori_buku(kategori)`)
+      .limit(20)
+    if (error) throw error
+    return data
+  } catch (error) {
+    console.trace(error as PostgrestError)
+    return []
+  }
+}
+
+const isLoading = ref(false)
+async function searchBooks(searchTerm: string, searchCategory: Kategori["id"]) {
+  try {
+    isLoading.value = true
+    const { data, error } = await supabase
+      .from("buku")
+      .select(`no_isbn, judul, penulis, penerbit, tahun_terbit, kategori_buku(kategori)`)
+      .textSearch("judul", searchTerm, { type: "websearch" })
+      .eq("kategori_id", searchCategory)
       .limit(30)
 
     if (error) throw error
-    daftarBuku.value = data
+    return data
   } catch (err) {
     console.trace((err as PostgrestError).message)
+    return []
+  } finally {
+    isLoading.value = false
   }
 }
 
 onMounted(async () => {
-  daftarBuku.value = await ambilBuku()
+  searchResults.value = await searchBukus()
   availableCategories.value = await getAllAvailableCategories()
 })
 </script>
@@ -55,35 +70,52 @@ onMounted(async () => {
 <template>
   <h1>Data buku</h1>
 
-  <form @submit.prevent="searchBooks">
+  <form
+    @submit.prevent="async () => (searchResults = await searchBooks(searchTerm, selectedCategory))"
+  >
     <input
-      type="text"
-      name="search-term"
       id="search-term"
       v-model="searchTerm"
-      placeholder="search for book"
+      type="text"
+      name="search-term"
+      placeholder="cari judul buku..."
       required
     />
-    <select name="search-category" id="search-category" v-model="selectedCategory" required>
-      <option value="" disabled>Select one</option>
+    <select id="search-category" v-model="selectedCategory" name="search-category" required>
+      <option value="" disabled>Pilih satu</option>
       <option v-for="category in availableCategories" :key="category.id" :value="category.id">
         {{ category.id }} - {{ category.kategori }}
       </option>
     </select>
-    <CTA>Search</CTA>
+    <CTA type="submit" label="Cari" />
   </form>
 
-  <ul>
-    <li v-if="!daftarBuku.length" class="not-found">
-      Bukunya ga ketemu. Coba lagi, mungkin salah ketik atau salah kategori. Atau bukunya memang ga
-      ada.
-    </li>
-    <li v-for="buku in daftarBuku" :key="buku.no_isbn" v-else>
-      <routerLink :to="{ name: 'admin-halaman-buku', params: { isbn: buku.no_isbn } }">
-        <p>{{ buku.judul }}</p>
-        <p>{{ buku.penulis }}</p>
-        <p>{{ buku.kategori_buku?.kategori }}</p>
-      </routerLink>
-    </li>
-  </ul>
+  <LoadingSpinner v-if="isLoading" />
+  <DataTable :value="searchResults" scrollable v-else>
+    <Column field="judul" header="Judul">
+      <template #body="slotProps">
+        <routerLink :to="{ name: 'admin-halaman-buku', params: { isbn: slotProps.data.no_isbn } }">
+          {{ slotProps.data.judul }}
+        </routerLink>
+      </template>
+    </Column>
+    <Column field="no_isbn" header="ISBN"></Column>
+    <Column field="penulis" header="Penulis"></Column>
+    <Column field="penerbit" header="Penerbit"></Column>
+    <Column field="tahun_terbit" header="Tahun Terbit"></Column>
+    <Column field="kategori_buku.kategori" header="Kategori"></Column>
+    <template #empty>Tidak ada buku ditemukan.</template>
+    <template #footer>Menampilkan {{ searchResults.length }} buku.</template>
+  </DataTable>
 </template>
+
+<style scoped>
+form {
+  display: flex;
+  gap: 1rem;
+}
+
+#search-category {
+  border-radius: 0.5rem;
+}
+</style>

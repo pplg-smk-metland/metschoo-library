@@ -72,9 +72,7 @@ const cekBisaDipinjam = ({ state_id }: Peminjaman, jumlah_exspl: Buku["jumlah_ex
 
 const bisaDikembalikan = ref(false)
 
-const cekBisaDikembalikan = ({ state_id }: Peminjaman) => {
-  return state_id === 2
-}
+const cekBisaDikembalikan = ({ state_id }: Peminjaman) => state_id === 2
 
 const bukuAdaDiWishlist = ref(false)
 
@@ -101,7 +99,7 @@ const { dialog: dialogError } = useDialog()
 
 const date = ref<Date>(new Date())
 const formattedDate = computed(() => {
-  if (!date) return ""
+  if (!date.value) return ""
 
   return new Intl.DateTimeFormat(undefined, {
     year: "numeric",
@@ -136,6 +134,7 @@ async function pinjamBuku({ judul, no_isbn }: Buku, tanggal: Date) {
     }
 
     await pinjamBukuDariISBN(no_isbn, tanggal)
+    dialogConfirm.value.close()
     dialog.value.open(`sukses meminjam buku ${judul}`)
   } catch (err) {
     dialog.value.open((err as PostgrestError).message)
@@ -153,6 +152,11 @@ async function kembalikanBuku({ judul }: Buku, id: Peminjaman["id"]) {
 }
 
 async function masukkanWishlist({ judul, no_isbn }: Buku) {
+  if (!authStore.session) {
+    alert("silahkan masuk jika anda ingin menambahkan buku ke dalam wishlist")
+    return
+  }
+
   try {
     const { data, error } = await supabase.from("wishlist").insert({ no_isbn })
     if (error) throw error
@@ -199,7 +203,7 @@ supabase
     <section class="main-section">
       <LoadingSpinner v-if="isLoading" />
 
-      <div class="buku" v-if="buku">
+      <div v-if="buku" class="buku">
         <figure>
           <img class="buku__gambar" :src="imgURL" alt="" width="400" height="600" />
           <img
@@ -212,7 +216,9 @@ supabase
         </figure>
 
         <figcaption class="buku__info">
-          <h1 class="judul">{{ buku.judul }}</h1>
+          <h1 class="judul">
+            {{ buku.judul }}
+          </h1>
           <p>
             <span class="penulis">{{ buku.penulis }}</span> -
             <span class="tahun-terbit">{{ buku.tahun_terbit }}</span>
@@ -221,19 +227,24 @@ supabase
           <p>Jumlah tersedia: {{ buku.jumlah_exspl }}</p>
 
           <div class="button-container">
-            <CTA @click="konfirmasiPinjamBuku(buku)" v-if="bisaDipinjam" :fill="true">
-              Pinjam buku
-            </CTA>
             <CTA
-              @click="kembalikanBuku(buku, peminjamanTerbaru.id)"
+              v-if="bisaDipinjam"
+              :fill="true"
+              @click="konfirmasiPinjamBuku(buku)"
+              label="Pinjam buku"
+            />
+            <CTA
               v-else
               :disabled="!bisaDikembalikan"
               :fill="true"
-              >Kembalikan buku</CTA
-            >
-            <CTA @click="masukkanWishlist(buku)" :disabled="bukuAdaDiWishlist || !bisaDipinjam">
-              tambahkan ke wishlist
-            </CTA>
+              @click="kembalikanBuku(buku, peminjamanTerbaru.id)"
+              label="kembalikan buku"
+            />
+            <CTA
+              :disabled="bukuAdaDiWishlist || !bisaDipinjam"
+              @click="masukkanWishlist(buku)"
+              label="tambahkan ke wishlist"
+            />
           </div>
         </figcaption>
 
@@ -251,15 +262,19 @@ supabase
           <p>Saya akan mengembalikan buku ini pada</p>
 
           <p class="tanggal">
-            <time :datetime="date?.toISOString()" v-if="date">{{ formattedDate }}</time>
+            <time v-if="date" :datetime="date?.toISOString()">{{ formattedDate }}</time>
             <span v-else> pilih dulu tanggalnya. </span>
           </p>
 
-          <CTA @click="pinjamBuku({ ...buku }, date)" :disabled="!isValidDate">Pinjam buku</CTA>
+          <CTA
+            :disabled="!isValidDate"
+            @click="pinjamBuku({ ...buku }, date)"
+            label="Pinjam buku"
+          />
         </TheDialog>
       </div>
 
-      <div class="not-found" v-else>
+      <div v-else class="not-found">
         <h1>Tidak ada buku!</h1>
         <p>Bukunya ga ada brok</p>
       </div>

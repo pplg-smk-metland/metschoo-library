@@ -1,10 +1,10 @@
 <template>
   <main>
-    <slot></slot>
+    <slot />
   </main>
 </template>
 
-<style>
+<style scoped>
 main {
   padding: 2rem;
   max-width: 100ch;

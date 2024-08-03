@@ -15,7 +15,8 @@ const authStore = useAuthStore()
 const pengguna = ref<Pengguna | null>(null)
 
 onMounted(async () => {
-  const data = await authStore.getProfile()
+  if (!authStore.session) return
+  const data = await authStore.getProfile(authStore.session)
   pengguna.value = data
 })
 
@@ -98,18 +99,22 @@ onMounted(async () => {
           />
         </figure>
 
-        <div class="profile__details" v-if="pengguna">
+        <div v-if="pengguna" class="profile__details">
           <h2>{{ pengguna.nama }}</h2>
           <p>{{ pengguna.kelas }} - {{ pengguna.jurusan }}</p>
           <p>{{ pengguna.email }}</p>
 
           <div class="button-container">
-            <CTA :to="{ name: 'profile-edit' }" class="btn cta" :is-link="true">Edit profil</CTA>
-            <CTA :to="{ name: 'profile-security' }" class="btn cta" :is-link="true"> Keamanan </CTA>
+            <routerLink :to="{ name: 'profile-edit' }">
+              <CTA label="Edit profil" />
+            </routerLink>
+            <router-link :to="{ name: 'profile-security' }">
+              <CTA label="Keamanan" />
+            </router-link>
           </div>
         </div>
 
-        <div class="not-found" v-else>
+        <div v-else class="not-found">
           <h1>Pengguna tidak ditemukan!</h1>
           <p>Silahkan coba beberapa saat lagi, atau hubungi admin Metschoo Library.</p>
         </div>
@@ -143,9 +148,9 @@ onMounted(async () => {
       <ul class="history-list">
         <li v-if="!riwayat.length" class="message">bukunya ga ada ges</li>
         <ProfileHistoryBook
-          class="history-list__item"
           v-for="{ buku } in riwayat"
           :key="buku?.no_isbn"
+          class="history-list__item"
           :buku="buku"
         />
       </ul>

@@ -1,4 +1,10 @@
-export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
 
 export type Database = {
   public: {
@@ -82,7 +88,7 @@ export type Database = {
           tenggat_waktu: string
           tgl_kembali?: string | null
           tgl_pinjam?: string
-          user_id: string
+          user_id?: string
         }
         Update: {
           id?: string
@@ -138,6 +144,7 @@ export type Database = {
           jurusan: string | null
           kelas: string | null
           nama: string
+          role_id: number
           user_id: string
         }
         Insert: {
@@ -145,6 +152,7 @@ export type Database = {
           jurusan?: string | null
           kelas?: string | null
           nama: string
+          role_id?: number
           user_id: string
         }
         Update: {
@@ -152,9 +160,17 @@ export type Database = {
           jurusan?: string | null
           kelas?: string | null
           nama?: string
+          role_id?: number
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "pengguna_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "pengguna_roles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "pengguna_user_id_fkey"
             columns: ["user_id"]
@@ -164,21 +180,39 @@ export type Database = {
           },
         ]
       }
-      wishlist: {
+      pengguna_roles: {
         Row: {
-          no_isbn: string
-          user_id: string
-          wishlist_id: string
+          created_at: string
+          id: number
+          name: string
         }
         Insert: {
-          no_isbn: string
-          user_id?: string
-          wishlist_id?: string
+          created_at?: string
+          id?: number
+          name: string
         }
         Update: {
+          created_at?: string
+          id?: number
+          name?: string
+        }
+        Relationships: []
+      }
+      wishlist: {
+        Row: {
+          id: string
+          no_isbn: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          no_isbn: string
+          user_id?: string
+        }
+        Update: {
+          id?: string
           no_isbn?: string
           user_id?: string
-          wishlist_id?: string
         }
         Relationships: [
           {
@@ -237,16 +271,20 @@ export type Tables<
     }
     ? R
     : never
-  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] & PublicSchema["Views"])
-  ? (PublicSchema["Tables"] & PublicSchema["Views"])[PublicTableNameOrOptions] extends {
-      Row: infer R
-    }
-    ? R
+  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
+        PublicSchema["Views"])
+    ? (PublicSchema["Tables"] &
+        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
     : never
-  : never
 
 export type TablesInsert<
-  PublicTableNameOrOptions extends keyof PublicSchema["Tables"] | { schema: keyof Database },
+  PublicTableNameOrOptions extends
+    | keyof PublicSchema["Tables"]
+    | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
     : never = never,
@@ -257,15 +295,17 @@ export type TablesInsert<
     ? I
     : never
   : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-  ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
-      Insert: infer I
-    }
-    ? I
+    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
     : never
-  : never
 
 export type TablesUpdate<
-  PublicTableNameOrOptions extends keyof PublicSchema["Tables"] | { schema: keyof Database },
+  PublicTableNameOrOptions extends
+    | keyof PublicSchema["Tables"]
+    | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
     : never = never,
@@ -276,20 +316,22 @@ export type TablesUpdate<
     ? U
     : never
   : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-  ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
-      Update: infer U
-    }
-    ? U
+    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
     : never
-  : never
 
 export type Enums<
-  PublicEnumNameOrOptions extends keyof PublicSchema["Enums"] | { schema: keyof Database },
+  PublicEnumNameOrOptions extends
+    | keyof PublicSchema["Enums"]
+    | { schema: keyof Database },
   EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
 > = PublicEnumNameOrOptions extends { schema: keyof Database }
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
-  ? PublicSchema["Enums"][PublicEnumNameOrOptions]
-  : never
+    ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never

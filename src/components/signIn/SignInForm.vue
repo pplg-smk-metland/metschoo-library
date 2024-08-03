@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue"
 import { useAuthStore } from "@/stores/auth"
-import { supabase } from "@/lib/supabase"
 import { useDialog } from "@/lib/composables"
 
 import TheDialog from "@/components/TheDialog.vue"
@@ -28,7 +27,8 @@ const { dialog } = useDialog()
 
 async function handleSignIn() {
   try {
-    await authStore.handleSignIn(data.value.email, data.value.password)
+    const error = await authStore.handleSignIn(data.value.email, data.value.password)
+    if (error) throw error
     router.push({ name: "home" })
   } catch (err) {
     if (err instanceof AuthError) dialog.value.open(err.message)
@@ -64,53 +64,51 @@ async function handleSignUp() {
       <p>Buat akun Metschoo Library yang baru!</p>
     </h1>
 
-    <div class="form-container log-in" v-if="isSigningIn">
+    <div v-if="isSigningIn" class="form-container log-in">
       <form @submit.prevent="handleSignIn">
         <label for="login-email">Email</label>
-        <input required type="email" id="login-email" placeholder="Email" v-model="data.email" />
+        <input id="login-email" v-model="data.email" required type="email" placeholder="Email" />
 
         <label for="login-password">Password</label>
         <input
+          id="login-password"
+          v-model="data.password"
           required
           type="password"
-          id="login-password"
           placeholder="Password Anda"
-          v-model="data.password"
         />
-        <CTA type="submit" :fill="true">Masuk</CTA>
+        <CTA type="submit" :fill="true" label="Masuk" />
       </form>
     </div>
 
-    <div class="form-container sign-up" v-else>
+    <div v-else class="form-container sign-up">
       <form @submit.prevent="handleSignUp">
         <label for="nama">Nama</label>
-        <input type="text" name="nama" id="nama" placeholder="Siapa namamu?" required />
+        <input id="nama" type="text" name="nama" placeholder="Siapa namamu?" required />
         <label for="signup-email">Email</label>
-        <input required type="email" id="signup-email" placeholder="Email" v-model="data.email" />
+        <input id="signup-email" v-model="data.email" required type="email" placeholder="Email" />
         <label for="signup-password">Password</label>
         <input
+          id="signup-password"
+          v-model="data.password"
           required
           type="password"
-          id="signup-password"
           placeholder="Password Anda"
-          v-model="data.password"
         />
         <label for="confirm-password">Konfirmasi Password</label>
         <input
+          v-model="data.confirmPassword"
           type="password"
           placeholder="Ketik Ulang Password"
           required
-          v-model="data.confirmPassword"
         />
 
-        <CTA type="submit" :fill="true">Daftar</CTA>
+        <CTA type="submit" :fill="true" label="Daftar" />
       </form>
     </div>
 
-    <CTA @click="handleSwitchForm">
-      <span v-if="isSigningIn">Belum punya akun? Daftar</span>
-      <span v-else>Sudah punya akun? Masuk</span>
-    </CTA>
+    <CTA @click="handleSwitchForm" label="Belum punya akun? Daftar" v-if="isSigningIn" />
+    <CTA @click="handleSwitchForm" label="Sudah punya akun? Masuk" v-else />
   </div>
 
   <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">

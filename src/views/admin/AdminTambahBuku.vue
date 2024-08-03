@@ -85,140 +85,175 @@ const router = useRouter()
 <template>
   <h1>Tambah buku</h1>
 
-  <div class="buku-gambar">
-    <img
-      :src="bukuGambarURL"
-      width="800"
-      height="450"
-      alt=""
-      v-if="bukuGambarEl && bukuGambarFile"
-    />
-  </div>
+  <div class="buku-container">
+    <div class="buku-gambar">
+      <img
+        v-if="bukuGambarEl && bukuGambarFile"
+        :src="bukuGambarURL"
+        width="450"
+        height="800"
+        alt=""
+      />
+    </div>
 
-  <form @submit.prevent="addNewBook(buku)">
-    <label for="buku-gambar">Gambar buku</label>
-    <input
-      type="file"
-      id="buku-gambar"
-      name="buku-gambar"
-      accept="image/*"
-      ref="bukuGambarEl"
-      @change="previewBookImage(bukuGambarEl!)"
-      required
-    />
+    <form @submit.prevent="addNewBook(buku)" class="buku-form">
+      <label for="buku-gambar">
+        Gambar buku
+        <input
+          id="buku-gambar"
+          ref="bukuGambarEl"
+          type="file"
+          name="buku-gambar"
+          accept="image/*"
+          required
+          @change="previewBookImage(bukuGambarEl!)"
+        />
+      </label>
 
-    <label for="buku-judul">Judul</label>
-    <input
-      type="text"
-      name="buku-judul"
-      id="buku-judul"
-      placeholder="judul buku"
-      required
-      v-model="buku.judul"
-    />
-    <label for="buku-isbn">ISBN</label>
-    <input
-      type="text"
-      name="buku-isbn"
-      id="buku-isbn"
-      placeholder="judul buku"
-      required
-      v-model="buku.no_isbn"
-    />
-    <label for="buku-kategori">Kategori</label>
-    <select name="buku-kategori" id="buku-kategori" v-model="buku.kategori_id" required>
-      <option value="" disabled>Pilih salah satu</option>
-      <option
-        v-for="kategori in availableCategories"
-        :key="kategori.id"
-        :value="Number(kategori.id)"
+      <label for="buku-judul">
+        Judul
+        <input
+          id="buku-judul"
+          v-model="buku.judul"
+          type="text"
+          name="buku-judul"
+          placeholder="judul buku"
+          required
+        />
+      </label>
+      <label for="buku-isbn">
+        ISBN
+        <input
+          id="buku-isbn"
+          v-model="buku.no_isbn"
+          type="text"
+          name="buku-isbn"
+          placeholder="judul buku"
+          required
+        />
+      </label>
+      <label for="buku-kategori">
+        Kategori
+        <select id="buku-kategori" v-model="buku.kategori_id" name="buku-kategori" required>
+          <option value="" disabled>Pilih salah satu</option>
+          <option
+            v-for="kategori in availableCategories"
+            :key="kategori.id"
+            :value="Number(kategori.id)"
+          >
+            {{ kategori.kategori }}
+          </option>
+        </select>
+      </label>
+      <label for="buku-penulis">
+        penulis
+        <input
+          id="buku-penulis"
+          v-model="buku.penulis"
+          type="text"
+          name="buku-penulis"
+          placeholder="judul buku"
+          required
+        />
+      </label>
+      <label for="buku-penerbit">
+        penerbit
+        <input
+          id="buku-penerbit"
+          v-model="buku.penerbit"
+          type="text"
+          name="buku-penerbit"
+          placeholder="penerbit"
+          required
+        />
+      </label>
+      <label for="buku-tahun-terbit">
+        Tahun terbit
+        <input
+          id="buku-tahun-terbit"
+          v-model="buku.tahun_terbit"
+          type="text"
+          name="buku-tahun-terbit"
+          placeholder="tahun terbit"
+          required
+        />
+      </label>
+      <label for="buku-alamat-terbit">
+        Alamat terbit
+        <input
+          id="buku-alamat-terbit"
+          v-model="buku.alamat_terbit"
+          type="text"
+          name="buku-alamat-terbit"
+          placeholder="alamat terbit"
+          required
+        />
+      </label>
+      <label for="buku-jumlah">
+        Jumlah
+        <input
+          id="buku-jumlah"
+          v-model="buku.jumlah_exspl"
+          type="number"
+          name="buku-jumlah"
+          min="0"
+          max="10000"
+          placeholder="jumlah buku"
+          required
+        />
+      </label>
+      <label for="buku-asal">
+        Asal
+        <input
+          id="buku-asal"
+          v-model="buku.asal"
+          type="text"
+          name="buku-asal"
+          placeholder="asal buku"
+          required
+        />
+      </label>
+      <CTA type="submit" :disabled="isLoading" label="Tambah buku baru" class="buku-form__submit" />
+
+      <TheDialog :is-open="errDialog.isOpen" @dialog-close="errDialog.close()">
+        <h2>Ada kesalahan!</h2>
+        <p>{{ errDialog.message }}</p>
+      </TheDialog>
+
+      <TheDialog
+        :is-open="dialog.isOpen"
+        @dialog-close="router.push({ name: 'admin-buku', params: { isbn: buku.no_isbn } })"
       >
-        {{ kategori.kategori }}
-      </option>
-    </select>
-    <label for="buku-penulis">penulis</label>
-    <input
-      type="text"
-      name="buku-penulis"
-      id="buku-penulis"
-      placeholder="judul buku"
-      required
-      v-model="buku.penulis"
-    />
-    <label for="buku-penerbit">penerbit</label>
-    <input
-      type="text"
-      name="buku-penerbit"
-      id="buku-penerbit"
-      placeholder="penerbit"
-      required
-      v-model="buku.penerbit"
-    />
-    <label for="buku-tahun-terbit">Tahun terbit</label>
-    <input
-      type="text"
-      name="buku-tahun-terbit"
-      id="buku-tahun-terbit"
-      placeholder="tahun terbit"
-      required
-      v-model="buku.tahun_terbit"
-    />
-    <label for="buku-alamat-terbit">Alamat terbit</label>
-    <input
-      type="text"
-      name="buku-alamat-terbit"
-      id="buku-alamat-terbit"
-      placeholder="alamat terbit"
-      required
-      v-model="buku.alamat_terbit"
-    />
-    <label for="buku-jumlah">Jumlah</label>
-    <input
-      type="number"
-      name="buku-jumlah"
-      id="buku-jumlah"
-      min="0"
-      max="10000"
-      placeholder="jumlah buku"
-      required
-      v-model="buku.jumlah_exspl"
-    />
-    <label for="buku-asal"> Asal </label>
-    <input
-      type="text"
-      name="buku-asal"
-      id="buku-asal"
-      placeholder="asal buku"
-      required
-      v-model="buku.asal"
-    />
-
-    <CTA :disabled="isLoading">Tambah buku baru</CTA>
-
-    <TheDialog :is-open="errDialog.isOpen" @dialog-close="errDialog.close()">
-      <h2>Ada kesalahan!</h2>
-      <p>{{ errDialog.message }}</p>
-    </TheDialog>
-
-    <TheDialog
-      :is-open="dialog.isOpen"
-      @dialog-close="router.push({ name: 'admin-buku', params: { isbn: buku.no_isbn } })"
-    >
-      <h2>Sukses!</h2>
-      <p>{{ dialog.message }}</p>
-    </TheDialog>
-  </form>
+        <h2>Sukses!</h2>
+        <p>{{ dialog.message }}</p>
+      </TheDialog>
+    </form>
+  </div>
 </template>
 
 <style>
-.buku-gambar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  aspect-ratio: 16/9;
+.buku-container {
+  display: grid;
+  grid-template-columns: 35ch 1fr;
+  gap: 2rem;
+
+  @media screen and (max-width: 60em) {
+    grid-template-columns: 1fr;
+  }
 }
 
-form .cta {
+.buku-gambar img {
+  width: 100%;
+}
+
+.buku-form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 1rem;
+}
+
+.buku-form__submit {
   margin-block: 1rem;
+  grid-column: span 2;
 }
 </style>

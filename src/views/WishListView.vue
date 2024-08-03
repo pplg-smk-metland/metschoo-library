@@ -58,11 +58,11 @@ onMounted(async () => {
     <section v-if="!authStore.session">
       <p>Kamu harus login dlu ya untuk menambahkan buku ke wishlist</p>
       <p>
-        <routerLink :to="{ name: 'home' }">Kembali ke beranda</routerLink>
+        <routerLink :to="{ name: 'home' }"> Kembali ke beranda </routerLink>
       </p>
     </section>
 
-    <section class="main-section" v-else>
+    <section v-else class="main-section">
       <LoadingSpinner v-if="isLoading" />
       <p v-if="!isLoading && !wishlist?.length">Kamu belum punya apa-apa dalam wishlist kamu.</p>
       <ul v-if="wishlist?.length" class="book-list">

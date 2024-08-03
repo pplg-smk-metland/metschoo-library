@@ -32,9 +32,15 @@ onMounted(async () => {
       </figure>
       <figcaption class="buku__info">
         <div class="metadata">
-          <h3 class="buku__judul">{{ buku.judul }}</h3>
-          <p class="buku__penulis">{{ buku.penulis }}</p>
-          <p class="buku__tahun-terbit">{{ buku.tahun_terbit }}</p>
+          <h3 class="buku__judul">
+            {{ buku.judul }}
+          </h3>
+          <p class="buku__penulis">
+            {{ buku.penulis }}
+          </p>
+          <p class="buku__tahun-terbit">
+            {{ buku.tahun_terbit }}
+          </p>
         </div>
       </figcaption>
     </routerLink>

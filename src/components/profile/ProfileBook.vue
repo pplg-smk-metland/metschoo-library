@@ -19,7 +19,7 @@ onMounted(async () => {
 
 <template>
   <li>
-    <routerLink :to="`/buku/${buku.no_isbn}`" class="buku" v-if="buku">
+    <routerLink v-if="buku" :to="`/buku/${buku.no_isbn}`" class="buku">
       <figure>
         <img
           :src="imgURL"
@@ -33,7 +33,9 @@ onMounted(async () => {
 
       <figcaption class="buku__info">
         <div class="buku__metadata">
-          <h3 class="buku__judul">{{ buku.judul }}</h3>
+          <h3 class="buku__judul">
+            {{ buku.judul }}
+          </h3>
           <p>{{ buku.no_isbn }}</p>
           <p class="buku__penulis">
             {{ buku.penulis }} -<span class="buku__tahun-terbit">{{ buku.tahun_terbit }}</span>

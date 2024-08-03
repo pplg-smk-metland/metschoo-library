@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { onMounted, ref } from "vue"
 import { useAuthStore } from "@/stores/auth"
 import { type Pengguna } from "@/types/index"
 
@@ -11,8 +11,10 @@ const user = ref<Pengguna | null>(null)
 
 const authStore = useAuthStore()
 
-authStore.$subscribe(async (_, state) => {
-  if (state.session) user.value = await authStore.getProfile()
+onMounted(() => {
+  setTimeout(() => {
+    authStore.getProfile(authStore.session!).then((profile) => (user.value = profile))
+  }, 200)
 })
 </script>
 

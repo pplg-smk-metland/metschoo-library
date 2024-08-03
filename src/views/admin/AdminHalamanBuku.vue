@@ -15,7 +15,6 @@ import TheDialog from "@/components/TheDialog.vue"
 const isLoading = ref(false)
 
 const availableCategories = ref<Kategori[] | null>([])
-const route = useRoute()
 const router = useRouter()
 const currentRoute = useRoute()
 
@@ -52,15 +51,24 @@ onMounted(async () => {
   availableCategories.value = await getAllAvailableCategories()
 })
 
-async function editBook() {
+async function editBook(buku: Buku) {
   try {
     const { error } = await supabase
       .from("buku")
       .update({
-        ...buku.value,
+        judul: buku.judul,
+        no_isbn: buku.no_isbn,
+        penulis: buku.penulis,
+        asal: buku.asal,
+        kategori_id: buku.kategori_id,
+        jumlah_exspl: buku.jumlah_exspl,
+        penerbit: buku.penerbit,
+        alamat_terbit: buku.alamat_terbit,
+        tahun_terbit: buku.tahun_terbit,
       })
-      .eq("no_isbn", route.params.isbn)
+      .eq("no_isbn", isbn)
     if (error) throw error
+    console.log("updated book")
   } catch (err) {
     console.trace((err as PostgrestError).message)
   }
@@ -69,7 +77,7 @@ async function editBook() {
 async function deleteBook(isbn: string) {
   isLoading.value = true
   try {
-    let { error } = await supabase.from("buku").delete().eq("no_isbn", isbn)
+    const { error } = await supabase.from("buku").delete().eq("no_isbn", isbn)
     if (error) throw error
 
     const response = await supabase.storage.from("Buku").remove([`${isbn}/${isbn}`])
@@ -106,11 +114,14 @@ function toggleFormVisibility() {
     <p>Silahkan coba lagi dalam beberapa saat.</p>
   </header>
 
-  <div class="wrapper" v-else>
-    <article class="buku" v-if="!formIsVisible">
-      <routerLink :to="{ name: 'admin' }">Kembali</routerLink>
+  <div v-else class="wrapper">
+    <article v-if="!formIsVisible" class="buku">
+      <header>
+        <h1>{{ buku.judul }} - {{ buku.jumlah_exspl }}</h1>
 
-      <h1>{{ buku.judul }} - {{ buku.jumlah_exspl }}</h1>
+        <routerLink :to="{ name: 'admin' }">Kembali</routerLink>
+      </header>
+
       <p>{{ buku.penulis }}</p>
       <p>{{ buku.asal }}</p>
       <p>{{ buku.penerbit }}</p>
@@ -118,68 +129,70 @@ function toggleFormVisibility() {
       <p>{{ buku.kategori_buku?.kategori }}</p>
     </article>
 
-    <article v-else>
-      <h1>Edit</h1>
-      <CTA @click="toggleFormVisibility">Go back</CTA>
+    <article class="buku" v-else>
+      <header>
+        <h1>Edit</h1>
+        <button @click="toggleFormVisibility">Kembali</button>
+      </header>
 
-      <form class="buku-edit" @submit.prevent="editBook">
+      <form class="buku-edit" @submit.prevent="editBook(buku)">
         <label for="buku-judul">Judul</label>
-        <input type="text" name="buku-judul" id="buku-judul" required v-model="buku.judul" />
+        <input id="buku-judul" v-model="buku.judul" type="text" name="buku-judul" required />
         <label for="buku-asal">Asal</label>
-        <input type="text" name="buku-asal" id="buku-asal" required v-model="buku.asal" />
+        <input id="buku-asal" v-model="buku.asal" type="text" name="buku-asal" required />
         <label for="buku-penulis">ISBN</label>
-        <input type="text" name="buku-isbn" id="buku-isbn" required v-model="buku.no_isbn" />
+        <input id="buku-isbn" v-model="buku.no_isbn" type="text" name="buku-isbn" required />
         <label for="buku-penulis">Penulis</label>
-        <input type="text" name="buku-penulis" id="buku-penulis" required v-model="buku.penulis" />
+        <input id="buku-penulis" v-model="buku.penulis" type="text" name="buku-penulis" required />
         <label for="buku-penerbit">Penerbit</label>
         <input
+          id="buku-penerbit"
+          v-model="buku.penerbit"
           type="text"
           name="buku-penerbit"
-          id="buku-penerbit"
           required
-          v-model="buku.penerbit"
         />
         <label for="buku-tahun-terbit">Tahun terbit</label>
         <input
+          id="buku-tahun-terbit"
+          v-model="buku.tahun_terbit"
           type="text"
           name="buku-tahun-terbit"
-          id="buku-tahun-terbit"
           required
-          v-model="buku.tahun_terbit"
         />
         <label for="buku-alamat-terbit">Alamat terbit</label>
         <input
+          id="buku-alamat-terbit"
+          v-model="buku.alamat_terbit"
           type="text"
           name="buku-alamat-terbit"
-          id="buku-alamat-terbit"
           required
-          v-model="buku.alamat_terbit"
         />
         <label for="buku-jumlah">Jumlah</label>
         <input
+          id="buku-jumlah"
+          v-model="buku.jumlah_exspl"
           type="number"
           name="buku-jumlah"
-          id="buku-jumlah"
           min="0"
           max="10000"
           required
-          v-model="buku.jumlah_exspl"
         />
         <label for="buku-kategori">Kategori</label>
-        <select name="buku-kategori" id="buku-kategori" v-model="buku.kategori_id" required>
+        <select id="buku-kategori" v-model="buku.kategori_id" name="buku-kategori" required>
           <option value="" disabled>Please select one</option>
           <option v-for="category in availableCategories" :key="category.id" :value="category.id">
             {{ category.id }} - {{ category.kategori }}
           </option>
         </select>
 
-        <CTA>Save changes</CTA>
+        <CTA type="submit" label="Simpan perubahan" />
       </form>
     </article>
 
     <div class="button-container">
-      <CTA @click="deleteBook(buku.no_isbn)" danger>Delete</CTA>
-      <CTA @click="toggleFormVisibility" v-show="!formIsVisible">Edit</CTA>
+      <CTA danger @click="deleteBook(buku.no_isbn)" label="Hapus " />
+      <CTA v-show="!formIsVisible" @click="toggleFormVisibility" label="Sunting" />
     </div>
   </div>
 
@@ -198,8 +211,11 @@ function toggleFormVisibility() {
 </template>
 
 <style scoped>
-.buku-edit {
-  padding-block: 1rem;
+.buku header {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column-reverse;
+  padding-block-end: 1rem;
 }
 
 .buku-edit button {

@@ -1,0 +1,442 @@
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+CREATE EXTENSION IF NOT EXISTS "pgsodium" WITH SCHEMA "pgsodium";
+
+CREATE EXTENSION IF NOT EXISTS "pg_graphql" WITH SCHEMA "graphql";
+
+CREATE EXTENSION IF NOT EXISTS "pg_stat_statements" WITH SCHEMA "extensions";
+
+CREATE EXTENSION IF NOT EXISTS "pgcrypto" WITH SCHEMA "extensions";
+
+CREATE EXTENSION IF NOT EXISTS "pgjwt" WITH SCHEMA "extensions";
+
+CREATE EXTENSION IF NOT EXISTS "supabase_vault" WITH SCHEMA "vault";
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA "extensions";
+
+CREATE OR REPLACE FUNCTION "public"."decrement_jumlah_exspl"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$
+begin
+  update public.buku
+  set jumlah_exspl = jumlah_exspl - 1
+  where no_isbn=new.no_isbn;
+  return new;
+end;
+$$;
+
+ALTER FUNCTION "public"."decrement_jumlah_exspl"() OWNER TO "postgres";
+
+CREATE OR REPLACE FUNCTION "public"."handle_new_user"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$
+begin
+  insert into public.pengguna (user_id, email)
+  values (new.id, new.email);
+  return new;
+end;
+$$;
+
+ALTER FUNCTION "public"."handle_new_user"() OWNER TO "postgres";
+
+CREATE OR REPLACE FUNCTION "public"."handle_update_user"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$
+begin
+  update public.pengguna
+  set email=new.email
+  where user_id=new.id;
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
+
+ALTER FUNCTION "public"."handle_update_user"() OWNER TO "postgres";
+
+SET default_tablespace = '';
+
+SET default_table_access_method = "heap";
+
+CREATE TABLE IF NOT EXISTS "public"."buku" (
+    "no_isbn" "text" NOT NULL,
+    "penulis" "text" NOT NULL,
+    "penerbit" "text" NOT NULL,
+    "tahun_terbit" "text" NOT NULL,
+    "alamat_terbit" "text" NOT NULL,
+    "asal" "text" NOT NULL,
+    "jumlah_exspl" bigint DEFAULT '0'::bigint NOT NULL,
+    "judul" "text" NOT NULL,
+    "kategori_id" bigint NOT NULL,
+    "fts" "tsvector" GENERATED ALWAYS AS ("to_tsvector"('"english"'::"regconfig", ("judul" || ''::"text"))) STORED,
+    CONSTRAINT "buku_jumlah_exspl_check" CHECK (("jumlah_exspl" >= 0))
+);
+
+ALTER TABLE "public"."buku" OWNER TO "postgres";
+
+COMMENT ON COLUMN "public"."buku"."no_isbn" IS 'Nomor ISBN buku.';
+
+COMMENT ON COLUMN "public"."buku"."penulis" IS 'Penulis buku';
+
+COMMENT ON COLUMN "public"."buku"."penerbit" IS 'Penerbit buku';
+
+COMMENT ON COLUMN "public"."buku"."judul" IS 'Judul buku';
+
+COMMENT ON COLUMN "public"."buku"."fts" IS 'Index column for full text search.';
+
+CREATE TABLE IF NOT EXISTS "public"."peminjaman" (
+    "user_id" "uuid" DEFAULT "auth"."uid"() NOT NULL,
+    "no_isbn" "text" NOT NULL,
+    "tgl_pinjam" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "tgl_kembali" timestamp with time zone,
+    "tenggat_waktu" timestamp with time zone NOT NULL,
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "state_id" bigint DEFAULT '1'::bigint NOT NULL
+);
+
+ALTER TABLE "public"."peminjaman" OWNER TO "postgres";
+
+COMMENT ON COLUMN "public"."peminjaman"."user_id" IS 'ID of borrower';
+
+COMMENT ON COLUMN "public"."peminjaman"."no_isbn" IS 'Nomor ISBN buku.';
+
+COMMENT ON COLUMN "public"."peminjaman"."tgl_pinjam" IS 'kapan buku dipinjam.';
+
+COMMENT ON COLUMN "public"."peminjaman"."tgl_kembali" IS 'kapan buku harus dikembalikan.';
+
+COMMENT ON COLUMN "public"."peminjaman"."tenggat_waktu" IS 'Tenggat waktu pengembalian.';
+
+COMMENT ON COLUMN "public"."peminjaman"."id" IS 'borrowing id';
+
+CREATE OR REPLACE VIEW "public"."distinct_riwayat" WITH ("security_invoker"='on') AS
+ SELECT DISTINCT "peminjaman"."state_id",
+    "buku".*::"public"."buku" AS "buku"
+   FROM ("public"."peminjaman"
+     JOIN "public"."buku" ON (("peminjaman"."no_isbn" = "buku"."no_isbn")))
+  WHERE ("peminjaman"."state_id" = ANY (ARRAY[(5)::bigint, (6)::bigint]));
+
+ALTER TABLE "public"."distinct_riwayat" OWNER TO "postgres";
+
+CREATE TABLE IF NOT EXISTS "public"."kategori_buku" (
+    "id" bigint NOT NULL,
+    "kategori" "text" NOT NULL,
+    CONSTRAINT "kategori_buku_kategori_check" CHECK (("length"("kategori") <> 0))
+);
+
+ALTER TABLE "public"."kategori_buku" OWNER TO "postgres";
+
+COMMENT ON TABLE "public"."kategori_buku" IS 'tabel berisi kategori buku';
+
+COMMENT ON COLUMN "public"."kategori_buku"."id" IS 'ID kategori.';
+
+COMMENT ON COLUMN "public"."kategori_buku"."kategori" IS 'Nama kategori.';
+
+ALTER TABLE "public"."kategori_buku" ALTER COLUMN "id" ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME "public"."kategori_buku_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+CREATE TABLE IF NOT EXISTS "public"."peminjaman_state" (
+    "id" bigint NOT NULL,
+    "name" "text" NOT NULL
+);
+
+ALTER TABLE "public"."peminjaman_state" OWNER TO "postgres";
+
+COMMENT ON TABLE "public"."peminjaman_state" IS 'possible borrowing states.';
+
+ALTER TABLE "public"."peminjaman_state" ALTER COLUMN "id" ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME "public"."peminjaman_state_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+CREATE TABLE IF NOT EXISTS "public"."pengguna" (
+    "user_id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "nama" "text" NOT NULL,
+    "email" "text" NOT NULL,
+    "kelas" "text",
+    "jurusan" "text",
+    "role_id" bigint DEFAULT '1'::bigint NOT NULL,
+    CONSTRAINT "username_length" CHECK (("char_length"("nama") >= 3))
+);
+
+ALTER TABLE "public"."pengguna" OWNER TO "postgres";
+
+COMMENT ON TABLE "public"."pengguna" IS 'Tabel semua pengguna.';
+
+COMMENT ON COLUMN "public"."pengguna"."role_id" IS 'Id of role of pengguna';
+
+CREATE TABLE IF NOT EXISTS "public"."pengguna_roles" (
+    "id" bigint NOT NULL,
+    "name" "text" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+ALTER TABLE "public"."pengguna_roles" OWNER TO "postgres";
+
+COMMENT ON TABLE "public"."pengguna_roles" IS 'all pengguna roles.';
+
+ALTER TABLE "public"."pengguna_roles" ALTER COLUMN "id" ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME "public"."pengguna_roles_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+CREATE TABLE IF NOT EXISTS "public"."wishlist" (
+    "user_id" "uuid" DEFAULT "auth"."uid"() NOT NULL,
+    "no_isbn" "text" NOT NULL,
+    "id" bigint NOT NULL
+);
+
+ALTER TABLE "public"."wishlist" OWNER TO "postgres";
+
+COMMENT ON TABLE "public"."wishlist" IS 'Wishlist peminjaman pengguna.';
+
+COMMENT ON COLUMN "public"."wishlist"."user_id" IS 'The ID of the user the wishlist entry belongs to';
+
+COMMENT ON COLUMN "public"."wishlist"."no_isbn" IS 'isbn of the book';
+
+COMMENT ON COLUMN "public"."wishlist"."id" IS 'id of wishlist entry';
+
+ALTER TABLE "public"."wishlist" ALTER COLUMN "id" ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME "public"."wishlist_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+ALTER TABLE ONLY "public"."buku"
+    ADD CONSTRAINT "buku_no_isbn_key" UNIQUE ("no_isbn");
+
+ALTER TABLE ONLY "public"."buku"
+    ADD CONSTRAINT "buku_pkey" PRIMARY KEY ("no_isbn");
+
+ALTER TABLE ONLY "public"."kategori_buku"
+    ADD CONSTRAINT "kategori_buku_kategori_key" UNIQUE ("kategori");
+
+ALTER TABLE ONLY "public"."kategori_buku"
+    ADD CONSTRAINT "kategori_buku_pkey" PRIMARY KEY ("id");
+
+ALTER TABLE ONLY "public"."peminjaman"
+    ADD CONSTRAINT "peminjaman_id_key" UNIQUE ("id");
+
+ALTER TABLE ONLY "public"."peminjaman"
+    ADD CONSTRAINT "peminjaman_pkey" PRIMARY KEY ("id");
+
+ALTER TABLE ONLY "public"."peminjaman_state"
+    ADD CONSTRAINT "peminjaman_state_name_key" UNIQUE ("name");
+
+ALTER TABLE ONLY "public"."peminjaman_state"
+    ADD CONSTRAINT "peminjaman_state_pkey" PRIMARY KEY ("id");
+
+ALTER TABLE ONLY "public"."pengguna"
+    ADD CONSTRAINT "pengguna_email_key" UNIQUE ("email");
+
+ALTER TABLE ONLY "public"."pengguna_roles"
+    ADD CONSTRAINT "pengguna_roles_name_key" UNIQUE ("name");
+
+ALTER TABLE ONLY "public"."pengguna_roles"
+    ADD CONSTRAINT "pengguna_roles_pkey" PRIMARY KEY ("id");
+
+ALTER TABLE ONLY "public"."pengguna"
+    ADD CONSTRAINT "profiles_pkey" PRIMARY KEY ("user_id");
+
+ALTER TABLE ONLY "public"."pengguna"
+    ADD CONSTRAINT "profiles_username_key" UNIQUE ("nama");
+
+ALTER TABLE ONLY "public"."wishlist"
+    ADD CONSTRAINT "wishlist_id_key" UNIQUE ("id");
+
+ALTER TABLE ONLY "public"."wishlist"
+    ADD CONSTRAINT "wishlist_pkey" PRIMARY KEY ("id");
+
+CREATE INDEX "books_fts" ON "public"."buku" USING "gin" ("fts");
+
+CREATE OR REPLACE TRIGGER "on_peminjaman_inserted" AFTER INSERT ON "public"."peminjaman" FOR EACH ROW EXECUTE FUNCTION "public"."decrement_jumlah_exspl"();
+
+ALTER TABLE ONLY "public"."peminjaman"
+    ADD CONSTRAINT "peminjaman_no_isbn_fkey" FOREIGN KEY ("no_isbn") REFERENCES "public"."buku"("no_isbn") ON UPDATE CASCADE;
+
+ALTER TABLE ONLY "public"."peminjaman"
+    ADD CONSTRAINT "peminjaman_state_id_fkey" FOREIGN KEY ("state_id") REFERENCES "public"."peminjaman_state"("id");
+
+ALTER TABLE ONLY "public"."peminjaman"
+    ADD CONSTRAINT "peminjaman_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."pengguna"("user_id");
+
+ALTER TABLE ONLY "public"."pengguna"
+    ADD CONSTRAINT "pengguna_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "public"."pengguna_roles"("id");
+
+ALTER TABLE ONLY "public"."pengguna"
+    ADD CONSTRAINT "pengguna_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE CASCADE;
+
+ALTER TABLE ONLY "public"."buku"
+    ADD CONSTRAINT "public_buku_kategori_id_fkey" FOREIGN KEY ("kategori_id") REFERENCES "public"."kategori_buku"("id");
+
+ALTER TABLE ONLY "public"."wishlist"
+    ADD CONSTRAINT "wishlist_no_isbn_fkey" FOREIGN KEY ("no_isbn") REFERENCES "public"."buku"("no_isbn") ON UPDATE CASCADE ON DELETE SET NULL;
+
+create role admin;
+grant authenticated to admin;
+
+CREATE POLICY "Enable all actions for admin" ON "public"."kategori_buku" TO "admin" USING (true);
+
+CREATE POLICY "Enable all for admin" ON "public"."buku" TO "admin" USING (true) WITH CHECK (true);
+
+CREATE POLICY "Enable all for admin" ON "public"."peminjaman" TO "admin" USING (true) WITH CHECK (true);
+
+CREATE POLICY "Enable all for admin" ON "public"."wishlist" TO "admin" USING (true) WITH CHECK (true);
+
+CREATE POLICY "Enable delete for users based on user_id" ON "public"."wishlist" FOR DELETE TO "authenticated" USING (("auth"."uid"() = "user_id"));
+
+CREATE POLICY "Enable insert for authenticated users only" ON "public"."peminjaman" FOR INSERT TO "authenticated" WITH CHECK (true);
+
+CREATE POLICY "Enable insert for authenticated users only" ON "public"."wishlist" FOR INSERT TO "authenticated" WITH CHECK (true);
+
+CREATE POLICY "Enable read access for all users" ON "public"."buku" FOR SELECT USING (true);
+
+CREATE POLICY "Enable read access for all users" ON "public"."kategori_buku" FOR SELECT USING (true);
+
+CREATE POLICY "Enable update for users based on email" ON "public"."peminjaman" FOR UPDATE TO "authenticated" USING (("auth"."uid"() = "user_id")) WITH CHECK (true);
+
+CREATE POLICY "Full access for admin" ON "public"."pengguna" TO "admin" USING (true) WITH CHECK (true);
+
+CREATE POLICY "Users can insert their own profile." ON "public"."pengguna" FOR INSERT WITH CHECK (("auth"."uid"() = "user_id"));
+
+CREATE POLICY "Users can only read their own data" ON "public"."peminjaman" FOR SELECT TO "authenticated" USING (("auth"."uid"() = "user_id"));
+
+CREATE POLICY "Users can update own profile." ON "public"."pengguna" FOR UPDATE USING (("auth"."uid"() = "user_id"));
+
+ALTER TABLE "public"."buku" ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE "public"."kategori_buku" ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE "public"."peminjaman" ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE "public"."peminjaman_state" ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE "public"."pengguna" ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE "public"."pengguna_roles" ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "user can only access own profile" ON "public"."pengguna" FOR SELECT USING (("auth"."uid"() = "user_id"));
+
+CREATE POLICY "users can only read their own wishlist" ON "public"."wishlist" FOR SELECT TO "authenticated" USING (("auth"."uid"() = "user_id"));
+
+ALTER TABLE "public"."wishlist" ENABLE ROW LEVEL SECURITY;
+
+ALTER PUBLICATION "supabase_realtime" OWNER TO "postgres";
+
+ALTER PUBLICATION "supabase_realtime" ADD TABLE ONLY "public"."peminjaman";
+
+ALTER PUBLICATION "supabase_realtime" ADD TABLE ONLY "public"."wishlist";
+
+REVOKE USAGE ON SCHEMA "public" FROM PUBLIC;
+GRANT USAGE ON SCHEMA "public" TO "postgres";
+GRANT USAGE ON SCHEMA "public" TO "anon";
+GRANT USAGE ON SCHEMA "public" TO "authenticated";
+GRANT USAGE ON SCHEMA "public" TO "service_role";
+GRANT ALL ON SCHEMA "public" TO "admin";
+
+GRANT ALL ON FUNCTION "public"."decrement_jumlah_exspl"() TO "anon";
+GRANT ALL ON FUNCTION "public"."decrement_jumlah_exspl"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."decrement_jumlah_exspl"() TO "service_role";
+
+GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "anon";
+GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "service_role";
+
+GRANT ALL ON FUNCTION "public"."handle_update_user"() TO "anon";
+GRANT ALL ON FUNCTION "public"."handle_update_user"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."handle_update_user"() TO "service_role";
+
+GRANT ALL ON TABLE "public"."buku" TO "anon";
+GRANT ALL ON TABLE "public"."buku" TO "authenticated";
+GRANT ALL ON TABLE "public"."buku" TO "service_role";
+GRANT SELECT ON TABLE "public"."buku" TO "admin";
+
+GRANT ALL ON TABLE "public"."peminjaman" TO "anon";
+GRANT ALL ON TABLE "public"."peminjaman" TO "authenticated";
+GRANT ALL ON TABLE "public"."peminjaman" TO "service_role";
+
+GRANT ALL ON TABLE "public"."distinct_riwayat" TO "anon";
+GRANT ALL ON TABLE "public"."distinct_riwayat" TO "authenticated";
+GRANT ALL ON TABLE "public"."distinct_riwayat" TO "service_role";
+
+GRANT ALL ON TABLE "public"."kategori_buku" TO "anon";
+GRANT ALL ON TABLE "public"."kategori_buku" TO "authenticated";
+GRANT ALL ON TABLE "public"."kategori_buku" TO "service_role";
+
+GRANT ALL ON SEQUENCE "public"."kategori_buku_id_seq" TO "anon";
+GRANT ALL ON SEQUENCE "public"."kategori_buku_id_seq" TO "authenticated";
+GRANT ALL ON SEQUENCE "public"."kategori_buku_id_seq" TO "service_role";
+
+GRANT ALL ON TABLE "public"."peminjaman_state" TO "anon";
+GRANT ALL ON TABLE "public"."peminjaman_state" TO "authenticated";
+GRANT ALL ON TABLE "public"."peminjaman_state" TO "service_role";
+
+GRANT ALL ON SEQUENCE "public"."peminjaman_state_id_seq" TO "anon";
+GRANT ALL ON SEQUENCE "public"."peminjaman_state_id_seq" TO "authenticated";
+GRANT ALL ON SEQUENCE "public"."peminjaman_state_id_seq" TO "service_role";
+
+GRANT ALL ON TABLE "public"."pengguna" TO "anon";
+GRANT ALL ON TABLE "public"."pengguna" TO "authenticated";
+GRANT ALL ON TABLE "public"."pengguna" TO "service_role";
+
+GRANT ALL ON TABLE "public"."pengguna_roles" TO "anon";
+GRANT ALL ON TABLE "public"."pengguna_roles" TO "authenticated";
+GRANT ALL ON TABLE "public"."pengguna_roles" TO "service_role";
+
+GRANT ALL ON SEQUENCE "public"."pengguna_roles_id_seq" TO "anon";
+GRANT ALL ON SEQUENCE "public"."pengguna_roles_id_seq" TO "authenticated";
+GRANT ALL ON SEQUENCE "public"."pengguna_roles_id_seq" TO "service_role";
+
+GRANT ALL ON TABLE "public"."wishlist" TO "anon";
+GRANT ALL ON TABLE "public"."wishlist" TO "authenticated";
+GRANT ALL ON TABLE "public"."wishlist" TO "service_role";
+
+GRANT ALL ON SEQUENCE "public"."wishlist_id_seq" TO "anon";
+GRANT ALL ON SEQUENCE "public"."wishlist_id_seq" TO "authenticated";
+GRANT ALL ON SEQUENCE "public"."wishlist_id_seq" TO "service_role";
+
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON SEQUENCES  TO "postgres";
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON SEQUENCES  TO "anon";
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON SEQUENCES  TO "authenticated";
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON SEQUENCES  TO "service_role";
+
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON FUNCTIONS  TO "postgres";
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON FUNCTIONS  TO "anon";
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON FUNCTIONS  TO "authenticated";
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON FUNCTIONS  TO "service_role";
+
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON TABLES  TO "postgres";
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON TABLES  TO "anon";
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON TABLES  TO "authenticated";
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON TABLES  TO "service_role";
+
+RESET ALL;
