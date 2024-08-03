@@ -31,6 +31,13 @@ app.use(PrimeVue, {
       option: "p-select-option",
       optionLabel: "p-select-option-label",
     },
+    panelMenu: {
+      root: "p-panelmenu",
+      headerContent: "p-panelmenu-header-content",
+      headerLink: "p-panelmenu-header-link",
+      rootList: "p-panelmenu-list",
+      menuItem: "p-panelmenu-item",
+    },
   },
 })
 

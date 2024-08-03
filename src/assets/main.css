@@ -164,6 +164,24 @@ table {
   order: -1;
 }
 
+.p-panelmenu a {
+  color: var(--white);
+}
+
+.p-panelmenu-header-content {
+  display: flex;
+  justify-content: space-between;
+}
+
+.p-panelmenu-list {
+  list-style: none;
+  padding-inline-start: 1.5rem;
+}
+
+.p-panelmenu-item {
+  padding: 1rem;
+}
+
 tr:nth-child(even) {
   background: var(--grey);
 }
