@@ -22,6 +22,15 @@ app.use(PrimeVue, {
       bodyCell: "p-table-cell",
       sort: "p-sort",
     },
+    select: {
+      root: "p-select form-control",
+      label: "p-select-label",
+      dropdown: "p-select-dropdown",
+      overlay: "p-select-overlay",
+      list: "p-select-list",
+      option: "p-select-option",
+      optionLabel: "p-select-option-label",
+    },
   },
 })
 

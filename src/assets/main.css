@@ -30,11 +30,11 @@ label {
   padding-block: 1rem 0.5rem;
 }
 
-input {
+input,
+.form-control {
   background: var(--neutral-transparent);
   outline: 2px solid var(--neutral);
   padding: 1rem;
-  width: 100%;
   border-radius: 0.5rem;
 }
 
@@ -119,6 +119,49 @@ table {
 
 .p-sort {
   cursor: pointer;
+}
+
+.p-select {
+  background: var(--neutral-transparent);
+  padding-inline: 1rem;
+  user-select: none;
+
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.p-select-label,
+.p-select-dropdown,
+.p-select-option {
+  cursor: pointer;
+}
+
+.p-select-overlay {
+  background: var(--neutral-transparent);
+  outline: 2px solid var(--neutral);
+}
+
+.p-select-list {
+  padding: 0;
+}
+
+.p-select-option {
+  padding: 0.25rem 1rem;
+  list-style: none;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.p-select-option:hover {
+  background: var(--dark-grey);
+}
+
+.p-select-option-label {
+  order: -1;
 }
 
 tr:nth-child(even) {

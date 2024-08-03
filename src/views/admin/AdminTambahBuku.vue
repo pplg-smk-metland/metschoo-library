@@ -3,6 +3,7 @@ import { onMounted, ref } from "vue"
 import { useRouter } from "vue-router"
 import { useBuku, useDialog } from "@/lib/composables"
 import { supabase } from "@/lib/supabase"
+import Select from "primevue/select"
 import { StorageError } from "@supabase/storage-js"
 import type { Buku, Kategori } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
@@ -128,22 +129,21 @@ const router = useRouter()
           v-model="buku.no_isbn"
           type="text"
           name="buku-isbn"
-          placeholder="judul buku"
+          placeholder="ISBN buku"
           required
         />
       </label>
       <label for="buku-kategori">
         Kategori
-        <select id="buku-kategori" v-model="buku.kategori_id" name="buku-kategori" required>
-          <option value="" disabled>Pilih salah satu</option>
-          <option
-            v-for="kategori in availableCategories"
-            :key="kategori.id"
-            :value="Number(kategori.id)"
-          >
-            {{ kategori.kategori }}
-          </option>
-        </select>
+        <Select
+          v-model="buku.kategori_id"
+          placeholder="Pilih kategori"
+          :options="availableCategories"
+          checkmark
+          optionLabel="kategori"
+          optionValue="id"
+          required
+        />
       </label>
       <label for="buku-penulis">
         penulis
@@ -152,7 +152,7 @@ const router = useRouter()
           v-model="buku.penulis"
           type="text"
           name="buku-penulis"
-          placeholder="judul buku"
+          placeholder="penulis buku"
           required
         />
       </label>
@@ -231,7 +231,7 @@ const router = useRouter()
   </div>
 </template>
 
-<style>
+<style scoped>
 .buku-container {
   display: grid;
   grid-template-columns: 35ch 1fr;
