@@ -58,17 +58,17 @@ async function addNewBook(buku: Buku) {
     dialog.value.open("Buku berhasil ditambahkan!")
   } catch (error) {
     console.table(error as Error)
+
+    let message: string
     if (error instanceof StorageError) {
-      errDialog.value.open(
-        `Ada kesalahan saat mengunggah sampul buku. Silahkan coba lagi dalam beberapa saat. ${error.message}`
-      )
+      message = `Ada kesalahan saat mengunggah sampul buku. Silahkan coba lagi dalam beberapa saat. ${error.message}`
     } else {
-      errDialog.value.open(
-        `Ada kesalahan saat mengunggah buku. Mungkin ISBNnya sudah ada? ${
-          (error as PostgrestError).message
-        }`
-      )
+      message = `Ada kesalahan saat mengunggah buku. Mungkin ISBNnya sudah ada? ${
+        (error as PostgrestError).message
+      }`
     }
+
+    errDialog.value.open(message)
   } finally {
     isLoading.value = false
   }

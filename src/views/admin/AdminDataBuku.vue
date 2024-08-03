@@ -9,6 +9,7 @@ import CTA from "@/components/CTA.vue"
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import DataTable from "primevue/datatable"
 import Column from "primevue/column"
+import Select from "primevue/select"
 
 const searchTerm = ref("")
 const availableCategories = ref<Kategori[]>([])
@@ -81,12 +82,14 @@ onMounted(async () => {
       placeholder="cari judul buku..."
       required
     />
-    <select id="search-category" v-model="selectedCategory" name="search-category" required>
-      <option value="" disabled>Pilih satu</option>
-      <option v-for="category in availableCategories" :key="category.id" :value="category.id">
-        {{ category.id }} - {{ category.kategori }}
-      </option>
-    </select>
+    <Select
+      v-model="selectedCategory"
+      placeholder="pilih kategori"
+      :options="availableCategories"
+      optionLabel="kategori"
+      optionValue="id"
+      checkmark
+    />
     <CTA type="submit" label="Cari" />
   </form>
 
@@ -115,7 +118,7 @@ form {
   gap: 1rem;
 }
 
-#search-category {
-  border-radius: 0.5rem;
+input {
+  flex-grow: 1;
 }
 </style>
