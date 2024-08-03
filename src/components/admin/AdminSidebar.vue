@@ -100,6 +100,7 @@ const sidebarLinks = ref<SidebarLink[]>([
 }
 
 .sidebar__link.router-link-exact-active {
+  background: var(--primary-200);
   border-left: 2px solid var(--white);
 }
 </style>
