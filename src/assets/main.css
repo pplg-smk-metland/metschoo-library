@@ -169,7 +169,7 @@ table {
 }
 
 .p-panelmenu a {
-  color: var(--white);
+  color: var(--panel-white);
 }
 
 .p-panelmenu-header-content {
