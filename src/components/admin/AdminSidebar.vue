@@ -9,6 +9,7 @@ interface SidebarLink {
   label: string
   items?: SidebarSubLink[]
   route?: RouteLocationRaw
+  isExpanded?: boolean
 }
 
 interface SidebarSubLink {
@@ -33,6 +34,7 @@ const sidebarLinks = ref<SidebarLink[]>([
   },
   {
     label: "buku",
+    isExpanded: false,
     items: [
       {
         label: "Data buku",
@@ -54,9 +56,9 @@ const sidebarLinks = ref<SidebarLink[]>([
         <routerLink class="sidebar__link" v-if="item.route" :to="item.route">
           {{ item.label }}
         </routerLink>
-        <button class="sidebar__link" v-else>
+        <button class="sidebar__link" v-else @click="item.isExpanded = !item.isExpanded">
           <span>{{ item.label }}</span>
-          <IconArrowDownDrop class="icon" />
+          <IconArrowDownDrop :class="['icon', { rotate: item.isExpanded }]" />
         </button>
       </template>
     </PanelMenu>
@@ -66,7 +68,7 @@ const sidebarLinks = ref<SidebarLink[]>([
 <style scoped>
 .sidebar {
   background: var(--primary);
-  color: var(--white);
+  color: var(--pale-white);
   max-height: 100vh;
   position: sticky;
   top: 3rem;
@@ -97,10 +99,12 @@ const sidebarLinks = ref<SidebarLink[]>([
 
 .sidebar__link:hover {
   background: var(--primary-200);
+  color: var(--white);
 }
 
 .sidebar__link.router-link-exact-active {
   background: var(--primary-200);
   border-left: 2px solid var(--white);
+  color: var(--white);
 }
 </style>
