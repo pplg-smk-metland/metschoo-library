@@ -15,10 +15,12 @@ app.use(PrimeVue, {
   unstyled: true,
   pt: {
     table: {
-      root: "p-table",
+      class: "p-table",
     },
     column: {
-      headerContent: "p-table-header",
+      columnHeaderContent: {
+        class: "p-table-header",
+      },
       bodyCell: "p-table-cell",
       sort: "p-sort",
     },

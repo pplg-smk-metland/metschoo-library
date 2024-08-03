@@ -109,16 +109,23 @@ a {
 
 table {
   min-width: max-content;
+  border-collapse: collapse;
 }
 
 .p-table-header,
 .p-table-cell {
-  padding: 0.5rem 1rem;
+  padding: 0.2rem 0.5rem;
+}
+
+.p-table-cell {
+  border: 2px solid var(--dark-grey);
 }
 
 .p-table-header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .p-sort {
