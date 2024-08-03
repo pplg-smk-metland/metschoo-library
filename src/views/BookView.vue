@@ -10,6 +10,7 @@ import {
   kembalikanBukuDariISBN,
   getBuku,
   getNewestPeminjaman,
+  formatDate,
 } from "@/lib/utils"
 import { useBuku, useDialog } from "@/lib/composables"
 import type { Buku, Peminjaman } from "@/types"
@@ -100,12 +101,7 @@ const { dialog: dialogError } = useDialog()
 const date = ref<Date>(new Date())
 const formattedDate = computed(() => {
   if (!date.value) return ""
-
-  return new Intl.DateTimeFormat(undefined, {
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
-  }).format(date.value as Date)
+  return formatDate(date)
 })
 
 const isValidDate = computed(() => date.value > new Date())

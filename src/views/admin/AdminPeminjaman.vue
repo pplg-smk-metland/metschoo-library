@@ -4,6 +4,7 @@ import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import DataTable from "primevue/datatable"
 import Column from "primevue/column"
 import { getPeminjamanData, type PeminjamanData } from "@/lib/peminjaman"
+import { formatDate } from "@/lib/utils"
 
 const peminjamanData = ref<PeminjamanData>([])
 
@@ -67,6 +68,7 @@ onMounted(async () => {
         </p>
       </template>
     </Column>
+
     <Column field="buku.judul" header="Judul">
       <template #body="slotProps">
         <routerLink :to="{ name: 'admin-halaman-buku', params: { isbn: slotProps.data.no_isbn } }">
@@ -75,8 +77,23 @@ onMounted(async () => {
       </template>
     </Column>
     <Column field="no_isbn" header="ISBN"></Column>
-    <Column field="tgl_pinjam" header="Tanggal Pinjam" sortable></Column>
-    <Column field="tenggat_waktu" header="Tenggat Waktu"></Column>
-    <Column field="tgl_kembali" header="Tanggal Kembali" sortable></Column>
+
+    <Column field="tgl_pinjam" header="Tanggal Pinjam" sortable>
+      <template #body="slotProps">
+        {{ formatDate(new Date(slotProps.data.tgl_pinjam)) }}
+      </template>
+    </Column>
+
+    <Column field="tenggat_waktu" header="Tenggat Waktu">
+      <template #body="slotProps">
+        {{ formatDate(new Date(slotProps.data.tenggat_waktu)) }}
+      </template>
+    </Column>
+
+    <Column field="tgl_kembali" header="Tanggal Kembali" sortable>
+      <template #body="slotProps">
+        {{ formatDate(new Date(slotProps.data.tgl_kembali)) }}
+      </template>
+    </Column>
   </DataTable>
 </template>
