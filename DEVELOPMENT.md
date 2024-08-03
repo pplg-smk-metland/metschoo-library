@@ -1,5 +1,21 @@
 # Contributor manual
 
+## Table of contents
+
+<!--toc:start-->
+
+- [Contributor manual](#contributor-manual)
+  - [Table of contents](#table-of-contents)
+  - [General workflow](#general-workflow)
+  - [Recommended IDE Setup](#recommended-ide-setup)
+  - [Project setup](#project-setup)
+  - [Supabase](#supabase)
+    - [Local environment variables](#local-environment-variables)
+    - [Supabase CLI](#supabase-cli)
+    - [Admin user](#admin-user)
+  - [Todo](#todo)
+  <!--toc:end-->
+
 Welcome to the contribution guide for Metschoo Library. Remember this is a team
 project and communication is of utmost importance. So when you want to make a
 new feature or just implemented a new one, please tell the other team members.
@@ -34,6 +50,9 @@ You would:
 
 [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
 (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+
+This project uses [Prettier](https://prettier.io) for formatting. For VS Code,
+you can install the Prettier extension
 
 ## Project setup
 
