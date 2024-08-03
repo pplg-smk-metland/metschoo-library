@@ -78,11 +78,11 @@ onMounted(async () => {
       v-model="searchTerm"
       type="text"
       name="search-term"
-      placeholder="search for book"
+      placeholder="cari judul buku..."
       required
     />
     <select id="search-category" v-model="selectedCategory" name="search-category" required>
-      <option value="" disabled>Select one</option>
+      <option value="" disabled>Pilih satu</option>
       <option v-for="category in availableCategories" :key="category.id" :value="category.id">
         {{ category.id }} - {{ category.kategori }}
       </option>
@@ -104,5 +104,18 @@ onMounted(async () => {
     <Column field="penerbit" header="Penerbit"></Column>
     <Column field="tahun_terbit" header="Tahun Terbit"></Column>
     <Column field="kategori_buku.kategori" header="Kategori"></Column>
+    <template #empty>Tidak ada buku ditemukan.</template>
+    <template #footer>Menampilkan {{ searchResults.length }} buku.</template>
   </DataTable>
 </template>
+
+<style scoped>
+form {
+  display: flex;
+  gap: 1rem;
+}
+
+#search-category {
+  border-radius: 0.5rem;
+}
+</style>
