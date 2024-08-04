@@ -98,10 +98,11 @@ const { dialog } = useDialog()
 const { dialog: dialogConfirm } = useDialog()
 const { dialog: dialogError } = useDialog()
 
-const date = ref<Date>(new Date())
+const date = ref(new Date())
+
 const formattedDate = computed(() => {
   if (!date.value) return ""
-  return formatDate(date)
+  return formatDate(date.value, { dateStyle: "full" })
 })
 
 const isValidDate = computed(() => date.value > new Date())
