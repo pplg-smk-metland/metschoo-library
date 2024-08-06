@@ -117,7 +117,7 @@ function toggleFormVisibility() {
 
   <div v-else class="wrapper">
     <article v-if="!formIsVisible" class="buku">
-      <header>
+      <header class="header">
         <h1>{{ buku.judul }} - {{ buku.jumlah_exspl }}</h1>
 
         <routerLink :to="{ name: 'admin' }">Kembali</routerLink>
@@ -214,13 +214,6 @@ function toggleFormVisibility() {
 </template>
 
 <style scoped>
-.buku header {
-  display: flex;
-  align-items: flex-start;
-  flex-direction: column-reverse;
-  padding-block-end: 1rem;
-}
-
 .buku-edit button {
   margin-block: 1rem;
 }

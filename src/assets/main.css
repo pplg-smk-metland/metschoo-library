@@ -196,3 +196,9 @@ table {
 tr:nth-child(even) {
   background: var(--grey);
 }
+
+header.header {
+  display: flex;
+  flex-direction: column-reverse;
+  padding-block-end: 1rem;
+}

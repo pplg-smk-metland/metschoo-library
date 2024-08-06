@@ -34,10 +34,10 @@ async function updateUserInfo() {
 
 <template>
   <ProfileEditLayout>
-    <section class="header">
+    <header class="header">
       <h1>Edit profil</h1>
       <routerLink :to="{ name: 'profile' }"> Kembali </routerLink>
-    </section>
+    </header>
 
     <section v-if="dataPengguna" class="profile">
       <figure class="profile__picture-wrapper">
