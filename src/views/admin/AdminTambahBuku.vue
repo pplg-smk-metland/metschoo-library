@@ -3,6 +3,7 @@ import { onMounted, ref } from "vue"
 import { useRouter } from "vue-router"
 import { useBuku, useDialog } from "@/lib/composables"
 import { supabase } from "@/lib/supabase"
+import Select from "primevue/select"
 import { StorageError } from "@supabase/storage-js"
 import type { Buku, Kategori } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
@@ -57,17 +58,17 @@ async function addNewBook(buku: Buku) {
     dialog.value.open("Buku berhasil ditambahkan!")
   } catch (error) {
     console.table(error as Error)
+
+    let message: string
     if (error instanceof StorageError) {
-      errDialog.value.open(
-        `Ada kesalahan saat mengunggah sampul buku. Silahkan coba lagi dalam beberapa saat. ${error.message}`
-      )
+      message = `Ada kesalahan saat mengunggah sampul buku. Silahkan coba lagi dalam beberapa saat. ${error.message}`
     } else {
-      errDialog.value.open(
-        `Ada kesalahan saat mengunggah buku. Mungkin ISBNnya sudah ada? ${
-          (error as PostgrestError).message
-        }`
-      )
+      message = `Ada kesalahan saat mengunggah buku. Mungkin ISBNnya sudah ada? ${
+        (error as PostgrestError).message
+      }`
     }
+
+    errDialog.value.open(message)
   } finally {
     isLoading.value = false
   }
@@ -85,16 +86,18 @@ const router = useRouter()
 <template>
   <h1>Tambah buku</h1>
 
-  <div class="buku-container">
-    <div class="buku-gambar">
+  <section class="buku-container">
+    <figure class="buku-gambar">
       <img
         v-if="bukuGambarEl && bukuGambarFile"
         :src="bukuGambarURL"
         width="450"
         height="800"
-        alt=""
+        :alt="`gambar buku ${buku?.judul}`"
       />
-    </div>
+
+      <p v-else class="buku-gambar__placeholder">Gambar buku akan muncul di sini.</p>
+    </figure>
 
     <form @submit.prevent="addNewBook(buku)" class="buku-form">
       <label for="buku-gambar">
@@ -128,22 +131,21 @@ const router = useRouter()
           v-model="buku.no_isbn"
           type="text"
           name="buku-isbn"
-          placeholder="judul buku"
+          placeholder="ISBN buku"
           required
         />
       </label>
       <label for="buku-kategori">
         Kategori
-        <select id="buku-kategori" v-model="buku.kategori_id" name="buku-kategori" required>
-          <option value="" disabled>Pilih salah satu</option>
-          <option
-            v-for="kategori in availableCategories"
-            :key="kategori.id"
-            :value="Number(kategori.id)"
-          >
-            {{ kategori.kategori }}
-          </option>
-        </select>
+        <Select
+          v-model="buku.kategori_id"
+          placeholder="Pilih kategori"
+          :options="availableCategories"
+          checkmark
+          optionLabel="kategori"
+          optionValue="id"
+          required
+        />
       </label>
       <label for="buku-penulis">
         penulis
@@ -152,7 +154,7 @@ const router = useRouter()
           v-model="buku.penulis"
           type="text"
           name="buku-penulis"
-          placeholder="judul buku"
+          placeholder="penulis buku"
           required
         />
       </label>
@@ -228,10 +230,10 @@ const router = useRouter()
         <p>{{ dialog.message }}</p>
       </TheDialog>
     </form>
-  </div>
+  </section>
 </template>
 
-<style>
+<style scoped>
 .buku-container {
   display: grid;
   grid-template-columns: 35ch 1fr;
@@ -242,18 +244,31 @@ const router = useRouter()
   }
 }
 
+.buku-gambar {
+  outline: 2px solid var(--neutral);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
 .buku-gambar img {
   width: 100%;
+}
+
+.buku-gambar__placeholder {
+  text-align: center;
 }
 
 .buku-form {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  column-gap: 1rem;
+  gap: 1rem;
+}
+
+.buku-form label {
+  padding: 0;
 }
 
 .buku-form__submit {
-  margin-block: 1rem;
   grid-column: span 2;
 }
 </style>

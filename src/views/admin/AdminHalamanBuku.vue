@@ -11,6 +11,7 @@ import type { PostgrestError, QueryData } from "@supabase/supabase-js"
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import CTA from "@/components/CTA.vue"
 import TheDialog from "@/components/TheDialog.vue"
+import Select from "primevue/select"
 
 const isLoading = ref(false)
 
@@ -179,12 +180,14 @@ function toggleFormVisibility() {
           required
         />
         <label for="buku-kategori">Kategori</label>
-        <select id="buku-kategori" v-model="buku.kategori_id" name="buku-kategori" required>
-          <option value="" disabled>Please select one</option>
-          <option v-for="category in availableCategories" :key="category.id" :value="category.id">
-            {{ category.id }} - {{ category.kategori }}
-          </option>
-        </select>
+        <Select
+          v-model="buku.kategori_id"
+          placeholder="Pilih kategori"
+          :options="availableCategories"
+          checkmark
+          optionLabel="kategori"
+          optionValue="id"
+        />
 
         <CTA type="submit" label="Simpan perubahan" />
       </form>

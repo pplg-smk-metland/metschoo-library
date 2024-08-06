@@ -103,3 +103,12 @@ export async function getAllAvailableCategories() {
     return []
   }
 }
+
+export function formatDate(date: Date, opts?: Intl.DateTimeFormatOptions) {
+  if (!opts) {
+    opts = {
+      dateStyle: "long",
+    }
+  }
+  return new Intl.DateTimeFormat("id-ID", opts).format(date)
+}

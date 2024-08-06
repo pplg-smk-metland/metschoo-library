@@ -15,12 +15,30 @@ app.use(PrimeVue, {
   unstyled: true,
   pt: {
     table: {
-      root: "p-table",
+      class: "p-table",
     },
     column: {
-      headerContent: "p-table-header",
+      columnHeaderContent: {
+        class: "p-table-header",
+      },
       bodyCell: "p-table-cell",
       sort: "p-sort",
+    },
+    select: {
+      root: "p-select form-control",
+      label: "p-select-label",
+      dropdown: "p-select-dropdown",
+      overlay: "p-select-overlay",
+      list: "p-select-list",
+      option: "p-select-option",
+      optionLabel: "p-select-option-label",
+    },
+    panelMenu: {
+      root: "p-panelmenu",
+      headerContent: "p-panelmenu-header-content",
+      headerLink: "p-panelmenu-header-link",
+      rootList: "p-panelmenu-list",
+      menuItem: "p-panelmenu-item",
     },
   },
 })

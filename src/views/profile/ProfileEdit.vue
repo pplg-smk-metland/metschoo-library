@@ -3,6 +3,7 @@ import { onMounted, ref } from "vue"
 import { useDialog } from "@/lib/composables"
 import { useAuthStore } from "@/stores/auth"
 import { type PostgrestError } from "@supabase/supabase-js"
+import Select from "primevue/select"
 
 import ProfileEditLayout from "@/layouts/ProfileEditLayout.vue"
 import TheDialog from "@/components/TheDialog.vue"
@@ -49,11 +50,12 @@ async function updateUserInfo() {
         <input v-model="dataPengguna.nama" type="text" placeholder="Masukan Nama" />
 
         <label for="kelas">Kelas</label>
-        <select id="kelas" v-model="dataPengguna.kelas" name="kelas">
-          <option value="X">X</option>
-          <option value="XI">XI</option>
-          <option value="XII">XII</option>
-        </select>
+        <Select
+          v-model="dataPengguna.kelas"
+          :options="['X', 'XI', 'XII']"
+          placeholder="kelas berapa kamu"
+          checkmark
+        />
 
         <label for="jurusan">Jurusan</label>
         <input v-model="dataPengguna.jurusan" type="text" placeholder="Masukkan Jurusan" />

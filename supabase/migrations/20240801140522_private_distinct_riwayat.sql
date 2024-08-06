@@ -1,7 +1,6 @@
 drop view if exists public.distinct_riwayat;
 
 -- new
-drop view public.distinct_riwayat;
 create or replace view public.distinct_riwayat with ("security_invoker" = 'on') as
   select distinct "peminjaman".state_id,
     "buku".*::"public"."buku" AS "buku"
