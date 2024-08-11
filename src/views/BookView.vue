@@ -291,7 +291,7 @@ supabase
               </template>
             </ConfirmPopup>
 
-            <Toast position="top-left" />
+            <Toast position="top-right" :unstyled="false" />
             <CTA
               :disabled="bukuAdaDiWishlist || !bisaDipinjam"
               :aria-expanded="confirmWishlistIsVisible"
