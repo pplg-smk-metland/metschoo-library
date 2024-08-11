@@ -22,6 +22,8 @@ import TheDialog from "@/components/TheDialog.vue"
 import CTA from "@/components/CTA.vue"
 import ConfirmPopup from "primevue/confirmpopup"
 import { useConfirm } from "primevue/useconfirm"
+import Toast from "primevue/toast"
+import { useToast } from "primevue/usetoast"
 import VueDatePicker from "@vuepic/vue-datepicker"
 import "@vuepic/vue-datepicker/dist/main.css"
 
@@ -153,19 +155,23 @@ async function kembalikanBuku({ judul }: Buku, id: Peminjaman["id"]) {
 }
 
 const confirmWishlistIsVisible = ref(false)
+const toast = useToast()
+
 function konfirmasiMasukkanWishlist(buku: Buku, e: Event) {
   confirm.require({
     target: e.currentTarget as HTMLElement,
     header: "Konfirmasi wishlist",
     message: "Apakah anda mau menambahkan buku ini ke dalam wishlist?",
     group: "headless",
-    accept: async () => await masukkanWishlist(buku),
+    accept: async () => {
+      await masukkanWishlist(buku)
+    },
     onShow: () => (confirmWishlistIsVisible.value = true),
     onHide: () => (confirmWishlistIsVisible.value = false),
   })
 }
 
-async function masukkanWishlist({ judul, no_isbn }: Buku) {
+async function masukkanWishlist({ no_isbn }: Buku) {
   if (!authStore.session) {
     alert("silahkan masuk jika anda ingin menambahkan buku ke dalam wishlist")
     return
@@ -175,13 +181,22 @@ async function masukkanWishlist({ judul, no_isbn }: Buku) {
     const { data, error } = await supabase.from("wishlist").insert({ no_isbn })
     if (error) throw error
 
-    dialog.value.open(`buku ${judul} berhasil ditambahkan ke dalam wishlist`)
     bukuAdaDiWishlist.value = true
+
+    toast.add({
+      severity: "success",
+      summary: "Sukses",
+      detail: "Sukses menambahkan buku ke dalam wishlist",
+      life: 5000,
+    })
     return data
   } catch (err) {
-    dialog.value.open(
-      `Ada yang salah ketika menambahkan buku ${judul} ke dalam wishlist. Silahkan coba beberapa saat lagi.`
-    )
+    toast.add({
+      severity: "error",
+      summary: "gagal",
+      detail: `Ada yang salah ketika menambahkan buku ke dalam wishlist. Silahkan coba beberapa saat lagi.`,
+      life: 20000,
+    })
     console.error((err as PostgrestError).message)
   }
 }
@@ -269,6 +284,7 @@ supabase
               </template>
             </ConfirmPopup>
 
+            <Toast position="top-left" />
             <CTA
               :disabled="bukuAdaDiWishlist || !bisaDipinjam"
               :aria-expanded="confirmWishlistIsVisible"

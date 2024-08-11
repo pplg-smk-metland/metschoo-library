@@ -211,6 +211,31 @@ table {
   gap: 1rem;
 }
 
+.p-toast {
+  border-radius: 0.5rem;
+  max-width: 50ch;
+  padding: 1rem;
+  background: var(--neutral-transparent);
+  outline: 2px solid var(--color-informational);
+}
+
+.p-toast-danger {
+  background: hsl(0, 30%, 90%);
+  outline: 2px solid var(--color-danger);
+}
+
+.p-toast-message-content {
+  display: grid;
+  grid-template-columns: 2rem 1fr 2rem;
+  grid-template-rows: 2fr;
+}
+
+.p-toast-icon,
+.p-toast-close-button {
+  grid-row: span 2;
+  font-size: 1.5rem;
+}
+
 tr:nth-child(even) {
   background: var(--grey);
 }
