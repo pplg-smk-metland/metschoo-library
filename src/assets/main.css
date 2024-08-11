@@ -193,6 +193,24 @@ table {
   padding: 1rem;
 }
 
+.p-confirmpopup {
+  border-radius: 0.5rem;
+  position: absolute;
+  top: 0.5rem;
+  outline: 2px solid var(--primary);
+  background: var(--neutral-transparent);
+}
+
+.p-confirmpopup > * {
+  padding: 1rem;
+}
+
+.p-confirmpopup-footer {
+  padding-block-start: 0;
+  display: flex;
+  gap: 1rem;
+}
+
 tr:nth-child(even) {
   background: var(--grey);
 }

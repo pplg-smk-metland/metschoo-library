@@ -20,6 +20,8 @@ import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import BaseLayout from "@/layouts/BaseLayout.vue"
 import TheDialog from "@/components/TheDialog.vue"
 import CTA from "@/components/CTA.vue"
+import ConfirmPopup from "primevue/confirmpopup"
+import { useConfirm } from "primevue/useconfirm"
 import VueDatePicker from "@vuepic/vue-datepicker"
 import "@vuepic/vue-datepicker/dist/main.css"
 
@@ -107,6 +109,8 @@ const formattedDate = computed(() => {
 
 const isValidDate = computed(() => date.value > new Date())
 
+const confirm = useConfirm()
+
 function konfirmasiPinjamBuku({ jumlah_exspl }: Buku) {
   if (jumlah_exspl === 0) {
     dialog.value.open("Maaf, buku ini tidak tersedia untuk saat ini.")
@@ -146,6 +150,15 @@ async function kembalikanBuku({ judul }: Buku, id: Peminjaman["id"]) {
     dialog.value.open(`Gagal mengembalikan buku! ${(err as PostgrestError).message}`)
     console.error((err as PostgrestError).message)
   }
+}
+
+function konfirmasiMasukkanWishlist(buku: Buku, e: Event) {
+  confirm.require({
+    target: e.currentTarget as HTMLElement,
+    message: "Apakah anda mau menambahkan buku ini ke dalam wishlist?",
+    group: "headless",
+    accept: async () => await masukkanWishlist(buku),
+  })
 }
 
 async function masukkanWishlist({ judul, no_isbn }: Buku) {
@@ -237,9 +250,23 @@ supabase
               @click="kembalikanBuku(buku, peminjamanTerbaru.id)"
               label="kembalikan buku"
             />
+
+            <ConfirmPopup group="headless">
+              <template #container="{ message, acceptCallback, rejectCallback }">
+                <section class="p-confirmpopup-content">
+                  <p>{{ message.message }}</p>
+                </section>
+
+                <section class="p-confirmpopup-footer">
+                  <CTA label="Tidak" @click="rejectCallback" />
+                  <CTA label="Ya" @click="acceptCallback" fill />
+                </section>
+              </template>
+            </ConfirmPopup>
+
             <CTA
               :disabled="bukuAdaDiWishlist || !bisaDipinjam"
-              @click="masukkanWishlist(buku)"
+              @click="konfirmasiMasukkanWishlist(buku, $event)"
               label="tambahkan ke wishlist"
             />
           </div>
