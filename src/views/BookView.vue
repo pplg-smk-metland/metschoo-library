@@ -152,12 +152,16 @@ async function kembalikanBuku({ judul }: Buku, id: Peminjaman["id"]) {
   }
 }
 
+const confirmWishlistIsVisible = ref(false)
 function konfirmasiMasukkanWishlist(buku: Buku, e: Event) {
   confirm.require({
     target: e.currentTarget as HTMLElement,
+    header: "Konfirmasi wishlist",
     message: "Apakah anda mau menambahkan buku ini ke dalam wishlist?",
     group: "headless",
     accept: async () => await masukkanWishlist(buku),
+    onShow: () => (confirmWishlistIsVisible.value = true),
+    onHide: () => (confirmWishlistIsVisible.value = false),
   })
 }
 
@@ -251,9 +255,10 @@ supabase
               label="kembalikan buku"
             />
 
-            <ConfirmPopup group="headless">
+            <ConfirmPopup group="headless" aria-label="popup">
               <template #container="{ message, acceptCallback, rejectCallback }">
                 <section class="p-confirmpopup-content">
+                  <h3>{{ message.header }}</h3>
                   <p>{{ message.message }}</p>
                 </section>
 
@@ -266,6 +271,8 @@ supabase
 
             <CTA
               :disabled="bukuAdaDiWishlist || !bisaDipinjam"
+              :aria-expanded="confirmWishlistIsVisible"
+              :aria-controls="confirmWishlistIsVisible ? 'confirm' : null"
               @click="konfirmasiMasukkanWishlist(buku, $event)"
               label="tambahkan ke wishlist"
             />
