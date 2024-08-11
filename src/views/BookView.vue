@@ -60,24 +60,31 @@ onMounted(async () => {
     bisaDipinjam.value = cekBisaDipinjam(peminjamanTerbaru.value, buku.value!.jumlah_exspl)
     bisaDikembalikan.value = cekBisaDikembalikan(peminjamanTerbaru.value)
   } catch (err) {
+    console.error(err as PostgrestError)
+
     if ((err as PostgrestError).code === "PGRST116") {
       bisaDipinjam.value = true
       return
     }
-
-    console.error(err as PostgrestError)
   }
 })
 
 const bisaDipinjam = ref(false)
 
-const cekBisaDipinjam = ({ state_id }: Peminjaman, jumlah_exspl: Buku["jumlah_exspl"]) => {
-  return [0, 3, 5, 6].includes(state_id) && jumlah_exspl > 0
+const cekBisaDipinjam = (peminjaman: Peminjaman | null, jumlah_exspl: Buku["jumlah_exspl"]) => {
+  if (!peminjaman) return true
+  return [0, 3, 5, 6].includes(peminjaman.state_id) && jumlah_exspl > 0
 }
 
 const bisaDikembalikan = ref(false)
 
-const cekBisaDikembalikan = ({ state_id }: Peminjaman) => state_id === 2
+// kalau peminjaman null, artinya, ya kembalikan aja
+const cekBisaDikembalikan = (peminjaman: Peminjaman | null) => {
+  if (peminjaman) return peminjaman.state_id === 2
+  else {
+    return true
+  }
+}
 
 const bukuAdaDiWishlist = ref(false)
 
@@ -129,7 +136,7 @@ async function pinjamBuku({ judul, no_isbn }: Buku, tanggal: Date) {
     return
   }
 
-  if (!confirm(`Beneran mau pinjem buku ${judul}?`)) return
+  if (!window.confirm(`Beneran mau pinjem buku ${judul}?`)) return
 
   try {
     if (bukuAdaDiWishlist.value) {
