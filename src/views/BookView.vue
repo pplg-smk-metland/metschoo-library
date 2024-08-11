@@ -30,6 +30,9 @@ import "@vuepic/vue-datepicker/dist/main.css"
 const route = useRoute()
 const isbn = route.params.isbn as string
 
+const toast = useToast()
+const confirm = useConfirm()
+
 const authStore = useAuthStore()
 
 const isLoading = ref(false)
@@ -105,7 +108,6 @@ async function checkWishlist(isbn: string) {
   }
 }
 
-const { dialog } = useDialog()
 const { dialog: dialogConfirm } = useDialog()
 const { dialog: dialogError } = useDialog()
 
@@ -118,8 +120,6 @@ const formattedDate = computed(() => {
 
 const isValidDate = computed(() => date.value > new Date())
 
-const confirm = useConfirm()
-
 function konfirmasiPinjamBuku({ jumlah_exspl }: Buku) {
   if (jumlah_exspl === 0) {
     dialog.value.open("Maaf, buku ini tidak tersedia untuk saat ini.")
@@ -129,7 +129,7 @@ function konfirmasiPinjamBuku({ jumlah_exspl }: Buku) {
   dialogConfirm.value.open("Mau dikembalikan kapan?")
 }
 
-async function pinjamBuku({ judul, no_isbn }: Buku, tanggal: Date) {
+async function pinjamBuku(e: Event, { judul, no_isbn }: Buku, tanggal: Date) {
   if (!authStore.session) {
     dialog.value.open("kalau mau pinjam buku, buat akun dulu ya")
     router.push({ name: "sign-in" })
@@ -144,10 +144,21 @@ async function pinjamBuku({ judul, no_isbn }: Buku, tanggal: Date) {
     }
 
     await pinjamBukuDariISBN(no_isbn, tanggal)
-    dialogConfirm.value.close()
-    dialog.value.open(`sukses meminjam buku ${judul}`)
+    toast.add({
+      severity: "success",
+      summary: "Sukses meminjam buku",
+      detail: `sukses meminjam buku ${judul}`,
+      life: 10000,
+    })
   } catch (err) {
-    dialog.value.open((err as PostgrestError).message)
+    console.error((err as PostgrestError).message)
+
+    toast.add({
+      severity: "error",
+      summary: "Gagal meminjam buku",
+      detail: `Gagal meminjam buku, coba lagi nanti.`,
+      life: 10000,
+    })
   }
 }
 
@@ -162,7 +173,6 @@ async function kembalikanBuku({ judul }: Buku, id: Peminjaman["id"]) {
 }
 
 const confirmWishlistIsVisible = ref(false)
-const toast = useToast()
 
 function konfirmasiMasukkanWishlist(buku: Buku, e: Event) {
   confirm.require({
@@ -202,7 +212,6 @@ async function masukkanWishlist({ no_isbn }: Buku) {
       severity: "error",
       summary: "gagal",
       detail: `Ada yang salah ketika menambahkan buku ke dalam wishlist. Silahkan coba beberapa saat lagi.`,
-      life: 20000,
     })
     console.error((err as PostgrestError).message)
   }
@@ -266,7 +275,7 @@ supabase
             <CTA
               v-if="bisaDipinjam"
               :fill="true"
-              @click="konfirmasiPinjamBuku(buku)"
+              @click="konfirmasiPinjamBuku($event, buku)"
               label="Pinjam buku"
             />
             <CTA
@@ -322,7 +331,8 @@ supabase
 
           <CTA
             :disabled="!isValidDate"
-            @click="pinjamBuku({ ...buku }, date)"
+            @click="pinjamBuku($event, { ...buku }, date)"
+            :title="!isValidDate ? 'pilih dulu tanggal yang benar.' : 'pinjam buku'"
             label="Pinjam buku"
           />
         </TheDialog>
@@ -364,11 +374,6 @@ supabase
         </table>
       </article>
     </section>
-
-    <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">
-      <h2>Info!!</h2>
-      <p>{{ dialog.message }}</p>
-    </TheDialog>
 
     <TheDialog :is-open="dialogError.isOpen" @dialog-close="dialogError.close()">
       <h2>Ups, ada yang salah nih.</h2>
