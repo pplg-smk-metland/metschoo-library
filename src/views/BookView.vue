@@ -46,7 +46,7 @@ onMounted(async () => {
     console.error(err as PostgrestError)
 
     buku.value = null
-    dialogError.value.open("Buku tidak ditemukan!")
+    toast.add({ severity: "error", summary: "Gagal", detail: "Gagal menemukan buku.", life: 10000 })
     return
   }
 
@@ -120,20 +120,18 @@ const formattedDate = computed(() => {
 
 const isValidDate = computed(() => date.value > new Date())
 
-function konfirmasiPinjamBuku({ jumlah_exspl }: Buku) {
-  if (jumlah_exspl === 0) {
-    dialog.value.open("Maaf, buku ini tidak tersedia untuk saat ini.")
-    return
-  }
-
+function konfirmasiPinjamBuku() {
   dialogConfirm.value.open("Mau dikembalikan kapan?")
 }
 
 async function pinjamBuku(e: Event, { judul, no_isbn }: Buku, tanggal: Date) {
   if (!authStore.session) {
-    dialog.value.open("kalau mau pinjam buku, buat akun dulu ya")
-    router.push({ name: "sign-in" })
-    return
+    return toast.add({
+      severity: "warn",
+      summary: "Tidak bisa meminjam buku",
+      detail: "kalau mau pinjam buku, buat akun dulu ya.",
+      life: 10000,
+    })
   }
 
   if (!window.confirm(`Beneran mau pinjem buku ${judul}?`)) return
@@ -165,10 +163,22 @@ async function pinjamBuku(e: Event, { judul, no_isbn }: Buku, tanggal: Date) {
 async function kembalikanBuku({ judul }: Buku, id: Peminjaman["id"]) {
   try {
     await kembalikanBukuDariISBN(id)
-    dialog.value.open(`sukses mengembalikan buku ${judul}`)
+
+    toast.add({
+      severity: "success",
+      summary: "Sukses!",
+      detail: `sukses mengembalikan buku ${judul}`,
+      life: 10000,
+    })
   } catch (err) {
-    dialog.value.open(`Gagal mengembalikan buku! ${(err as PostgrestError).message}`)
     console.error((err as PostgrestError).message)
+
+    toast.add({
+      severity: "error",
+      summary: "Gagal",
+      detail: `Gagal mengembalikan buku! ${(err as PostgrestError).message}`,
+      life: 10000,
+    })
   }
 }
 
@@ -275,7 +285,7 @@ supabase
             <CTA
               v-if="bisaDipinjam"
               :fill="true"
-              @click="konfirmasiPinjamBuku($event, buku)"
+              @click="konfirmasiPinjamBuku"
               label="Pinjam buku"
             />
             <CTA
