@@ -1,33 +1,49 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue"
-import { useDialog } from "@/lib/composables"
 import { useAuthStore } from "@/stores/auth"
 import { type PostgrestError } from "@supabase/supabase-js"
-import Select from "primevue/select"
 
+import Select from "primevue/select"
+import Toast from "primevue/toast"
 import ProfileEditLayout from "@/layouts/ProfileEditLayout.vue"
-import TheDialog from "@/components/TheDialog.vue"
 import CTA from "@/components/CTA.vue"
 import type { Pengguna } from "@/types"
-
-const { dialog } = useDialog()
+import { useToast } from "primevue/usetoast"
+import { useRouter } from "vue-router"
 
 const dataPengguna = ref<Pengguna | null>(null)
 const authStore = useAuthStore()
 
+const router = useRouter()
+
 onMounted(async () => {
-  if (authStore.session) {
-    const data = await authStore.getProfile(authStore.session)
-    dataPengguna.value = data
-  }
+  if (!authStore.session) return router.back()
+
+  const data = await authStore.getProfile(authStore.session)
+  dataPengguna.value = data
 })
+
+const toast = useToast()
 
 async function updateUserInfo() {
   try {
-    await authStore.handleUpdateProfile(dataPengguna.value!)
-    dialog.value.open("sukses memperbarui data pengguna.")
+    await authStore.handleUpdateProfile(dataPengguna.value as Pengguna)
+
+    toast.add({
+      severity: "success",
+      summary: "Sukses!",
+      detail: "sukses memperbarui data pengguna.",
+      life: 10000,
+    })
   } catch (err) {
     console.error((err as PostgrestError).message)
+
+    toast.add({
+      severity: "error",
+      summary: "Gagal",
+      detail: "Gagal memperbarui data pengguna. Silahkan coba lagi nanti",
+      life: 10000,
+    })
   }
 }
 </script>
@@ -71,9 +87,6 @@ async function updateUserInfo() {
       <p>silahkan coba lagi.</p>
     </section>
 
-    <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">
-      <h2>Info!!!</h2>
-      <p>{{ dialog.message }}</p>
-    </TheDialog>
+    <Toast :unstyled="false" />
   </ProfileEditLayout>
 </template>
