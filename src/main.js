@@ -52,6 +52,7 @@ app.use(PrimeVue, {
       messageContent: "p-toast-message-content",
       messageIcon: "p-toast-icon",
       closeButton: "p-toast-close-button",
+      buttonContainer: "p-toast-button-container",
     },
   },
 })
