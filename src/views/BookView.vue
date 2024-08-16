@@ -20,11 +20,18 @@ import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import BaseLayout from "@/layouts/BaseLayout.vue"
 import TheDialog from "@/components/TheDialog.vue"
 import CTA from "@/components/CTA.vue"
+import ConfirmPopup from "primevue/confirmpopup"
+import { useConfirm } from "primevue/useconfirm"
+import Toast from "primevue/toast"
+import { useToast } from "primevue/usetoast"
 import VueDatePicker from "@vuepic/vue-datepicker"
 import "@vuepic/vue-datepicker/dist/main.css"
 
 const route = useRoute()
 const isbn = route.params.isbn as string
+
+const toast = useToast()
+const confirm = useConfirm()
 
 const authStore = useAuthStore()
 
@@ -39,7 +46,7 @@ onMounted(async () => {
     console.error(err as PostgrestError)
 
     buku.value = null
-    dialogError.value.open("Buku tidak ditemukan!")
+    toast.add({ severity: "error", summary: "Gagal", detail: "Gagal menemukan buku.", life: 10000 })
     return
   }
 
@@ -56,24 +63,31 @@ onMounted(async () => {
     bisaDipinjam.value = cekBisaDipinjam(peminjamanTerbaru.value, buku.value!.jumlah_exspl)
     bisaDikembalikan.value = cekBisaDikembalikan(peminjamanTerbaru.value)
   } catch (err) {
+    console.error(err as PostgrestError)
+
     if ((err as PostgrestError).code === "PGRST116") {
       bisaDipinjam.value = true
       return
     }
-
-    console.error(err as PostgrestError)
   }
 })
 
 const bisaDipinjam = ref(false)
 
-const cekBisaDipinjam = ({ state_id }: Peminjaman, jumlah_exspl: Buku["jumlah_exspl"]) => {
-  return [0, 3, 5, 6].includes(state_id) && jumlah_exspl > 0
+const cekBisaDipinjam = (peminjaman: Peminjaman | null, jumlah_exspl: Buku["jumlah_exspl"]) => {
+  if (!peminjaman) return true
+  return [0, 3, 5, 6].includes(peminjaman.state_id) && jumlah_exspl > 0
 }
 
 const bisaDikembalikan = ref(false)
 
-const cekBisaDikembalikan = ({ state_id }: Peminjaman) => state_id === 2
+// kalau peminjaman null, artinya, ya kembalikan aja
+const cekBisaDikembalikan = (peminjaman: Peminjaman | null) => {
+  if (peminjaman) return peminjaman.state_id === 2
+  else {
+    return true
+  }
+}
 
 const bukuAdaDiWishlist = ref(false)
 
@@ -94,7 +108,6 @@ async function checkWishlist(isbn: string) {
   }
 }
 
-const { dialog } = useDialog()
 const { dialog: dialogConfirm } = useDialog()
 const { dialog: dialogError } = useDialog()
 
@@ -107,23 +120,21 @@ const formattedDate = computed(() => {
 
 const isValidDate = computed(() => date.value > new Date())
 
-function konfirmasiPinjamBuku({ jumlah_exspl }: Buku) {
-  if (jumlah_exspl === 0) {
-    dialog.value.open("Maaf, buku ini tidak tersedia untuk saat ini.")
-    return
-  }
-
+function konfirmasiPinjamBuku() {
   dialogConfirm.value.open("Mau dikembalikan kapan?")
 }
 
 async function pinjamBuku({ judul, no_isbn }: Buku, tanggal: Date) {
   if (!authStore.session) {
-    dialog.value.open("kalau mau pinjam buku, buat akun dulu ya")
-    router.push({ name: "sign-in" })
-    return
+    return toast.add({
+      severity: "warn",
+      summary: "Tidak bisa meminjam buku",
+      detail: "kalau mau pinjam buku, buat akun dulu ya.",
+      life: 10000,
+    })
   }
 
-  if (!confirm(`Beneran mau pinjem buku ${judul}?`)) return
+  if (!window.confirm(`Beneran mau pinjem buku ${judul}?`)) return
 
   try {
     if (bukuAdaDiWishlist.value) {
@@ -131,24 +142,63 @@ async function pinjamBuku({ judul, no_isbn }: Buku, tanggal: Date) {
     }
 
     await pinjamBukuDariISBN(no_isbn, tanggal)
-    dialogConfirm.value.close()
-    dialog.value.open(`sukses meminjam buku ${judul}`)
+    toast.add({
+      severity: "success",
+      summary: "Sukses meminjam buku",
+      detail: `sukses meminjam buku ${judul}`,
+      life: 10000,
+    })
   } catch (err) {
-    dialog.value.open((err as PostgrestError).message)
+    console.error((err as PostgrestError).message)
+
+    toast.add({
+      severity: "error",
+      summary: "Gagal meminjam buku",
+      detail: `Gagal meminjam buku, coba lagi nanti.`,
+      life: 10000,
+    })
   }
 }
 
 async function kembalikanBuku({ judul }: Buku, id: Peminjaman["id"]) {
   try {
     await kembalikanBukuDariISBN(id)
-    dialog.value.open(`sukses mengembalikan buku ${judul}`)
+
+    toast.add({
+      severity: "success",
+      summary: "Sukses!",
+      detail: `sukses mengembalikan buku ${judul}`,
+      life: 10000,
+    })
   } catch (err) {
-    dialog.value.open(`Gagal mengembalikan buku! ${(err as PostgrestError).message}`)
     console.error((err as PostgrestError).message)
+
+    toast.add({
+      severity: "error",
+      summary: "Gagal",
+      detail: `Gagal mengembalikan buku! ${(err as PostgrestError).message}`,
+      life: 10000,
+    })
   }
 }
 
-async function masukkanWishlist({ judul, no_isbn }: Buku) {
+const confirmWishlistIsVisible = ref(false)
+
+function konfirmasiMasukkanWishlist(buku: Buku, e: Event) {
+  confirm.require({
+    target: e.currentTarget as HTMLElement,
+    header: "Konfirmasi wishlist",
+    message: "Apakah anda mau menambahkan buku ini ke dalam wishlist?",
+    group: "headless",
+    accept: async () => {
+      await masukkanWishlist(buku)
+    },
+    onShow: () => (confirmWishlistIsVisible.value = true),
+    onHide: () => (confirmWishlistIsVisible.value = false),
+  })
+}
+
+async function masukkanWishlist({ no_isbn }: Buku) {
   if (!authStore.session) {
     alert("silahkan masuk jika anda ingin menambahkan buku ke dalam wishlist")
     return
@@ -158,13 +208,21 @@ async function masukkanWishlist({ judul, no_isbn }: Buku) {
     const { data, error } = await supabase.from("wishlist").insert({ no_isbn })
     if (error) throw error
 
-    dialog.value.open(`buku ${judul} berhasil ditambahkan ke dalam wishlist`)
     bukuAdaDiWishlist.value = true
+
+    toast.add({
+      severity: "success",
+      summary: "Sukses",
+      detail: "Sukses menambahkan buku ke dalam wishlist",
+      life: 5000,
+    })
     return data
   } catch (err) {
-    dialog.value.open(
-      `Ada yang salah ketika menambahkan buku ${judul} ke dalam wishlist. Silahkan coba beberapa saat lagi.`
-    )
+    toast.add({
+      severity: "error",
+      summary: "gagal",
+      detail: `Ada yang salah ketika menambahkan buku ke dalam wishlist. Silahkan coba beberapa saat lagi.`,
+    })
     console.error((err as PostgrestError).message)
   }
 }
@@ -227,7 +285,7 @@ supabase
             <CTA
               v-if="bisaDipinjam"
               :fill="true"
-              @click="konfirmasiPinjamBuku(buku)"
+              @click="konfirmasiPinjamBuku"
               label="Pinjam buku"
             />
             <CTA
@@ -237,9 +295,27 @@ supabase
               @click="kembalikanBuku(buku, peminjamanTerbaru.id)"
               label="kembalikan buku"
             />
+
+            <ConfirmPopup group="headless" aria-label="popup">
+              <template #container="{ message, acceptCallback, rejectCallback }">
+                <section class="p-confirmpopup-content">
+                  <h3>{{ message.header }}</h3>
+                  <p>{{ message.message }}</p>
+                </section>
+
+                <section class="p-confirmpopup-footer">
+                  <CTA label="Tidak" @click="rejectCallback" />
+                  <CTA label="Ya" @click="acceptCallback" fill />
+                </section>
+              </template>
+            </ConfirmPopup>
+
+            <Toast position="top-right" :unstyled="false" />
             <CTA
               :disabled="bukuAdaDiWishlist || !bisaDipinjam"
-              @click="masukkanWishlist(buku)"
+              :aria-expanded="confirmWishlistIsVisible"
+              :aria-controls="confirmWishlistIsVisible ? 'confirm' : null"
+              @click="konfirmasiMasukkanWishlist(buku, $event)"
               label="tambahkan ke wishlist"
             />
           </div>
@@ -266,6 +342,7 @@ supabase
           <CTA
             :disabled="!isValidDate"
             @click="pinjamBuku({ ...buku }, date)"
+            :title="!isValidDate ? 'pilih dulu tanggal yang benar.' : 'pinjam buku'"
             label="Pinjam buku"
           />
         </TheDialog>
@@ -307,11 +384,6 @@ supabase
         </table>
       </article>
     </section>
-
-    <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">
-      <h2>Info!!</h2>
-      <p>{{ dialog.message }}</p>
-    </TheDialog>
 
     <TheDialog :is-open="dialogError.isOpen" @dialog-close="dialogError.close()">
       <h2>Ups, ada yang salah nih.</h2>

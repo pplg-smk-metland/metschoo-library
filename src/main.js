@@ -3,6 +3,8 @@ import "./assets/main.css"
 import { createApp } from "vue"
 import { createPinia } from "pinia"
 import PrimeVue from "primevue/config"
+import ConfirmationService from "primevue/confirmationservice"
+import ToastService from "primevue/toastservice"
 
 import App from "./App.vue"
 import router from "./router"
@@ -40,7 +42,21 @@ app.use(PrimeVue, {
       rootList: "p-panelmenu-list",
       menuItem: "p-panelmenu-item",
     },
+    confirmPopup: {
+      root: "p-confirmpopup",
+      content: "p-confirmpopup-content",
+      footer: "p-confirmpopup-footer",
+    },
+    toast: {
+      root: "p-toast",
+      messageContent: "p-toast-message-content",
+      messageIcon: "p-toast-icon",
+      closeButton: "p-toast-close-button",
+      buttonContainer: "p-toast-button-container",
+    },
   },
 })
+app.use(ConfirmationService)
+app.use(ToastService)
 
 app.mount("#app")

@@ -193,6 +193,64 @@ table {
   padding: 1rem;
 }
 
+.p-confirmpopup {
+  border-radius: 0.5rem;
+  position: absolute;
+  top: 0.5rem;
+  outline: 2px solid var(--primary);
+  background: var(--neutral-transparent);
+}
+
+.p-confirmpopup > * {
+  padding: 1rem;
+}
+
+.p-confirmpopup-footer {
+  padding-block-start: 0;
+  display: flex;
+  gap: 1rem;
+}
+
+.p-toast {
+  max-width: 50ch;
+}
+
+.p-toast .p-toast-message {
+  border-radius: 0.5rem;
+}
+
+.p-toast .p-toast-message {
+  outline: 2px solid var(--color-confirm);
+  border: none;
+}
+
+.p-toast .p-toast-message-success {
+  outline-color: var(--color-confirm);
+}
+
+.p-toast .p-toast-message-error {
+  outline-color: var(--color-danger);
+}
+
+.p-toast .p-toast-message-content {
+  background: var(--neutral-transparent);
+  padding-inline: 1rem;
+  padding-block: 0.5rem;
+  gap: 1rem;
+}
+
+.p-toast :is(.p-toast-icon) {
+  width: 1.5rem;
+}
+
+.p-toast-button-container {
+  padding-inline: 0.5rem;
+}
+
+.p-toast-close-icon {
+  --p-toast-close-icon-size: 1.5rem;
+}
+
 tr:nth-child(even) {
   background: var(--grey);
 }

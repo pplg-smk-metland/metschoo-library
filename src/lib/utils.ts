@@ -49,7 +49,15 @@ export async function getNewestPeminjaman(isbn: string) {
     .single()
 
   const { data, error } = await peminjamanQuery
-  if (error) throw error
+  if (error) {
+    if ((error as PostgrestError).code === "PGRST116") {
+      console.log("data not found")
+      return null
+    }
+
+    throw error
+  }
+
   return data as Peminjaman
 }
 
