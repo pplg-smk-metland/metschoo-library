@@ -2,14 +2,14 @@
 import { onMounted, ref } from "vue"
 import { useAuthStore } from "@/stores/auth"
 import { supabase } from "@/lib/supabase"
-import { useDialog } from "@/lib/composables"
 import { type Buku } from "@/types/index"
 import { type PostgrestError, type QueryData } from "@supabase/supabase-js"
 
 import BaseLayout from "@/layouts/BaseLayout.vue"
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import WishlistBook from "@/components/wishlist/WishlistBook.vue"
-import TheDialog from "@/components/TheDialog.vue"
+import Toast from "primevue/toast"
+import { useToast } from "primevue/usetoast"
 
 const authStore = useAuthStore()
 
@@ -31,20 +31,33 @@ async function ambilWishlist() {
   }
 }
 
-const { dialog } = useDialog()
+const toast = useToast()
 
 async function hapusBukuDariWishlist(buku: Buku) {
   try {
     await supabase.from("wishlist").delete().eq("no_isbn", buku.no_isbn)
     hapusBuku(buku)
+
+    toast.add({
+      severity: "success",
+      summary: "Sukses!",
+      detail: "sukses menghapus buku dari wishlist",
+      life: 5000,
+    })
   } catch (err) {
     console.error((err as PostgrestError).message)
+
+    toast.add({
+      severity: "error",
+      summary: "Gagal",
+      detail: "gagal menghapus buku dari wishlist",
+      life: 10000,
+    })
   }
 }
 
 function hapusBuku(buku: Buku) {
   wishlist.value = wishlist.value?.filter(({ no_isbn }) => no_isbn !== buku.no_isbn)
-  dialog.value.open(`menghapus buku ${buku.judul} dari wishlist...`)
 }
 
 onMounted(async () => {
@@ -76,9 +89,6 @@ onMounted(async () => {
       </ul>
     </section>
 
-    <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">
-      <h2>Info!!!</h2>
-      <p>{{ dialog.message }}</p>
-    </TheDialog>
+    <Toast :unstyled="false" />
   </BaseLayout>
 </template>
