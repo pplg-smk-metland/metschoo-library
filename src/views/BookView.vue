@@ -124,7 +124,7 @@ function konfirmasiPinjamBuku() {
   dialogConfirm.value.open("Mau dikembalikan kapan?")
 }
 
-async function pinjamBuku(e: Event, { judul, no_isbn }: Buku, tanggal: Date) {
+async function pinjamBuku({ judul, no_isbn }: Buku, tanggal: Date) {
   if (!authStore.session) {
     return toast.add({
       severity: "warn",
@@ -341,7 +341,7 @@ supabase
 
           <CTA
             :disabled="!isValidDate"
-            @click="pinjamBuku($event, { ...buku }, date)"
+            @click="pinjamBuku({ ...buku }, date)"
             :title="!isValidDate ? 'pilih dulu tanggal yang benar.' : 'pinjam buku'"
             label="Pinjam buku"
           />
