@@ -5,6 +5,7 @@ import DataTable from "primevue/datatable"
 import Column from "primevue/column"
 import { getPeminjamanData, type PeminjamanData } from "@/lib/peminjaman"
 import { formatDate } from "@/lib/utils"
+import type { Peminjaman } from "@/types"
 
 const peminjamanData = ref<PeminjamanData>([])
 const peminjamanDataWeek = computed(() => {
@@ -32,6 +33,12 @@ onMounted(async () => {
   peminjamanData.value = await getPeminjamanData()
   isLoading.value = false
 })
+
+const lateClass = (data: Peminjaman) => {
+  const isLate = new Date(data.tenggat_waktu).getTime() < new Date(data.tgl_kembali).getTime()
+  console.log(isLate)
+  return [{ late: isLate }]
+}
 </script>
 
 <template>
@@ -79,7 +86,13 @@ onMounted(async () => {
     <Column field="tgl_pinjam" header="Tanggal pinjam"></Column>
   </DataTable>
 
-  <DataTable :value="peminjamanDataWeek" sortField="tenggat_waktu" :sortOrder="-1" scrollable>
+  <DataTable
+    :value="peminjamanDataWeek"
+    sortField="tenggat_waktu"
+    :sortOrder="-1"
+    scrollable
+    :rowClass="lateClass"
+  >
     <template #header>
       <h2>Data peminjaman Seminggu terakhir</h2>
     </template>
@@ -131,3 +144,9 @@ onMounted(async () => {
     </Column>
   </DataTable>
 </template>
+
+<style>
+tr.late {
+  background-color: var(--color-warning-subtle);
+}
+</style>
