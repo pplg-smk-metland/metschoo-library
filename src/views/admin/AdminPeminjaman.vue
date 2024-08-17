@@ -37,7 +37,7 @@ onMounted(async () => {
 <template>
   <h1>Data peminjaman</h1>
 
-  <DataTable :value="borrowPending" scrollable :loading="isLoading">
+  <DataTable :value="borrowPending" scrollable :loading="isLoading" stripedRows>
     <template #header>
       <h2>Belum dikonfirmasi</h2>
     </template>
@@ -63,6 +63,20 @@ onMounted(async () => {
         {{ formatDate(new Date(slotProps.data.tenggat_waktu)) }}
       </template>
     </Column>
+  </DataTable>
+
+  <DataTable :value="returnPending" scrollable>
+    <template #header>
+      <h2>Mau dikembalikan</h2>
+      <p>Buku yang mau dikembalikan</p>
+    </template>
+    <template #empty>
+      <p>Tidak ada data</p>
+    </template>
+
+    <Column field="pengguna.nama" header="Peminjam"></Column>
+    <Column field="buku.judul" header="Judul buku"></Column>
+    <Column field="tgl_pinjam" header="Tanggal pinjam"></Column>
   </DataTable>
 
   <DataTable :value="peminjamanDataWeek" sortField="tenggat_waktu" :sortOrder="-1" scrollable>
