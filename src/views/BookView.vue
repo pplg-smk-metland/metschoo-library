@@ -121,10 +121,6 @@ const formattedDate = computed(() => {
 const isValidDate = computed(() => date.value > new Date())
 
 function konfirmasiPinjamBuku() {
-  dialogConfirm.value.open("Mau dikembalikan kapan?")
-}
-
-async function pinjamBuku({ judul, no_isbn }: Buku, tanggal: Date) {
   if (!authStore.session) {
     return toast.add({
       severity: "warn",
@@ -134,6 +130,10 @@ async function pinjamBuku({ judul, no_isbn }: Buku, tanggal: Date) {
     })
   }
 
+  dialogConfirm.value.open("Mau dikembalikan kapan?")
+}
+
+async function pinjamBuku({ judul, no_isbn }: Buku, tanggal: Date) {
   if (!window.confirm(`Beneran mau pinjem buku ${judul}?`)) return
 
   try {
@@ -142,12 +142,14 @@ async function pinjamBuku({ judul, no_isbn }: Buku, tanggal: Date) {
     }
 
     await pinjamBukuDariISBN(no_isbn, tanggal)
+
     toast.add({
       severity: "success",
       summary: "Sukses meminjam buku",
       detail: `sukses meminjam buku ${judul}`,
       life: 10000,
     })
+    dialogConfirm.value.close()
   } catch (err) {
     console.error((err as PostgrestError).message)
 
