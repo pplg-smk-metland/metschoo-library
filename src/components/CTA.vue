@@ -19,6 +19,7 @@ defineProps({
 .cta {
   border: 2px solid var(--primary);
   text-align: center;
+  line-height: 1;
   padding: 1rem 2rem;
   border-radius: 0.5rem;
   user-select: none;

@@ -6,7 +6,7 @@
   </footer>
 </template>
 
-<style>
+<style scoped>
 footer {
   background: #222;
   color: #ddd;
