@@ -53,9 +53,16 @@ onMounted(async () => {
     <Column field="pengguna.nama" header="Peminjam"></Column>
     <Column field="buku.judul" header="Judul buku"></Column>
     <Column field="no_isbn" header="ISBN"></Column>
-    <Column field="tgl_pinjam" header="Tanggal pinjam"></Column>
-    <Column field="tgl_kembali" header="Tanggal kembali"></Column>
-    <Column field="tenggat_waktu" header="Tenggat waktu"></Column>
+    <Column field="tgl_pinjam" header="Tanggal pinjam">
+      <template #body="slotProps">
+        {{ formatDate(new Date(slotProps.data.tgl_pinjam)) }}
+      </template>
+    </Column>
+    <Column field="tenggat_waktu" header="Tenggat waktu">
+      <template #body="slotProps">
+        {{ formatDate(new Date(slotProps.data.tenggat_waktu)) }}
+      </template>
+    </Column>
   </DataTable>
 
   <DataTable :value="peminjamanDataWeek" sortField="tenggat_waktu" :sortOrder="-1" scrollable>
@@ -105,7 +112,7 @@ onMounted(async () => {
 
     <Column field="tgl_kembali" header="Tanggal Kembali" sortable>
       <template #body="slotProps">
-        {{ formatDate(new Date(slotProps.data.tgl_kembali)) }}
+        {{ slotProps.data.tgl_kembali ? formatDate(new Date(slotProps.data.tgl_kembali)) : "-" }}
       </template>
     </Column>
   </DataTable>
