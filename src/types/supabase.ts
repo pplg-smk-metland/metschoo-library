@@ -151,9 +151,9 @@ export type Database = {
           email: string
           jurusan?: string | null
           kelas?: string | null
-          nama: string
+          nama?: string
           role_id?: number
-          user_id: string
+          user_id?: string
         }
         Update: {
           email?: string
@@ -200,17 +200,17 @@ export type Database = {
       }
       wishlist: {
         Row: {
-          id: string
+          id: number
           no_isbn: string
           user_id: string
         }
         Insert: {
-          id?: string
+          id?: number
           no_isbn: string
           user_id?: string
         }
         Update: {
-          id?: string
+          id?: number
           no_isbn?: string
           user_id?: string
         }
@@ -218,7 +218,7 @@ export type Database = {
           {
             foreignKeyName: "wishlist_no_isbn_fkey"
             columns: ["no_isbn"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "buku"
             referencedColumns: ["no_isbn"]
           },
@@ -226,10 +226,14 @@ export type Database = {
       }
     }
     Views: {
-      distinct_riwayat: {
+      peminjaman_history: {
         Row: {
           buku: Database["public"]["Tables"]["buku"]["Row"] | null
+          peminjaman_state: string | null
           state_id: number | null
+          tenggat_waktu: string | null
+          tgl_kembali: string | null
+          tgl_pinjam: string | null
         }
         Relationships: [
           {
@@ -335,3 +339,4 @@ export type Enums<
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
     : never
+
