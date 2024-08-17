@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue"
+import { ref, onMounted, computed } from "vue"
 import { ambilGambarBukuDariISBN, formatDate } from "@/lib/utils"
 import type { History } from "@/views/profile/ProfileRoot.vue"
 
@@ -8,8 +8,12 @@ interface Props {
 }
 
 const props = defineProps<Props>()
-const { buku, tgl_pinjam, tgl_kembali } = props.data
+const { buku, tgl_pinjam, tgl_kembali, tenggat_waktu } = props.data
 const imgUrl = ref("")
+
+const late = computed(() => {
+  return new Date(tenggat_waktu!) < new Date(tgl_kembali!)
+})
 
 onMounted(async () => {
   imgUrl.value = await ambilGambarBukuDariISBN(buku!.no_isbn)
@@ -26,6 +30,7 @@ onMounted(async () => {
       <p>{{ buku.penulis }}</p>
       <p class="tanggal-pinjam">dipinjam pada {{ formatDate(new Date(tgl_pinjam)) }}</p>
       <p class="tanggal-pinjam">dikembalikan pada {{ formatDate(new Date(tgl_kembali)) }}</p>
+      <p v-if="late" class="late">Terlambat</p>
     </div>
   </RouterLink>
 </template>
@@ -34,6 +39,10 @@ onMounted(async () => {
 .buku {
   overflow: hidden;
   display: flex;
+}
+
+.late {
+  color: var(--color-warning);
 }
 
 .buku:hover {
