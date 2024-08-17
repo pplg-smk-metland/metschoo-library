@@ -6,13 +6,15 @@ import type { Buku, Peminjaman } from "@/types"
 
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import DataRow from "@/components/admin/DataRow.vue"
-import TheDialog from "@/components/TheDialog.vue"
-import { useDialog } from "@/lib/composables"
+import CTA from "@/components/CTA.vue"
+import ConfirmDialog from "primevue/confirmdialog"
+import Toast from "primevue/toast"
 import { confirmBorrowBuku, confirmReturnBuku } from "@/lib/utils"
 import { getPeminjamanData, type PeminjamanData } from "@/lib/peminjaman"
+import { useConfirm } from "primevue/useconfirm"
+import { useToast } from "primevue/usetoast"
 
 const isLoading = ref(false)
-const { dialog } = useDialog()
 
 const peminjamanData = ref<PeminjamanData>([])
 
@@ -34,24 +36,71 @@ onMounted(async () => {
   isLoading.value = false
 })
 
+const confirm = useConfirm()
+const toast = useToast()
+
 async function konfirmasiPeminjaman(id: Peminjaman["id"]) {
   try {
-    if (!confirm("beneran nih mau konfirmasi peminjaman buku")) return
-    await confirmBorrowBuku(id)
+    confirm.require({
+      group: "headless",
+      header: "Konfirmasi peminjaman",
+      message: "Beneran nih mau konfirmasi peminjaman buku?",
+      accept: async () => {
+        await confirmBorrowBuku(id)
 
-    dialog.value.open(`Sukses mengkonfirmasi peminjaman buku`)
+        toast.add({
+          severity: "success",
+          summary: "Sukses!",
+          detail: "Sukses mengkonfirmasi peminjaman buku!",
+          life: 10000,
+        })
+      },
+      reject: () => {
+        toast.add({
+          severity: "info",
+          summary: "Gak jadi",
+          detail: "Gak jadi mengkonfirmasi peminjaman buku.",
+          life: 10000,
+        })
+      },
+    })
   } catch (err) {
     console.error((err as PostgrestError).message)
+
+    toast.add({
+      severity: "error",
+      summary: "Gagal konfirmasi peminjaman",
+      detail: "Gagal mengkonfirmasi peminjaman buku. Silahkan coba lagi",
+    })
   }
 }
 
 async function konfirmasiPengembalian(dataPeminjaman: Peminjaman, buku: Buku) {
   try {
-    await confirmReturnBuku(dataPeminjaman, buku, new Date())
+    confirm.require({
+      group: "headless",
+      header: "Konfirmasi pengembalian",
+      message: "Beneran mau konfirmasi buku ini?",
+      accept: async () => {
+        await confirmReturnBuku(dataPeminjaman, buku, new Date())
 
-    dialog.value.open(`Sukses mengkonfirmasi pengembalian buku`)
+        toast.add({
+          severity: "success",
+          summary: "Sukses!",
+          detail: `Sukses mengkonfirmasi pengembalian buku`,
+          life: 10000,
+        })
+      },
+    })
   } catch (err) {
     console.error((err as PostgrestError).message)
+
+    toast.add({
+      severity: "error",
+      summary: "Gagal",
+      detail: `Gagal mengkonfirmasi pengembalian buku. Silahkan coba lagi nanti`,
+      life: 10000,
+    })
   }
 }
 
@@ -130,10 +179,24 @@ supabase
     </ul>
   </section>
 
-  <TheDialog :is-open="dialog.isOpen" :dialog-close="dialog.close">
-    <h2>Sukses!</h2>
-    <p>{{ dialog.message }}</p>
-  </TheDialog>
+  <ConfirmDialog position="top" group="headless">
+    <template #container="{ message, acceptCallback, rejectCallback }">
+      <header class="p-confirmdialog-header">
+        <span class="p-confirmdialog-title">{{ message.header }}</span>
+      </header>
+
+      <div class="p-confirmdialog-content">
+        <span>{{ message.message }}</span>
+      </div>
+
+      <footer class="p-confirmdialog-footer">
+        <CTA @click="rejectCallback" label="Tidak" />
+        <CTA fill @click="acceptCallback" label="Ya" />
+      </footer>
+    </template>
+  </ConfirmDialog>
+
+  <Toast :unstyled="false" />
 </template>
 
 <style scoped>
