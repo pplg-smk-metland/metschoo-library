@@ -2,6 +2,9 @@ import type { Buku, PeminjamanState } from "@/types"
 import { ref } from "vue"
 import { supabase } from "./supabase"
 
+/**
+ * Returns a blank Buku ref.
+ */
 export function useBuku() {
   const buku = ref<Buku | null>({
     judul: "",
@@ -18,6 +21,9 @@ export function useBuku() {
   return { buku }
 }
 
+/**
+ * Returns a dialog controller. Only controls one dialog component
+ * */
 export function useDialog() {
   const dialog = ref({
     isOpen: false,
@@ -44,6 +50,11 @@ export function useDialog() {
   return { dialog }
 }
 
+/**
+ * gets newest peminjaman and returns the state
+ * @param {Buku['no_isbn']} isbn - isbn of book
+ * @returns {Promise<PeminjamanState>} state of peminjaman
+ */
 export async function usePeminjamanState(isbn: Buku["no_isbn"]): Promise<PeminjamanState> {
   const peminjamanQuery = supabase
     .from("peminjaman")

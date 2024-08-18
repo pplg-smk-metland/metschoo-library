@@ -2,6 +2,11 @@ import { supabase } from "@/lib/supabase"
 import type { Buku, Kategori, Peminjaman } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
 
+/**
+ * get a single buku by its isbn.
+ * @param {Buku['no_isbn']} isbn - isbn
+ * @returns Buku
+ */
 export async function getBuku(isbn: Buku["no_isbn"]) {
   const { data, error } = await supabase
     .from("buku")
@@ -14,6 +19,9 @@ export async function getBuku(isbn: Buku["no_isbn"]) {
   return data
 }
 
+/**
+ * Get multiple bukus.
+ */
 export async function getBukus(typeId?: Kategori["id"]) {
   let query = supabase.from("buku").select(`*`).limit(20)
 
@@ -26,7 +34,7 @@ export async function getBukus(typeId?: Kategori["id"]) {
   return data
 }
 
-export async function ambilGambarBukuDariISBN(isbn: Buku["no_isbn"]) {
+export async function getBukuImage(isbn: Buku["no_isbn"]) {
   // TODO: store cover array in localStorage
   // TODO: also implement expiry time (24 hours or so)
   // TODO: if null or expired, get from storage
@@ -40,7 +48,10 @@ export async function ambilGambarBukuDariISBN(isbn: Buku["no_isbn"]) {
   return "assets/Image_not_available.png"
 }
 
-export async function pinjamBukuDariISBN(no_isbn: Buku["no_isbn"], tenggat_waktu: Date) {
+/**
+ * borrow a buku.
+ */
+export async function borrowBuku(no_isbn: Buku["no_isbn"], tenggat_waktu: Date) {
   const { error } = await supabase.from("peminjaman").insert({
     no_isbn,
     tgl_pinjam: new Date().toISOString(),
@@ -49,16 +60,25 @@ export async function pinjamBukuDariISBN(no_isbn: Buku["no_isbn"], tenggat_waktu
   if (error) throw error
 }
 
-export async function kembalikanBukuDariISBN(id: Peminjaman["id"]) {
+/**
+ * return a buku.
+ */
+export async function returnBuku(id: Peminjaman["id"]) {
   const { error } = await supabase.from("peminjaman").update({ state_id: 4 }).eq("id", id)
   if (error) throw error
 }
 
+/**
+ * confirm that a buku was borrowed.
+ */
 export async function confirmBorrowBuku(id: Peminjaman["id"]) {
   const { error } = await supabase.from("peminjaman").update({ state_id: 2 }).eq("id", id)
   if (error) throw error
 }
 
+/**
+ * confirm that a buku has been returned.
+ */
 export async function confirmReturnBuku(
   { id, tenggat_waktu }: Peminjaman,
   { jumlah_exspl, no_isbn }: Buku,
@@ -80,6 +100,9 @@ export async function confirmReturnBuku(
   if (updateError) throw error
 }
 
+/**
+ * Gets all available categories.
+ */
 export async function getAllAvailableCategories() {
   try {
     const { data, error } = await supabase.from("kategori_buku").select("id, kategori")
@@ -91,6 +114,9 @@ export async function getAllAvailableCategories() {
   }
 }
 
+/**
+ * wrapper of `Intl.DateTimeFormat` to format dates
+ * */
 export function formatDate(date: Date, opts?: Intl.DateTimeFormatOptions) {
   if (!opts) {
     opts = {
