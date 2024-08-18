@@ -17,6 +17,7 @@
 
   --color-confirm: hsl(100, 50%, 50%);
   --color-warning: hsl(39, 100%, 50%);
+  --color-warning-subtle: hsl(39, 90%, 80%);
   --color-danger: hsl(0, 100%, 50%);
   --color-informational: hsl(240, 100%, 50%);
 

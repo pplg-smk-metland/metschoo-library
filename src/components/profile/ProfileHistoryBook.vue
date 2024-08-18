@@ -1,15 +1,19 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue"
-import { ambilGambarBukuDariISBN } from "@/lib/utils"
-import type { Riwayat } from "@/views/profile/ProfileRoot.vue"
+import { ref, onMounted, computed } from "vue"
+import { ambilGambarBukuDariISBN, formatDate } from "@/lib/utils"
+import type { History } from "@/views/profile/ProfileRoot.vue"
 
 interface Props {
-  buku: Riwayat[0]["buku"]
+  data: History[number]
 }
 
 const props = defineProps<Props>()
-const buku = props.buku
+const { buku, tgl_pinjam, tgl_kembali, tenggat_waktu } = props.data
 const imgUrl = ref("")
+
+const late = computed(() => {
+  return new Date(tenggat_waktu!) < new Date(tgl_kembali!)
+})
 
 onMounted(async () => {
   imgUrl.value = await ambilGambarBukuDariISBN(buku!.no_isbn)
@@ -24,6 +28,9 @@ onMounted(async () => {
     <div class="buku__teks">
       <h3>{{ buku.judul }}</h3>
       <p>{{ buku.penulis }}</p>
+      <p class="tanggal-pinjam">dipinjam pada {{ formatDate(new Date(tgl_pinjam)) }}</p>
+      <p class="tanggal-pinjam">dikembalikan pada {{ formatDate(new Date(tgl_kembali)) }}</p>
+      <p v-if="late" class="late">Terlambat</p>
     </div>
   </RouterLink>
 </template>
@@ -32,6 +39,14 @@ onMounted(async () => {
 .buku {
   overflow: hidden;
   display: flex;
+}
+
+.late {
+  color: var(--color-warning);
+}
+
+.buku:hover {
+  background: var(--pale-white);
 }
 
 .buku__gambar {
@@ -53,7 +68,17 @@ onMounted(async () => {
   justify-content: space-between;
 }
 
+.buku__teks p {
+  margin-block: 0;
+}
+
 .buku__teks h3 {
   margin-block: 0 0.5rem;
+  line-height: 1;
+}
+
+.tanggal-pinjam {
+  margin-block: 0.2rem 0;
+  line-height: 1.1;
 }
 </style>

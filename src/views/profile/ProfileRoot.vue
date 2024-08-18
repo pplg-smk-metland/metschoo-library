@@ -54,15 +54,15 @@ async function ambilBukuYangDipinjam() {
   }
 }
 
-const riwayatQuery = supabase.from("distinct_riwayat").select("*")
+const historyQuery = supabase.from("peminjaman_history").select("*")
 
-export type Riwayat = QueryData<typeof riwayatQuery>
-const riwayat = ref<Riwayat | never>([])
+export type History = QueryData<typeof historyQuery>
+const history = ref<History | never>([])
 
-async function ambilRiwayatPeminjaman() {
+async function getPeminjamanHistory() {
   try {
     isLoading.value = true
-    const { data, error } = await riwayatQuery
+    const { data, error } = await historyQuery
 
     if (error) throw error
     return data
@@ -76,7 +76,7 @@ async function ambilRiwayatPeminjaman() {
 
 onMounted(async () => {
   bukuYangDipinjam.value = await ambilBukuYangDipinjam()
-  riwayat.value = await ambilRiwayatPeminjaman()
+  history.value = await getPeminjamanHistory()
 })
 </script>
 
@@ -146,12 +146,12 @@ onMounted(async () => {
       <h2>Riwayat Peminjaman</h2>
 
       <ul class="history-list">
-        <li v-if="!riwayat.length" class="message">bukunya ga ada ges</li>
+        <li v-if="!history.length" class="message">bukunya ga ada ges</li>
         <ProfileHistoryBook
-          v-for="{ buku } in riwayat"
-          :key="buku?.no_isbn"
+          v-for="data in history"
+          :key="data.buku?.no_isbn"
           class="history-list__item"
-          :buku="buku"
+          :data="data"
         />
       </ul>
     </aside>
