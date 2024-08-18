@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue"
-import { ambilGambarBukuDariISBN, formatDate } from "@/lib/utils"
+import { getBukuImage, formatDate } from "@/lib/utils"
 import type { History } from "@/views/profile/ProfileRoot.vue"
 
 interface Props {
@@ -16,7 +16,7 @@ const late = computed(() => {
 })
 
 onMounted(async () => {
-  imgUrl.value = await ambilGambarBukuDariISBN(buku!.no_isbn)
+  imgUrl.value = await getBukuImage(buku!.no_isbn)
 })
 </script>
 
