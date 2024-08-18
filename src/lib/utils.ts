@@ -39,26 +39,36 @@ export async function ambilGambarBukuDariISBN(isbn: Buku["no_isbn"]) {
   return "assets/Image_not_available.png"
 }
 
-export async function getNewestPeminjaman(isbn: string) {
+export interface PeminjamanState {
+  id?: Peminjaman["id"]
+  isBorrowable: boolean
+  isReturnable: boolean
+}
+
+export async function usePeminjamanState(isbn: Buku["no_isbn"]): Promise<PeminjamanState> {
   const peminjamanQuery = supabase
     .from("peminjaman")
-    .select("id, tgl_pinjam, state_id, tenggat_waktu")
+    .select("id, no_isbn, tgl_pinjam, tgl_kembali, peminjaman_state(id, name)")
     .eq("no_isbn", isbn)
     .order("tgl_pinjam", { ascending: false })
     .limit(1)
-    .single()
+    .maybeSingle()
 
   const { data, error } = await peminjamanQuery
   if (error) {
-    if ((error as PostgrestError).code === "PGRST116") {
-      console.log("data not found")
-      return null
-    }
-
     throw error
   }
 
-  return data as Peminjaman
+  if (!data) return { isBorrowable: true, isReturnable: false }
+
+  const borrowableStates = ["borrow cancelled", "return confirmed", "return late"]
+  const returnableStates = ["borrow confirmed", "borrow cancelled"]
+  const isBorrowable =
+    data?.peminjaman_state !== null && borrowableStates.includes(data.peminjaman_state.name)
+  const isReturnable =
+    data?.peminjaman_state !== null && returnableStates.includes(data.peminjaman_state.name)
+
+  return { id: data.id, isBorrowable, isReturnable }
 }
 
 export async function pinjamBukuDariISBN(no_isbn: Buku["no_isbn"], tenggat_waktu: Date) {
