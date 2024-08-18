@@ -3,13 +3,7 @@ import { computed, onMounted, ref } from "vue"
 import { supabase } from "@/lib/supabase"
 import { useRoute } from "vue-router"
 import { useAuthStore } from "@/stores/auth"
-import {
-  ambilGambarBukuDariISBN,
-  pinjamBukuDariISBN,
-  kembalikanBukuDariISBN,
-  getBuku,
-  formatDate,
-} from "@/lib/utils"
+import { getBukuImage, borrowBuku, returnBuku, getBuku, formatDate } from "@/lib/utils"
 import { usePeminjamanState, useBuku, useDialog } from "@/lib/composables"
 import type { Buku, Peminjaman, PeminjamanState } from "@/types"
 import type { PostgrestError, RealtimePostgresChangesPayload } from "@supabase/supabase-js"
@@ -53,7 +47,7 @@ onMounted(async () => {
     })
   }
 
-  imgURL.value = await ambilGambarBukuDariISBN(isbn)
+  imgURL.value = await getBukuImage(isbn)
 })
 
 const peminjamanState = ref<PeminjamanState | null>(null)
@@ -119,7 +113,7 @@ async function pinjamBuku({ judul, no_isbn }: Buku, tanggal: Date) {
       await supabase.from("wishlist").delete().eq("no_isbn", no_isbn)
     }
 
-    await pinjamBukuDariISBN(no_isbn, tanggal)
+    await borrowBuku(no_isbn, tanggal)
 
     toast.add({
       severity: "success",
@@ -142,7 +136,7 @@ async function pinjamBuku({ judul, no_isbn }: Buku, tanggal: Date) {
 
 async function kembalikanBuku({ judul }: Buku, id: Peminjaman["id"]) {
   try {
-    await kembalikanBukuDariISBN(id)
+    await returnBuku(id)
 
     toast.add({
       severity: "success",

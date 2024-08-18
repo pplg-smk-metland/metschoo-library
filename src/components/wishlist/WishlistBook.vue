@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ambilGambarBukuDariISBN } from "@/lib/utils"
+import { getBukuImage } from "@/lib/utils"
 import { onMounted, ref } from "vue"
 import CTA from "@/components/CTA.vue"
 import { type Buku } from "@/types/index"
@@ -13,7 +13,7 @@ defineEmits(["pinjamBuku", "hapusBuku"])
 
 const imgURL = ref("")
 onMounted(async () => {
-  imgURL.value = await ambilGambarBukuDariISBN(props.buku.no_isbn)
+  imgURL.value = await getBukuImage(props.buku.no_isbn)
 })
 </script>
 

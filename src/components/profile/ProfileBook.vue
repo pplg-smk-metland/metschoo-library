@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue"
-import { ambilGambarBukuDariISBN } from "@/lib/utils"
+import { getBukuImage } from "@/lib/utils"
 import type { BukuPinjam } from "@/views/profile/ProfileRoot.vue"
 
 interface Props {
@@ -13,7 +13,7 @@ const { buku } = data
 const imgURL = ref("")
 
 onMounted(async () => {
-  imgURL.value = await ambilGambarBukuDariISBN(buku!.no_isbn)
+  imgURL.value = await getBukuImage(buku!.no_isbn)
 })
 </script>
 
