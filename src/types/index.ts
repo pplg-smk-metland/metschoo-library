@@ -8,3 +8,9 @@ export type Buku = PartialBy<Tables<"buku">, "fts">
 export type Pengguna = Tables<"pengguna">
 export type Kategori = Tables<"kategori_buku">
 export type Peminjaman = Tables<"peminjaman">
+
+export interface PeminjamanState {
+  id?: Peminjaman["id"]
+  isBorrowable: boolean
+  isReturnable: boolean
+}
