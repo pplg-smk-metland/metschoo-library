@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue"
-import router from "@/router"
 import { supabase } from "@/lib/supabase"
 import { useRoute } from "vue-router"
 import { useAuthStore } from "@/stores/auth"
