@@ -14,13 +14,14 @@ export async function getBuku(isbn: Buku["no_isbn"]) {
   return data
 }
 
-export async function getBukus(typeId: Kategori["id"]) {
-  const { data, error } = await supabase
-    .from("buku")
-    .select(`*`)
-    .limit(20)
-    .eq("kategori_id", typeId)
+export async function getBukus(typeId?: Kategori["id"]) {
+  let query = supabase.from("buku").select(`*`).limit(20)
 
+  if (typeId) {
+    query = query.eq("kategori_id", typeId)
+  }
+
+  const { data, error } = await query
   if (error) throw error
   return data
 }
