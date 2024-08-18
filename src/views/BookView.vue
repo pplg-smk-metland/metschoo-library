@@ -9,8 +9,9 @@ import {
   pinjamBukuDariISBN,
   kembalikanBukuDariISBN,
   getBuku,
-  getNewestPeminjaman,
+  usePeminjamanState,
   formatDate,
+  type PeminjamanState,
 } from "@/lib/utils"
 import { useBuku, useDialog } from "@/lib/composables"
 import type { Buku, Peminjaman } from "@/types"
@@ -53,41 +54,16 @@ onMounted(async () => {
   imgURL.value = await ambilGambarBukuDariISBN(isbn)
 })
 
-const peminjamanTerbaru = ref<Peminjaman | null>(null)
+const peminjamanState = ref<PeminjamanState | null>(null)
 
 onMounted(async () => {
   try {
-    peminjamanTerbaru.value = await getNewestPeminjaman(isbn)
-
+    peminjamanState.value = await usePeminjamanState(isbn)
     bukuAdaDiWishlist.value = await checkWishlist(isbn)
-    bisaDipinjam.value = cekBisaDipinjam(peminjamanTerbaru.value, buku.value!.jumlah_exspl)
-    bisaDikembalikan.value = cekBisaDikembalikan(peminjamanTerbaru.value)
   } catch (err) {
     console.error(err as PostgrestError)
-
-    if ((err as PostgrestError).code === "PGRST116") {
-      bisaDipinjam.value = true
-      return
-    }
   }
 })
-
-const bisaDipinjam = ref(false)
-
-const cekBisaDipinjam = (peminjaman: Peminjaman | null, jumlah_exspl: Buku["jumlah_exspl"]) => {
-  if (!peminjaman) return true
-  return [0, 3, 5, 6].includes(peminjaman.state_id) && jumlah_exspl > 0
-}
-
-const bisaDikembalikan = ref(false)
-
-// kalau peminjaman null, artinya, ya kembalikan aja
-const cekBisaDikembalikan = (peminjaman: Peminjaman | null) => {
-  if (peminjaman) return peminjaman.state_id === 2
-  else {
-    return true
-  }
-}
 
 const bukuAdaDiWishlist = ref(false)
 
@@ -231,14 +207,11 @@ async function masukkanWishlist({ no_isbn }: Buku) {
 
 async function perbaruiDataBuku(payload: RealtimePostgresChangesPayload<Peminjaman>) {
   try {
-    peminjamanTerbaru.value = await getNewestPeminjaman(isbn)
+    peminjamanState.value = await usePeminjamanState((payload.new as Peminjaman).no_isbn)
   } catch (err) {
     dialogError.value.open("Gagal mengambil data peminjaman, silahkan coba lagi.")
     console.error(err as PostgrestError)
   }
-
-  bisaDipinjam.value = cekBisaDipinjam(payload.new as Peminjaman, buku.value!.jumlah_exspl)
-  bisaDikembalikan.value = cekBisaDikembalikan(payload.new as Peminjaman)
 }
 
 supabase
@@ -285,16 +258,16 @@ supabase
 
           <div class="button-container">
             <CTA
-              v-if="bisaDipinjam"
+              v-if="peminjamanState?.isBorrowable"
               :fill="true"
               @click="konfirmasiPinjamBuku"
               label="Pinjam buku"
             />
             <CTA
               v-else
-              :disabled="!bisaDikembalikan"
+              :disabled="!peminjamanState?.isReturnable"
               :fill="true"
-              @click="kembalikanBuku(buku, peminjamanTerbaru.id)"
+              @click="kembalikanBuku(buku, peminjamanState?.id!)"
               label="kembalikan buku"
             />
 
@@ -314,7 +287,7 @@ supabase
 
             <Toast position="top-right" :unstyled="false" />
             <CTA
-              :disabled="bukuAdaDiWishlist || !bisaDipinjam"
+              :disabled="bukuAdaDiWishlist || !peminjamanState?.isBorrowable"
               :aria-expanded="confirmWishlistIsVisible"
               :aria-controls="confirmWishlistIsVisible ? 'confirm' : null"
               @click="konfirmasiMasukkanWishlist(buku, $event)"
