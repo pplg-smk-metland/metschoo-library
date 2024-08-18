@@ -54,6 +54,13 @@ app.use(PrimeVue, {
       closeButton: "p-toast-close-button",
       buttonContainer: "p-toast-button-container",
     },
+    dialog: {
+      root: "p-confirmdialog",
+      header: "p-confirmdialog-header",
+      title: "p-confirmdialog-title",
+      content: "p-confirmdialog-content",
+      footer: "p-confirmdialog-footer",
+    },
   },
 })
 app.use(ConfirmationService)

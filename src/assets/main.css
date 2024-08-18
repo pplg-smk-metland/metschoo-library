@@ -211,6 +211,42 @@ table {
   gap: 1rem;
 }
 
+.p-confirmdialog {
+  outline: 2px solid var(--dark-grey);
+  border-radius: 0.5rem;
+  background: var(--neutral-transparent);
+  backdrop-filter: blur(1rem);
+
+  --p-dialog-content-padding: 1rem;
+  padding: var(--p-dialog-content-padding);
+  margin-block: 1rem;
+}
+
+.p-confirmdialog-content {
+  padding-block: var(--p-dialog-content-padding);
+}
+
+.p-confirmdialog-header,
+.p-confirmdialog-footer {
+  display: flex;
+  --p-dialog-header-padding: 1rem;
+  --p-dialog-footer-padding: 1rem;
+  padding: var(--p-dialog-header);
+}
+
+.p-confirmdialog-header {
+  justify-content: space-between;
+}
+
+.p-confirmdialog-title {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.p-confirmdialog-footer {
+  gap: 1rem;
+}
+
 .p-toast {
   max-width: 50ch;
 }
