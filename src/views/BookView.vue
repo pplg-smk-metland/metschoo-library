@@ -8,12 +8,10 @@ import {
   pinjamBukuDariISBN,
   kembalikanBukuDariISBN,
   getBuku,
-  usePeminjamanState,
   formatDate,
-  type PeminjamanState,
 } from "@/lib/utils"
-import { useBuku, useDialog } from "@/lib/composables"
-import type { Buku, Peminjaman } from "@/types"
+import { usePeminjamanState, useBuku, useDialog } from "@/lib/composables"
+import type { Buku, Peminjaman, PeminjamanState } from "@/types"
 import type { PostgrestError, RealtimePostgresChangesPayload } from "@supabase/supabase-js"
 
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
@@ -46,8 +44,13 @@ onMounted(async () => {
     console.error(err as PostgrestError)
 
     buku.value = null
-    toast.add({ severity: "error", summary: "Gagal", detail: "Gagal menemukan buku.", life: 10000 })
-    return
+
+    toast.add({
+      severity: "error",
+      summary: "Gagal",
+      detail: "Gagal menemukan buku.",
+      life: 10000,
+    })
   }
 
   imgURL.value = await ambilGambarBukuDariISBN(isbn)
