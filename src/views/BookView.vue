@@ -3,7 +3,14 @@ import { computed, onMounted, ref } from "vue"
 import { supabase } from "@/lib/supabase"
 import { useRoute } from "vue-router"
 import { useAuthStore } from "@/stores/auth"
-import { getBukuImage, borrowBuku, returnBuku, getBuku, formatDate } from "@/lib/utils"
+import {
+  getBukuImage,
+  borrowBuku,
+  returnBuku,
+  getBuku,
+  formatDate,
+  cancelBorrowBuku,
+} from "@/lib/utils"
 import { usePeminjamanState, useBuku, useDialog } from "@/lib/composables"
 import type { Buku, Peminjaman, PeminjamanState } from "@/types"
 import type { PostgrestError, RealtimePostgresChangesPayload } from "@supabase/supabase-js"
@@ -134,6 +141,37 @@ async function pinjamBuku({ judul, no_isbn }: Buku, tanggal: Date) {
   }
 }
 
+async function batalkanPeminjamanBuku({ judul }: Buku, id: Peminjaman["id"]) {
+  if (!window.confirm(`apakah anda ingin membatalkan peminjaman ${judul}?`)) {
+    return toast.add({
+      severity: "info",
+      summary: "Tidak jadi",
+      detail: "Tidak jadi membatalkan peminjaman buku.",
+      life: 10000,
+    })
+  }
+
+  try {
+    await cancelBorrowBuku(id)
+
+    toast.add({
+      severity: "success",
+      summary: "Sukses!",
+      detail: `Sukses membatalkan peminjaman buku ${judul}.`,
+      life: 10000,
+    })
+  } catch (err) {
+    console.error(err as PostgrestError)
+
+    toast.add({
+      severity: "error",
+      summary: "Gagal!",
+      detail: "gagal membatalkan peminjaman buku! Silahkan coba lagi nanti.",
+      life: 10000,
+    })
+  }
+}
+
 async function kembalikanBuku({ judul }: Buku, id: Peminjaman["id"]) {
   try {
     await returnBuku(id)
@@ -229,7 +267,12 @@ supabase
     <section class="main-section">
       <LoadingSpinner v-if="isLoading" />
 
-      <div v-if="buku" class="buku">
+      <div v-if="!buku" class="not-found">
+        <h1>Tidak ada buku!</h1>
+        <p>Bukunya ga ada brok</p>
+      </div>
+
+      <div v-else class="buku">
         <figure>
           <img class="buku__gambar" :src="imgURL" alt="" width="400" height="600" />
           <img
@@ -259,8 +302,16 @@ supabase
               @click="konfirmasiPinjamBuku"
               label="Pinjam buku"
             />
+
             <CTA
               v-else
+              danger
+              label="batalkan peminjaman"
+              @click="batalkanPeminjamanBuku(buku, peminjamanState?.id!)"
+            />
+
+            <CTA
+              v-if="peminjamanState?.isReturnable"
               :disabled="!peminjamanState?.isReturnable"
               :fill="true"
               @click="kembalikanBuku(buku, peminjamanState?.id!)"
@@ -317,11 +368,6 @@ supabase
             label="Pinjam buku"
           />
         </TheDialog>
-      </div>
-
-      <div v-else class="not-found">
-        <h1>Tidak ada buku!</h1>
-        <p>Bukunya ga ada brok</p>
       </div>
     </section>
 

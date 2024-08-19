@@ -60,6 +60,17 @@ export async function borrowBuku(no_isbn: Buku["no_isbn"], tenggat_waktu: Date) 
   if (error) throw error
 }
 
+export async function cancelBorrowBuku(id: Peminjaman["id"]) {
+  const { error } = await supabase
+    .from("peminjaman")
+    .update({
+      state_id: 6,
+    })
+    .eq("id", id)
+
+  if (error) throw error
+}
+
 /**
  * return a buku.
  */
