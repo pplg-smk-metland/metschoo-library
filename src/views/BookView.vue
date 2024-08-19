@@ -305,6 +305,7 @@ supabase
 
             <CTA
               v-else
+              :disabled="!peminjamanState?.isCancellable"
               danger
               label="batalkan peminjaman"
               @click="batalkanPeminjamanBuku(buku, peminjamanState?.id!)"

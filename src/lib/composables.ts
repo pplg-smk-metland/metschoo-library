@@ -72,17 +72,20 @@ export async function usePeminjamanState(isbn: Buku["no_isbn"]): Promise<Peminja
   if (!data || !data.peminjaman_state) {
     return {
       isBorrowable: true,
+      isCancellable: false,
       isReturnable: false,
     }
   }
 
   const borrowableConditions = ["borrow cancelled", "return confirmed", "return late"]
   const isBorrowable = borrowableConditions.includes(data.peminjaman_state.name)
+  const isCancellable = data.peminjaman_state.name === "borrow pending"
   const isReturnable = data.peminjaman_state.name === "borrow confirmed"
 
   return {
     id: data.id,
     isBorrowable,
+    isCancellable,
     isReturnable,
   }
 }

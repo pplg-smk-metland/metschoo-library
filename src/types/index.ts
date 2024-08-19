@@ -12,5 +12,6 @@ export type Peminjaman = Tables<"peminjaman">
 export interface PeminjamanState {
   id?: Peminjaman["id"]
   isBorrowable: boolean
+  isCancellable: boolean
   isReturnable: boolean
 }
