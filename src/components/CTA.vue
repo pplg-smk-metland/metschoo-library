@@ -49,6 +49,10 @@ defineProps({
   color: var(--white);
 }
 
+.cta--danger:hover {
+  color: var(--color-danger);
+}
+
 .cta:disabled {
   background: var(--dark-grey);
 }
