@@ -31,7 +31,7 @@
     "eslint-plugin-vue": "^9.27.0",
     "globals": "^15.9.0",
     "prettier": "^3.3.3",
-    "supabase": "^1.187.10",
+    "supabase": "^1.190.0",
     "typescript-eslint": "^7.18.0",
     "unplugin-icons": "^0.19.1",
     "vite": "^4.5.3"
