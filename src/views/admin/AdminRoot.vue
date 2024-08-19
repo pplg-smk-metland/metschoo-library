@@ -9,7 +9,7 @@ import DataRow from "@/components/admin/DataRow.vue"
 import CTA from "@/components/CTA.vue"
 import ConfirmDialog from "primevue/confirmdialog"
 import Toast from "primevue/toast"
-import { borrowBuku, confirmReturnBuku } from "@/lib/utils"
+import { confirmBorrowBuku, confirmReturnBuku } from "@/lib/utils"
 import { getPeminjamanData, type PeminjamanData } from "@/lib/peminjaman"
 import { useConfirm } from "primevue/useconfirm"
 import { useToast } from "primevue/usetoast"
@@ -46,7 +46,7 @@ async function konfirmasiPeminjaman(id: Peminjaman["id"]) {
       header: "Konfirmasi peminjaman",
       message: "Beneran nih mau konfirmasi peminjaman buku?",
       accept: async () => {
-        await borrowBuku(id)
+        await confirmBorrowBuku(id)
 
         toast.add({
           severity: "success",
