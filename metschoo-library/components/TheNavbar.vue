@@ -20,14 +20,14 @@ function closeNav() {
 <template>
   <nav class="navbar">
     <div class="logo">
-      <!-- <img src="/logo.svg" alt="Logo Metschoo Library" /> -->
+      <img src="/logo.svg" alt="Logo Metschoo Library" />
     </div>
 
     <ul ref="navlinks" class="nav-links">
       <li class="nav-links__header">
         <div class="logo">
           <NuxtLink to="/">
-            <!-- <img src="/logo.svg" alt="Logo Metschoo Library" /> -->
+            <img src="/logo.svg" alt="Logo Metschoo Library" />
           </NuxtLink>
         </div>
         <button ref="closeNavBtn" class="nav-btn close" @click="closeNav">
