@@ -19,7 +19,7 @@ onMounted(async () => {
 
 <template>
   <li>
-    <routerLink v-if="buku" :to="`/buku/${buku.no_isbn}`" class="buku">
+    <NuxtLink v-if="buku" :to="`/buku/${buku.no_isbn}`" class="buku">
       <figure>
         <img
           :src="imgURL"
@@ -57,7 +57,7 @@ onMounted(async () => {
           </time>
         </p>
       </div>
-    </routerLink>
+    </NuxtLink>
   </li>
 </template>
 

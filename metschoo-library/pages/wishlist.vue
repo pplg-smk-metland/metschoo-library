@@ -5,7 +5,6 @@ import { supabase } from "@/lib/supabase"
 import { type Buku } from "@/types/index"
 import { type PostgrestError, type QueryData } from "@supabase/supabase-js"
 
-import BaseLayout from "@/layouts/BaseLayout.vue"
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import WishlistBook from "@/components/wishlist/WishlistBook.vue"
 import Toast from "primevue/toast"
@@ -63,6 +62,8 @@ function hapusBuku(buku: Buku) {
 onMounted(async () => {
   wishlist.value = await ambilWishlist()
 })
+
+const router = useRouter()
 </script>
 
 <template>
@@ -71,7 +72,7 @@ onMounted(async () => {
     <section v-if="!authStore.session">
       <p>Kamu harus login dlu ya untuk menambahkan buku ke wishlist</p>
       <p>
-        <routerLink :to="{ name: 'home' }"> Kembali ke beranda </routerLink>
+        <NuxtLink to="/"> Kembali ke beranda </NuxtLink>
       </p>
     </section>
 
@@ -83,7 +84,7 @@ onMounted(async () => {
           v-for="wishlistItem in wishlist"
           :key="wishlistItem.id"
           :buku="wishlistItem.buku!"
-          @pinjam-buku="$router.push(`/buku/${wishlistItem.no_isbn}`)"
+          @pinjam-buku="router.push(`/buku/${wishlistItem.no_isbn}`)"
           @hapus-buku="hapusBukuDariWishlist(wishlistItem.buku!)"
         />
       </ul>

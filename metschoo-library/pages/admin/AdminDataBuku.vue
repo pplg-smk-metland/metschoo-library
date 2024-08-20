@@ -97,9 +97,9 @@ onMounted(async () => {
   <DataTable :value="searchResults" scrollable v-else>
     <Column field="judul" header="Judul">
       <template #body="slotProps">
-        <routerLink :to="{ name: 'admin-halaman-buku', params: { isbn: slotProps.data.no_isbn } }">
+        <NuxtLink :to="{ name: 'admin-halaman-buku', params: { isbn: slotProps.data.no_isbn } }">
           {{ slotProps.data.judul }}
-        </routerLink>
+        </NuxtLink>
       </template>
     </Column>
     <Column field="no_isbn" header="ISBN"></Column>

@@ -21,7 +21,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <RouterLink v-if="buku" :to="`/buku/${buku.no_isbn}`" class="buku">
+  <NuxtLink v-if="buku" :to="`/buku/${buku.no_isbn}`" class="buku">
     <div class="buku__gambar">
       <img :src="imgUrl" :alt="`Cover ${buku.judul}`" width="100" />
     </div>
@@ -32,7 +32,7 @@ onMounted(async () => {
       <p class="tanggal-pinjam">dikembalikan pada {{ formatDate(new Date(tgl_kembali)) }}</p>
       <p v-if="late" class="late">Terlambat</p>
     </div>
-  </RouterLink>
+  </NuxtLink>
 </template>
 
 <style scoped>

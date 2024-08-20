@@ -9,7 +9,6 @@ import ProfileEditLayout from "@/layouts/ProfileEditLayout.vue"
 import CTA from "@/components/CTA.vue"
 import type { Pengguna } from "@/types"
 import { useToast } from "primevue/usetoast"
-import { useRouter } from "vue-router"
 
 const dataPengguna = ref<Pengguna | null>(null)
 const authStore = useAuthStore()
@@ -52,7 +51,7 @@ async function updateUserInfo() {
   <ProfileEditLayout>
     <header class="header">
       <h1>Edit profil</h1>
-      <routerLink :to="{ name: 'profile' }"> Kembali </routerLink>
+      <NuxtLink :to="{ name: 'profile' }"> Kembali </NuxtLink>
     </header>
 
     <section v-if="dataPengguna" class="profile">

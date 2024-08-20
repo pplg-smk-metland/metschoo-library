@@ -2,7 +2,6 @@
 import { onMounted, ref } from "vue"
 import { useDialog } from "@/lib/composables"
 import { useAuthStore } from "@/stores/auth"
-import router from "@/router"
 import { supabase } from "@/lib/supabase"
 
 import ProfileEditLayout from "@/layouts/ProfileEditLayout.vue"
@@ -53,6 +52,8 @@ async function ubahEmail() {
 }
 
 const authStore = useAuthStore()
+const router = useRouter()
+
 async function signOut() {
   const reallySigningOut = confirm("Beneran nih mau keluar akun?")
 
@@ -73,7 +74,7 @@ onMounted(async () => {
   <ProfileEditLayout>
     <section class="nav">
       <h1>Ubah kredensial</h1>
-      <routerLink :to="{ name: 'profile' }"> Kembali </routerLink>
+      <NuxtLink :to="{ name: 'profile' }"> Kembali </NuxtLink>
     </section>
 
     <section class="main-section">

@@ -4,7 +4,6 @@ import { StorageError } from "@supabase/storage-js"
 import { supabase } from "@/lib/supabase"
 import { getAllAvailableCategories } from "@/lib/utils"
 import { useDialog } from "@/lib/composables"
-import { useRoute, useRouter } from "vue-router"
 import type { Kategori } from "@/types"
 import type { PostgrestError, QueryData } from "@supabase/supabase-js"
 
@@ -120,7 +119,7 @@ function toggleFormVisibility() {
       <header class="header">
         <h1>{{ buku.judul }} - {{ buku.jumlah_exspl }}</h1>
 
-        <routerLink :to="{ name: 'admin' }">Kembali</routerLink>
+        <NuxtLink @click="router.back()">Kembali</NuxtLink>
       </header>
 
       <p>{{ buku.penulis }}</p>

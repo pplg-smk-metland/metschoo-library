@@ -105,12 +105,12 @@ onMounted(async () => {
           <p>{{ pengguna.email }}</p>
 
           <div class="button-container">
-            <routerLink :to="{ name: 'profile-edit' }">
+            <NuxtLink :to="{ name: 'profile-edit' }">
               <CTA label="Edit profil" />
-            </routerLink>
-            <router-link :to="{ name: 'profile-security' }">
+            </NuxtLink>
+            <Nuxtlink :to="{ name: 'profile-security' }">
               <CTA label="Keamanan" />
-            </router-link>
+            </Nuxtlink>
           </div>
         </div>
 

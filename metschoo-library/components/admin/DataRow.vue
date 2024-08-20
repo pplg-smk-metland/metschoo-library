@@ -18,7 +18,7 @@ const returnPending = computed(() => data.state_id === 4)
 <template>
   <li class="data-row">
     <div class="data-buku">
-      <routerLink :to="{ name: 'admin-halaman-buku', params: { isbn: buku.no_isbn } }">
+      <NuxtLink :to="{ name: 'admin-halaman-buku', params: { isbn: buku.no_isbn } }">
         <h1>{{ buku.judul }}</h1>
         <p>{{ buku.no_isbn }}</p>
         <p>{{ buku.jumlah_exspl }}</p>
@@ -27,7 +27,7 @@ const returnPending = computed(() => data.state_id === 4)
           <span v-if="borrowPending">belum dipinjam</span>
           <span v-if="returnPending">belum dikembalikan</span>
         </p>
-      </routerLink>
+      </NuxtLink>
     </div>
 
     <div class="data-pengguna">
