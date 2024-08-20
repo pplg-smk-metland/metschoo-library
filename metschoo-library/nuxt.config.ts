@@ -4,5 +4,6 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ["@pinia/nuxt", "@primevue/nuxt-module", "@nuxt/eslint"],
   srcDir: ".",
+  css: ["~/assets/base.css", "~/assets/main.css"],
 })
 
