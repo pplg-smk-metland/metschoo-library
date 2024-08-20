@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase"
+import { supabase } from "@/supabase"
 import type { Buku, Kategori, Peminjaman } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
 

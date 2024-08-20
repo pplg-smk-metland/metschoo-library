@@ -1,6 +1,6 @@
 import type { Buku, PeminjamanState } from "@/types"
 import { ref } from "vue"
-import { supabase } from "./supabase"
+import { supabase } from "@/supabase"
 
 /**
  * Returns a blank Buku ref.
