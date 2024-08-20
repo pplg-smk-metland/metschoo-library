@@ -4,7 +4,6 @@ import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import DataTable from "primevue/datatable"
 import Column from "primevue/column"
 import { getPeminjamanData, type PeminjamanData } from "@/lib/peminjaman"
-import { formatDate } from "@/lib/utils"
 import type { Peminjaman } from "@/types"
 
 const peminjamanData = ref<PeminjamanData>([])

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue"
-import { useDialog } from "@/lib/composables"
+import { useDialog } from "@/composables"
 import { useAuthStore } from "@/stores/auth"
-import { supabase } from "@/lib/supabase"
+import { supabase } from "@/supabase"
 
 import ProfileEditLayout from "@/layouts/ProfileEditLayout.vue"
 import TheDialog from "@/components/TheDialog.vue"

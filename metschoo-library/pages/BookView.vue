@@ -1,17 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue"
-import { supabase } from "@/lib/supabase"
-import { useRoute } from "vue-router"
+import { supabase } from "@/supabase"
+import { useDialog } from "@/composables"
 import { useAuthStore } from "@/stores/auth"
-import {
-  getBukuImage,
-  borrowBuku,
-  returnBuku,
-  getBuku,
-  formatDate,
-  cancelBorrowBuku,
-} from "@/lib/utils"
-import { usePeminjamanState, useBuku, useDialog } from "@/lib/composables"
 import type { Buku, Peminjaman, PeminjamanState } from "@/types"
 import type { PostgrestError, RealtimePostgresChangesPayload } from "@supabase/supabase-js"
 

@@ -1,6 +1,6 @@
 import { defineStore } from "pinia"
 import { ref } from "vue"
-import { supabase } from "@/lib/supabase"
+import { supabase } from "@/supabase"
 import { AuthError, type PostgrestError, type Session, type User } from "@supabase/supabase-js"
 import type { Pengguna } from "@/types"
 

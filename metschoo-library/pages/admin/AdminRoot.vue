@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue"
-import { supabase } from "@/lib/supabase"
+import { supabase } from "@/supabase"
 import type { PostgrestError, RealtimePostgresChangesPayload } from "@supabase/supabase-js"
 import type { Buku, Peminjaman } from "@/types"
 
@@ -9,7 +9,6 @@ import DataRow from "@/components/admin/DataRow.vue"
 import CTA from "@/components/CTA.vue"
 import ConfirmDialog from "primevue/confirmdialog"
 import Toast from "primevue/toast"
-import { confirmBorrowBuku, confirmReturnBuku } from "@/lib/utils"
 import { getPeminjamanData, type PeminjamanData } from "@/lib/peminjaman"
 import { useConfirm } from "primevue/useconfirm"
 import { useToast } from "primevue/usetoast"

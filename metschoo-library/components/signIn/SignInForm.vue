@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue"
 import { useAuthStore } from "@/stores/auth"
-import { useDialog } from "@/lib/composables"
+import { useDialog } from "@/composables"
 
 import TheDialog from "@/components/TheDialog.vue"
 import CTA from "@/components/CTA.vue"

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue"
 import { useAuthStore } from "@/stores/auth"
-import { supabase } from "@/lib/supabase"
-import { type Buku } from "@/types/index"
+import { supabase } from "@/supabase"
+import { type Buku } from "@/types/"
 import { type PostgrestError, type QueryData } from "@supabase/supabase-js"
 
 import LoadingSpinner from "@/components/LoadingSpinner.vue"

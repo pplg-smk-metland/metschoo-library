@@ -5,7 +5,6 @@ import type { Buku } from "@/types"
 
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import BookItem from "@/components/BookItem.vue"
-import { getBukus } from "@/lib/utils"
 
 interface Props {
   typeId: number

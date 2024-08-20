@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue"
-import { getBukuImage, formatDate } from "@/lib/utils"
 import type { History } from "@/views/profile/ProfileRoot.vue"
 
 interface Props {

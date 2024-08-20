@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue"
-import { getBukuImage } from "@/lib/utils"
 import type { Buku } from "@/types"
 
 interface Props {

@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue"
 import { StorageError } from "@supabase/storage-js"
-import { supabase } from "@/lib/supabase"
-import { getAllAvailableCategories } from "@/lib/utils"
-import { useDialog } from "@/lib/composables"
+import { supabase } from "@/supabase"
+import { useDialog } from "@/composables"
 import type { Kategori } from "@/types"
 import type { PostgrestError, QueryData } from "@supabase/supabase-js"
 

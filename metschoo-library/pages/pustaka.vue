@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { inject, onMounted, ref } from "vue"
-import { supabase } from "@/lib/supabase"
+import { supabase } from "@/supabase"
 
 import BaseLayout from "@/layouts/BaseLayout.vue"
 import LoadingSpinner from "@/components/LoadingSpinner.vue"

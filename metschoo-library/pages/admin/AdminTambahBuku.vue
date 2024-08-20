@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue"
 import { useRouter } from "vue-router"
-import { useBuku, useDialog } from "@/lib/composables"
-import { supabase } from "@/lib/supabase"
+import { useBuku, useDialog } from "@/composables"
+import { supabase } from "@/supabase"
 import Select from "primevue/select"
 import { StorageError } from "@supabase/storage-js"
 import type { Buku, Kategori } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
-import { getAllAvailableCategories } from "@/lib/utils"
 
 import CTA from "@/components/CTA.vue"
 import TheDialog from "@/components/TheDialog.vue"
