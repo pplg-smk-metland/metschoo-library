@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue"
-import { supabase } from "@/supabase"
 import { useDialog } from "@/composables"
 import { useAuthStore } from "@/stores/auth"
 import type { Buku, Peminjaman, PeminjamanState } from "@/types"
@@ -16,7 +14,9 @@ import Toast from "primevue/toast"
 import { useToast } from "primevue/usetoast"
 import VueDatePicker from "@vuepic/vue-datepicker"
 import "@vuepic/vue-datepicker/dist/main.css"
+import type { Database } from "~/types/supabase"
 
+const supabase = useSupabaseClient<Database>()
 const route = useRoute()
 const isbn = route.params.isbn as string
 

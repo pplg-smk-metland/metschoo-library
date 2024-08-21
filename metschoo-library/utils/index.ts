@@ -1,6 +1,6 @@
-import { supabase } from "@/supabase"
 import type { Buku, Kategori, Peminjaman } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
+import type { Database } from "~/types/supabase"
 
 /**
  * get a single buku by its isbn.
@@ -8,6 +8,7 @@ import type { PostgrestError } from "@supabase/supabase-js"
  * @returns Buku
  */
 export async function getBuku(isbn: Buku["no_isbn"]) {
+  const supabase = useSupabaseClient<Database>()
   const { data, error } = await supabase
     .from("buku")
     .select("*")
@@ -23,6 +24,7 @@ export async function getBuku(isbn: Buku["no_isbn"]) {
  * Get multiple bukus.
  */
 export async function getBukus(typeId?: Kategori["id"]) {
+  const supabase = useSupabaseClient<Database>()
   let query = supabase.from("buku").select(`*`).limit(20)
 
   if (typeId) {
@@ -35,6 +37,7 @@ export async function getBukus(typeId?: Kategori["id"]) {
 }
 
 export async function getBukuImage(isbn: Buku["no_isbn"]) {
+  const supabase = useSupabaseClient<Database>()
   // TODO: store cover array in localStorage
   // TODO: also implement expiry time (24 hours or so)
   // TODO: if null or expired, get from storage
@@ -52,6 +55,7 @@ export async function getBukuImage(isbn: Buku["no_isbn"]) {
  * borrow a buku.
  */
 export async function borrowBuku(no_isbn: Buku["no_isbn"], tenggat_waktu: Date) {
+  const supabase = useSupabaseClient<Database>()
   const { error } = await supabase.from("peminjaman").insert({
     no_isbn,
     tgl_pinjam: new Date().toISOString(),
@@ -61,6 +65,7 @@ export async function borrowBuku(no_isbn: Buku["no_isbn"], tenggat_waktu: Date) 
 }
 
 export async function cancelBorrowBuku(id: Peminjaman["id"]) {
+  const supabase = useSupabaseClient<Database>()
   const { error } = await supabase
     .from("peminjaman")
     .update({
@@ -75,6 +80,7 @@ export async function cancelBorrowBuku(id: Peminjaman["id"]) {
  * return a buku.
  */
 export async function returnBuku(id: Peminjaman["id"]) {
+  const supabase = useSupabaseClient<Database>()
   const { error } = await supabase.from("peminjaman").update({ state_id: 4 }).eq("id", id)
   if (error) throw error
 }
@@ -83,6 +89,7 @@ export async function returnBuku(id: Peminjaman["id"]) {
  * confirm that a buku was borrowed.
  */
 export async function confirmBorrowBuku(id: Peminjaman["id"]) {
+  const supabase = useSupabaseClient<Database>()
   const { error } = await supabase.from("peminjaman").update({ state_id: 2 }).eq("id", id)
   if (error) throw error
 }
@@ -95,6 +102,7 @@ export async function confirmReturnBuku(
   { jumlah_exspl, no_isbn }: Buku,
   tgl_kembali: Date
 ) {
+  const supabase = useSupabaseClient<Database>()
   let state_id = 5
   if (new Date(tenggat_waktu) < new Date(tgl_kembali)) state_id = 6
 
@@ -115,6 +123,7 @@ export async function confirmReturnBuku(
  * Gets all available categories.
  */
 export async function getAllAvailableCategories() {
+  const supabase = useSupabaseClient<Database>()
   try {
     const { data, error } = await supabase.from("kategori_buku").select("id, kategori")
     if (error) throw error

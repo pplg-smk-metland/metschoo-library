@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue"
-import { supabase } from "@/supabase"
 import type { PostgrestError, RealtimePostgresChangesPayload } from "@supabase/supabase-js"
 import type { Buku, Peminjaman } from "@/types"
 
@@ -12,6 +11,9 @@ import Toast from "primevue/toast"
 import { getPeminjamanData, type PeminjamanData } from "@/lib/peminjaman"
 import { useConfirm } from "primevue/useconfirm"
 import { useToast } from "primevue/usetoast"
+import type { Database } from "~/types/supabase"
+
+const supabase = useSupabaseClient<Database>()
 
 const isLoading = ref(false)
 

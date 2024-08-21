@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue"
 import { StorageError } from "@supabase/storage-js"
-import { supabase } from "@/supabase"
 import { useDialog } from "@/composables"
 import type { Kategori } from "@/types"
 import type { PostgrestError, QueryData } from "@supabase/supabase-js"
@@ -10,7 +9,9 @@ import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import CTA from "@/components/CTA.vue"
 import TheDialog from "@/components/TheDialog.vue"
 import Select from "primevue/select"
+import type { Database } from "~/types/supabase"
 
+const supabase = useSupabaseClient<Database>()
 const isLoading = ref(false)
 
 const availableCategories = ref<Kategori[] | null>([])

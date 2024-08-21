@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { inject, onMounted, ref } from "vue"
-import { supabase } from "@/supabase"
-
 import BaseLayout from "@/layouts/BaseLayout.vue"
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import TheHeader from "@/components/TheHeader.vue"
@@ -9,11 +6,14 @@ import BookItem from "@/components/BookItem.vue"
 import type { PostgrestError } from "@supabase/supabase-js"
 import { searchTermKey } from "@/stores/search"
 import type { Buku } from "@/types"
+import type { Database } from "~/types/supabase"
+
+
+const supabase = useSupabaseClient<Database>()
 
 const searchTerm = inject(searchTermKey, ref(""))
 
 const books = ref<Buku[] | null>(null)
-
 const isLoading = ref(false)
 
 async function cariBuku() {

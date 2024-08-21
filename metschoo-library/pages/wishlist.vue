@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue"
 import { useAuthStore } from "@/stores/auth"
-import { supabase } from "@/supabase"
 import { type Buku } from "@/types/"
 import { type PostgrestError, type QueryData } from "@supabase/supabase-js"
 
@@ -9,7 +8,10 @@ import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import WishlistBook from "@/components/wishlist/WishlistBook.vue"
 import Toast from "primevue/toast"
 import { useToast } from "primevue/usetoast"
+import type { Database } from "~/types/supabase"
 
+
+const supabase = useSupabaseClient<Database>()
 const authStore = useAuthStore()
 
 const wishlistQuery = supabase.from("wishlist").select("*, buku(*)")

@@ -1,10 +1,13 @@
 import { defineStore } from "pinia"
 import { ref } from "vue"
-import { supabase } from "@/supabase"
 import { AuthError, type PostgrestError, type Session, type User } from "@supabase/supabase-js"
 import type { Pengguna } from "@/types"
+import type { Database } from "~/types/supabase"
+
 
 export const useAuthStore = defineStore("auth", () => {
+  const supabase = useSupabaseClient<Database>()
+
   const session = ref<Session | null>(null)
   const user = ref<User | null>(null)
 

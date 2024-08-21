@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue"
 import { useAuthStore } from "@/stores/auth"
-import { supabase } from "@/supabase"
 import type { Pengguna } from "@/types"
 import type { PostgrestError, QueryData } from "@supabase/supabase-js"
 
@@ -9,7 +8,9 @@ import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import ProfileBook from "@/components/profile/ProfileBook.vue"
 import ProfileHistoryBook from "@/components/profile/ProfileHistoryBook.vue"
 import CTA from "@/components/CTA.vue"
+import type { Database } from "~/types/supabase"
 
+const supabase = useSupabaseClient<Database>()
 const authStore = useAuthStore()
 
 const pengguna = ref<Pengguna | null>(null)

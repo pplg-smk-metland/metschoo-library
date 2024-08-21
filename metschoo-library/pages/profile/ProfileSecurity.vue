@@ -2,12 +2,14 @@
 import { onMounted, ref } from "vue"
 import { useDialog } from "@/composables"
 import { useAuthStore } from "@/stores/auth"
-import { supabase } from "@/supabase"
 
 import ProfileEditLayout from "@/layouts/ProfileEditLayout.vue"
 import TheDialog from "@/components/TheDialog.vue"
 import CTA from "@/components/CTA.vue"
 import { type AuthError } from "@supabase/supabase-js"
+import type { Database } from "~/types/supabase"
+
+const supabase = useSupabaseClient<Database>()
 
 const { dialog } = useDialog()
 const kredensialPengguna = ref({

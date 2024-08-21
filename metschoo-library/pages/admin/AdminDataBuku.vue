@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue"
-import { supabase } from "@/supabase"
 import type { Kategori } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
 
@@ -9,6 +8,9 @@ import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import DataTable from "primevue/datatable"
 import Column from "primevue/column"
 import Select from "primevue/select"
+import type { Database } from "~/types/supabase"
+
+const supabase = useSupabaseClient<Database>()
 
 const searchTerm = ref("")
 const availableCategories = ref<Kategori[]>([])
