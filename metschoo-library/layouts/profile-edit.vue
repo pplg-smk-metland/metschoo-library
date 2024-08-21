@@ -1,7 +1,9 @@
 <template>
-  <main>
-    <slot />
-  </main>
+  <NuxtLayout>
+    <main>
+      <slot />
+    </main>
+  </NuxtLayout>
 </template>
 
 <style scoped>
