@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import TheNavbar from "@/components/TheNavbar.vue"
-import AdminSidebar from "@/components/admin/AdminSidebar.vue"
-</script>
-
 <template>
   <div class="wrapper">
     <TheNavbar />
