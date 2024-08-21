@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue"
 import type { PostgrestError, RealtimePostgresChangesPayload } from "@supabase/supabase-js"
 import type { Buku, Peminjaman } from "@/types"
 
@@ -8,7 +7,7 @@ import DataRow from "@/components/admin/DataRow.vue"
 import CTA from "@/components/CTA.vue"
 import ConfirmDialog from "primevue/confirmdialog"
 import Toast from "primevue/toast"
-import { getPeminjamanData, type PeminjamanData } from "@/lib/peminjaman"
+import { getPeminjamanData } from "@/lib/peminjaman"
 import { useConfirm } from "primevue/useconfirm"
 import { useToast } from "primevue/usetoast"
 import type { Database } from "~/types/supabase"
@@ -21,7 +20,7 @@ const supabase = useSupabaseClient<Database>()
 
 const isLoading = ref(false)
 
-const peminjamanData = ref<PeminjamanData>([])
+const peminjamanData = ref([])
 
 const bukusBorrowPending = computed(() => {
   return peminjamanData.value.filter((data) => data.state_id === 1)

@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue"
 import { useDialog } from "@/composables"
-import { useAuthStore } from "@/stores/auth"
 
-import ProfileEditLayout from "@/layouts/ProfileEditLayout.vue"
 import TheDialog from "@/components/TheDialog.vue"
 import CTA from "@/components/CTA.vue"
 import { type AuthError } from "@supabase/supabase-js"
 import type { Database } from "~/types/supabase"
+
+definePageMeta({
+  layout: "profile-edit"
+})
 
 const supabase = useSupabaseClient<Database>()
 

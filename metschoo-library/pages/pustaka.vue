@@ -3,7 +3,6 @@ import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import TheHeader from "@/components/TheHeader.vue"
 import BookItem from "@/components/BookItem.vue"
 import type { PostgrestError } from "@supabase/supabase-js"
-import { searchTermKey } from "@/stores/search"
 import type { Buku } from "@/types"
 import type { Database } from "~/types/supabase"
 

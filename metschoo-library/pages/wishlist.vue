@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue"
-import { useAuthStore } from "@/stores/auth"
 import { type Buku } from "@/types/"
 import { type PostgrestError, type QueryData } from "@supabase/supabase-js"
 

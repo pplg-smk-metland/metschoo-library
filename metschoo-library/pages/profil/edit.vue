@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue"
-import { useAuthStore } from "@/stores/auth"
 import { type PostgrestError } from "@supabase/supabase-js"
 
 import Select from "primevue/select"
 import Toast from "primevue/toast"
-import ProfileEditLayout from "@/layouts/ProfileEditLayout.vue"
 import CTA from "@/components/CTA.vue"
 import type { Pengguna } from "@/types"
 import { useToast } from "primevue/usetoast"
+
+definePageMeta({
+  layout: "profile-edit"
+})
 
 const dataPengguna = ref<Pengguna | null>(null)
 const authStore = useAuthStore()

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useDialog } from "@/composables"
-import { useAuthStore } from "@/stores/auth"
 import type { Buku, Peminjaman, PeminjamanState } from "@/types"
 import type { PostgrestError, RealtimePostgresChangesPayload } from "@supabase/supabase-js"
 
