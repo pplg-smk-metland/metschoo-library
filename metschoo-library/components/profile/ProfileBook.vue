@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue"
 import type { BukuPinjam } from "@/views/profile/ProfileRoot.vue"
 
 interface Props {

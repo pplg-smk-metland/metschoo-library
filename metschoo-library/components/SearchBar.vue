@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { inject, ref } from "vue"
-import { searchTermKey } from "@/stores/search"
 const router = useRouter()
 const route = useRoute()
 

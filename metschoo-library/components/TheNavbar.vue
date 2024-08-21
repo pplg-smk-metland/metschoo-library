@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue"
-// import { useAuthStore } from "@/stores/auth"
-
-// const authStore = useAuthStore()
+const authStore = useAuthStore()
 
 const openNavBtn = ref(null)
 const closeNavBtn = ref(null)
@@ -43,11 +40,10 @@ function closeNav() {
       <li>
         <NuxtLink class="nav-link" to="/wishlist"> Wishlist </NuxtLink>
       </li>
-      <!-- <li v-if="!authStore.session"> -->
-      <li>
+      <li v-if="!authStore.session">
         <NuxtLink to="/login" class="nav-link nav-link--cta"> Masuk </NuxtLink>
       </li>
-      <li>
+      <li v-else>
         <NuxtLink to="/profil" class="nav-link nav-link--cta"> Profil </NuxtLink>
       </li>
     </ul>
