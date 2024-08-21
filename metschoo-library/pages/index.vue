@@ -14,11 +14,11 @@ definePageMeta({
 
   <section class="main-section">
     <h2>Rekomendasi</h2>
-    <BookList :type-id="1" />
+    <!-- <HomeBookList :type-id="1" /> -->
   </section>
 
   <section class="main-section">
     <h2>Koleksi</h2>
-    <BookList :type-id="2" />
+    <!-- <HomeBookList :type-id="2" /> -->
   </section>
 </template>

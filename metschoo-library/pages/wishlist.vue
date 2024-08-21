@@ -10,6 +10,9 @@ import Toast from "primevue/toast"
 import { useToast } from "primevue/usetoast"
 import type { Database } from "~/types/supabase"
 
+definePageMeta({
+  layout: "default"
+})
 
 const supabase = useSupabaseClient<Database>()
 const authStore = useAuthStore()
@@ -69,7 +72,6 @@ const router = useRouter()
 </script>
 
 <template>
-  <BaseLayout>
     <h1>Wishlist</h1>
     <section v-if="!authStore.session">
       <p>Kamu harus login dlu ya untuk menambahkan buku ke wishlist</p>
@@ -93,5 +95,4 @@ const router = useRouter()
     </section>
 
     <Toast :unstyled="false" />
-  </BaseLayout>
 </template>

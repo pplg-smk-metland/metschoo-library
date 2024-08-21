@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import BaseLayout from "@/layouts/BaseLayout.vue"
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import TheHeader from "@/components/TheHeader.vue"
 import BookItem from "@/components/BookItem.vue"
@@ -8,6 +7,9 @@ import { searchTermKey } from "@/stores/search"
 import type { Buku } from "@/types"
 import type { Database } from "~/types/supabase"
 
+definePageMeta({
+  layout: "default",
+})
 
 const supabase = useSupabaseClient<Database>()
 
@@ -41,17 +43,15 @@ onMounted(async () => {
 </script>
 
 <template>
-  <BaseLayout>
-    <TheHeader @search="async () => await cariBuku()">
-      <template #header-heading> Pustaka </template>
-      <template #header-text> Eksplor buku disini </template>
-    </TheHeader>
+  <TheHeader @search="async () => await cariBuku()">
+    <template #header-heading> Pustaka </template>
+    <template #header-text> Eksplor buku disini </template>
+  </TheHeader>
 
-    <h2>Hasil pencarian</h2>
-    <ul class="book-list">
-      <LoadingSpinner v-show="isLoading" />
-      <li v-show="!isLoading && !books?.length" class="mesasge">ga ada buku woi</li>
-      <BookItem v-for="buku in books" v-show="!isLoading" :key="buku.no_isbn" :buku="buku" />
-    </ul>
-  </BaseLayout>
+  <h2>Hasil pencarian</h2>
+  <ul class="book-list">
+    <LoadingSpinner v-show="isLoading" />
+    <li v-show="!isLoading && !books?.length" class="mesasge">ga ada buku woi</li>
+    <BookItem v-for="buku in books" v-show="!isLoading" :key="buku.no_isbn" :buku="buku" />
+  </ul>
 </template>

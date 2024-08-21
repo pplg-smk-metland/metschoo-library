@@ -1,5 +1,7 @@
 import type { PostgrestError, QueryData } from "@supabase/supabase-js"
-import { supabase } from "./supabase"
+import type {Database} from "@/types/supabase"
+
+const supabase = useSupabaseClient<Database>()
 
 const peminjamanDataQuery = supabase
   .from("peminjaman")

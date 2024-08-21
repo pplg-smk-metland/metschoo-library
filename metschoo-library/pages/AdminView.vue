@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import AdminLayout from "@/layouts/AdminLayout.vue"
+definePageMeta({
+  layout: "admin"
+})
 </script>
 
 <template>
-  <AdminLayout>
     <RouterView />
-  </AdminLayout>
 </template>
 
 <style scoped>

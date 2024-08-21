@@ -1,6 +1,5 @@
 import type { Buku, PeminjamanState } from "@/types"
 import { ref } from "vue"
-import { supabase } from "@/supabase"
 
 /**
  * Returns a blank Buku ref.
@@ -56,6 +55,8 @@ export function useDialog() {
  * @returns {Promise<PeminjamanState>} state of peminjaman
  */
 export async function usePeminjamanState(isbn: Buku["no_isbn"]): Promise<PeminjamanState> {
+  const supabase = useSupabaseClient()
+
   const peminjamanQuery = supabase
     .from("peminjaman")
     .select("id, no_isbn, tgl_pinjam, tgl_kembali, peminjaman_state(id, name)")

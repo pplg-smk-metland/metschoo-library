@@ -5,7 +5,6 @@ import type { Buku, Peminjaman, PeminjamanState } from "@/types"
 import type { PostgrestError, RealtimePostgresChangesPayload } from "@supabase/supabase-js"
 
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
-import BaseLayout from "@/layouts/BaseLayout.vue"
 import TheDialog from "@/components/TheDialog.vue"
 import CTA from "@/components/CTA.vue"
 import ConfirmPopup from "primevue/confirmpopup"
@@ -15,6 +14,10 @@ import { useToast } from "primevue/usetoast"
 import VueDatePicker from "@vuepic/vue-datepicker"
 import "@vuepic/vue-datepicker/dist/main.css"
 import type { Database } from "~/types/supabase"
+
+definePageMeta({
+  layout: "default"
+})
 
 const supabase = useSupabaseClient<Database>()
 const route = useRoute()
@@ -254,7 +257,6 @@ supabase
 </script>
 
 <template>
-  <BaseLayout>
     <section class="main-section">
       <LoadingSpinner v-if="isLoading" />
 
@@ -399,7 +401,6 @@ supabase
       <p>{{ dialogError.message }}</p>
       <p>Silahkan coba lagi, atau hubungi admin.</p>
     </TheDialog>
-  </BaseLayout>
 </template>
 
 <style scoped>
