@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   compatibilityDate: "2024-04-03",
   devtools: { enabled: true },
-  modules: ["@pinia/nuxt", "@primevue/nuxt-module", "@nuxt/eslint", "@nuxtjs/supabase"],
+  modules: ["@pinia/nuxt", "@primevue/nuxt-module", "@nuxt/eslint", "@nuxtjs/supabase", "unplugin-icons/nuxt"],
   srcDir: ".",
   css: ["~/assets/base.css", "~/assets/main.css"],
   supabase: {
