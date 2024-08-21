@@ -3,10 +3,15 @@ import { computed, onMounted, ref } from "vue"
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import DataTable from "primevue/datatable"
 import Column from "primevue/column"
-import { getPeminjamanData, type PeminjamanData } from "@/lib/peminjaman"
+// import { getPeminjamanData, type PeminjamanData } from "@/lib/peminjaman"
+import { getPeminjamanData } from "@/lib/peminjaman"
 import type { Peminjaman } from "@/types"
 
-const peminjamanData = ref<PeminjamanData>([])
+definePageMeta({
+  layout: "admin"
+})
+
+const peminjamanData = ref([])
 const peminjamanDataWeek = computed(() => {
   const now = new Date()
   const nowAWeekLater = new Date().setDate(now.getDate() + 7)
@@ -117,7 +122,7 @@ const lateClass = (data: Peminjaman) => {
 
     <Column field="buku.judul" header="Judul">
       <template #body="slotProps">
-        <NuxtLink :to="{ name: 'admin-halaman-buku', params: { isbn: slotProps.data.no_isbn } }">
+        <NuxtLink :to="`/admin/buku/${slotProps.data.no_isbn}`">
           {{ slotProps.data.buku.judul }}
         </NuxtLink>
       </template>

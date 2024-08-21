@@ -51,7 +51,7 @@ async function updateUserInfo() {
   <ProfileEditLayout>
     <header class="header">
       <h1>Edit profil</h1>
-      <NuxtLink :to="{ name: 'profile' }"> Kembali </NuxtLink>
+      <NuxtLink to="/profil"> Kembali </NuxtLink>
     </header>
 
     <section v-if="dataPengguna" class="profile">

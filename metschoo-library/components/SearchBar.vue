@@ -11,7 +11,7 @@ const bukuYangDicari = inject(searchTermKey, ref(""))
 
 async function cariBuku() {
   if (route.path !== "pustaka") {
-    router.push({ name: "pustaka" })
+    router.push("/pustaka")
   } else {
     emit("search")
   }

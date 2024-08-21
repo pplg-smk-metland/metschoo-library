@@ -11,6 +11,10 @@ import CTA from "@/components/CTA.vue"
 import TheDialog from "@/components/TheDialog.vue"
 import type { Database } from "~/types/supabase"
 
+definePageMeta({
+  layout: "admin"
+})
+
 const supabase = useSupabaseClient<Database>()
 const { buku } = useBuku()
 
@@ -224,7 +228,7 @@ const router = useRouter()
 
       <TheDialog
         :is-open="dialog.isOpen"
-        @dialog-close="router.push({ name: 'admin-buku', params: { isbn: buku.no_isbn } })"
+        @dialog-close="router.push(`/admin/buku/${buku.no_isbn}`)"
       >
         <h2>Sukses!</h2>
         <p>{{ dialog.message }}</p>

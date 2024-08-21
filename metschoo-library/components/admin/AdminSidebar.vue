@@ -20,17 +20,15 @@ interface SidebarSubLink {
 const sidebarLinks = ref<SidebarLink[]>([
   {
     label: "Dashboard",
-    route: {
-      name: "admin",
-    },
+    route: "admin",
   },
   {
     label: "Manajemen pengguna",
-    route: { name: "admin-manajemen-pengguna" },
+    route: "pengguna",
   },
   {
-    label: "Peminjaman ",
-    route: { name: "admin-peminjaman" },
+    label: "Peminjaman",
+    route: "peminjaman",
   },
   {
     label: "buku",
@@ -38,11 +36,11 @@ const sidebarLinks = ref<SidebarLink[]>([
     items: [
       {
         label: "Data buku",
-        route: { name: "admin-data-buku" },
+        route: "buku/",
       },
       {
         label: "Tambah buku",
-        route: { name: "admin-tambah-buku" },
+        route: 'buku/tambah',
       },
     ],
   },
@@ -53,7 +51,7 @@ const sidebarLinks = ref<SidebarLink[]>([
   <nav class="sidebar">
     <PanelMenu :model="sidebarLinks">
       <template #item="{ item }">
-        <NuxtLink class="sidebar__link" v-if="item.route" :to="item.route">
+        <NuxtLink class="sidebar__link" v-if="item.route" :to="`/admin/${item.route !== 'admin' ? item.route : ''}`">
           {{ item.label }}
         </NuxtLink>
         <button class="sidebar__link" v-else @click="item.isExpanded = !item.isExpanded">

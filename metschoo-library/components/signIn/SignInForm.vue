@@ -29,7 +29,7 @@ async function handleSignIn() {
   try {
     const error = await authStore.handleSignIn(data.value.email, data.value.password)
     if (error) throw error
-    router.push({ name: "home" })
+    router.push("/")
   } catch (err) {
     if (err instanceof AuthError) dialog.value.open(err.message)
     else console.error((err as Error).message)

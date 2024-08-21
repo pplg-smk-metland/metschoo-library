@@ -5,10 +5,10 @@ definePageMeta({
 </script>
 
 <template>
-    <RouterView />
+  <slot/>
 </template>
 
-<style scoped>
+<style>
 .data-list {
   list-style: none;
   margin: 0;

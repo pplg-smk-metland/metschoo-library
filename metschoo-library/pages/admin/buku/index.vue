@@ -10,6 +10,10 @@ import Column from "primevue/column"
 import Select from "primevue/select"
 import type { Database } from "~/types/supabase"
 
+definePageMeta({
+  layout: "admin"
+})
+
 const supabase = useSupabaseClient<Database>()
 
 const searchTerm = ref("")
@@ -98,7 +102,7 @@ onMounted(async () => {
   <DataTable :value="searchResults" scrollable v-else>
     <Column field="judul" header="Judul">
       <template #body="slotProps">
-        <NuxtLink :to="{ name: 'admin-halaman-buku', params: { isbn: slotProps.data.no_isbn } }">
+        <NuxtLink :to="`/admin/buku/${slotProps.data.no_isbn }`">
           {{ slotProps.data.judul }}
         </NuxtLink>
       </template>

@@ -18,7 +18,7 @@ const returnPending = computed(() => data.state_id === 4)
 <template>
   <li class="data-row">
     <div class="data-buku">
-      <NuxtLink :to="{ name: 'admin-halaman-buku', params: { isbn: buku.no_isbn } }">
+      <NuxtLink :to="`/admin/buku/${buku.no_isbn}`">
         <h1>{{ buku.judul }}</h1>
         <p>{{ buku.no_isbn }}</p>
         <p>{{ buku.jumlah_exspl }}</p>

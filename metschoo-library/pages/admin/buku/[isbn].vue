@@ -11,6 +11,10 @@ import TheDialog from "@/components/TheDialog.vue"
 import Select from "primevue/select"
 import type { Database } from "~/types/supabase"
 
+definePageMeta({
+  layout: "admin"
+})
+
 const supabase = useSupabaseClient<Database>()
 const isLoading = ref(false)
 
@@ -198,13 +202,13 @@ function toggleFormVisibility() {
     </div>
   </div>
 
-  <TheDialog :is-open="errDialog.isOpen" @dialog-close="router.push({ name: 'admin-data-buku' })">
+  <TheDialog :is-open="errDialog.isOpen" @dialog-close="router.push('/admin/buku')">
     <h2>Ada kesalahan!</h2>
     <p>
       {{ errDialog.message }}
     </p>
   </TheDialog>
-  <TheDialog :is-open="dialog.isOpen" @dialog-close="router.push({ name: 'admin-data-buku' })">
+  <TheDialog :is-open="dialog.isOpen" @dialog-close="router.push('/admin/buku/')">
     <h2>Sukses!</h2>
     <p>
       {{ dialog.message }}

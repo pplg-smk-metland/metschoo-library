@@ -61,7 +61,7 @@ async function signOut() {
 
   if (reallySigningOut) {
     await authStore.handleSignOut()
-    router.push({ name: "home" })
+    router.push("/")
   }
 }
 
@@ -76,7 +76,7 @@ onMounted(async () => {
   <ProfileEditLayout>
     <section class="nav">
       <h1>Ubah kredensial</h1>
-      <NuxtLink :to="{ name: 'profile' }"> Kembali </NuxtLink>
+      <NuxtLink to="/profil"> Kembali </NuxtLink>
     </section>
 
     <section class="main-section">

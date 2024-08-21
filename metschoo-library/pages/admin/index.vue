@@ -13,6 +13,10 @@ import { useConfirm } from "primevue/useconfirm"
 import { useToast } from "primevue/usetoast"
 import type { Database } from "~/types/supabase"
 
+definePageMeta({
+  layout: "admin"
+})
+
 const supabase = useSupabaseClient<Database>()
 
 const isLoading = ref(false)
