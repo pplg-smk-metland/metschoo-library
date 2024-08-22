@@ -16,6 +16,12 @@ definePageMeta({
   layout: "admin"
 })
 
+const user = useSupabaseUser()
+
+if (user.value.app_metadata.role !== 'super-admin') {
+  await navigateTo({path: "/"})
+}
+
 const supabase = useSupabaseClient<Database>()
 
 const isLoading = ref(false)
