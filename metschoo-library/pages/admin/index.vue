@@ -18,9 +18,13 @@ definePageMeta({
 
 const user = useSupabaseUser()
 
-if (user.value.app_metadata.role !== 'super-admin') {
+onMounted(async () => {
+  if (user.value && user.value.app_metadata.role === 'super-admin') {
+    return
+  }
+
   await navigateTo({path: "/"})
-}
+})
 
 const supabase = useSupabaseClient<Database>()
 
