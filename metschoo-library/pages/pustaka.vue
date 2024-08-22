@@ -10,20 +10,31 @@ definePageMeta({
   layout: "default",
 })
 
+const route = useRoute()
+const router = useRouter()
+
 const supabase = useSupabaseClient<Database>()
 
-const searchTerm = inject(searchTermKey, ref(""))
+const searchTerm = ref(route.query.term ? route.query.term : '')
 
 const books = ref<Buku[] | null>(null)
 const isLoading = ref(false)
 
 async function cariBuku() {
+  router.push({
+    query: {
+      term: searchTerm.value
+    }
+  })
+
   isLoading.value = true
+  console.log(searchTerm.value)
+
   try {
     const { data, error } = await supabase
       .from("buku")
       .select()
-      .textSearch("judul", searchTerm.value, { type: "websearch" })
+      .textSearch("judul", searchTerm.value as string, { type: "websearch" })
       .limit(20)
 
     if (error) throw error
@@ -37,7 +48,7 @@ async function cariBuku() {
 }
 
 onMounted(async () => {
-  if (searchTerm.value.length !== 0) await cariBuku()
+  await cariBuku()
 })
 </script>
 

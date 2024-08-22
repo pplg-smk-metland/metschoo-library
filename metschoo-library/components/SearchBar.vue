@@ -1,32 +1,21 @@
 <script setup lang="ts">
-const router = useRouter()
 const route = useRoute()
 
 import CTA from "@/components/CTA.vue"
 
 const emit = defineEmits(["search"])
-const bukuYangDicari = inject(searchTermKey, ref(""))
-
-async function cariBuku() {
-  if (route.path !== "pustaka") {
-    router.push("/pustaka")
-  } else {
-    emit("search")
-  }
-}
 </script>
 
 <template>
-  <form id="search-form" @submit.prevent="cariBuku">
+  <form id="search-form" action="/pustaka">
     <input
       id="search-input"
-      v-model="bukuYangDicari"
       type="search"
-      name="search"
+      name="term"
       placeholder="Cari buku disini"
       required
     />
-    <CTA id="search-submit" label="Cari" />
+    <CTA id="search-submit" label="Cari" type="submit" />
   </form>
 </template>
 
