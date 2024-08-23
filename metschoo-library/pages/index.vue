@@ -3,20 +3,14 @@ definePageMeta({
   layout: "default",
 })
 
-const user = ref()
-
 const authStore = useAuthStore()
-onMounted(async() => {
-  if (!authStore.session) return
-
-  user.value = await authStore.getProfile(authStore.session)
-})
+const {profile} = authStore
 </script>
 
 <template>
   <TheHeader>
     <template #header-heading>
-      Halo, <span v-if="user">{{ user.nama }}.</span>
+      <span v-if="profile">Halo, {{ profile.nama }}.</span>
       <span v-else>Halo kamu!</span>
     </template>
   </TheHeader>

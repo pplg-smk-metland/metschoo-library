@@ -26,9 +26,6 @@ const bukuSudahDikonfirmasi = computed(() => {
 
 const isLoading = ref(false)
 
-const authStore = useAuthStore()
-const pengguna = ref<Pengguna | null>(null)
-
 const history = ref<History>([])
 
 const historyQuery = supabase.from("peminjaman_history").select("*")
@@ -49,8 +46,10 @@ async function getPeminjamanHistory() {
   }
 }
 
+const authStore = useAuthStore()
+const {profile} = authStore
+
 onMounted( async () => {
-  pengguna.value = await authStore.getProfile(authStore.session)
   history.value = await getPeminjamanHistory()
 })
 </script>
@@ -74,10 +73,10 @@ onMounted( async () => {
            />
          </figure>
       
-         <div v-if="pengguna" class="profile__details">
-           <h2>{{ pengguna.nama }}</h2>
-           <p>{{ pengguna.kelas }} - {{ pengguna.jurusan }}</p>
-           <p>{{ pengguna.email }}</p>
+         <div v-if="profile" class="profile__details">
+           <h2>{{ profile.nama }}</h2>
+           <p>{{ profile.kelas }} - {{ profile.jurusan }}</p>
+           <p>{{ profile.email }}</p>
       
            <div class="button-container">
              <NuxtLink to="/profil/edit">

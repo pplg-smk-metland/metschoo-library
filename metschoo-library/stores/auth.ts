@@ -7,23 +7,17 @@ import type { Database } from "~/types/supabase"
 
 export const useAuthStore = defineStore("auth", () => {
   const supabase = useSupabaseClient<Database>()
+  const user = useSupabaseUser()
 
   const session = ref<Session | null>(null)
-  const user = ref<User | null>(null)
+  const profile = ref<Pengguna | null>(null)
 
   async function init() {
     supabase.auth.onAuthStateChange(async (_, _session) => {
       session.value = _session
-
-      if (!session.value) return
-      user.value = await getUser(session.value.access_token)
+      
+      profile.value = await getProfile(user.value.id)
     })
-  }
-
-  async function getUser(jwt: string) {
-    const { data, error } = await supabase.auth.getUser(jwt)
-    if (error) throw error
-    return data.user
   }
 
   async function handleSignUp(email: string, password: string) {
@@ -46,7 +40,6 @@ export const useAuthStore = defineStore("auth", () => {
     try {
       const { error } = await supabase.auth.signOut()
       session.value = null
-      user.value = null
 
       if (error) throw error
     } catch (err) {
@@ -54,12 +47,12 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
-  async function getProfile(session: Session) {
+  async function getProfile(id: string): Promise<Pengguna | null> {
     try {
       const { data, error } = await supabase
         .from("pengguna")
         .select("user_id, nama, email, kelas, jurusan, role_id")
-        .eq("user_id", session.user.id)
+        .eq("user_id", id)
         .single()
       if (error) throw error
       return data
@@ -81,7 +74,7 @@ export const useAuthStore = defineStore("auth", () => {
 
   return {
     session,
-    user,
+    profile,
     init,
     handleSignUp,
     handleSignIn,

@@ -67,80 +67,79 @@ async function signOut() {
   }
 }
 
+const {profile} = authStore
+
 onMounted(async () => {
   if (!authStore.session) return
-  const data = await authStore.getProfile(authStore.session)
-  kredensialPengguna.value.email = data!.email
+  kredensialPengguna.value.email = profile!.email
 })
 </script>
 
 <template>
-  <ProfileEditLayout>
-    <section class="nav">
-      <h1>Ubah kredensial</h1>
-      <NuxtLink to="/profil"> Kembali </NuxtLink>
-    </section>
+  <section class="nav">
+    <h1>Ubah kredensial</h1>
+    <NuxtLink to="/profil"> Kembali </NuxtLink>
+  </section>
 
-    <section class="main-section">
-      <h2>Ubah password</h2>
-      <form class="profile-form" @submit.prevent="ubahKredensial">
-        <label for="password">Password</label>
-        <input
-          id="password"
-          v-model="kredensialPengguna.password"
-          type="password"
-          name="password"
-          placeholder="Password rahasia anda"
-          required
-        />
+  <section class="main-section">
+    <h2>Ubah password</h2>
+    <form class="profile-form" @submit.prevent="ubahKredensial">
+      <label for="password">Password</label>
+      <input
+        id="password"
+        v-model="kredensialPengguna.password"
+        type="password"
+        name="password"
+        placeholder="Password rahasia anda"
+        required
+      />
 
-        <label for="confirm-password">konfirmasi password</label>
-        <input
-          id="confirm-password"
-          v-model="kredensialPengguna.passwordKonfirmasi"
-          type="password"
-          name="confirm-password"
-          placeholder="Password rahasia anda"
-          required
-        />
-        <div class="button-container">
-          <CTA label="Ubah kredensial" />
-        </div>
-      </form>
-    </section>
+      <label for="confirm-password">konfirmasi password</label>
+      <input
+        id="confirm-password"
+        v-model="kredensialPengguna.passwordKonfirmasi"
+        type="password"
+        name="confirm-password"
+        placeholder="Password rahasia anda"
+        required
+      />
+      <div class="button-container">
+        <CTA label="Ubah kredensial" />
+      </div>
+    </form>
+  </section>
 
-    <section class="main-section">
-      <h2>Ubah email</h2>
+  <section class="main-section">
+    <h2>Ubah email</h2>
 
-      <form @submit.prevent="ubahEmail">
-        <label for="email">Email</label>
-        <input
-          id="email"
-          v-model="kredensialPengguna.email"
-          type="email"
-          name="email"
-          placeholder="emailanda@apa.com"
-          required
-        />
-
-        <div class="button-container">
-          <CTA label="Ubah email" />
-        </div>
-      </form>
-    </section>
-
-    <section class="main-section">
-      <h2>Keluar dari akun</h2>
-      <p>Klik disini untuk keluar dari akun anda</p>
+    <form @submit.prevent="ubahEmail">
+      <label for="email">Email</label>
+      <input
+        id="email"
+        v-model="kredensialPengguna.email"
+        type="email"
+        name="email"
+        placeholder="emailanda@apa.com"
+        required
+      />
 
       <div class="button-container">
-        <CTA @click="signOut" label="Keluar dari akun" />
+        <CTA label="Ubah email" />
       </div>
-    </section>
+    </form>
+  </section>
 
-    <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">
-      <h2>Info!!!</h2>
-      <p>{{ dialog.message }}</p>
-    </TheDialog>
-  </ProfileEditLayout>
+  <section class="main-section">
+    <h2>Keluar dari akun</h2>
+    <p>Klik disini untuk keluar dari akun anda</p>
+
+    <div class="button-container">
+      <CTA @click="signOut" label="Keluar dari akun" />
+    </div>
+  </section>
+
+  <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">
+    <h2>Info!!!</h2>
+    <p>{{ dialog.message }}</p>
+  </TheDialog>
 </template>
