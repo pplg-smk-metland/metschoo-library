@@ -15,7 +15,7 @@ export const useAuthStore = defineStore("auth", () => {
     supabase.auth.onAuthStateChange(async (_, _session) => {
       session.value = _session
 
-      profile.value = await getProfile(user.value.id)
+      if (user.value) profile.value = await getProfile(user.value.id)
     })
   }
 
