@@ -1,6 +1,6 @@
 import { defineStore } from "pinia"
 import { ref } from "vue"
-import { AuthError, type PostgrestError, type Session } from "@supabase/supabase-js"
+import { AuthError, type PostgrestError } from "@supabase/supabase-js"
 import type { Pengguna } from "@/types"
 import type { Database } from "~/types/supabase"
 
@@ -8,13 +8,10 @@ export const useAuthStore = defineStore("auth", () => {
   const supabase = useSupabaseClient<Database>()
   const user = useSupabaseUser()
 
-  const session = ref<Session | null>(null)
   const profile = ref<Pengguna | null>(null)
 
   async function init() {
-    supabase.auth.onAuthStateChange(async (_, _session) => {
-      session.value = _session
-
+    supabase.auth.onAuthStateChange(async () => {
       if (user.value) profile.value = await getProfile(user.value.id)
     })
   }
@@ -69,7 +66,6 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   return {
-    session,
     profile,
     init,
     handleSignUp,

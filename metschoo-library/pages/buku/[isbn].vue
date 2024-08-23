@@ -22,7 +22,7 @@ const isbn = route.params.isbn as string
 const toast = useToast()
 const confirm = useConfirm()
 
-const authStore = useAuthStore()
+const user = useSupabaseUser()
 
 const isLoading = ref(false)
 const { buku } = useBuku()
@@ -90,7 +90,7 @@ const formattedDate = computed(() => {
 const isValidDate = computed(() => date.value > new Date())
 
 function konfirmasiPinjamBuku() {
-  if (!authStore.session) {
+  if (!user.value) {
     return toast.add({
       severity: "warn",
       summary: "Tidak bisa meminjam buku",
@@ -201,8 +201,12 @@ function konfirmasiMasukkanWishlist(buku: Buku, e: Event) {
 }
 
 async function masukkanWishlist({ no_isbn }: Buku) {
-  if (!authStore.session) {
-    alert("silahkan masuk jika anda ingin menambahkan buku ke dalam wishlist")
+  if (!user.value) {
+    toast.add({
+      severity: "warn",
+      summary: "gagal memasukkan buku ke wishlist",
+      detail: "silahkan masuk jika anda ingin menambahkan buku ke dalam wishlist",
+    })
     return
   }
 

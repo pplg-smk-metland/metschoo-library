@@ -14,10 +14,7 @@ const authStore = useAuthStore()
 const supabaseUser = useSupabaseUser()
 const user = ref<Pengguna | null>(null)
 
-const router = useRouter()
-
 onMounted(async () => {
-  if (!authStore.session) return router.back()
   user.value = await authStore.getProfile(supabaseUser.value.id)
 })
 

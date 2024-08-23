@@ -13,7 +13,6 @@ definePageMeta({
 })
 
 const supabase = useSupabaseClient<Database>()
-const authStore = useAuthStore()
 
 const wishlistQuery = supabase.from("wishlist").select("*, buku(*)")
 type Wishlist = QueryData<typeof wishlistQuery>
@@ -67,11 +66,12 @@ onMounted(async () => {
 })
 
 const router = useRouter()
+const user = useSupabaseUser()
 </script>
 
 <template>
   <h1>Wishlist</h1>
-  <section v-if="!authStore.session">
+  <section v-if="!user">
     <p>Kamu harus login dlu ya untuk menambahkan buku ke wishlist</p>
     <p>
       <NuxtLink to="/"> Kembali ke beranda </NuxtLink>

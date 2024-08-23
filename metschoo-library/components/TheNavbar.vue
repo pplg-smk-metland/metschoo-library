@@ -12,6 +12,8 @@ function openNav() {
 function closeNav() {
   navlinks.value?.classList.remove("active")
 }
+
+const user = useSupabaseUser()
 </script>
 
 <template>
@@ -40,7 +42,7 @@ function closeNav() {
       <li>
         <NuxtLink class="nav-link" to="/wishlist"> Wishlist </NuxtLink>
       </li>
-      <li v-if="!authStore.session">
+      <li v-if="!user">
         <NuxtLink to="/login" class="nav-link nav-link--cta"> Masuk </NuxtLink>
       </li>
       <li v-else>
