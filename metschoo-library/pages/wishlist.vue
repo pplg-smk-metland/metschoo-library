@@ -8,6 +8,10 @@ import Toast from "primevue/toast"
 import { useToast } from "primevue/usetoast"
 import type { Database } from "~/types/supabase"
 
+useHead({
+  title: "Wishlist",
+})
+
 definePageMeta({
   layout: "default",
 })

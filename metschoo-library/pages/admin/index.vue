@@ -10,6 +10,10 @@ import { useConfirm } from "primevue/useconfirm"
 import { useToast } from "primevue/usetoast"
 import type { Database } from "~/types/supabase"
 
+useHead({
+  title: 'Admin'
+})
+
 definePageMeta({
   layout: "admin",
 })

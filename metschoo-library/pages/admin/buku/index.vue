@@ -7,6 +7,10 @@ import Column from "primevue/column"
 import Select from "primevue/select"
 import type { Database } from "~/types/supabase"
 
+useHead({
+  title: 'Data Buku'
+})
+
 definePageMeta({
   layout: "admin",
 })

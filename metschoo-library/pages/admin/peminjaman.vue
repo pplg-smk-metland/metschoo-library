@@ -6,6 +6,10 @@ import Column from "primevue/column"
 import { getPeminjamanData } from "@/lib/peminjaman"
 import type { Peminjaman } from "@/types"
 
+useHead({
+  title: 'Peminjaman'
+})
+
 definePageMeta({
   layout: "admin",
 })

@@ -4,6 +4,16 @@ import { AuthError } from "@supabase/supabase-js"
 
 
 const isSigningIn = ref(false)
+const buttonLabel = computed(() =>
+  isSigningIn.value ? "Belum punya akun? Daftar" : "Sudah punya akun? Masuk"
+)
+
+const title = computed(() => isSigningIn.value ? "Log in" : "Sign in")
+
+// title used in /login
+useHead({
+  title: title
+})
 
 function handleSwitchForm() {
   isSigningIn.value = !isSigningIn.value
@@ -103,7 +113,7 @@ async function handleSignUp() {
     </div>
 
     <CTA @click="handleSwitchForm" label="Belum punya akun? Daftar" v-if="isSigningIn" />
-    <CTA @click="handleSwitchForm" label="Sudah punya akun? Masuk" v-else />
+    <CTA @click="handleSwitchForm" :label="buttonLabel" v-else />
   </div>
 
   <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">

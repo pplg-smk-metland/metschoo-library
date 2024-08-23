@@ -1,6 +1,6 @@
 <script setup lang="ts">
 useHead({
-  title: "Metschoo Library",
+  titleTemplate: (title) => (title ? `${title} - Metschoo Library` : "Metschoo Library"),
   meta: [
     {
       name: "description",

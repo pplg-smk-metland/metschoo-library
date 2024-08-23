@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import type { PostgrestError, QueryData } from "@supabase/supabase-js"
 
+useHead({
+  title: 'Profil'
+})
+
 definePageMeta({
   layout: "default",
 })

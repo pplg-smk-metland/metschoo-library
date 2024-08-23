@@ -6,6 +6,10 @@ import Toast from "primevue/toast"
 import type { Pengguna } from "@/types"
 import { useToast } from "primevue/usetoast"
 
+useHead({
+  title: 'Edit profil'
+})
+
 definePageMeta({
   layout: "profile-edit",
 })

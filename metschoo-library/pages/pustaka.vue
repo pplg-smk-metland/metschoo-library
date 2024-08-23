@@ -6,6 +6,10 @@ import type { PostgrestError } from "@supabase/supabase-js"
 import type { Buku } from "@/types"
 import type { Database } from "~/types/supabase"
 
+useHead({
+  title: "Pustaka",
+})
+
 definePageMeta({
   layout: "default",
 })
