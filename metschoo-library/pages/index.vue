@@ -4,7 +4,7 @@ definePageMeta({
 })
 
 const authStore = useAuthStore()
-const {profile} = authStore
+const { profile } = authStore
 </script>
 
 <template>

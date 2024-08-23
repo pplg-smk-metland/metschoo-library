@@ -8,7 +8,7 @@ import type { Pengguna } from "@/types"
 import { useToast } from "primevue/usetoast"
 
 definePageMeta({
-  layout: "profile-edit"
+  layout: "profile-edit",
 })
 
 const authStore = useAuthStore()
@@ -19,7 +19,7 @@ const router = useRouter()
 
 onMounted(async () => {
   if (!authStore.session) return router.back()
-  user.value = await authStore.getProfile(supabaseUser.value.id) 
+  user.value = await authStore.getProfile(supabaseUser.value.id)
 })
 
 const toast = useToast()

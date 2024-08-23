@@ -15,7 +15,7 @@ import "@vuepic/vue-datepicker/dist/main.css"
 import type { Database } from "~/types/supabase"
 
 definePageMeta({
-  layout: "default"
+  layout: "default",
 })
 
 const supabase = useSupabaseClient<Database>()
@@ -256,150 +256,150 @@ supabase
 </script>
 
 <template>
-    <section class="main-section">
-      <LoadingSpinner v-if="isLoading" />
+  <section class="main-section">
+    <LoadingSpinner v-if="isLoading" />
 
-      <div v-if="!buku" class="not-found">
-        <h1>Tidak ada buku!</h1>
-        <p>Bukunya ga ada brok</p>
-      </div>
+    <div v-if="!buku" class="not-found">
+      <h1>Tidak ada buku!</h1>
+      <p>Bukunya ga ada brok</p>
+    </div>
 
-      <div v-else class="buku">
-        <figure>
-          <img class="buku__gambar" :src="imgURL" alt="" width="400" height="600" />
-          <img
-            class="buku__gambar buku__gambar--bayangan"
-            :src="imgURL"
-            alt=""
-            width="400"
-            height="600"
-          />
-        </figure>
+    <div v-else class="buku">
+      <figure>
+        <img class="buku__gambar" :src="imgURL" alt="" width="400" height="600" />
+        <img
+          class="buku__gambar buku__gambar--bayangan"
+          :src="imgURL"
+          alt=""
+          width="400"
+          height="600"
+        />
+      </figure>
 
-        <figcaption class="buku__info">
-          <h1 class="judul">
-            {{ buku.judul }}
-          </h1>
-          <p>
-            <span class="penulis">{{ buku.penulis }}</span> -
-            <span class="tahun-terbit">{{ buku.tahun_terbit }}</span>
-          </p>
-          <p>{{ buku.penerbit }} - {{ buku.alamat_terbit }}</p>
-          <p>Jumlah tersedia: {{ buku.jumlah_exspl }}</p>
+      <figcaption class="buku__info">
+        <h1 class="judul">
+          {{ buku.judul }}
+        </h1>
+        <p>
+          <span class="penulis">{{ buku.penulis }}</span> -
+          <span class="tahun-terbit">{{ buku.tahun_terbit }}</span>
+        </p>
+        <p>{{ buku.penerbit }} - {{ buku.alamat_terbit }}</p>
+        <p>Jumlah tersedia: {{ buku.jumlah_exspl }}</p>
 
-          <div class="button-container">
-            <CTA
-              v-if="peminjamanState?.isBorrowable"
-              :fill="true"
-              @click="konfirmasiPinjamBuku"
-              label="Pinjam buku"
-            />
-
-            <CTA
-              v-else
-              :disabled="!peminjamanState?.isCancellable"
-              danger
-              label="batalkan peminjaman"
-              @click="batalkanPeminjamanBuku(buku, peminjamanState?.id!)"
-            />
-
-            <CTA
-              v-if="peminjamanState?.isReturnable"
-              :disabled="!peminjamanState?.isReturnable"
-              :fill="true"
-              @click="kembalikanBuku(buku, peminjamanState?.id!)"
-              label="kembalikan buku"
-            />
-
-            <ConfirmPopup group="headless" aria-label="popup">
-              <template #container="{ message, acceptCallback, rejectCallback }">
-                <section class="p-confirmpopup-content">
-                  <h3>{{ message.header }}</h3>
-                  <p>{{ message.message }}</p>
-                </section>
-
-                <section class="p-confirmpopup-footer">
-                  <CTA label="Tidak" @click="rejectCallback" />
-                  <CTA label="Ya" @click="acceptCallback" fill />
-                </section>
-              </template>
-            </ConfirmPopup>
-
-            <Toast position="top-right" :unstyled="false" />
-            <CTA
-              :disabled="bukuAdaDiWishlist || !peminjamanState?.isBorrowable"
-              :aria-expanded="confirmWishlistIsVisible"
-              :aria-controls="confirmWishlistIsVisible ? 'confirm' : null"
-              @click="konfirmasiMasukkanWishlist(buku, $event)"
-              label="tambahkan ke wishlist"
-            />
-          </div>
-        </figcaption>
-
-        <TheDialog :is-open="dialogConfirm.isOpen" @dialog-close="dialogConfirm.close()">
-          <h2>{{ dialogConfirm.message }}</h2>
-
-          <VueDatePicker
-            v-model="date"
-            locale="id"
-            cancel-text="Batalkan"
-            select-text="Pilih"
-            :min-date="new Date()"
-          />
-
-          <p>Saya akan mengembalikan buku ini pada</p>
-
-          <p class="tanggal">
-            <time v-if="date" :datetime="date?.toISOString()">{{ formattedDate }}</time>
-            <span v-else> pilih dulu tanggalnya. </span>
-          </p>
-
+        <div class="button-container">
           <CTA
-            :disabled="!isValidDate"
-            @click="pinjamBuku({ ...buku }, date)"
-            :title="!isValidDate ? 'pilih dulu tanggal yang benar.' : 'pinjam buku'"
+            v-if="peminjamanState?.isBorrowable"
+            :fill="true"
+            @click="konfirmasiPinjamBuku"
             label="Pinjam buku"
           />
-        </TheDialog>
-      </div>
-    </section>
 
-    <section class="main-section">
-      <article>
-        <h2>Informasi bibliografi</h2>
-        <table class="tabel-bibliografi">
-          <tbody>
-            <tr>
-              <td>judul</td>
-              <td>{{ buku?.judul }}</td>
-            </tr>
+          <CTA
+            v-else
+            :disabled="!peminjamanState?.isCancellable"
+            danger
+            label="batalkan peminjaman"
+            @click="batalkanPeminjamanBuku(buku, peminjamanState?.id!)"
+          />
 
-            <tr>
-              <td>Penulis</td>
-              <td>
-                {{ buku?.penulis }}
-              </td>
-            </tr>
+          <CTA
+            v-if="peminjamanState?.isReturnable"
+            :disabled="!peminjamanState?.isReturnable"
+            :fill="true"
+            @click="kembalikanBuku(buku, peminjamanState?.id!)"
+            label="kembalikan buku"
+          />
 
-            <tr>
-              <td>ISBN</td>
-              <td>{{ buku?.no_isbn }}</td>
-            </tr>
+          <ConfirmPopup group="headless" aria-label="popup">
+            <template #container="{ message, acceptCallback, rejectCallback }">
+              <section class="p-confirmpopup-content">
+                <h3>{{ message.header }}</h3>
+                <p>{{ message.message }}</p>
+              </section>
 
-            <tr>
-              <td>Penerbit</td>
-              <td>{{ buku?.penerbit }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </article>
-    </section>
+              <section class="p-confirmpopup-footer">
+                <CTA label="Tidak" @click="rejectCallback" />
+                <CTA label="Ya" @click="acceptCallback" fill />
+              </section>
+            </template>
+          </ConfirmPopup>
 
-    <TheDialog :is-open="dialogError.isOpen" @dialog-close="dialogError.close()">
-      <h2>Ups, ada yang salah nih.</h2>
-      <p>{{ dialogError.message }}</p>
-      <p>Silahkan coba lagi, atau hubungi admin.</p>
-    </TheDialog>
+          <Toast position="top-right" :unstyled="false" />
+          <CTA
+            :disabled="bukuAdaDiWishlist || !peminjamanState?.isBorrowable"
+            :aria-expanded="confirmWishlistIsVisible"
+            :aria-controls="confirmWishlistIsVisible ? 'confirm' : null"
+            @click="konfirmasiMasukkanWishlist(buku, $event)"
+            label="tambahkan ke wishlist"
+          />
+        </div>
+      </figcaption>
+
+      <TheDialog :is-open="dialogConfirm.isOpen" @dialog-close="dialogConfirm.close()">
+        <h2>{{ dialogConfirm.message }}</h2>
+
+        <VueDatePicker
+          v-model="date"
+          locale="id"
+          cancel-text="Batalkan"
+          select-text="Pilih"
+          :min-date="new Date()"
+        />
+
+        <p>Saya akan mengembalikan buku ini pada</p>
+
+        <p class="tanggal">
+          <time v-if="date" :datetime="date?.toISOString()">{{ formattedDate }}</time>
+          <span v-else> pilih dulu tanggalnya. </span>
+        </p>
+
+        <CTA
+          :disabled="!isValidDate"
+          @click="pinjamBuku({ ...buku }, date)"
+          :title="!isValidDate ? 'pilih dulu tanggal yang benar.' : 'pinjam buku'"
+          label="Pinjam buku"
+        />
+      </TheDialog>
+    </div>
+  </section>
+
+  <section class="main-section">
+    <article>
+      <h2>Informasi bibliografi</h2>
+      <table class="tabel-bibliografi">
+        <tbody>
+          <tr>
+            <td>judul</td>
+            <td>{{ buku?.judul }}</td>
+          </tr>
+
+          <tr>
+            <td>Penulis</td>
+            <td>
+              {{ buku?.penulis }}
+            </td>
+          </tr>
+
+          <tr>
+            <td>ISBN</td>
+            <td>{{ buku?.no_isbn }}</td>
+          </tr>
+
+          <tr>
+            <td>Penerbit</td>
+            <td>{{ buku?.penerbit }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </article>
+  </section>
+
+  <TheDialog :is-open="dialogError.isOpen" @dialog-close="dialogError.close()">
+    <h2>Ups, ada yang salah nih.</h2>
+    <p>{{ dialogError.message }}</p>
+    <p>Silahkan coba lagi, atau hubungi admin.</p>
+  </TheDialog>
 </template>
 
 <style scoped>

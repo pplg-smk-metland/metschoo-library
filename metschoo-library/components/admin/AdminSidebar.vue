@@ -40,7 +40,7 @@ const sidebarLinks = ref<SidebarLink[]>([
       },
       {
         label: "Tambah buku",
-        route: 'buku/tambah',
+        route: "buku/tambah",
       },
     ],
   },
@@ -51,7 +51,11 @@ const sidebarLinks = ref<SidebarLink[]>([
   <nav class="sidebar">
     <PanelMenu :model="sidebarLinks">
       <template #item="{ item }">
-        <NuxtLink class="sidebar__link" v-if="item.route" :to="`/admin/${item.route !== 'admin' ? item.route : ''}`">
+        <NuxtLink
+          class="sidebar__link"
+          v-if="item.route"
+          :to="`/admin/${item.route !== 'admin' ? item.route : ''}`"
+        >
           {{ item.label }}
         </NuxtLink>
         <button class="sidebar__link" v-else @click="item.isExpanded = !item.isExpanded">

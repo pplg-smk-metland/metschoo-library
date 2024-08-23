@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { PostgrestError, QueryData } from '@supabase/supabase-js';
-import type { Pengguna } from '~/types';
+import type { PostgrestError, QueryData } from "@supabase/supabase-js"
+import type { Pengguna } from "~/types"
 
 definePageMeta({
-  layout: "default"
+  layout: "default",
 })
 
 const supabase = useSupabaseClient()
@@ -47,9 +47,9 @@ async function getPeminjamanHistory() {
 }
 
 const authStore = useAuthStore()
-const {profile} = authStore
+const { profile } = authStore
 
-onMounted( async () => {
+onMounted(async () => {
   history.value = await getPeminjamanHistory()
 })
 </script>
@@ -61,52 +61,52 @@ onMounted( async () => {
         <h1>Profil</h1>
         <p>Selamat Datang di Profil kamu</p>
       </header>
-  
+
       <section class="profile">
-         <figure class="profile__picture-container">
-           <img
-             class="profile-picture"
-             src="@/assets/profilepicture.svg"
-             width="300"
-             height="300"
-             alt="Foto kamu disini"
-           />
-         </figure>
-      
-         <div v-if="profile" class="profile__details">
-           <h2>{{ profile.nama }}</h2>
-           <p>{{ profile.kelas }} - {{ profile.jurusan }}</p>
-           <p>{{ profile.email }}</p>
-      
-           <div class="button-container">
-             <NuxtLink to="/profil/edit">
-               <CTA label="Edit profil" />
-             </NuxtLink>
-             <NuxtLink to="/profil/keamanan">
-               <CTA label="Keamanan" />
-             </NuxtLink>
-           </div>
-         </div>
-      
-         <div v-else class="not-found">
-           <h1>Pengguna tidak ditemukan!</h1>
-           <p>Silahkan coba beberapa saat lagi, atau hubungi admin Metschoo Library.</p>
-         </div>
+        <figure class="profile__picture-container">
+          <img
+            class="profile-picture"
+            src="@/assets/profilepicture.svg"
+            width="300"
+            height="300"
+            alt="Foto kamu disini"
+          />
+        </figure>
+
+        <div v-if="profile" class="profile__details">
+          <h2>{{ profile.nama }}</h2>
+          <p>{{ profile.kelas }} - {{ profile.jurusan }}</p>
+          <p>{{ profile.email }}</p>
+
+          <div class="button-container">
+            <NuxtLink to="/profil/edit">
+              <CTA label="Edit profil" />
+            </NuxtLink>
+            <NuxtLink to="/profil/keamanan">
+              <CTA label="Keamanan" />
+            </NuxtLink>
+          </div>
+        </div>
+
+        <div v-else class="not-found">
+          <h1>Pengguna tidak ditemukan!</h1>
+          <p>Silahkan coba beberapa saat lagi, atau hubungi admin Metschoo Library.</p>
+        </div>
       </section>
-      
+
       <section>
         <h2>Buku yang dipinjam</h2>
         <LoadingSpinner v-if="isLoading" />
         <p v-else-if="!isLoading && bukuYangDipinjam.length === 0">Ga ada buku yang dipinjam</p>
-      
+
         <h3>Belum dikonfirmasi</h3>
         <ul class="book-list">
           <li v-if="!bukuBlumDikonfirmasi.length">ga ada bukunya nih</li>
           <ProfileBook v-for="data in bukuBlumDikonfirmasi" :key="data.no_isbn" :data="data" />
         </ul>
-      
+
         <h3>Sudah dikonfirmasi</h3>
-      
+
         <ul class="book-list">
           <li v-if="!bukuSudahDikonfirmasi.length">ga ada bukunya nih</li>
           <ProfileBook v-for="data in bukuSudahDikonfirmasi" :key="data.no_isbn" :data="data" />
@@ -116,7 +116,7 @@ onMounted( async () => {
 
     <aside class="history">
       <h2>Riwayat Peminjaman</h2>
-    
+
       <ul class="history-list">
         <li v-if="!history.length" class="message">bukunya ga ada ges</li>
         <ProfileHistoryBook

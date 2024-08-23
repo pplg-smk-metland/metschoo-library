@@ -15,7 +15,7 @@ const router = useRouter()
 
 const supabase = useSupabaseClient<Database>()
 
-const searchTerm = ref(route.query.term ? route.query.term : '')
+const searchTerm = ref(route.query.term ? route.query.term : "")
 
 const books = ref<Buku[] | null>(null)
 const isLoading = ref(false)
@@ -23,8 +23,8 @@ const isLoading = ref(false)
 async function cariBuku() {
   router.push({
     query: {
-      term: searchTerm.value
-    }
+      term: searchTerm.value,
+    },
   })
 
   isLoading.value = true

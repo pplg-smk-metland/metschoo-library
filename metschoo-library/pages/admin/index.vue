@@ -13,7 +13,7 @@ import { useToast } from "primevue/usetoast"
 import type { Database } from "~/types/supabase"
 
 definePageMeta({
-  layout: "admin"
+  layout: "admin",
 })
 
 const supabase = useSupabaseClient<Database>()

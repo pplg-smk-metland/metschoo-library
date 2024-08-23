@@ -8,7 +8,7 @@ export default defineNuxtConfig({
     "@nuxt/eslint",
     "@nuxtjs/supabase",
     "unplugin-icons/nuxt",
-    "@nuxt/image"
+    "@nuxt/image",
   ],
   srcDir: ".",
   css: ["~/assets/base.css", "~/assets/main.css"],
@@ -18,5 +18,5 @@ export default defineNuxtConfig({
       login: "/login",
       callback: "/",
     },
-  }
+  },
 })

@@ -8,7 +8,7 @@ import { type AuthError } from "@supabase/supabase-js"
 import type { Database } from "~/types/supabase"
 
 definePageMeta({
-  layout: "profile-edit"
+  layout: "profile-edit",
 })
 
 const supabase = useSupabaseClient<Database>()
@@ -67,7 +67,7 @@ async function signOut() {
   }
 }
 
-const {profile} = authStore
+const { profile } = authStore
 
 onMounted(async () => {
   if (!authStore.session) return

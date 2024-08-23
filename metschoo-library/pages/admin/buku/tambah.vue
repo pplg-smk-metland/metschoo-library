@@ -12,7 +12,7 @@ import TheDialog from "@/components/TheDialog.vue"
 import type { Database } from "~/types/supabase"
 
 definePageMeta({
-  layout: "admin"
+  layout: "admin",
 })
 
 const supabase = useSupabaseClient<Database>()

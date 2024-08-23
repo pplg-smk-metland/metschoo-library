@@ -4,7 +4,6 @@ import { AuthError, type PostgrestError, type Session, type User } from "@supaba
 import type { Pengguna } from "@/types"
 import type { Database } from "~/types/supabase"
 
-
 export const useAuthStore = defineStore("auth", () => {
   const supabase = useSupabaseClient<Database>()
   const user = useSupabaseUser()
@@ -15,7 +14,7 @@ export const useAuthStore = defineStore("auth", () => {
   async function init() {
     supabase.auth.onAuthStateChange(async (_, _session) => {
       session.value = _session
-      
+
       profile.value = await getProfile(user.value.id)
     })
   }

@@ -1,15 +1,16 @@
 <script setup lang="ts">
-  const authStore = useAuthStore()
+const authStore = useAuthStore()
 
 onMounted(async () => {
   await authStore.init()
 })
 </script>
+
 <template>
   <TheNavbar />
-    <main>
-      <slot />
-    </main>
+  <main>
+    <slot />
+  </main>
   <TheFooter />
 </template>
 

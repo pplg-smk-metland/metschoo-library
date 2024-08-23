@@ -8,13 +8,7 @@ const emit = defineEmits(["search"])
 
 <template>
   <form id="search-form" action="/pustaka">
-    <input
-      id="search-input"
-      type="search"
-      name="term"
-      placeholder="Cari buku disini"
-      required
-    />
+    <input id="search-input" type="search" name="term" placeholder="Cari buku disini" required />
     <CTA id="search-submit" label="Cari" type="submit" />
   </form>
 </template>

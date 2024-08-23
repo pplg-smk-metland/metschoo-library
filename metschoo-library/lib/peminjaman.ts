@@ -1,6 +1,5 @@
 import type { PostgrestError, QueryData } from "@supabase/supabase-js"
-import type {Database} from "@/types/supabase"
-
+import type { Database } from "@/types/supabase"
 
 // const peminjamanDataQuery = supabase
 //   .from("peminjaman")
@@ -12,8 +11,8 @@ export async function getPeminjamanData() {
   const supabase = useSupabaseClient<Database>()
   try {
     const { data, error } = await supabase
-  .from("peminjaman")
-  .select("*, pengguna(nama, kelas, jurusan), buku(*)")
+      .from("peminjaman")
+      .select("*, pengguna(nama, kelas, jurusan), buku(*)")
 
     if (error) throw error
     return data

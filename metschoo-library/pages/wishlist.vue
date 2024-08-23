@@ -9,7 +9,7 @@ import { useToast } from "primevue/usetoast"
 import type { Database } from "~/types/supabase"
 
 definePageMeta({
-  layout: "default"
+  layout: "default",
 })
 
 const supabase = useSupabaseClient<Database>()
@@ -70,27 +70,27 @@ const router = useRouter()
 </script>
 
 <template>
-    <h1>Wishlist</h1>
-    <section v-if="!authStore.session">
-      <p>Kamu harus login dlu ya untuk menambahkan buku ke wishlist</p>
-      <p>
-        <NuxtLink to="/"> Kembali ke beranda </NuxtLink>
-      </p>
-    </section>
+  <h1>Wishlist</h1>
+  <section v-if="!authStore.session">
+    <p>Kamu harus login dlu ya untuk menambahkan buku ke wishlist</p>
+    <p>
+      <NuxtLink to="/"> Kembali ke beranda </NuxtLink>
+    </p>
+  </section>
 
-    <section v-else class="main-section">
-      <LoadingSpinner v-if="isLoading" />
-      <p v-if="!isLoading && !wishlist?.length">Kamu belum punya apa-apa dalam wishlist kamu.</p>
-      <ul v-if="wishlist?.length" class="book-list">
-        <WishlistBook
-          v-for="wishlistItem in wishlist"
-          :key="wishlistItem.id"
-          :buku="wishlistItem.buku!"
-          @pinjam-buku="router.push(`/buku/${wishlistItem.no_isbn}`)"
-          @hapus-buku="hapusBukuDariWishlist(wishlistItem.buku!)"
-        />
-      </ul>
-    </section>
+  <section v-else class="main-section">
+    <LoadingSpinner v-if="isLoading" />
+    <p v-if="!isLoading && !wishlist?.length">Kamu belum punya apa-apa dalam wishlist kamu.</p>
+    <ul v-if="wishlist?.length" class="book-list">
+      <WishlistBook
+        v-for="wishlistItem in wishlist"
+        :key="wishlistItem.id"
+        :buku="wishlistItem.buku!"
+        @pinjam-buku="router.push(`/buku/${wishlistItem.no_isbn}`)"
+        @hapus-buku="hapusBukuDariWishlist(wishlistItem.buku!)"
+      />
+    </ul>
+  </section>
 
-    <Toast :unstyled="false" />
+  <Toast :unstyled="false" />
 </template>

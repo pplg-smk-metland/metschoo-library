@@ -8,7 +8,7 @@ import { getPeminjamanData } from "@/lib/peminjaman"
 import type { Peminjaman } from "@/types"
 
 definePageMeta({
-  layout: "admin"
+  layout: "admin",
 })
 
 const peminjamanData = ref([])
