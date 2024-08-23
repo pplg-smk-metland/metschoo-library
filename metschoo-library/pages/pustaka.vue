@@ -32,7 +32,6 @@ async function cariBuku() {
   })
 
   isLoading.value = true
-  console.log(searchTerm.value)
 
   try {
     const { data, error } = await supabase
@@ -52,7 +51,7 @@ async function cariBuku() {
 }
 
 onMounted(async () => {
-  await cariBuku()
+  if (searchTerm.value.length) await cariBuku()
 })
 </script>
 
