@@ -1,14 +1,10 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue"
-import { useRouter } from "vue-router"
 import { useBuku, useDialog } from "@/composables"
 import Select from "primevue/select"
 import { StorageError } from "@supabase/storage-js"
 import type { Buku, Kategori } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
 
-import CTA from "@/components/CTA.vue"
-import TheDialog from "@/components/TheDialog.vue"
 import type { Database } from "~/types/supabase"
 
 definePageMeta({

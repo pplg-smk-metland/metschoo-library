@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { PostgrestError, QueryData } from "@supabase/supabase-js"
-import type { Pengguna } from "~/types"
 
 definePageMeta({
   layout: "default",

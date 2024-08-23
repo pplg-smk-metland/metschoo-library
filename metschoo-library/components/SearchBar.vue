@@ -1,8 +1,6 @@
 <script setup lang="ts">
 const route = useRoute()
 
-import CTA from "@/components/CTA.vue"
-
 const emit = defineEmits(["search"])
 </script>
 

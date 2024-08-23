@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from "vue"
 import type { RouteLocationRaw } from "vue-router"
 
 import IconArrowDownDrop from "~icons/mdi/arrow-down-drop"

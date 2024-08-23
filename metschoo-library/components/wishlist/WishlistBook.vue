@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue"
-import CTA from "@/components/CTA.vue"
 import { type Buku } from "@/types/index"
 
 interface Props {

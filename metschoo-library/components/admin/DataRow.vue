@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import CTA from "@/components/CTA.vue"
 import type { PeminjamanData } from "@/views/admin/AdminRoot.vue"
-import { computed } from "vue"
+
 interface Props {
   data: PeminjamanData[number]
   buku: PeminjamanData[number]["buku"]

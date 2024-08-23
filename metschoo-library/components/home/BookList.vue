@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue"
 import type { PostgrestError } from "@supabase/supabase-js"
 import type { Buku } from "@/types"
 

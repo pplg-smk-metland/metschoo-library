@@ -1,6 +1,6 @@
 import { defineStore } from "pinia"
 import { ref } from "vue"
-import { AuthError, type PostgrestError, type Session, type User } from "@supabase/supabase-js"
+import { AuthError, type PostgrestError, type Session } from "@supabase/supabase-js"
 import type { Pengguna } from "@/types"
 import type { Database } from "~/types/supabase"
 
@@ -38,7 +38,6 @@ export const useAuthStore = defineStore("auth", () => {
   async function handleSignOut() {
     try {
       const { error } = await supabase.auth.signOut()
-      session.value = null
 
       if (error) throw error
     } catch (err) {
@@ -62,8 +61,6 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   async function handleUpdateProfile(profileUpdates: Pengguna) {
-    if (session.value === null) throw Error("session does not exist")
-
     const updates = {
       ...profileUpdates,
     }

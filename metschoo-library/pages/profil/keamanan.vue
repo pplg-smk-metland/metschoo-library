@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue"
 import { useDialog } from "@/composables"
 
-import TheDialog from "@/components/TheDialog.vue"
-import CTA from "@/components/CTA.vue"
 import { type AuthError } from "@supabase/supabase-js"
 import type { Database } from "~/types/supabase"
 

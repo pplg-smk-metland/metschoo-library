@@ -3,7 +3,6 @@ import { type PostgrestError } from "@supabase/supabase-js"
 
 import Select from "primevue/select"
 import Toast from "primevue/toast"
-import CTA from "@/components/CTA.vue"
 import type { Pengguna } from "@/types"
 import { useToast } from "primevue/usetoast"
 

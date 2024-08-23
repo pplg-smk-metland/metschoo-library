@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue"
 import type { Kategori } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
 
-import CTA from "@/components/CTA.vue"
-import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import DataTable from "primevue/datatable"
 import Column from "primevue/column"
 import Select from "primevue/select"

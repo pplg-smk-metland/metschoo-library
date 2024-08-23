@@ -2,9 +2,7 @@
 import type { PostgrestError, RealtimePostgresChangesPayload } from "@supabase/supabase-js"
 import type { Buku, Peminjaman } from "@/types"
 
-import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import DataRow from "@/components/admin/DataRow.vue"
-import CTA from "@/components/CTA.vue"
 import ConfirmDialog from "primevue/confirmdialog"
 import Toast from "primevue/toast"
 import { getPeminjamanData } from "@/lib/peminjaman"

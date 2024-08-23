@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue"
-import type { History } from "@/views/profile/ProfileRoot.vue"
+import type { History } from "@/pages/profil/index.vue"
 
 interface Props {
   data: History[number]

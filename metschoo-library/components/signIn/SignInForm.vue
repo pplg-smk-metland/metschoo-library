@@ -1,14 +1,7 @@
 <script setup lang="ts">
-import { ref } from "vue"
 import { useDialog } from "@/composables"
-
-import TheDialog from "@/components/TheDialog.vue"
-import CTA from "@/components/CTA.vue"
-import { useRouter } from "vue-router"
 import { AuthError } from "@supabase/supabase-js"
 
-const authStore = useAuthStore()
-const router = useRouter()
 
 const isSigningIn = ref(false)
 
@@ -23,6 +16,9 @@ const data = ref({
 })
 
 const { dialog } = useDialog()
+
+const authStore = useAuthStore()
+const router = useRouter()
 
 async function handleSignIn() {
   try {
