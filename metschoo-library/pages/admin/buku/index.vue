@@ -8,7 +8,7 @@ import Select from "primevue/select"
 import type { Database } from "~/types/supabase"
 
 useHead({
-  title: 'Data Buku'
+  title: "Data Buku",
 })
 
 definePageMeta({

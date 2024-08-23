@@ -7,7 +7,7 @@ import { getPeminjamanData } from "@/lib/peminjaman"
 import type { Peminjaman } from "@/types"
 
 useHead({
-  title: 'Peminjaman'
+  title: "Peminjaman",
 })
 
 definePageMeta({

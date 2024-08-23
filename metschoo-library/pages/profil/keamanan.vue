@@ -5,7 +5,7 @@ import { type AuthError } from "@supabase/supabase-js"
 import type { Database } from "~/types/supabase"
 
 useHead({
-  title: 'Keamanan Profil'
+  title: "Keamanan Profil",
 })
 
 definePageMeta({

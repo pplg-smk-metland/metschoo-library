@@ -8,7 +8,7 @@ import type { PostgrestError } from "@supabase/supabase-js"
 import type { Database } from "~/types/supabase"
 
 useHead({
-  title: 'Tambah Buku'
+  title: "Tambah Buku",
 })
 
 definePageMeta({

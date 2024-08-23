@@ -1,12 +1,26 @@
 <script setup lang="ts">
-const route = useRoute()
+const term = ref("")
 
-const emit = defineEmits(["search"])
+async function searchRedirect() {
+  return await navigateTo({
+    path: "/pustaka",
+    query: {
+      term: term.value,
+    },
+  })
+}
 </script>
 
 <template>
-  <form id="search-form" action="/pustaka">
-    <input id="search-input" type="search" name="term" placeholder="Cari buku disini" required />
+  <form id="search-form" @submit.prevent="searchRedirect">
+    <input
+      id="search-input"
+      type="search"
+      name="term"
+      placeholder="Cari buku disini"
+      v-model="term"
+      required
+    />
     <CTA id="search-submit" label="Cari" type="submit" />
   </form>
 </template>

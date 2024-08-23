@@ -1,15 +1,15 @@
 <script setup lang="ts">
 definePageMeta({
-    middleware: [
-      function () { 
-        const user = useSupabaseUser()
+  middleware: [
+    function () {
+      const user = useSupabaseUser()
 
-        if (user.value) {
-          return navigateTo('/')
-        }
+      if (user.value) {
+        return navigateTo("/")
       }
-    ]
-  })
+    },
+  ],
+})
 </script>
 <template>
   <main>

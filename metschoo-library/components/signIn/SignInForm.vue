@@ -2,17 +2,16 @@
 import { useDialog } from "@/composables"
 import { AuthError } from "@supabase/supabase-js"
 
-
 const isSigningIn = ref(false)
 const buttonLabel = computed(() =>
   isSigningIn.value ? "Belum punya akun? Daftar" : "Sudah punya akun? Masuk"
 )
 
-const title = computed(() => isSigningIn.value ? "Log in" : "Sign in")
+const title = computed(() => (isSigningIn.value ? "Log in" : "Sign in"))
 
 // title used in /login
 useHead({
-  title: title
+  title: title,
 })
 
 function handleSwitchForm() {

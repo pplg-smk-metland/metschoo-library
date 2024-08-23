@@ -7,7 +7,7 @@ import type { Pengguna } from "@/types"
 import { useToast } from "primevue/usetoast"
 
 useHead({
-  title: 'Edit profil'
+  title: "Edit profil",
 })
 
 definePageMeta({

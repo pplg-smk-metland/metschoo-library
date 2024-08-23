@@ -15,29 +15,30 @@ definePageMeta({
 })
 
 const route = useRoute()
-const router = useRouter()
 
 const supabase = useSupabaseClient<Database>()
 
-const searchTerm = ref(route.query.term ? route.query.term : "")
+const searchTerm = ref(route.query.term ?? "")
 
 const books = ref<Buku[] | null>(null)
 const isLoading = ref(false)
 
-async function cariBuku() {
-  router.push({
-    query: {
-      term: searchTerm.value,
-    },
-  })
+watch(
+  () => route.query.term,
+  async (newTerm, _) => {
+    searchTerm.value = newTerm as string
+    await cariBuku(searchTerm.value)
+  }
+)
 
+async function cariBuku(term: string) {
   isLoading.value = true
 
   try {
     const { data, error } = await supabase
       .from("buku")
       .select()
-      .textSearch("judul", searchTerm.value as string, { type: "websearch" })
+      .textSearch("judul", term, { type: "websearch" })
       .limit(20)
 
     if (error) throw error
@@ -51,17 +52,18 @@ async function cariBuku() {
 }
 
 onMounted(async () => {
-  if (searchTerm.value.length) await cariBuku()
+  if (searchTerm.value.length) await cariBuku(searchTerm.value as string)
 })
 </script>
 
 <template>
-  <TheHeader @search="async () => await cariBuku()">
+  <TheHeader>
     <template #header-heading> Pustaka </template>
     <template #header-text> Eksplor buku disini </template>
   </TheHeader>
 
   <h2>Hasil pencarian</h2>
+
   <ul class="book-list">
     <LoadingSpinner v-show="isLoading" />
     <li v-show="!isLoading && !books?.length" class="mesasge">ga ada buku woi</li>

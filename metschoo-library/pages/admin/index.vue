@@ -11,7 +11,7 @@ import { useToast } from "primevue/usetoast"
 import type { Database } from "~/types/supabase"
 
 useHead({
-  title: 'Admin'
+  title: "Admin",
 })
 
 definePageMeta({

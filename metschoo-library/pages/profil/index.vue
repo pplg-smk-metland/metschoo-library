@@ -2,7 +2,7 @@
 import type { PostgrestError, QueryData } from "@supabase/supabase-js"
 
 useHead({
-  title: 'Profil'
+  title: "Profil",
 })
 
 definePageMeta({

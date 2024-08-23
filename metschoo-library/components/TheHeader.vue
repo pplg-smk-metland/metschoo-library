@@ -1,7 +1,3 @@
-<script setup lang="ts">
-const emit = defineEmits(["search"])
-</script>
-
 <template>
   <header>
     <div class="header__text">
@@ -14,7 +10,7 @@ const emit = defineEmits(["search"])
     </div>
 
     <div class="header__search-bar">
-      <SearchBar @search="emit('search')" />
+      <SearchBar />
     </div>
   </header>
 </template>
