@@ -43,7 +43,6 @@ onMounted(async () => {
 
 const lateClass = (data: Peminjaman) => {
   const isLate = new Date(data.tenggat_waktu).getTime() < new Date(data.tgl_kembali).getTime()
-  console.log(isLate)
   return [{ late: isLate }]
 }
 </script>

@@ -69,7 +69,6 @@ async function editBook(buku: Buku) {
       })
       .eq("no_isbn", isbn)
     if (error) throw error
-    console.log("updated book")
   } catch (err) {
     console.trace((err as PostgrestError).message)
   }
