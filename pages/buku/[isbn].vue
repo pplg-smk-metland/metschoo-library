@@ -303,7 +303,7 @@ onMounted(() => (isClient.value = true))
           <CTA
             v-else
             :disabled="!peminjamanState?.isCancellable"
-            danger
+            severity="danger"
             label="batalkan peminjaman"
             @click="batalkanPeminjamanBuku(buku, peminjamanState?.id!)"
           />
@@ -318,19 +318,19 @@ onMounted(() => (isClient.value = true))
 
           <ConfirmPopup group="headless" aria-label="popup">
             <template #container="{ message, acceptCallback, rejectCallback }">
-              <section class="p-confirmpopup-content">
+              <section class="px-4 pt-4">
                 <h3>{{ message.header }}</h3>
                 <p>{{ message.message }}</p>
               </section>
 
-              <section class="p-confirmpopup-footer">
+              <section class="px-4 pb-4 flex gap-2">
                 <CTA label="Tidak" @click="rejectCallback" />
                 <CTA label="Ya" @click="acceptCallback" fill />
               </section>
             </template>
           </ConfirmPopup>
 
-          <Toast position="top-right" :unstyled="false" />
+          <Toast position="top-right" />
           <CTA
             :disabled="bukuAdaDiWishlist || !peminjamanState?.isBorrowable"
             :aria-expanded="confirmWishlistIsVisible"

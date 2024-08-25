@@ -134,7 +134,7 @@ onMounted(async () => {
     <p>Klik disini untuk keluar dari akun anda</p>
 
     <div class="button-container">
-      <CTA @click="signOut" label="Keluar dari akun" danger />
+      <CTA @click="signOut" label="Keluar dari akun" severity="danger" />
     </div>
   </section>
 

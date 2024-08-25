@@ -193,7 +193,7 @@ function toggleFormVisibility() {
     </article>
 
     <div class="button-container">
-      <CTA danger @click="deleteBook(buku.no_isbn)" label="Hapus " />
+      <CTA severity="danger" @click="deleteBook(buku.no_isbn)" label="Hapus" />
       <CTA v-show="!formIsVisible" @click="toggleFormVisibility" label="Sunting" />
     </div>
   </div>
