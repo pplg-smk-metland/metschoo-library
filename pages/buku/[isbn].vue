@@ -7,8 +7,8 @@ import ConfirmPopup from "primevue/confirmpopup"
 import { useConfirm } from "primevue/useconfirm"
 import Toast from "primevue/toast"
 import { useToast } from "primevue/usetoast"
-import VueDatePicker from "@vuepic/vue-datepicker"
-import "@vuepic/vue-datepicker/dist/main.css"
+import DatePicker from "primevue/datepicker"
+import Dialog from "primevue/dialog"
 import type { Database } from "~/types/supabase"
 
 definePageMeta({
@@ -77,7 +77,7 @@ async function checkWishlist(isbn: string) {
   }
 }
 
-const { dialog: dialogConfirm } = useDialog()
+const dialogIsVisible = ref(false)
 const { dialog: dialogError } = useDialog()
 
 const date = ref(new Date())
@@ -99,7 +99,7 @@ function konfirmasiPinjamBuku() {
     })
   }
 
-  dialogConfirm.value.open("Mau dikembalikan kapan?")
+  dialogIsVisible.value = true
 }
 
 async function pinjamBuku({ judul, no_isbn }: Buku, tanggal: Date) {
@@ -118,7 +118,7 @@ async function pinjamBuku({ judul, no_isbn }: Buku, tanggal: Date) {
       detail: `sukses meminjam buku ${judul}`,
       life: 10000,
     })
-    dialogConfirm.value.close()
+    dialogIsVisible.value = false
   } catch (err) {
     console.error((err as PostgrestError).message)
 
@@ -254,6 +254,10 @@ supabase
     perbaruiDataBuku
   )
   .subscribe()
+
+// render only on client to prevent hydration mismatch
+const isClient = ref(false)
+onMounted(() => (isClient.value = true))
 </script>
 
 <template>
@@ -265,7 +269,7 @@ supabase
       <p>Bukunya ga ada brok</p>
     </div>
 
-    <div v-else class="buku">
+    <div v-else-if="buku && isClient" class="buku">
       <figure>
         <img class="buku__gambar" :src="imgURL" alt="" width="400" height="600" />
         <img
@@ -337,16 +341,10 @@ supabase
         </div>
       </figcaption>
 
-      <TheDialog :is-open="dialogConfirm.isOpen" @dialog-close="dialogConfirm.close()">
-        <h2>{{ dialogConfirm.message }}</h2>
+      <Dialog v-model:visible="dialogIsVisible" modal header="Mau dikembalikan kapan">
+        <h2>Saya akan mengembalikan buku ini pada...</h2>
 
-        <VueDatePicker
-          v-model="date"
-          locale="id"
-          cancel-text="Batalkan"
-          select-text="Pilih"
-          :min-date="new Date()"
-        />
+        <DatePicker v-model="date" :minDate="new Date()" />
 
         <p>Saya akan mengembalikan buku ini pada</p>
 
@@ -361,7 +359,7 @@ supabase
           :title="!isValidDate ? 'pilih dulu tanggal yang benar.' : 'pinjam buku'"
           label="Pinjam buku"
         />
-      </TheDialog>
+      </Dialog>
     </div>
   </section>
 
