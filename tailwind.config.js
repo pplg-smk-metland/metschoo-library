@@ -1,8 +1,14 @@
+import defaultTheme from "tailwindcss/defaultTheme.js"
+
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [],
+  content: ["./presets/**/*.{js,vue,ts}"],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ['"Josefin Sans"', ...defaultTheme.fontFamily.sans],
+      },
+    },
   },
   plugins: [require("tailwindcss-primeui")],
 }
