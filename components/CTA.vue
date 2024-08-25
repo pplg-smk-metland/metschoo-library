@@ -1,59 +1,24 @@
 <script setup lang="ts">
 import Button from "primevue/button"
 
-defineProps({
-  fill: Boolean,
-  danger: Boolean,
-  label: String,
-})
+interface Props {
+  fill?: boolean
+  label: string
+  link?: boolean
+}
+
+defineProps<Props>()
 </script>
 
 <template>
   <Button
     :label="label"
-    :class="['cta', { 'cta--fill': fill }, { 'cta--danger': danger }]"
-  ></Button>
+    :class="[
+      'px-8 py-4 select-none active:translate-y-1',
+      { 'hover:bg-primary-200': !fill },
+      { 'bg-primary-500 text-primary-contrast hover:text-primary': fill },
+    ]"
+    :link="link"
+    outlined
+  />
 </template>
-
-<style scoped>
-.cta {
-  border: 2px solid var(--primary);
-  text-align: center;
-  line-height: 1;
-  padding: 1rem 2rem;
-  border-radius: 0.5rem;
-  user-select: none;
-}
-
-.cta:hover,
-.cta:focus-visible {
-  background: var(--dark-grey);
-}
-
-.cta:active {
-  translate: 0 4px;
-}
-
-.cta--fill {
-  background: var(--primary);
-  color: var(--white);
-}
-
-.cta--fill:is(:hover, :focus-visible) {
-  background: var(--secondary-100);
-  color: var(--white);
-}
-
-.cta--danger {
-  background: var(--color-danger);
-  color: var(--white);
-}
-
-.cta--danger:hover {
-  color: var(--color-danger);
-}
-
-.cta:disabled {
-  background: var(--dark-grey);
-}
-</style>
