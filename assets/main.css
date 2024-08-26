@@ -1,0 +1,94 @@
+@import "./base.css";
+
+label {
+  padding-block: 1rem 0.5rem;
+}
+
+input,
+.form-control {
+  background: transparent;
+  outline: 2px solid var(--neutral);
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+input {
+  width: 100%;
+}
+
+input:hover {
+  outline-color: var(--primary);
+}
+
+input:focus-visible {
+  outline: 2px solid var(--primary);
+}
+
+label,
+input {
+  display: block;
+}
+
+select {
+  background: none;
+  border: none;
+  outline: 2px solid var(--dark-grey);
+  padding: 1rem;
+  cursor: pointer;
+}
+
+button:disabled {
+  filter: saturate(0.2);
+  cursor: not-allowed;
+}
+
+.button-container {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.book-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(25ch, 100%), 1fr));
+  gap: 0.5rem;
+}
+
+a {
+  transition: color 400ms ease;
+}
+
+#__nuxt {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.main-section {
+  padding-block: 1rem;
+}
+
+table {
+  min-width: max-content;
+  border-collapse: collapse;
+}
+
+tr:nth-child(even) {
+  @apply bg-slate-500/20 dark:bg-slate-700/20;
+}
+
+header.header {
+  display: flex;
+  flex-direction: column-reverse;
+  padding-block-end: 1rem;
+}

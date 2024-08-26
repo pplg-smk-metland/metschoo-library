@@ -1,0 +1,78 @@
+:root {
+  --primary-500: #336f6c;
+  --primary-200: #1d564c;
+  --primary: var(--primary-500);
+
+  --secondary-100: #1d564c;
+  --secondary-500: #08322c;
+  --accent: #40d4c5;
+
+  --white: hsl(180, 54%, 95%);
+  --pale-white: hsl(180, 20%, 85%);
+  --grey: hsl(180, 25%, 90%);
+  --dark-grey: hsl(180, 20%, 80%);
+  --neutral: hsl(0 0% 82%);
+  --neutral-transparent: hsla(0 0% 94% / 85%);
+  --dark: var(--secondary-500);
+
+  --color-confirm: hsl(100, 50%, 50%);
+  --color-warning: hsl(39, 100%, 50%);
+  --color-warning-subtle: hsl(39, 90%, 80%);
+  --color-danger: hsl(0, 70%, 55%);
+  --color-informational: hsl(240, 100%, 50%);
+
+  --background: var(--white);
+  --text: var(--dark);
+  --text-light: var(--dark-grey);
+
+  --nav-link-active: var(--primary-200);
+}
+
+[data-theme="dark"] {
+  --background: var(--dark);
+  --text: var(--white);
+}
+
+:root {
+  --p-primary-50: #eaf0ef;
+  --p-primary-100: #d5e1e0;
+  --p-primary-200: #c1d2d1;
+  --p-primary-300: #98b5b3;
+  --p-primary-500: #336f6c;
+  --p-primary-600: #2b605d;
+  --p-primary-700: #23514e;
+  --p-primary-900: #1c4240;
+
+  --p-surface-0: #ffffff;
+  --p-surface-50: #f8fafc;
+  --p-surface-100: #f1f5f9;
+  --p-surface-200: #e2e8f0;
+  --p-surface-300: #cbd5e1;
+  --p-surface-400: #94a3b8;
+  --p-surface-500: #64748b;
+  --p-surface-600: #475569;
+  --p-surface-700: #23514e;
+  --p-surface-800: #1e293b;
+  --p-surface-900: #0f172a;
+  --p-surface-950: #020617;
+
+  --p-content-border-radius: 0.5rem;
+}
+
+:root {
+  --p-primary-color: var(--p-primary-500);
+  --p-primary-contrast-color: var(--p-surface-0);
+  --p-primary-hover-color: var(--p-primary-600);
+  --p-primary-active-color: var(--p-primary-700);
+  --p-content-border-color: var(--p-surface-200);
+  --p-content-hover-background: var(--p-surface-100);
+  --p-content-hover-color: var(--p-surface-800);
+  --p-highlight-background: var(--p-primary-50);
+  --p-highlight-color: var(--p-primary-700);
+  --p-highlight-focus-background: var(--p-primary-100);
+  --p-highlight-focus-color: var(--p-primary-800);
+  --p-text-color: var(--p-surface-700);
+  --p-text-hover-color: var(--p-surface-800);
+  --p-text-muted-color: var(--p-surface-500);
+  --p-text-hover-muted-color: var(--p-surface-600);
+}
