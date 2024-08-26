@@ -19,64 +19,30 @@ onMounted(async () => {
 </script>
 
 <template>
-  <NuxtLink v-if="buku" :to="`/buku/${buku.no_isbn}`" class="buku">
-    <div class="buku__gambar">
-      <img :src="imgUrl" :alt="`Cover ${buku.judul}`" width="100" />
-    </div>
-    <div class="buku__teks">
-      <h3>{{ buku.judul }}</h3>
-      <p>{{ buku.penulis }}</p>
-      <p class="tanggal-pinjam">dipinjam pada {{ formatDate(new Date(tgl_pinjam)) }}</p>
-      <p class="tanggal-pinjam">dikembalikan pada {{ formatDate(new Date(tgl_kembali)) }}</p>
-      <p v-if="late" class="late">Terlambat</p>
+  <NuxtLink
+    v-if="buku"
+    :to="`/buku/${buku.no_isbn}`"
+    class="flex gap-2 hover:bg-primary-500/20 rounded-lg"
+  >
+    <figure class="max-w-24">
+      <img :src="imgUrl" :alt="`Cover ${buku.judul}`" width="100" class="size-full object-cover" />
+    </figure>
+
+    <div class="flex flex-col justify-between py-4 flex-1 leading-none">
+      <header>
+        <h3>{{ buku.judul }}</h3>
+        <p class="m-0">{{ buku.penulis }}</p>
+      </header>
+
+      <p>
+        dipinjam pada <span class="block font-bold">{{ formatDate(new Date(tgl_pinjam)) }}</span>
+      </p>
+      <p v-if="tgl_kembali">
+        dikembalikan pada
+        <span class="block font-bold">{{ formatDate(new Date(tgl_kembali)) }}</span>
+      </p>
+      <p v-else class="text-red-400 leading-normal">Dibatalkan</p>
+      <p v-if="late" class="text-red-500 ring-red-500">Terlambat</p>
     </div>
   </NuxtLink>
 </template>
-
-<style scoped>
-.buku {
-  overflow: hidden;
-  display: flex;
-}
-
-.late {
-  color: var(--color-warning);
-}
-
-.buku:hover {
-  background: var(--pale-white);
-}
-
-.buku__gambar {
-  min-width: max-content;
-}
-
-.buku__gambar img {
-  border-radius: 0.5rem;
-  height: 100%;
-  object-fit: cover;
-}
-
-.buku__teks {
-  padding: 1rem;
-  flex-grow: 1;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.buku__teks p {
-  margin-block: 0;
-}
-
-.buku__teks h3 {
-  margin-block: 0 0.5rem;
-  line-height: 1;
-}
-
-.tanggal-pinjam {
-  margin-block: 0.2rem 0;
-  line-height: 1.1;
-}
-</style>
