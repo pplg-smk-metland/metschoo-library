@@ -28,7 +28,7 @@ onMounted(async () => {
       <img :src="imgUrl" :alt="`Cover ${buku.judul}`" width="100" class="size-full object-cover" />
     </figure>
 
-    <div class="flex flex-col justify-between py-4 flex-1 leading-none">
+    <div class="flex flex-col justify-between py-2 flex-1 leading-none">
       <header>
         <h3>{{ buku.judul }}</h3>
         <p class="m-0">{{ buku.penulis }}</p>

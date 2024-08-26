@@ -90,22 +90,10 @@ const sidebarLinks = ref<SidebarLink[]>([
 }
 
 .sidebar__link {
-  flex: 1;
-  color: inherit;
-  padding: 1rem;
-
-  display: flex;
-  justify-content: space-between;
-}
-
-.sidebar__link:hover {
-  background: var(--primary-200);
-  color: var(--white);
+  @apply p-4 flex justify-between;
 }
 
 .sidebar__link.router-link-exact-active {
-  background: var(--primary-200);
-  border-left: 2px solid var(--white);
-  color: var(--white);
+  @apply border-l-4 border-l-primary text-white;
 }
 </style>
