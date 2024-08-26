@@ -261,110 +261,88 @@ onMounted(() => (isClient.value = true))
 </script>
 
 <template>
-  <section class="main-section">
-    <LoadingSpinner v-if="isLoading" />
+  <div v-if="!buku" class="not-found">
+    <h1>Tidak ada buku!</h1>
+    <p>Bukunya ga ada brok</p>
+  </div>
 
-    <div v-if="!buku" class="not-found">
-      <h1>Tidak ada buku!</h1>
-      <p>Bukunya ga ada brok</p>
-    </div>
+  <LoadingSpinner v-if="isLoading" />
+  <section
+    class="main-section grid grid-cols-1 md:grid-cols-6 md:grid-rows-2 gap-4 justify-items-start"
+    v-else-if="buku && isClient"
+  >
+    <figure class="col-span-1 md:col-span-2 md:row-span-2 place-self-center">
+      <img class="buku__gambar" :src="imgURL" alt="" width="400" height="600" />
+      <img
+        class="buku__gambar buku__gambar--bayangan"
+        :src="imgURL"
+        alt=""
+        width="400"
+        height="600"
+      />
+    </figure>
 
-    <div v-else-if="buku && isClient" class="buku">
-      <figure>
-        <img class="buku__gambar" :src="imgURL" alt="" width="400" height="600" />
-        <img
-          class="buku__gambar buku__gambar--bayangan"
-          :src="imgURL"
-          alt=""
-          width="400"
-          height="600"
-        />
-      </figure>
+    <figcaption class="buku__info col-span-1 md:col-span-4">
+      <h1 class="judul">
+        {{ buku.judul }}
+      </h1>
+      <p>
+        <span class="penulis">{{ buku.penulis }}</span> -
+        <span class="tahun-terbit">{{ buku.tahun_terbit }}</span>
+      </p>
+      <p>{{ buku.penerbit }} - {{ buku.alamat_terbit }}</p>
+      <p>Jumlah tersedia: {{ buku.jumlah_exspl }}</p>
 
-      <figcaption class="buku__info">
-        <h1 class="judul">
-          {{ buku.judul }}
-        </h1>
-        <p>
-          <span class="penulis">{{ buku.penulis }}</span> -
-          <span class="tahun-terbit">{{ buku.tahun_terbit }}</span>
-        </p>
-        <p>{{ buku.penerbit }} - {{ buku.alamat_terbit }}</p>
-        <p>Jumlah tersedia: {{ buku.jumlah_exspl }}</p>
-
-        <div class="button-container">
-          <CTA
-            v-if="peminjamanState?.isBorrowable"
-            :fill="true"
-            @click="konfirmasiPinjamBuku"
-            label="Pinjam buku"
-          />
-
-          <CTA
-            v-else
-            :disabled="!peminjamanState?.isCancellable"
-            severity="danger"
-            label="batalkan peminjaman"
-            @click="batalkanPeminjamanBuku(buku, peminjamanState?.id!)"
-          />
-
-          <CTA
-            v-if="peminjamanState?.isReturnable"
-            :disabled="!peminjamanState?.isReturnable"
-            :fill="true"
-            @click="kembalikanBuku(buku, peminjamanState?.id!)"
-            label="kembalikan buku"
-          />
-
-          <ConfirmPopup group="headless" aria-label="popup">
-            <template #container="{ message, acceptCallback, rejectCallback }">
-              <section class="px-4 pt-4">
-                <h3>{{ message.header }}</h3>
-                <p>{{ message.message }}</p>
-              </section>
-
-              <section class="px-4 pb-4 flex gap-2">
-                <CTA label="Tidak" @click="rejectCallback" />
-                <CTA label="Ya" @click="acceptCallback" fill />
-              </section>
-            </template>
-          </ConfirmPopup>
-
-          <Toast position="top-right" />
-          <CTA
-            :disabled="bukuAdaDiWishlist || !peminjamanState?.isBorrowable"
-            :aria-expanded="confirmWishlistIsVisible"
-            :aria-controls="confirmWishlistIsVisible ? 'confirm' : null"
-            @click="konfirmasiMasukkanWishlist(buku, $event)"
-            label="tambahkan ke wishlist"
-          />
-        </div>
-      </figcaption>
-
-      <Dialog v-model:visible="dialogIsVisible" modal header="Mau dikembalikan kapan">
-        <h2>Saya akan mengembalikan buku ini pada...</h2>
-
-        <DatePicker v-model="date" :minDate="new Date()" />
-
-        <p>Saya akan mengembalikan buku ini pada</p>
-
-        <p class="tanggal">
-          <time v-if="date" :datetime="date?.toISOString()">{{ formattedDate }}</time>
-          <span v-else> pilih dulu tanggalnya. </span>
-        </p>
-
+      <div class="button-container">
         <CTA
-          :disabled="!isValidDate"
-          @click="pinjamBuku({ ...buku }, date)"
-          :title="!isValidDate ? 'pilih dulu tanggal yang benar.' : 'pinjam buku'"
+          v-if="peminjamanState?.isBorrowable"
+          fill
+          @click="konfirmasiPinjamBuku"
           label="Pinjam buku"
         />
-      </Dialog>
-    </div>
-  </section>
 
-  <section class="main-section">
-    <article>
+        <CTA
+          v-else
+          :disabled="!peminjamanState?.isCancellable"
+          severity="danger"
+          label="batalkan peminjaman"
+          @click="batalkanPeminjamanBuku(buku, peminjamanState?.id!)"
+        />
+
+        <CTA
+          v-if="peminjamanState?.isReturnable"
+          :disabled="!peminjamanState?.isReturnable"
+          fill
+          @click="kembalikanBuku(buku, peminjamanState?.id!)"
+          label="kembalikan buku"
+        />
+
+        <ConfirmPopup group="headless" aria-label="popup">
+          <template #container="{ message, acceptCallback, rejectCallback }">
+            <section class="px-4 pt-4">
+              <h3>{{ message.header }}</h3>
+              <p>{{ message.message }}</p>
+            </section>
+
+            <section class="px-4 pb-4 flex gap-2">
+              <CTA label="Tidak" @click="rejectCallback" />
+              <CTA label="Ya" @click="acceptCallback" fill />
+            </section>
+          </template>
+        </ConfirmPopup>
+
+        <Toast position="top-right" />
+        <CTA
+          :disabled="bukuAdaDiWishlist || !peminjamanState?.isBorrowable"
+          :aria-expanded="confirmWishlistIsVisible"
+          :aria-controls="confirmWishlistIsVisible ? 'confirm' : null"
+          @click="konfirmasiMasukkanWishlist(buku, $event)"
+          label="tambahkan ke wishlist"
+        />
+      </div>
+    </figcaption>
+
+    <article class="md:col-span-4">
       <h2>Informasi bibliografi</h2>
       <table class="tabel-bibliografi">
         <tbody>
@@ -392,6 +370,24 @@ onMounted(() => (isClient.value = true))
         </tbody>
       </table>
     </article>
+
+    <Dialog v-model:visible="dialogIsVisible" modal header="Mau dikembalikan kapan">
+      <p>Saya akan mengembalikan buku ini pada...</p>
+
+      <DatePicker v-model="date" :minDate="new Date()" />
+
+      <p class="font-bold">
+        <time v-if="date" :datetime="date?.toISOString()">{{ formattedDate }}</time>
+        <span v-else> pilih dulu tanggalnya. </span>
+      </p>
+
+      <CTA
+        :disabled="!isValidDate"
+        @click="pinjamBuku({ ...buku }, date)"
+        label="Pinjam buku"
+        fill
+      />
+    </Dialog>
   </section>
 
   <TheDialog :is-open="dialogError.isOpen" @dialog-close="dialogError.close()">
@@ -402,11 +398,6 @@ onMounted(() => (isClient.value = true))
 </template>
 
 <style scoped>
-.buku {
-  display: flex;
-  gap: 2rem;
-}
-
 .buku figure {
   position: relative;
 
@@ -431,10 +422,6 @@ onMounted(() => (isClient.value = true))
   filter: blur(10px);
 }
 
-.buku__info {
-  max-width: 100ch;
-}
-
 .judul {
   font-size: clamp(2rem, 2.5vw, 3.5rem);
   line-height: 1.1;
@@ -454,9 +441,5 @@ onMounted(() => (isClient.value = true))
 
 .tabel-bibliografi td {
   padding: 0.5rem;
-}
-
-.tanggal {
-  font-weight: bold;
 }
 </style>
