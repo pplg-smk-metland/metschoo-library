@@ -88,7 +88,9 @@ const router = useRouter()
 </script>
 
 <template>
-  <h1>Tambah buku</h1>
+  <header>
+    <h1>Tambah buku</h1>
+  </header>
 
   <section class="buku-container">
     <figure class="buku-gambar">

@@ -75,29 +75,33 @@ onMounted(async () => {
 </script>
 
 <template>
-  <h1>Data buku</h1>
+  <header>
+    <h1>Data buku</h1>
 
-  <form
-    @submit.prevent="async () => (searchResults = await searchBooks(searchTerm, selectedCategory))"
-  >
-    <input
-      id="search-term"
-      v-model="searchTerm"
-      type="text"
-      name="search-term"
-      placeholder="cari judul buku..."
-      required
-    />
-    <Select
-      v-model="selectedCategory"
-      placeholder="pilih kategori"
-      :options="availableCategories"
-      optionLabel="kategori"
-      optionValue="id"
-      checkmark
-    />
-    <CTA type="submit" label="Cari" />
-  </form>
+    <form
+      @submit.prevent="
+        async () => (searchResults = await searchBooks(searchTerm, selectedCategory))
+      "
+    >
+      <input
+        id="search-term"
+        v-model="searchTerm"
+        type="text"
+        name="search-term"
+        placeholder="cari judul buku..."
+        required
+      />
+      <Select
+        v-model="selectedCategory"
+        placeholder="pilih kategori"
+        :options="availableCategories"
+        optionLabel="kategori"
+        optionValue="id"
+        checkmark
+      />
+      <CTA type="submit" label="Cari" />
+    </form>
+  </header>
 
   <LoadingSpinner v-if="isLoading" />
   <DataTable :value="searchResults" scrollable v-else>

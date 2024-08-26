@@ -2,7 +2,7 @@
   <div class="wrapper">
     <TheNavbar />
     <AdminSidebar />
-    <main class="dark:bg-surface-900 dark:text-white">
+    <main class="dark:bg-surface-900 dark:text-white flex flex-col align-stretch gap-4">
       <slot />
     </main>
   </div>

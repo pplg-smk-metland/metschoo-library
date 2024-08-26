@@ -149,10 +149,13 @@ supabase
 </script>
 
 <template>
-  <h1>Admin</h1>
-  <p>Halo admin</p>
+  <header>
+    <h1>Admin</h1>
+    <p>Halo admin</p>
+  </header>
 
   <LoadingSpinner v-if="isLoading" />
+
   <section v-else class="main-section">
     <h2>Buku yang belum dikonfirmasi</h2>
     <ul class="data-list">
