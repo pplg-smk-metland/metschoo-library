@@ -6,7 +6,7 @@ label {
 
 input,
 .form-control {
-  background: var(--neutral-transparent);
+  background: transparent;
   outline: 2px solid var(--neutral);
   padding: 1rem;
   border-radius: 0.5rem;
@@ -21,7 +21,6 @@ input:hover {
 }
 
 input:focus-visible {
-  background: var(--dark-grey);
   outline: 2px solid var(--primary);
 }
 
@@ -60,12 +59,10 @@ button:disabled {
 }
 
 a {
-  text-decoration: none;
-  color: var(--primary);
   transition: color 400ms ease;
 }
 
-#app {
+#__nuxt {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -87,7 +84,7 @@ table {
 }
 
 tr:nth-child(even) {
-  background: var(--grey);
+  @apply bg-slate-500/20 dark:bg-slate-700/20;
 }
 
 header.header {

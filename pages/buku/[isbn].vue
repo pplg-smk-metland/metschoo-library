@@ -283,15 +283,20 @@ onMounted(() => (isClient.value = true))
     </figure>
 
     <figcaption class="buku__info col-span-1 md:col-span-4">
-      <h1 class="judul">
+      <h1 class="judul max-w-5xl">
         {{ buku.judul }}
       </h1>
-      <p>
-        <span class="penulis">{{ buku.penulis }}</span> -
-        <span class="tahun-terbit">{{ buku.tahun_terbit }}</span>
+      <p class="text-slate-700 dark:text-slate-400">
+        <span>{{ buku.penulis }}</span> -
+        <span>{{ buku.tahun_terbit }}</span>
       </p>
       <p>{{ buku.penerbit }} - {{ buku.alamat_terbit }}</p>
-      <p>Jumlah tersedia: {{ buku.jumlah_exspl }}</p>
+      <p>
+        Jumlah tersedia:
+        <span :class="['font-bold', { 'text-red': buku.jumlah_exspl === 0 }]">
+          {{ buku.jumlah_exspl }}
+        </span>
+      </p>
 
       <div class="button-container">
         <CTA
@@ -424,19 +429,10 @@ onMounted(() => (isClient.value = true))
 
 .judul {
   font-size: clamp(2rem, 2.5vw, 3.5rem);
-  line-height: 1.1;
-}
-
-.penulis {
-  color: #777;
 }
 
 .tabel-bibliografi {
   border-collapse: collapse;
-}
-
-.tabel-bibliografi tr:nth-child(even) {
-  backdrop-filter: invert(0.2);
 }
 
 .tabel-bibliografi td {

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-const authStore = useAuthStore()
-
 const openNavBtn = ref(null)
 const closeNavBtn = ref(null)
 const navlinks = ref<HTMLUListElement | null>(null)
@@ -17,7 +15,7 @@ const user = useSupabaseUser()
 </script>
 
 <template>
-  <nav class="navbar">
+  <nav class="bg-primary text-primary-contrast z-10 navbar shadow-md">
     <div class="logo">
       <img src="/logo.svg" alt="Logo Metschoo Library" />
     </div>
@@ -58,12 +56,6 @@ const user = useSupabaseUser()
 
 <style scoped>
 .navbar {
-  background: var(--primary);
-  color: var(--white);
-  font-weight: 300;
-  padding-inline: 0.5rem;
-  z-index: 10;
-
   grid-area: navbar;
 
   display: flex;
@@ -75,10 +67,6 @@ const user = useSupabaseUser()
 
 .logo img {
   height: 3.5rem;
-}
-
-.logo a::before {
-  display: none;
 }
 
 .nav-links {

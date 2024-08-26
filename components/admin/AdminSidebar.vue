@@ -47,7 +47,7 @@ const sidebarLinks = ref<SidebarLink[]>([
 </script>
 
 <template>
-  <nav class="sidebar">
+  <nav class="p-4 dark:bg-slate-900 sticky top-8 sidebar">
     <PanelMenu :model="sidebarLinks">
       <template #item="{ item }">
         <NuxtLink
@@ -68,32 +68,18 @@ const sidebarLinks = ref<SidebarLink[]>([
 
 <style scoped>
 .sidebar {
-  background: var(--primary);
-  color: var(--pale-white);
-  max-height: 100vh;
-  position: sticky;
-  top: 3rem;
-
   grid-area: sidebar;
-
-  display: flex;
-  flex-direction: column;
 }
 
 .sidebar .icon {
   font-size: 1.2rem;
 }
 
-.sidebar .icon.rotate {
-  rotate: -180deg;
-  transition: rotate 500ms ease;
-}
-
 .sidebar__link {
-  @apply p-4 flex justify-between;
+  @apply p-4 flex justify-between hover:text-slate-900 dark:hover:text-white;
 }
 
 .sidebar__link.router-link-exact-active {
-  @apply border-l-4 border-l-primary text-white;
+  @apply border-l-4 border-l-primary dark:text-white;
 }
 </style>

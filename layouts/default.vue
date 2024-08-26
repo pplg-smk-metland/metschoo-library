@@ -8,7 +8,7 @@ onMounted(async () => {
 
 <template>
   <TheNavbar />
-  <main>
+  <main class="dark:bg-surface-900 dark:text-white">
     <slot />
   </main>
   <TheFooter />

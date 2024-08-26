@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { BukuPinjam } from "@/views/profile/ProfileRoot.vue"
+import type { BukuPinjam } from "@/pages/profil/index.vue"
 
 interface Props {
   data: BukuPinjam[0]
