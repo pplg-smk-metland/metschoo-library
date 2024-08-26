@@ -4,7 +4,6 @@ import Button from "primevue/button"
 interface Props {
   fill?: boolean
   label: string
-  link?: boolean
 }
 
 defineProps<Props>()
@@ -13,12 +12,7 @@ defineProps<Props>()
 <template>
   <Button
     :label="label"
-    :class="[
-      'px-8 py-4 select-none active:translate-y-1',
-      { 'hover:bg-primary-200': !fill },
-      { 'bg-primary-500 text-primary-contrast hover:text-primary': fill },
-    ]"
-    :link="link"
-    outlined
+    :class="['select-none active:translate-y-1 focus:none focus-visible:ring-primary']"
+    :outlined="!fill"
   />
 </template>
