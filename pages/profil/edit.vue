@@ -48,18 +48,17 @@ async function updateProfile() {
 </script>
 
 <template>
-  <header class="header">
-    <h1>Edit profil</h1>
+  <PageHeader heading="Edit profil">
     <NuxtLink to="/profil">Kembali</NuxtLink>
-  </header>
+  </PageHeader>
 
-  <section v-if="user" class="profile">
-    <figure class="profile__picture-wrapper">
+  <section v-if="user" class="main-section flex gap-4">
+    <figure class="flex flex-col gap-4">
       <img class="profile__picture" src="@/assets/profilepicture.svg" alt="Foto kamu disini" />
       <CTA label="Edit foto profil" />
     </figure>
 
-    <form class="profile__details" @submit.prevent="updateProfile">
+    <form class="flex flex-col gap-2 flex-1" @submit.prevent="updateProfile">
       <label for="name">Nama</label>
       <InputText v-model="user.nama" type="text" placeholder="Masukan Nama" />
 
@@ -74,9 +73,7 @@ async function updateProfile() {
       <label for="jurusan">Jurusan</label>
       <InputText v-model="user.jurusan" type="text" placeholder="Masukkan Jurusan" />
 
-      <div class="button-container">
-        <CTA @click="updateProfile" label="Edit profil" />
-      </div>
+      <CTA @click="updateProfile" label="Edit profil" class="mt-auto" />
     </form>
   </section>
 
@@ -85,5 +82,5 @@ async function updateProfile() {
     <p>silahkan coba lagi.</p>
   </section>
 
-  <Toast :unstyled="false" />
+  <Toast />
 </template>

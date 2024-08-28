@@ -7,14 +7,9 @@ onMounted(async () => {
 </script>
 
 <template>
-  <TheNavbar />
-  <main>
-    <slot />
-  </main>
+  <NuxtLayout name="default">
+    <div class="max-w-[100ch] mx-auto flex flex-col gap-4">
+      <slot />
+    </div>
+  </NuxtLayout>
 </template>
-
-<style scoped>
-main {
-  max-width: 100ch;
-}
-</style>

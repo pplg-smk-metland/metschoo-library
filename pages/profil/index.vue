@@ -58,66 +58,63 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="wrapper">
-    <div class="profile-view">
-      <header>
-        <h1>Profil</h1>
-        <p>Selamat Datang di Profil kamu</p>
-      </header>
+  <div class="grid gap-4 grid-cols-1 lg:grid-cols-12 lg:grid-flow-dense max-w-screen-2xl mx-auto">
+    <PageHeader heading="Profil" class="col-span-full lg:col-span-9">
+      <p>Selamat Datang di Profil kamu</p>
+    </PageHeader>
 
-      <section class="profile">
-        <figure class="profile__picture-container">
-          <img
-            class="profile-picture"
-            src="@/assets/profilepicture.svg"
-            width="300"
-            height="300"
-            alt="Foto kamu disini"
-          />
-        </figure>
+    <section class="main-section flex gap-4 col-span-full lg:col-span-9">
+      <figure class="profile__picture-container">
+        <img
+          class="profile-picture"
+          src="@/assets/profilepicture.svg"
+          width="300"
+          height="300"
+          alt="Foto kamu disini"
+        />
+      </figure>
 
-        <div v-if="profile" class="profile__details">
-          <h2>{{ profile.nama }}</h2>
-          <p>{{ profile.kelas }} - {{ profile.jurusan }}</p>
-          <p>{{ profile.email }}</p>
+      <div v-if="profile" class="profile__details">
+        <h2>{{ profile.nama }}</h2>
+        <p>{{ profile.kelas }} - {{ profile.jurusan }}</p>
+        <p>{{ profile.email }}</p>
 
-          <div class="button-container">
-            <NuxtLink to="/profil/edit">
-              <CTA label="Edit profil" />
-            </NuxtLink>
-            <NuxtLink to="/profil/keamanan">
-              <CTA label="Keamanan" />
-            </NuxtLink>
-          </div>
+        <div class="button-container">
+          <NuxtLink to="/profil/edit">
+            <CTA label="Edit profil" />
+          </NuxtLink>
+          <NuxtLink to="/profil/keamanan">
+            <CTA label="Keamanan" />
+          </NuxtLink>
         </div>
+      </div>
 
-        <div v-else class="not-found">
-          <h1>Pengguna tidak ditemukan!</h1>
-          <p>Silahkan coba beberapa saat lagi, atau hubungi admin Metschoo Library.</p>
-        </div>
-      </section>
+      <div v-else class="not-found">
+        <h1>Pengguna tidak ditemukan!</h1>
+        <p>Silahkan coba beberapa saat lagi, atau hubungi admin Metschoo Library.</p>
+      </div>
+    </section>
 
-      <section>
-        <h2>Buku yang dipinjam</h2>
-        <LoadingSpinner v-if="isLoading" />
-        <p v-else-if="!isLoading && bukuYangDipinjam.length === 0">Ga ada buku yang dipinjam</p>
+    <section class="main-section col-span-full lg:col-span-9">
+      <h2>Buku yang dipinjam</h2>
+      <LoadingSpinner v-if="isLoading" />
+      <p v-else-if="!isLoading && bukuYangDipinjam.length === 0">Ga ada buku yang dipinjam</p>
 
-        <h3>Belum dikonfirmasi</h3>
-        <ul class="book-list">
-          <li v-if="!bukuBlumDikonfirmasi.length">ga ada bukunya nih</li>
-          <ProfileBook v-for="data in bukuBlumDikonfirmasi" :key="data.no_isbn" :data="data" />
-        </ul>
+      <h3>Belum dikonfirmasi</h3>
+      <ul class="book-list">
+        <li v-if="!bukuBlumDikonfirmasi.length">ga ada bukunya nih</li>
+        <ProfileBook v-for="data in bukuBlumDikonfirmasi" :key="data.no_isbn" :data="data" />
+      </ul>
 
-        <h3>Sudah dikonfirmasi</h3>
+      <h3>Sudah dikonfirmasi</h3>
 
-        <ul class="book-list">
-          <li v-if="!bukuSudahDikonfirmasi.length">ga ada bukunya nih</li>
-          <ProfileBook v-for="data in bukuSudahDikonfirmasi" :key="data.no_isbn" :data="data" />
-        </ul>
-      </section>
-    </div>
+      <ul class="book-list">
+        <li v-if="!bukuSudahDikonfirmasi.length">ga ada bukunya nih</li>
+        <ProfileBook v-for="data in bukuSudahDikonfirmasi" :key="data.no_isbn" :data="data" />
+      </ul>
+    </section>
 
-    <aside class="history">
+    <aside class="main-section rounded-lg col-span-full lg:row-span-3 lg:col-span-3">
       <h2>Riwayat Peminjaman</h2>
 
       <ul class="history-list">
@@ -134,32 +131,9 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.wrapper {
-  padding: 0;
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-}
-
-.profile-view {
-  padding: 2rem;
-}
-
-.history {
-  padding: 2rem 1.5rem;
-  outline: 2px solid var(--neutral, --grey);
-}
-
-.history h2 {
-  text-align: center;
-}
-
 @media screen and (max-width: 50em) {
   .wrapper {
     grid-template-columns: 1fr;
-  }
-
-  .history h2 {
-    text-align: center;
   }
 
   .profile {

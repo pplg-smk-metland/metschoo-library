@@ -83,7 +83,7 @@ onMounted(async () => {
 
   <section class="main-section">
     <h2>Ubah password</h2>
-    <form class="profile-form" @submit.prevent="ubahKredensial">
+    <form class="flex flex-col gap-2" @submit.prevent="ubahKredensial">
       <label for="password">Password</label>
       <InputText
         id="password"
@@ -109,10 +109,12 @@ onMounted(async () => {
     </form>
   </section>
 
+  <Divider />
+
   <section class="main-section">
     <h2>Ubah email</h2>
 
-    <form @submit.prevent="ubahEmail">
+    <form @submit.prevent="ubahEmail" class="flex flex-col gap-2">
       <label for="email">Email</label>
       <InputText
         id="email"
