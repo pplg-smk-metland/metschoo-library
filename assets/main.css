@@ -13,14 +13,7 @@ input {
 
 label {
   display: block;
-}
-
-select {
-  background: none;
-  border: none;
-  outline: 2px solid var(--dark-grey);
-  padding: 1rem;
-  cursor: pointer;
+  padding-block-start: 0.75rem;
 }
 
 button:disabled {
@@ -61,7 +54,7 @@ a {
 }
 
 .main-section {
-  padding-block: 1rem;
+  @apply p-4 bg-slate-200 dark:bg-surface-800/70 rounded-lg;
 }
 
 table {
@@ -70,7 +63,7 @@ table {
 }
 
 tr:nth-child(even) {
-  @apply bg-slate-500/20 dark:bg-slate-700/20;
+  @apply bg-slate-200/20 dark:bg-slate-700/10;
 }
 
 header.header {
