@@ -116,11 +116,9 @@ function toggleFormVisibility() {
 
   <div v-else class="wrapper">
     <article v-if="!formIsVisible" class="buku">
-      <header class="header">
-        <h1>{{ buku.judul }} - {{ buku.jumlah_exspl }}</h1>
-
+      <PageHeader :heading="`${buku.judul} - ${buku.jumlah_exspl}`">
         <NuxtLink @click="router.back()">Kembali</NuxtLink>
-      </header>
+      </PageHeader>
 
       <p>{{ buku.penulis }}</p>
       <p>{{ buku.asal }}</p>

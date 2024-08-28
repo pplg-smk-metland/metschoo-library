@@ -48,9 +48,7 @@ const lateClass = (data: Peminjaman) => {
 </script>
 
 <template>
-  <header>
-    <h1>Data peminjaman</h1>
-  </header>
+  <PageHeader heading="Data peminjaman" />
 
   <DataTable :value="borrowPending" scrollable :loading="isLoading" stripedRows>
     <template #header>

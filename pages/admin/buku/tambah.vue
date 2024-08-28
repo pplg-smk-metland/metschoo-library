@@ -88,9 +88,9 @@ const router = useRouter()
 </script>
 
 <template>
-  <header>
-    <h1>Tambah buku</h1>
-  </header>
+  <PageHeader heading="Tambah buku">
+    <NuxtLink to="/buku">Kembali</NuxtLink>
+  </PageHeader>
 
   <section class="grid gap-8 buku-container">
     <figure

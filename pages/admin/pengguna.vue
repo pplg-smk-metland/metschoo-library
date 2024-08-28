@@ -9,8 +9,7 @@ definePageMeta({
 </script>
 
 <template>
-  <header>
-    <h1>Manajemen pengguna</h1>
+  <PageHeader heading="Manajemen pengguna">
     <p>Temukan pengguna dan kelola data mereka</p>
-  </header>
+  </PageHeader>
 </template>

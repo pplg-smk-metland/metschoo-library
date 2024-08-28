@@ -6,6 +6,7 @@ import DataTable from "primevue/datatable"
 import Column from "primevue/column"
 import Select from "primevue/select"
 import type { Database } from "~/types/supabase"
+import PageHeader from "~/components/PageHeader.vue"
 
 useHead({
   title: "Data Buku",
@@ -75,15 +76,13 @@ onMounted(async () => {
 </script>
 
 <template>
-  <header>
-    <h1>Data buku</h1>
-
+  <PageHeader heading="Data buku">
     <form
       @submit.prevent="
         async () => (searchResults = await searchBooks(searchTerm, selectedCategory))
       "
     >
-      <input
+      <InputText
         id="search-term"
         v-model="searchTerm"
         type="text"
@@ -101,7 +100,7 @@ onMounted(async () => {
       />
       <CTA type="submit" label="Cari" />
     </form>
-  </header>
+  </PageHeader>
 
   <LoadingSpinner v-if="isLoading" />
   <DataTable :value="searchResults" scrollable v-else>

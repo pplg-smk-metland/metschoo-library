@@ -149,10 +149,9 @@ supabase
 </script>
 
 <template>
-  <header>
-    <h1>Admin</h1>
+  <PageHeader heading="Admin">
     <p>Halo admin</p>
-  </header>
+  </PageHeader>
 
   <LoadingSpinner v-if="isLoading" />
 
