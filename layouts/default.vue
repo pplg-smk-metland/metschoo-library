@@ -8,7 +8,7 @@ onMounted(async () => {
 
 <template>
   <TheNavbar />
-  <main class="flex flex-col gap-4">
+  <main>
     <slot />
   </main>
   <TheFooter />
