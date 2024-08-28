@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import InputText from "primevue/inputtext"
 const term = ref("")
 
 async function searchRedirect() {
@@ -12,8 +13,9 @@ async function searchRedirect() {
 </script>
 
 <template>
-  <form id="search-form" @submit.prevent="searchRedirect">
-    <input
+  <form id="search-form" class="flex gap-4" @submit.prevent="searchRedirect">
+    <InputText
+      class="flex-1"
       id="search-input"
       type="search"
       name="term"
@@ -24,18 +26,3 @@ async function searchRedirect() {
     <CTA id="search-submit" label="Cari" type="submit" />
   </form>
 </template>
-
-<style scoped>
-#search-form {
-  display: flex;
-  gap: 1rem;
-}
-
-#search-input {
-  flex-grow: 1;
-}
-
-#search-form .btn {
-  margin: 0;
-}
-</style>

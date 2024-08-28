@@ -92,8 +92,10 @@ const router = useRouter()
     <h1>Tambah buku</h1>
   </header>
 
-  <section class="buku-container">
-    <figure class="buku-gambar">
+  <section class="grid gap-8 buku-container">
+    <figure
+      class="outline outline-2 outline-gray-300 dark:outline-gray-700 rounded-lg overflow-hidden"
+    >
       <img
         v-if="bukuGambarEl && bukuGambarFile"
         :src="bukuGambarURL"
@@ -102,13 +104,13 @@ const router = useRouter()
         :alt="`gambar buku ${buku?.judul}`"
       />
 
-      <p v-else class="buku-gambar__placeholder">Gambar buku akan muncul di sini.</p>
+      <p v-else class="text-center">Gambar buku akan muncul di sini.</p>
     </figure>
 
-    <form @submit.prevent="addNewBook(buku)" class="buku-form">
+    <form @submit.prevent="addNewBook(buku)" class="grid grid-cols-2 gap-4">
       <label for="buku-gambar">
         Gambar buku
-        <input
+        <InputText
           id="buku-gambar"
           ref="bukuGambarEl"
           type="file"
@@ -121,7 +123,7 @@ const router = useRouter()
 
       <label for="buku-judul">
         Judul
-        <input
+        <InputText
           id="buku-judul"
           v-model="buku.judul"
           type="text"
@@ -132,7 +134,7 @@ const router = useRouter()
       </label>
       <label for="buku-isbn">
         ISBN
-        <input
+        <InputText
           id="buku-isbn"
           v-model="buku.no_isbn"
           type="text"
@@ -141,6 +143,7 @@ const router = useRouter()
           required
         />
       </label>
+
       <label for="buku-kategori">
         Kategori
         <Select
@@ -155,7 +158,7 @@ const router = useRouter()
       </label>
       <label for="buku-penulis">
         penulis
-        <input
+        <InputText
           id="buku-penulis"
           v-model="buku.penulis"
           type="text"
@@ -166,7 +169,7 @@ const router = useRouter()
       </label>
       <label for="buku-penerbit">
         penerbit
-        <input
+        <InputText
           id="buku-penerbit"
           v-model="buku.penerbit"
           type="text"
@@ -175,9 +178,10 @@ const router = useRouter()
           required
         />
       </label>
+
       <label for="buku-tahun-terbit">
         Tahun terbit
-        <input
+        <InputText
           id="buku-tahun-terbit"
           v-model="buku.tahun_terbit"
           type="text"
@@ -188,7 +192,7 @@ const router = useRouter()
       </label>
       <label for="buku-alamat-terbit">
         Alamat terbit
-        <input
+        <InputText
           id="buku-alamat-terbit"
           v-model="buku.alamat_terbit"
           type="text"
@@ -197,9 +201,10 @@ const router = useRouter()
           required
         />
       </label>
+
       <label for="buku-jumlah">
         Jumlah
-        <input
+        <InputText
           id="buku-jumlah"
           v-model="buku.jumlah_exspl"
           type="number"
@@ -210,9 +215,10 @@ const router = useRouter()
           required
         />
       </label>
+
       <label for="buku-asal">
         Asal
-        <input
+        <InputText
           id="buku-asal"
           v-model="buku.asal"
           type="text"
@@ -221,7 +227,8 @@ const router = useRouter()
           required
         />
       </label>
-      <CTA type="submit" :disabled="isLoading" label="Tambah buku baru" class="buku-form__submit" />
+
+      <CTA type="submit" :disabled="isLoading" label="Tambah buku baru" class="col-span-2" />
 
       <TheDialog :is-open="errDialog.isOpen" @dialog-close="errDialog.close()">
         <h2>Ada kesalahan!</h2>
@@ -241,40 +248,14 @@ const router = useRouter()
 
 <style scoped>
 .buku-container {
-  display: grid;
   grid-template-columns: 35ch 1fr;
-  gap: 2rem;
 
   @media screen and (max-width: 60em) {
     grid-template-columns: 1fr;
   }
 }
 
-.buku-gambar {
-  outline: 2px solid var(--neutral);
-  border-radius: 0.5rem;
-  overflow: hidden;
-}
-
-.buku-gambar img {
-  width: 100%;
-}
-
-.buku-gambar__placeholder {
-  text-align: center;
-}
-
-.buku-form {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-}
-
 .buku-form label {
   padding: 0;
-}
-
-.buku-form__submit {
-  grid-column: span 2;
 }
 </style>

@@ -69,50 +69,63 @@ async function handleSignUp() {
     </h1>
 
     <div v-if="isSigningIn" class="form-container log-in">
-      <form @submit.prevent="handleSignIn">
+      <form @submit.prevent="handleSignIn" class="flex flex-col gap-2">
         <label for="login-email">Email</label>
-        <input id="login-email" v-model="data.email" required type="email" placeholder="Email" />
+        <InputText
+          id="login-email"
+          v-model="data.email"
+          required
+          type="email"
+          placeholder="Email"
+        />
 
         <label for="login-password">Password</label>
-        <input
+        <InputText
           id="login-password"
           v-model="data.password"
           required
           type="password"
           placeholder="Password Anda"
         />
-        <CTA type="submit" :fill="true" label="Masuk" />
+        <CTA type="submit" label="Masuk" />
       </form>
     </div>
 
     <div v-else class="form-container sign-up">
-      <form @submit.prevent="handleSignUp">
+      <form @submit.prevent="handleSignUp" class="flex flex-col gap-2">
         <label for="nama">Nama</label>
-        <input id="nama" type="text" name="nama" placeholder="Siapa namamu?" required />
+        <InputText id="nama" type="text" name="nama" placeholder="Siapa namamu?" required />
+
         <label for="signup-email">Email</label>
-        <input id="signup-email" v-model="data.email" required type="email" placeholder="Email" />
+        <InputText
+          id="signup-email"
+          v-model="data.email"
+          required
+          type="email"
+          placeholder="Email"
+        />
         <label for="signup-password">Password</label>
-        <input
+        <Password
           id="signup-password"
+          class="w-full"
           v-model="data.password"
           required
-          type="password"
+          toggle-mask
           placeholder="Password Anda"
         />
         <label for="confirm-password">Konfirmasi Password</label>
-        <input
+        <Password
+          class="w-full"
           v-model="data.confirmPassword"
-          type="password"
           placeholder="Ketik Ulang Password"
           required
         />
 
-        <CTA type="submit" :fill="true" label="Daftar" />
+        <CTA type="submit" label="Daftar" class="block" />
       </form>
     </div>
 
-    <CTA @click="handleSwitchForm" label="Belum punya akun? Daftar" v-if="isSigningIn" />
-    <CTA @click="handleSwitchForm" :label="buttonLabel" v-else />
+    <CTA @click="handleSwitchForm" :label="buttonLabel" text />
   </div>
 
   <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">

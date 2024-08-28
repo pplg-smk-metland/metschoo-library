@@ -85,7 +85,7 @@ onMounted(async () => {
     <h2>Ubah password</h2>
     <form class="profile-form" @submit.prevent="ubahKredensial">
       <label for="password">Password</label>
-      <input
+      <InputText
         id="password"
         v-model="kredensialPengguna.password"
         type="password"
@@ -95,7 +95,7 @@ onMounted(async () => {
       />
 
       <label for="confirm-password">konfirmasi password</label>
-      <input
+      <InputText
         id="confirm-password"
         v-model="kredensialPengguna.passwordKonfirmasi"
         type="password"
@@ -114,7 +114,7 @@ onMounted(async () => {
 
     <form @submit.prevent="ubahEmail">
       <label for="email">Email</label>
-      <input
+      <InputText
         id="email"
         v-model="kredensialPengguna.email"
         type="email"

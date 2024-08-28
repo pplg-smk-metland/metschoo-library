@@ -61,7 +61,7 @@ async function updateProfile() {
 
     <form class="profile__details" @submit.prevent="updateProfile">
       <label for="name">Nama</label>
-      <input v-model="user.nama" type="text" placeholder="Masukan Nama" />
+      <InputText v-model="user.nama" type="text" placeholder="Masukan Nama" />
 
       <label for="kelas">Kelas</label>
       <Select
@@ -72,10 +72,10 @@ async function updateProfile() {
       />
 
       <label for="jurusan">Jurusan</label>
-      <input v-model="user.jurusan" type="text" placeholder="Masukkan Jurusan" />
+      <InputText v-model="user.jurusan" type="text" placeholder="Masukkan Jurusan" />
 
       <div class="button-container">
-        <CTA @click="updateProfile" :fill="true" label="Edit profil" />
+        <CTA @click="updateProfile" label="Edit profil" />
       </div>
     </form>
   </section>

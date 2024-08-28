@@ -137,15 +137,21 @@ function toggleFormVisibility() {
 
       <form class="buku-edit" @submit.prevent="editBook(buku)">
         <label for="buku-judul">Judul</label>
-        <input id="buku-judul" v-model="buku.judul" type="text" name="buku-judul" required />
+        <InputText id="buku-judul" v-model="buku.judul" type="text" name="buku-judul" required />
         <label for="buku-asal">Asal</label>
-        <input id="buku-asal" v-model="buku.asal" type="text" name="buku-asal" required />
+        <InputText id="buku-asal" v-model="buku.asal" type="text" name="buku-asal" required />
         <label for="buku-penulis">ISBN</label>
-        <input id="buku-isbn" v-model="buku.no_isbn" type="text" name="buku-isbn" required />
+        <InputText id="buku-isbn" v-model="buku.no_isbn" type="text" name="buku-isbn" required />
         <label for="buku-penulis">Penulis</label>
-        <input id="buku-penulis" v-model="buku.penulis" type="text" name="buku-penulis" required />
+        <InputText
+          id="buku-penulis"
+          v-model="buku.penulis"
+          type="text"
+          name="buku-penulis"
+          required
+        />
         <label for="buku-penerbit">Penerbit</label>
-        <input
+        <InputText
           id="buku-penerbit"
           v-model="buku.penerbit"
           type="text"
@@ -153,7 +159,7 @@ function toggleFormVisibility() {
           required
         />
         <label for="buku-tahun-terbit">Tahun terbit</label>
-        <input
+        <InputText
           id="buku-tahun-terbit"
           v-model="buku.tahun_terbit"
           type="text"
@@ -161,7 +167,7 @@ function toggleFormVisibility() {
           required
         />
         <label for="buku-alamat-terbit">Alamat terbit</label>
-        <input
+        <InputText
           id="buku-alamat-terbit"
           v-model="buku.alamat_terbit"
           type="text"
@@ -169,7 +175,7 @@ function toggleFormVisibility() {
           required
         />
         <label for="buku-jumlah">Jumlah</label>
-        <input
+        <InputText
           id="buku-jumlah"
           v-model="buku.jumlah_exspl"
           type="number"
