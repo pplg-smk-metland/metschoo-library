@@ -37,6 +37,7 @@ export const useAuthStore = defineStore("auth", () => {
       const { error } = await supabase.auth.signOut()
 
       if (error) throw error
+      profile.value = null
     } catch (err) {
       if (err instanceof AuthError) console.table(err)
     }
