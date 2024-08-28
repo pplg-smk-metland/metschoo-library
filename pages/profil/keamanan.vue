@@ -131,6 +131,8 @@ onMounted(async () => {
     </form>
   </section>
 
+  <Divider />
+
   <section class="main-section">
     <h2>Keluar dari akun</h2>
     <p>Klik disini untuk keluar dari akun anda</p>
