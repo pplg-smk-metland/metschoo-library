@@ -12,6 +12,7 @@ function closeNav() {
 }
 
 const user = useSupabaseUser()
+const isAdmin = computed(() => user.value.app_metadata.role === "super-admin")
 </script>
 
 <template>
@@ -43,8 +44,11 @@ const user = useSupabaseUser()
       <li v-if="!user">
         <NuxtLink to="/login" class="nav-link nav-link--cta"> Masuk </NuxtLink>
       </li>
-      <li v-else>
+      <li v-if="!isAdmin">
         <NuxtLink to="/profil" class="nav-link nav-link--cta"> Profil </NuxtLink>
+      </li>
+      <li v-else>
+        <NuxtLink to="/admin" class="nav-link nav-link--cta"> Admin </NuxtLink>
       </li>
     </ul>
 
