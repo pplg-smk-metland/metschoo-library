@@ -22,6 +22,9 @@ useHead({
       rel: "stylesheet",
     },
   ],
+  bodyAttrs: {
+    class: "dark:bg-surface-900 dark:text-gray-300",
+  },
 })
 </script>
 
