@@ -12,7 +12,9 @@ function closeNav() {
 }
 
 const user = useSupabaseUser()
-const isAdmin = computed(() => user.value.app_metadata.role === "super-admin")
+const isAdmin = computed(() =>
+  user.value ? user.value.app_metadata?.role === "super-admin" : false
+)
 </script>
 
 <template>
