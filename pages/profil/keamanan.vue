@@ -114,7 +114,7 @@ onMounted(async () => {
   <section class="main-section">
     <h2>Ubah email</h2>
 
-    <form @submit.prevent="ubahEmail" class="flex flex-col gap-2">
+    <form class="flex flex-col gap-2" @submit.prevent="ubahEmail">
       <label for="email">Email</label>
       <InputText
         id="email"
@@ -138,7 +138,7 @@ onMounted(async () => {
     <p>Klik disini untuk keluar dari akun anda</p>
 
     <div class="button-container">
-      <CTA @click="signOut" label="Keluar dari akun" severity="danger" />
+      <CTA label="Keluar dari akun" severity="danger" @click="signOut" />
     </div>
   </section>
 

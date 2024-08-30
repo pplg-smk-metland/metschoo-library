@@ -36,13 +36,13 @@ const returnPending = computed(() => data.state_id === 4)
 
     <CTA
       v-show="borrowPending"
-      @click="$emit('konfirmasiPeminjaman')"
       label="Konfirmasi peminjaman "
+      @click="$emit('konfirmasiPeminjaman')"
     />
     <CTA
       v-show="returnPending"
-      @click="$emit('konfirmasiPengembalian')"
       label=" Konfirmasi pengembalian "
+      @click="$emit('konfirmasiPengembalian')"
     />
   </li>
 </template>

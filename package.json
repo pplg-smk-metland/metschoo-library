@@ -8,10 +8,12 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "lint": "eslint .  --ignore-pattern \"assets/presets/*\"",
+    "lint:fix": "eslint . --fix --ignore-pattern \"assets/presets/*\""
   },
   "dependencies": {
-    "@nuxt/eslint": "^0.5.1",
+    "@nuxt/eslint": "^0.5.4",
     "@nuxt/image": "^1.7.0",
     "@pinia/nuxt": "^0.5.3",
     "nuxt": "^3.12.4",
