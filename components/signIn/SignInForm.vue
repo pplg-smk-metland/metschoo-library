@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useDialog } from "@/composables"
 import { AuthError } from "@supabase/supabase-js"
 
 const isSigningIn = ref(false)
@@ -24,19 +23,25 @@ const data = ref({
   confirmPassword: "",
 })
 
-const { dialog } = useDialog()
-
 const authStore = useAuthStore()
 const router = useRouter()
 
+const toast = useToast()
 async function handleSignIn() {
   try {
     const error = await authStore.handleSignIn(data.value.email, data.value.password)
     if (error) throw error
     router.push("/")
   } catch (err) {
-    if (err instanceof AuthError) dialog.value.open(err.message)
-    else console.error((err as Error).message)
+    console.error(err)
+
+    if (err instanceof AuthError) {
+      toast.add({
+        severity: "error",
+        summary: "Gagal masuk!",
+        detail: "Ada sebuah kesalahan saat masuk. Silahkan coba lagi",
+      })
+    }
   }
 }
 
@@ -52,7 +57,15 @@ async function handleSignUp() {
     await authStore.handleSignUp(email, password)
     alert("Cek email lu ya buat verifikasi email!")
   } catch (err) {
-    if (err instanceof AuthError) dialog.value.open(err.message)
+    console.error(err)
+
+    if (err instanceof AuthError) {
+      toast.add({
+        severity: "error",
+        summary: "Gagal mendaftar!",
+        detail: "Ada sebuah kesalahan saat mendaftar. Silahkan coba lagi",
+      })
+    }
   }
 }
 </script>
@@ -127,11 +140,7 @@ async function handleSignUp() {
 
     <CTA :label="buttonLabel" text @click="handleSwitchForm" />
   </div>
-
-  <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">
-    <h2>Error!</h2>
-    {{ dialog.message }}
-  </TheDialog>
+    <Toast />
 </template>
 
 <style>
