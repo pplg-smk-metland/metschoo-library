@@ -198,8 +198,8 @@ supabase
       </div>
 
       <footer class="p-confirmdialog-footer">
-        <CTA label="Tidak" @click="rejectCallback" />
-        <CTA fill label="Ya" @click="acceptCallback" />
+        <CTA @click="rejectCallback" label="Tidak" />
+        <CTA fill @click="acceptCallback" label="Ya" />
       </footer>
     </template>
   </ConfirmDialog>

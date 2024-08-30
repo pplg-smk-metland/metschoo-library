@@ -73,7 +73,7 @@ async function updateProfile() {
       <label for="jurusan">Jurusan</label>
       <InputText v-model="user.jurusan" type="text" placeholder="Masukkan Jurusan" />
 
-      <CTA label="Edit profil" class="mt-auto" @click="updateProfile" />
+      <CTA @click="updateProfile" label="Edit profil" class="mt-auto" />
     </form>
   </section>
 

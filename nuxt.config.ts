@@ -28,12 +28,4 @@ export default defineNuxtConfig({
       callback: "/",
     },
   },
-
-  runtimeConfig: {
-    public: {
-      supabase: {
-        url: process.env.SUPABASE_URL,
-      },
-    },
-  },
 })

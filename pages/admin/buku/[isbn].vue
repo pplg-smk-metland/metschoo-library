@@ -127,7 +127,7 @@ function toggleFormVisibility() {
       <p>{{ buku.kategori_buku?.kategori }}</p>
     </article>
 
-    <article v-else class="buku">
+    <article class="buku" v-else>
       <header>
         <h1>Edit</h1>
         <button @click="toggleFormVisibility">Kembali</button>
@@ -188,8 +188,8 @@ function toggleFormVisibility() {
           placeholder="Pilih kategori"
           :options="availableCategories"
           checkmark
-          option-label="kategori"
-          option-value="id"
+          optionLabel="kategori"
+          optionValue="id"
         />
 
         <CTA type="submit" label="Simpan perubahan" />
@@ -197,8 +197,8 @@ function toggleFormVisibility() {
     </article>
 
     <div class="button-container">
-      <CTA severity="danger" label="Hapus" @click="deleteBook(buku.no_isbn)" />
-      <CTA v-show="!formIsVisible" label="Sunting" @click="toggleFormVisibility" />
+      <CTA severity="danger" @click="deleteBook(buku.no_isbn)" label="Hapus" />
+      <CTA v-show="!formIsVisible" @click="toggleFormVisibility" label="Sunting" />
     </div>
   </div>
 

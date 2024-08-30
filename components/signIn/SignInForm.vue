@@ -69,7 +69,7 @@ async function handleSignUp() {
     </h1>
 
     <div v-if="isSigningIn" class="form-container log-in">
-      <form class="flex flex-col gap-2" @submit.prevent="handleSignIn">
+      <form @submit.prevent="handleSignIn" class="flex flex-col gap-2">
         <label for="login-email">Email</label>
         <InputText
           id="login-email"
@@ -92,7 +92,7 @@ async function handleSignUp() {
     </div>
 
     <div v-else class="form-container sign-up">
-      <form class="flex flex-col gap-2" @submit.prevent="handleSignUp">
+      <form @submit.prevent="handleSignUp" class="flex flex-col gap-2">
         <label for="nama">Nama</label>
         <InputText id="nama" type="text" name="nama" placeholder="Siapa namamu?" required />
 
@@ -107,16 +107,16 @@ async function handleSignUp() {
         <label for="signup-password">Password</label>
         <Password
           id="signup-password"
-          v-model="data.password"
           class="w-full"
+          v-model="data.password"
           required
           toggle-mask
           placeholder="Password Anda"
         />
         <label for="confirm-password">Konfirmasi Password</label>
         <Password
-          v-model="data.confirmPassword"
           class="w-full"
+          v-model="data.confirmPassword"
           placeholder="Ketik Ulang Password"
           required
         />
@@ -125,7 +125,7 @@ async function handleSignUp() {
       </form>
     </div>
 
-    <CTA :label="buttonLabel" text @click="handleSwitchForm" />
+    <CTA @click="handleSwitchForm" :label="buttonLabel" text />
   </div>
 
   <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">

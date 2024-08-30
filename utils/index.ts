@@ -37,12 +37,11 @@ export async function getBukus(typeId?: Kategori["id"]) {
 }
 
 export async function getBukuImage(isbn: Buku["no_isbn"]) {
-  const config = useRuntimeConfig()
   const supabase = useSupabaseClient<Database>()
   // TODO: store cover array in localStorage
   // TODO: also implement expiry time (24 hours or so)
   // TODO: if null or expired, get from storage
-  const cdnURL = `${config.public.supabase.url}/storage/v1/object/public/Buku`
+  const cdnURL = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/Buku`
 
   const { data, error } = await supabase.storage
     .from("Buku")

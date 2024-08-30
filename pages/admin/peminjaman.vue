@@ -50,7 +50,7 @@ const lateClass = (data: Peminjaman) => {
 <template>
   <PageHeader heading="Data peminjaman" />
 
-  <DataTable :value="borrowPending" scrollable :loading="isLoading" striped-rows>
+  <DataTable :value="borrowPending" scrollable :loading="isLoading" stripedRows>
     <template #header>
       <h2>Belum dikonfirmasi</h2>
     </template>
@@ -63,9 +63,9 @@ const lateClass = (data: Peminjaman) => {
       <LoadingSpinner />
     </template>
 
-    <Column field="pengguna.nama" header="Peminjam" />
-    <Column field="buku.judul" header="Judul buku" />
-    <Column field="no_isbn" header="ISBN" />
+    <Column field="pengguna.nama" header="Peminjam"></Column>
+    <Column field="buku.judul" header="Judul buku"></Column>
+    <Column field="no_isbn" header="ISBN"></Column>
     <Column field="tgl_pinjam" header="Tanggal pinjam">
       <template #body="slotProps">
         {{ formatDate(new Date(slotProps.data.tgl_pinjam)) }}
@@ -87,17 +87,17 @@ const lateClass = (data: Peminjaman) => {
       <p>Tidak ada data</p>
     </template>
 
-    <Column field="pengguna.nama" header="Peminjam" />
-    <Column field="buku.judul" header="Judul buku" />
-    <Column field="tgl_pinjam" header="Tanggal pinjam" />
+    <Column field="pengguna.nama" header="Peminjam"></Column>
+    <Column field="buku.judul" header="Judul buku"></Column>
+    <Column field="tgl_pinjam" header="Tanggal pinjam"></Column>
   </DataTable>
 
   <DataTable
     :value="peminjamanDataWeek"
-    sort-field="tenggat_waktu"
-    :sort-order="-1"
+    sortField="tenggat_waktu"
+    :sortOrder="-1"
     scrollable
-    :row-class="lateClass"
+    :rowClass="lateClass"
   >
     <template #header>
       <h2>Data peminjaman Seminggu terakhir</h2>
@@ -129,7 +129,7 @@ const lateClass = (data: Peminjaman) => {
         </NuxtLink>
       </template>
     </Column>
-    <Column field="no_isbn" header="ISBN" />
+    <Column field="no_isbn" header="ISBN"></Column>
 
     <Column field="tgl_pinjam" header="Tanggal Pinjam" sortable>
       <template #body="slotProps">

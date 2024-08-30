@@ -15,12 +15,12 @@ async function searchRedirect() {
 <template>
   <form id="search-form" class="flex gap-4" @submit.prevent="searchRedirect">
     <InputText
-      id="search-input"
-      v-model="term"
       class="flex-1"
+      id="search-input"
       type="search"
       name="term"
       placeholder="Cari buku disini"
+      v-model="term"
       required
     />
     <CTA id="search-submit" label="Cari" type="submit" />

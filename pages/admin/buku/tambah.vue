@@ -107,7 +107,7 @@ const router = useRouter()
       <p v-else class="text-center">Gambar buku akan muncul di sini.</p>
     </figure>
 
-    <form class="grid grid-cols-2 gap-4" @submit.prevent="addNewBook(buku)">
+    <form @submit.prevent="addNewBook(buku)" class="grid grid-cols-2 gap-4">
       <label for="buku-gambar">
         Gambar buku
         <InputText
@@ -151,8 +151,8 @@ const router = useRouter()
           placeholder="Pilih kategori"
           :options="availableCategories"
           checkmark
-          option-label="kategori"
-          option-value="id"
+          optionLabel="kategori"
+          optionValue="id"
           required
         />
       </label>

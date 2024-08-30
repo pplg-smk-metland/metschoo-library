@@ -38,8 +38,8 @@ onMounted(async () => {
       </p>
 
       <div class="button-container">
-        <CTA label="Pinjam buku" @click="$emit('pinjamBuku')" />
-        <CTA label="Hapus dari wishlist" @click="$emit('hapusBuku')" />
+        <CTA @click="$emit('pinjamBuku')" label="Pinjam buku" />
+        <CTA @click="$emit('hapusBuku')" label="Hapus dari wishlist" />
       </div>
     </figcaption>
   </li>

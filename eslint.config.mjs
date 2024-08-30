@@ -1,20 +1,22 @@
-// @ts-check
-import withNuxt from "./.nuxt/eslint.config.mjs"
+import globals from "globals"
+import pluginJs from "@eslint/js"
+import tseslint from "typescript-eslint"
+import pluginVue from "eslint-plugin-vue"
 
-export default withNuxt(
-  // Your custom configs here
-
+export default [
+  pluginJs.configs.recommended,
+  ...tseslint.configs.recommended,
+  ...pluginVue.configs["flat/essential"],
   {
     languageOptions: {
       parserOptions: {
         parser: "@typescript-eslint/parser",
       },
+      globals: globals.browser,
     },
-    ignores: ["**/assets/presets/"],
     rules: {
-      // "@typescript-eslint/consistent-type-imports": "error",
+      "@typescript-eslint/consistent-type-imports": "error",
       "prefer-const": "error",
-      "vue/no-multiple-template-root": "off", // we're not using Vue 2
     },
-  }
-)
+  },
+]

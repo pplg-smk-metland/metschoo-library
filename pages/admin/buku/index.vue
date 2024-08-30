@@ -94,8 +94,8 @@ onMounted(async () => {
         v-model="selectedCategory"
         placeholder="pilih kategori"
         :options="availableCategories"
-        option-label="kategori"
-        option-value="id"
+        optionLabel="kategori"
+        optionValue="id"
         checkmark
       />
       <CTA type="submit" label="Cari" />
@@ -103,7 +103,7 @@ onMounted(async () => {
   </PageHeader>
 
   <LoadingSpinner v-if="isLoading" />
-  <DataTable v-else :value="searchResults" scrollable>
+  <DataTable :value="searchResults" scrollable v-else>
     <Column field="judul" header="Judul">
       <template #body="slotProps">
         <NuxtLink :to="`/admin/buku/${slotProps.data.no_isbn}`">
@@ -111,11 +111,11 @@ onMounted(async () => {
         </NuxtLink>
       </template>
     </Column>
-    <Column field="no_isbn" header="ISBN" />
-    <Column field="penulis" header="Penulis" />
-    <Column field="penerbit" header="Penerbit" />
-    <Column field="tahun_terbit" header="Tahun Terbit" />
-    <Column field="kategori_buku.kategori" header="Kategori" />
+    <Column field="no_isbn" header="ISBN"></Column>
+    <Column field="penulis" header="Penulis"></Column>
+    <Column field="penerbit" header="Penerbit"></Column>
+    <Column field="tahun_terbit" header="Tahun Terbit"></Column>
+    <Column field="kategori_buku.kategori" header="Kategori"></Column>
     <template #empty>Tidak ada buku ditemukan.</template>
     <template #footer>Menampilkan {{ searchResults.length }} buku.</template>
   </DataTable>

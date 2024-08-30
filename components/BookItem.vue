@@ -25,7 +25,7 @@ onMounted(async () => {
       <figure>
         <img
           :src="imgURL"
-          class="rounded-lg w-full min-h-96 object-cover bg-no-repeat"
+          class="rounded-lg w-full object-cover bg-no-repeat"
           :alt="`cover buku ${buku.judul}`"
           loading="lazy"
           height="400"

@@ -51,13 +51,13 @@ const sidebarLinks = ref<SidebarLink[]>([
     <PanelMenu :model="sidebarLinks">
       <template #item="{ item }">
         <NuxtLink
-          v-if="item.route"
           class="sidebar__link"
+          v-if="item.route"
           :to="`/admin/${item.route !== 'admin' ? item.route : ''}`"
         >
           {{ item.label }}
         </NuxtLink>
-        <button v-else class="sidebar__link" @click="item.isExpanded = !item.isExpanded">
+        <button class="sidebar__link" v-else @click="item.isExpanded = !item.isExpanded">
           <span>{{ item.label }}</span>
           <IconArrowDownDrop :class="['icon', { rotate: item.isExpanded }]" />
         </button>

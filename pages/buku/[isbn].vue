@@ -268,8 +268,8 @@ onMounted(() => (isClient.value = true))
 
   <LoadingSpinner v-if="isLoading" />
   <section
-    v-else-if="buku && isClient"
     class="main-section grid grid-cols-1 md:grid-cols-6 md:grid-rows-2 gap-4 justify-items-start"
+    v-else-if="buku && isClient"
   >
     <figure class="col-span-1 md:col-span-2 md:row-span-2 place-self-center">
       <img class="buku__gambar" :src="imgURL" alt="" width="400" height="600" />
@@ -302,8 +302,8 @@ onMounted(() => (isClient.value = true))
         <CTA
           v-if="peminjamanState?.isBorrowable"
           fill
-          label="Pinjam buku"
           @click="konfirmasiPinjamBuku"
+          label="Pinjam buku"
         />
 
         <CTA
@@ -318,8 +318,8 @@ onMounted(() => (isClient.value = true))
           v-if="peminjamanState?.isReturnable"
           :disabled="!peminjamanState?.isReturnable"
           fill
-          label="kembalikan buku"
           @click="kembalikanBuku(buku, peminjamanState?.id!)"
+          label="kembalikan buku"
         />
 
         <ConfirmPopup group="headless" aria-label="popup">
@@ -331,7 +331,7 @@ onMounted(() => (isClient.value = true))
 
             <section class="px-4 pb-4 flex gap-2">
               <CTA label="Tidak" @click="rejectCallback" />
-              <CTA label="Ya" fill @click="acceptCallback" />
+              <CTA label="Ya" @click="acceptCallback" fill />
             </section>
           </template>
         </ConfirmPopup>
@@ -341,8 +341,8 @@ onMounted(() => (isClient.value = true))
           :disabled="bukuAdaDiWishlist || !peminjamanState?.isBorrowable"
           :aria-expanded="confirmWishlistIsVisible"
           :aria-controls="confirmWishlistIsVisible ? 'confirm' : null"
-          label="tambahkan ke wishlist"
           @click="konfirmasiMasukkanWishlist(buku, $event)"
+          label="tambahkan ke wishlist"
         />
       </div>
     </figcaption>
@@ -379,7 +379,7 @@ onMounted(() => (isClient.value = true))
     <Dialog v-model:visible="dialogIsVisible" modal header="Mau dikembalikan kapan">
       <p>Saya akan mengembalikan buku ini pada...</p>
 
-      <DatePicker v-model="date" :min-date="new Date()" />
+      <DatePicker v-model="date" :minDate="new Date()" />
 
       <p class="font-bold">
         <time v-if="date" :datetime="date?.toISOString()">{{ formattedDate }}</time>
@@ -388,9 +388,9 @@ onMounted(() => (isClient.value = true))
 
       <CTA
         :disabled="!isValidDate"
+        @click="pinjamBuku({ ...buku }, date)"
         label="Pinjam buku"
         fill
-        @click="pinjamBuku({ ...buku }, date)"
       />
     </Dialog>
   </section>

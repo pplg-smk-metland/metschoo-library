@@ -12,9 +12,7 @@ function closeNav() {
 }
 
 const user = useSupabaseUser()
-const isAdmin = computed(() =>
-  user.value ? user.value.app_metadata?.role === "super-admin" : false
-)
+const isAdmin = computed(() => user.value.app_metadata.role === "super-admin")
 </script>
 
 <template>
@@ -43,16 +41,14 @@ const isAdmin = computed(() =>
       <li>
         <NuxtLink class="nav-link" to="/wishlist"> Wishlist </NuxtLink>
       </li>
-      <template v-if="user">
-        <li v-if="!isAdmin">
-          <NuxtLink to="/profil" class="nav-link nav-link--cta"> Profil </NuxtLink>
-        </li>
-        <li v-else>
-          <NuxtLink to="/admin" class="nav-link nav-link--cta"> Admin </NuxtLink>
-        </li>
-      </template>
-      <li v-else>
+      <li v-if="!user">
         <NuxtLink to="/login" class="nav-link nav-link--cta"> Masuk </NuxtLink>
+      </li>
+      <li v-if="!isAdmin">
+        <NuxtLink to="/profil" class="nav-link nav-link--cta"> Profil </NuxtLink>
+      </li>
+      <li v-else>
+        <NuxtLink to="/admin" class="nav-link nav-link--cta"> Admin </NuxtLink>
       </li>
     </ul>
 
