@@ -71,17 +71,26 @@ async function handleSignUp() {
 </script>
 
 <template>
-  <div class="signin">
-    <h1 v-if="isSigningIn">
-      <span>Masuk</span>
-      <p>Masuk ke akun Metschoo Library yang sudah anda miliki!</p>
-    </h1>
-    <h1 v-else>
-      <span>Daftar</span>
-      <p>Buat akun Metschoo Library yang baru!</p>
-    </h1>
+  <section
+    class="flex flex-col gap-4 flex-auto max-w-xl p-8 rounded-lg bg-surface-300 dark:bg-surface-700"
+  >
+    <header>
+      <template v-if="isSigningIn">
+        <h1 v-if="isSigningIn" class="text-center">
+          <span>Masuk</span>
+        </h1>
+        <p class="text-center m-0">Masuk ke akun Metschoo Library yang sudah anda miliki!</p>
+      </template>
 
-    <div v-if="isSigningIn" class="form-container log-in">
+      <template v-else>
+        <h1 class="text-center">
+          <span>Daftar</span>
+        </h1>
+        <p class="text-center m-0">Buat akun Metschoo Library yang baru!</p>
+      </template>
+    </header>
+
+    <div v-if="isSigningIn" class="flex-1">
       <form class="flex flex-col gap-2" @submit.prevent="handleSignIn">
         <label for="login-email">Email</label>
         <InputText
@@ -104,7 +113,7 @@ async function handleSignUp() {
       </form>
     </div>
 
-    <div v-else class="form-container sign-up">
+    <div v-else class="flex-1">
       <form class="flex flex-col gap-2" @submit.prevent="handleSignUp">
         <label for="nama">Nama</label>
         <InputText id="nama" type="text" name="nama" placeholder="Siapa namamu?" required />
@@ -139,39 +148,6 @@ async function handleSignUp() {
     </div>
 
     <CTA :label="buttonLabel" text @click="handleSwitchForm" />
-  </div>
     <Toast />
+  </section>
 </template>
-
-<style>
-.signin {
-  /* background-color: #a4c5c5; */
-  flex-basis: 60ch;
-  max-width: 60ch;
-  padding: 2rem;
-  outline: 2px solid #ddd;
-  border-radius: 0.5rem;
-
-  display: flex;
-  flex-direction: column;
-}
-
-.form-container {
-  flex-grow: 1;
-}
-
-.signin h1 {
-  text-align: center;
-}
-
-.signin p {
-  font-weight: 300;
-  font-size: large;
-}
-
-.signin .btn {
-  width: 100%;
-  text-align: center;
-  margin-block-start: 2rem;
-}
-</style>
