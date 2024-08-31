@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PeminjamanData } from "@/views/admin/AdminRoot.vue"
+import type { AdminPeminjamanData as PeminjamanData } from "@/pages/admin/index.vue"
 
 interface Props {
   data: PeminjamanData[number]
@@ -15,7 +15,9 @@ const returnPending = computed(() => data.state_id === 4)
 </script>
 
 <template>
-  <li class="data-row">
+  <li v-if="!buku">anying lah</li>
+
+  <li v-else class="data-row">
     <div class="data-buku">
       <NuxtLink :to="`/admin/buku/${buku.no_isbn}`">
         <h1>{{ buku.judul }}</h1>

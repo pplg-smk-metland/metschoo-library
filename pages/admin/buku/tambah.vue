@@ -92,7 +92,11 @@ const router = useRouter()
     <NuxtLink to="/buku">Kembali</NuxtLink>
   </PageHeader>
 
-  <section class="grid gap-8 buku-container">
+  <section v-if="!buku">
+    <p>Ada kesalahan saat mengambil data buku. Silahkan coba lagi</p>
+  </section>
+
+  <section v-else class="grid gap-8 buku-container">
     <figure
       class="outline outline-2 outline-gray-300 dark:outline-gray-700 rounded-lg overflow-hidden"
     >

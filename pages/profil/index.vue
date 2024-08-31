@@ -13,9 +13,10 @@ definePageMeta({
 
 const supabase = useSupabaseClient<Database>()
 
-// sorry guys i just can't make this work with types
-//                          👇
-const bukuYangDipinjam = ref<Array<any>>([])
+const peminjamanQuery = supabase.from("peminjaman").select("*, buku(*)")
+export type PeminjamanData = QueryData<typeof peminjamanQuery>
+
+const bukuYangDipinjam = ref<PeminjamanData>([])
 
 /** daftar buku yang belum dikonfirmasi */
 const bukuBlumDikonfirmasi = computed(() => {

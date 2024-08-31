@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import type { PostgrestError, RealtimePostgresChangesPayload } from "@supabase/supabase-js"
+import type {
+  PostgrestError,
+  QueryData,
+  RealtimePostgresChangesPayload,
+} from "@supabase/supabase-js"
 import type { Buku, Peminjaman } from "@/types"
 
 import DataRow from "@/components/admin/DataRow.vue"
@@ -22,7 +26,11 @@ const supabase = useSupabaseClient<Database>()
 
 const isLoading = ref(false)
 
-const peminjamanData = ref([])
+const peminjamanQuery = supabase
+  .from("peminjaman")
+  .select("*, pengguna(nama, kelas, jurusan), buku(*)")
+export type AdminPeminjamanData = QueryData<typeof peminjamanQuery>
+const peminjamanData = ref<AdminPeminjamanData>([])
 
 const bukusBorrowPending = computed(() => {
   return peminjamanData.value.filter((data) => data.state_id === 1)

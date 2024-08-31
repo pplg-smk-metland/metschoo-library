@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { History } from "@/pages/profil/index.vue"
+import { formatDate } from "#imports"
 
 interface Props {
   data: History[number]
@@ -35,7 +36,7 @@ onMounted(async () => {
       </header>
 
       <p>
-        dipinjam pada <span class="block font-bold">{{ formatDate(new Date(tgl_pinjam)) }}</span>
+        dipinjam pada <span class="block font-bold">{{ formatDate(new Date(tgl_pinjam!)) }}</span>
       </p>
       <p v-if="tgl_kembali">
         dikembalikan pada

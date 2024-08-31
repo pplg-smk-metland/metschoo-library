@@ -2,9 +2,9 @@
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import DataTable from "primevue/datatable"
 import Column from "primevue/column"
-// import { getPeminjamanData, type PeminjamanData } from "@/lib/peminjaman"
 import { getPeminjamanData } from "@/lib/peminjaman"
 import type { Peminjaman } from "@/types"
+import { formatDate } from "#imports"
 
 useHead({
   title: "Peminjaman",
@@ -14,7 +14,7 @@ definePageMeta({
   layout: "admin",
 })
 
-const peminjamanData = ref([])
+const peminjamanData = ref<Peminjaman[]>([])
 const peminjamanDataWeek = computed(() => {
   const now = new Date()
   const nowAWeekLater = new Date().setDate(now.getDate() + 7)
@@ -42,8 +42,12 @@ onMounted(async () => {
 })
 
 const lateClass = (data: Peminjaman) => {
-  const isLate = new Date(data.tenggat_waktu).getTime() < new Date(data.tgl_kembali).getTime()
-  return [{ late: isLate }]
+  if (data.tgl_kembali) {
+    const isLate = new Date(data.tenggat_waktu).getTime() < new Date(data.tgl_kembali).getTime()
+    return [{ late: isLate }]
+  } else {
+    return [{ late: false }]
+  }
 }
 </script>
 

@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import type { PeminjamanData } from "@/pages/profil/index.vue"
+
 interface Props {
-  data: {
-    buku: any
-  }
+  data: PeminjamanData[number]
 }
 
 const { data } = defineProps<Props>()
@@ -16,7 +16,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <li>
+  <li v-if="!buku"></li>
+  <li v-else>
     <NuxtLink v-if="buku" :to="`/buku/${buku.no_isbn}`" class="buku">
       <figure>
         <img
