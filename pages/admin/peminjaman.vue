@@ -54,105 +54,106 @@ const lateClass = (data: Peminjaman) => {
 <template>
   <PageHeader heading="Data peminjaman" />
 
-  <DataTable :value="borrowPending" scrollable :loading="isLoading" striped-rows>
-    <template #header>
-      <h2>Belum dikonfirmasi</h2>
-    </template>
+  <section class="main-section">
+    <h2>Belum dikonfirmasi</h2>
 
-    <template #empty>
-      <p>Belum ada yang meminjam</p>
-    </template>
-
-    <template #loading>
-      <LoadingSpinner />
-    </template>
-
-    <Column field="pengguna.nama" header="Peminjam" />
-    <Column field="buku.judul" header="Judul buku" />
-    <Column field="no_isbn" header="ISBN" />
-    <Column field="tgl_pinjam" header="Tanggal pinjam">
-      <template #body="slotProps">
-        {{ formatDate(new Date(slotProps.data.tgl_pinjam)) }}
+    <DataTable :value="borrowPending" scrollable :loading="isLoading" striped-rows>
+      <template #empty>
+        <p>Belum ada yang meminjam</p>
       </template>
-    </Column>
-    <Column field="tenggat_waktu" header="Tenggat waktu">
-      <template #body="slotProps">
-        {{ formatDate(new Date(slotProps.data.tenggat_waktu)) }}
+
+      <template #loading>
+        <LoadingSpinner />
       </template>
-    </Column>
-  </DataTable>
 
-  <DataTable :value="returnPending" scrollable>
-    <template #header>
-      <h2>Mau dikembalikan</h2>
-      <p>Buku yang mau dikembalikan</p>
-    </template>
-    <template #empty>
-      <p>Tidak ada data</p>
-    </template>
+      <Column field="pengguna.nama" header="Peminjam" />
+      <Column field="buku.judul" header="Judul buku" />
+      <Column field="no_isbn" header="ISBN" />
+      <Column field="tgl_pinjam" header="Tanggal pinjam">
+        <template #body="slotProps">
+          {{ formatDate(new Date(slotProps.data.tgl_pinjam)) }}
+        </template>
+      </Column>
+      <Column field="tenggat_waktu" header="Tenggat waktu">
+        <template #body="slotProps">
+          {{ formatDate(new Date(slotProps.data.tenggat_waktu)) }}
+        </template>
+      </Column>
+    </DataTable>
+  </section>
 
-    <Column field="pengguna.nama" header="Peminjam" />
-    <Column field="buku.judul" header="Judul buku" />
-    <Column field="tgl_pinjam" header="Tanggal pinjam" />
-  </DataTable>
+  <section class="main-section">
+    <h2>Mau dikembalikan</h2>
+    <p>Buku yang mau dikembalikan</p>
 
-  <DataTable
-    :value="peminjamanDataWeek"
-    sort-field="tenggat_waktu"
-    :sort-order="-1"
-    scrollable
-    :row-class="lateClass"
-  >
-    <template #header>
-      <h2>Data peminjaman Seminggu terakhir</h2>
-    </template>
-
-    <template #empty>
-      <p>Tidak peminjaman selama seminggu terakhir.</p>
-    </template>
-
-    <Column field="pengguna.nama" header="Peminjam">
-      <template #body="slotProps">
-        <p>
-          <span>
-            {{ slotProps.data.pengguna.nama }}
-          </span>
-          -
-          <span>
-            {{ slotProps.data.pengguna.kelas }}
-            {{ slotProps.data.pengguna.jurusan }}
-          </span>
-        </p>
+    <DataTable :value="returnPending" scrollable>
+      <template #empty>
+        <p>Tidak ada data</p>
       </template>
-    </Column>
 
-    <Column field="buku.judul" header="Judul">
-      <template #body="slotProps">
-        <NuxtLink :to="`/admin/buku/${slotProps.data.no_isbn}`">
-          {{ slotProps.data.buku.judul }}
-        </NuxtLink>
-      </template>
-    </Column>
-    <Column field="no_isbn" header="ISBN" />
+      <Column field="pengguna.nama" header="Peminjam" />
+      <Column field="buku.judul" header="Judul buku" />
+      <Column field="tgl_pinjam" header="Tanggal pinjam" />
+    </DataTable>
+  </section>
 
-    <Column field="tgl_pinjam" header="Tanggal Pinjam" sortable>
-      <template #body="slotProps">
-        {{ formatDate(new Date(slotProps.data.tgl_pinjam)) }}
-      </template>
-    </Column>
+  <section class="main-section">
+    <h2>Data peminjaman Seminggu terakhir</h2>
 
-    <Column field="tenggat_waktu" header="Tenggat Waktu" :sortable="true">
-      <template #body="slotProps">
-        {{ formatDate(new Date(slotProps.data.tenggat_waktu)) }}
+    <DataTable
+      :value="peminjamanDataWeek"
+      sort-field="tenggat_waktu"
+      :sort-order="-1"
+      scrollable
+      :row-class="lateClass"
+    >
+      <template #empty>
+        <p>Tidak peminjaman selama seminggu terakhir.</p>
       </template>
-    </Column>
 
-    <Column field="tgl_kembali" header="Tanggal Kembali" sortable>
-      <template #body="slotProps">
-        {{ slotProps.data.tgl_kembali ? formatDate(new Date(slotProps.data.tgl_kembali)) : "-" }}
-      </template>
-    </Column>
-  </DataTable>
+      <Column field="pengguna.nama" header="Peminjam">
+        <template #body="slotProps">
+          <p>
+            <span>
+              {{ slotProps.data.pengguna.nama }}
+            </span>
+            -
+            <span>
+              {{ slotProps.data.pengguna.kelas }}
+              {{ slotProps.data.pengguna.jurusan }}
+            </span>
+          </p>
+        </template>
+      </Column>
+
+      <Column field="buku.judul" header="Judul">
+        <template #body="slotProps">
+          <NuxtLink :to="`/admin/buku/${slotProps.data.no_isbn}`">
+            {{ slotProps.data.buku.judul }}
+          </NuxtLink>
+        </template>
+      </Column>
+      <Column field="no_isbn" header="ISBN" />
+
+      <Column field="tgl_pinjam" header="Tanggal Pinjam" sortable>
+        <template #body="slotProps">
+          {{ formatDate(new Date(slotProps.data.tgl_pinjam)) }}
+        </template>
+      </Column>
+
+      <Column field="tenggat_waktu" header="Tenggat Waktu" :sortable="true">
+        <template #body="slotProps">
+          {{ formatDate(new Date(slotProps.data.tenggat_waktu)) }}
+        </template>
+      </Column>
+
+      <Column field="tgl_kembali" header="Tanggal Kembali" sortable>
+        <template #body="slotProps">
+          {{ slotProps.data.tgl_kembali ? formatDate(new Date(slotProps.data.tgl_kembali)) : "-" }}
+        </template>
+      </Column>
+    </DataTable>
+  </section>
 </template>
 
 <style>
