@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PostgrestError, QueryData } from "@supabase/supabase-js"
 import { getPeminjamanData } from "~/lib/peminjaman"
+import type { Pengguna } from "~/types"
 import type { Database } from "~/types/database.types"
 
 useHead({
@@ -50,7 +51,11 @@ async function getPeminjamanHistory() {
 }
 
 const authStore = useAuthStore()
-const { profile } = authStore
+const profile = ref<Pengguna | null>()
+
+authStore.$subscribe((mutation, state) => {
+  profile.value = state.profile
+})
 
 onMounted(async () => {
   history.value = await getPeminjamanHistory()
@@ -77,10 +82,10 @@ onMounted(async () => {
         />
       </figure>
 
-      <div v-if="profile" class="profile__details">
-        <h2>{{ profile.nama }}</h2>
-        <p>{{ profile.kelas }} - {{ profile.jurusan }}</p>
-        <p>{{ profile.email }}</p>
+      <div class="profile__details">
+        <h2>{{ profile?.nama }}</h2>
+        <p>{{ profile?.kelas }} - {{ profile?.jurusan }}</p>
+        <p>{{ profile?.email }}</p>
 
         <div class="button-container">
           <NuxtLink to="/profil/edit">
@@ -90,11 +95,6 @@ onMounted(async () => {
             <CTA label="Keamanan" />
           </NuxtLink>
         </div>
-      </div>
-
-      <div v-else class="not-found">
-        <h1>Pengguna tidak ditemukan!</h1>
-        <p>Silahkan coba beberapa saat lagi, atau hubungi admin Metschoo Library.</p>
       </div>
     </section>
 

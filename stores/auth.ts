@@ -11,7 +11,12 @@ export const useAuthStore = defineStore("auth", () => {
   const profile = ref<Pengguna | null>(null)
 
   async function init() {
-    supabase.auth.onAuthStateChange(async () => {
+    supabase.auth.onAuthStateChange(async (event) => {
+      if (event === "SIGNED_OUT") {
+        profile.value = null
+        return
+      }
+
       if (user.value) profile.value = await getProfile(user.value.id)
     })
   }
@@ -37,7 +42,6 @@ export const useAuthStore = defineStore("auth", () => {
       const { error } = await supabase.auth.signOut()
 
       if (error) throw error
-      profile.value = null
     } catch (err) {
       if (err instanceof AuthError) console.table(err)
     }
