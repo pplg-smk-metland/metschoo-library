@@ -89,7 +89,7 @@ const router = useRouter()
 
 <template>
   <PageHeader heading="Tambah buku">
-    <NuxtLink to="/buku">Kembali</NuxtLink>
+    <NuxtLink to="/admin/buku">Kembali</NuxtLink>
   </PageHeader>
 
   <section v-if="!buku">
