@@ -15,10 +15,3 @@ insert into public.pengguna_roles (name) values
 ('user'),
 ('admin');
 
--- insert into public.pengguna(nama, email, role_id) values
--- ('admin', 'oranglain@gmail.com', '2');
---  
--- drop role if exists admin;
--- create role admin;
--- grant authenticated to admin;
--- update auth.users set role='admin' where email='oranglain@gmail.com';
