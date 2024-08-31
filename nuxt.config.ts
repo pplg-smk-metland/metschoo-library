@@ -13,6 +13,9 @@ export default defineNuxtConfig({
     "@nuxt/image",
     "@nuxtjs/tailwindcss",
   ],
+  typescript: {
+    typeCheck: true,
+  },
   primevue: {
     options: {
       unstyled: true,
