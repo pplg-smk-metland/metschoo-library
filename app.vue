@@ -23,7 +23,7 @@ useHead({
     },
   ],
   bodyAttrs: {
-    class: "dark:bg-surface-900 dark:text-gray-300",
+    class: "bg-surface-200/80 dark:bg-surface-900 dark:text-gray-300",
   },
 })
 </script>
