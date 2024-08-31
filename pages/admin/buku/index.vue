@@ -5,7 +5,7 @@ import type { PostgrestError } from "@supabase/supabase-js"
 import DataTable from "primevue/datatable"
 import Column from "primevue/column"
 import Select from "primevue/select"
-import type { Database } from "~/types/supabase"
+import type { Database } from "~/types/database.types.ts"
 import PageHeader from "~/components/PageHeader.vue"
 
 useHead({

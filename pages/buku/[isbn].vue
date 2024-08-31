@@ -9,7 +9,7 @@ import Toast from "primevue/toast"
 import { useToast } from "primevue/usetoast"
 import DatePicker from "primevue/datepicker"
 import Dialog from "primevue/dialog"
-import type { Database } from "~/types/supabase"
+import type { Database } from "~/types/database.types.ts"
 
 definePageMeta({
   layout: "default",

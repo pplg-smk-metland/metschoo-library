@@ -1,4 +1,4 @@
-import type { Tables } from "./supabase"
+import type { Tables } from "./database.types.ts"
 
 // thttps://stackoverflow.com/questions/43159887/make-a-single-property-optional-in-typescriptype Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>

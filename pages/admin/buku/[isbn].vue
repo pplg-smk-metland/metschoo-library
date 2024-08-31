@@ -6,7 +6,7 @@ import type { PostgrestError, QueryData } from "@supabase/supabase-js"
 
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import Select from "primevue/select"
-import type { Database } from "~/types/supabase"
+import type { Database } from "~/types/database.types.ts"
 
 definePageMeta({
   layout: "admin",

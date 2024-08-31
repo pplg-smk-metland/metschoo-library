@@ -6,7 +6,7 @@ import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import WishlistBook from "@/components/wishlist/WishlistBook.vue"
 import Toast from "primevue/toast"
 import { useToast } from "primevue/usetoast"
-import type { Database } from "~/types/supabase"
+import type { Database } from "~/types/database.types.ts"
 
 useHead({
   title: "Wishlist",

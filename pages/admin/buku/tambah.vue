@@ -5,7 +5,7 @@ import { StorageError } from "@supabase/storage-js"
 import type { Buku, Kategori } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
 
-import type { Database } from "~/types/supabase"
+import type { Database } from "~/types/database.types.ts"
 
 useHead({
   title: "Tambah Buku",

@@ -4,7 +4,7 @@ import TheHeader from "@/components/TheHeader.vue"
 import BookItem from "@/components/BookItem.vue"
 import type { PostgrestError } from "@supabase/supabase-js"
 import type { Buku } from "@/types"
-import type { Database } from "~/types/supabase"
+import type { Database } from "~/types/database.types"
 
 useHead({
   title: "Pustaka",

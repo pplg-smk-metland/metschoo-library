@@ -1,6 +1,6 @@
 import type { Buku, Kategori, Peminjaman } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
-import type { Database } from "~/types/supabase"
+import type { Database } from "~/types/database.types.ts"
 
 /**
  * get a single buku by its isbn.

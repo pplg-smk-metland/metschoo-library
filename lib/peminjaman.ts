@@ -1,5 +1,5 @@
 import type { PostgrestError } from "@supabase/supabase-js"
-import type { Database } from "@/types/supabase"
+import type { Database } from "@/types/database.types.ts"
 
 export async function getPeminjamanData() {
   const supabase = useSupabaseClient<Database>()

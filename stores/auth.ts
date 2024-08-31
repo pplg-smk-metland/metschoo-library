@@ -2,7 +2,7 @@ import { defineStore } from "pinia"
 import { ref } from "vue"
 import { AuthError, type PostgrestError } from "@supabase/supabase-js"
 import type { Pengguna } from "@/types"
-import type { Database } from "~/types/supabase"
+import type { Database } from "~/types/database.types"
 
 export const useAuthStore = defineStore("auth", () => {
   const supabase = useSupabaseClient<Database>()

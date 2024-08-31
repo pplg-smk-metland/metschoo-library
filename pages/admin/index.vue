@@ -8,7 +8,7 @@ import Toast from "primevue/toast"
 import { getPeminjamanData } from "@/lib/peminjaman"
 import { useConfirm } from "primevue/useconfirm"
 import { useToast } from "primevue/usetoast"
-import type { Database } from "~/types/supabase"
+import type { Database } from "~/types/database.types.ts"
 
 useHead({
   title: "Admin",

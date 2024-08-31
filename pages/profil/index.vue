@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PostgrestError, QueryData } from "@supabase/supabase-js"
 import { getPeminjamanData } from "~/lib/peminjaman"
+import type { Database } from "~/types/database.types"
 
 useHead({
   title: "Profil",
@@ -10,7 +11,7 @@ definePageMeta({
   layout: "default",
 })
 
-const supabase = useSupabaseClient()
+const supabase = useSupabaseClient<Database>()
 
 // sorry guys i just can't make this work with types
 //                          👇

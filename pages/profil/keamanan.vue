@@ -2,7 +2,7 @@
 import { useDialog } from "@/composables"
 
 import { type AuthError } from "@supabase/supabase-js"
-import type { Database } from "~/types/supabase"
+import type { Database } from "~/types/database.types.ts"
 
 useHead({
   title: "Keamanan Profil",

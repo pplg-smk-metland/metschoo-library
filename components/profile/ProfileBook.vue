@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { BukuPinjam } from "@/pages/profil/index.vue"
-
 interface Props {
-  data: BukuPinjam[0]
+  data: {
+    buku: any
+  }
 }
 
 const { data } = defineProps<Props>()
