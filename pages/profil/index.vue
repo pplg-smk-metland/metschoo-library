@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { PostgrestError, QueryData } from "@supabase/supabase-js"
+import { getPeminjamanData } from "~/lib/peminjaman"
 
 useHead({
   title: "Profil",
@@ -11,12 +12,9 @@ definePageMeta({
 
 const supabase = useSupabaseClient()
 
-const pinjamQuery = supabase
-  .from("peminjaman")
-  .select(`no_isbn, tgl_pinjam, tgl_kembali, tenggat_waktu, state_id, buku(*)`)
-
-export type BukuPinjam = QueryData<typeof pinjamQuery>
-const bukuYangDipinjam = ref<BukuPinjam>([])
+// sorry guys i just can't make this work with types
+//                          👇
+const bukuYangDipinjam = ref<Array<any>>([])
 
 /** daftar buku yang belum dikonfirmasi */
 const bukuBlumDikonfirmasi = computed(() => {
@@ -29,10 +27,10 @@ const bukuSudahDikonfirmasi = computed(() => {
 
 const isLoading = ref(false)
 
-const history = ref<History>([])
-
 const historyQuery = supabase.from("peminjaman_history").select("*")
 export type History = QueryData<typeof historyQuery>
+
+const history = ref<History>([])
 
 async function getPeminjamanHistory() {
   try {
@@ -54,6 +52,9 @@ const { profile } = authStore
 
 onMounted(async () => {
   history.value = await getPeminjamanHistory()
+
+  // @ts-nocheck
+  bukuYangDipinjam.value = await getPeminjamanData()
 })
 </script>
 
