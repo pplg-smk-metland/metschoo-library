@@ -60,7 +60,6 @@ authStore.$subscribe((mutation, state) => {
 onMounted(async () => {
   history.value = await getPeminjamanHistory()
 
-  // @ts-nocheck
   bukuYangDipinjam.value = await getPeminjamanData()
 })
 </script>

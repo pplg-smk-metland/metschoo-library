@@ -9,7 +9,7 @@ import type { Buku, Peminjaman } from "@/types"
 import DataRow from "@/components/admin/DataRow.vue"
 import ConfirmDialog from "primevue/confirmdialog"
 import Toast from "primevue/toast"
-import { getPeminjamanData } from "@/lib/peminjaman"
+import { getAdminPeminjamanData } from "@/lib/peminjaman"
 import { useConfirm } from "primevue/useconfirm"
 import { useToast } from "primevue/usetoast"
 import type { Database } from "~/types/database.types.ts"
@@ -46,7 +46,7 @@ const bukusReturnPending = computed(() => {
 
 onMounted(async () => {
   isLoading.value = true
-  peminjamanData.value = await getPeminjamanData()
+  peminjamanData.value = await getAdminPeminjamanData()
   isLoading.value = false
 })
 
