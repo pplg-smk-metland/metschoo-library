@@ -17,19 +17,19 @@ const peminjaman = ref()
 
 onMounted(async () => {
   isLoading.value = true
+  const userId = route.params.id
 
-  const { data, error } = await supabase
-    .from("pengguna")
-    .select("*")
-    .eq("user_id", route.params.id)
-    .single()
+  const { data, error } = await supabase.from("pengguna").select("*").eq("user_id", userId).single()
   if (error) {
     console.error(error)
   }
 
   pengguna.value = data
 
-  const { data: peminjamanData } = await supabase.from("peminjaman").select("*, buku(judul)")
+  const { data: peminjamanData } = await supabase
+    .from("peminjaman")
+    .select("*, buku(judul)")
+    .eq("user_id", userId)
   peminjaman.value = peminjamanData
 
   isLoading.value = false
