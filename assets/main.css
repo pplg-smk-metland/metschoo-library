@@ -14,6 +14,9 @@ input {
 label {
   display: block;
   padding-block-start: 0.75rem;
+  line-height: 1;
+
+  @apply dark:text-gray-300;
 }
 
 button:disabled {
@@ -54,7 +57,7 @@ a {
 }
 
 .main-section {
-  @apply p-4 bg-slate-200 dark:bg-surface-800/70 rounded-lg;
+  @apply p-6 bg-slate-100 dark:bg-surface-800/70 rounded-lg;
 }
 
 table {

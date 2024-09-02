@@ -1,14 +1,19 @@
 <script setup lang="ts">
+import MdiHamburgerMenu from "~icons/mdi/hamburger-menu"
+import MdiClose from "~icons/mdi/close"
+
 const openNavBtn = ref(null)
 const closeNavBtn = ref(null)
 const navlinks = ref<HTMLUListElement | null>(null)
 
 function openNav() {
-  navlinks.value?.classList.add("active")
+  navlinks.value?.classList.remove("-translate-y-full")
+  navlinks.value?.classList.add("-translate-y-0")
 }
 
 function closeNav() {
-  navlinks.value?.classList.remove("active")
+  navlinks.value?.classList.add("-translate-y-full")
+  navlinks.value?.classList.remove("-translate-y-0")
 }
 
 const user = useSupabaseUser()
@@ -18,20 +23,25 @@ const isAdmin = computed(() =>
 </script>
 
 <template>
-  <nav class="bg-primary text-primary-contrast z-10 navbar shadow-md">
+  <nav
+    class="flex justify-between items-center sticky top-0 bg-primary dark:bg-surface-700/90 text-primary-contrast z-10 shadow-md navbar"
+  >
     <div class="logo">
-      <img src="/logo.svg" alt="Logo Metschoo Library" />
+      <img src="/logo.svg" alt="Logo Metschoo Library" class="h-14" />
     </div>
 
-    <ul ref="navlinks" class="nav-links">
-      <li class="nav-links__header">
+    <ul
+      ref="navlinks"
+      class="flex flex-col absolute top-0 left-0 -translate-y-full w-full md:flex-row md:relative md:translate-y-0 md:w-auto bg-inherit dark:bg-surface-700 transition-transform z-10"
+    >
+      <li class="flex justify-between md:hidden md:appearance-none">
         <div class="logo">
           <NuxtLink to="/">
-            <img src="/logo.svg" alt="Logo Metschoo Library" />
+            <img src="/logo.svg" alt="Logo Metschoo Library" height="50" class="w-16" />
           </NuxtLink>
         </div>
-        <button ref="closeNavBtn" class="nav-btn close" @click="closeNav">
-          <i class="fa-solid fa-xmark" />
+        <button ref="closeNavBtn" class="nav-btn" @click="closeNav">
+          <MdiClose />
         </button>
       </li>
       <li>
@@ -43,21 +53,22 @@ const isAdmin = computed(() =>
       <li>
         <NuxtLink class="nav-link" to="/wishlist"> Wishlist </NuxtLink>
       </li>
+
       <template v-if="user">
         <li v-if="!isAdmin">
-          <NuxtLink to="/profil" class="nav-link nav-link--cta"> Profil </NuxtLink>
+          <NuxtLink to="/profil" class="nav-link bg-primary-700"> Profil </NuxtLink>
         </li>
         <li v-else>
-          <NuxtLink to="/admin" class="nav-link nav-link--cta"> Admin </NuxtLink>
+          <NuxtLink to="/admin" class="nav-link bg-primary-700"> Admin </NuxtLink>
         </li>
       </template>
       <li v-else>
-        <NuxtLink to="/login" class="nav-link nav-link--cta"> Masuk </NuxtLink>
+        <NuxtLink to="/login" class="nav-link bg-primary-700"> Masuk </NuxtLink>
       </li>
     </ul>
 
-    <button ref="openNavBtn" class="nav-btn open" @click="openNav">
-      <i class="fa-solid fa-bars" />
+    <button ref="openNavBtn" class="nav-btn" @click="openNav">
+      <MdiHamburgerMenu />
     </button>
   </nav>
 </template>
@@ -65,94 +76,35 @@ const isAdmin = computed(() =>
 <style scoped>
 .navbar {
   grid-area: navbar;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: sticky;
-  top: 0;
-}
-
-.logo img {
-  height: 3.5rem;
-}
-
-.nav-links {
-  background: inherit;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  width: 100%;
-
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  top: 0;
-  left: 0;
-  translate: 0 -100%;
-  transition: translate 200ms ease;
-}
-
-.nav-links.active {
-  translate: 0 0;
-  z-index: 10;
-}
-
-.nav-links__header {
-  padding-inline: 0.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
 .nav-link,
 .nav-btn {
-  color: inherit;
-  text-decoration: none;
-  padding: 1rem;
-  display: block;
-  position: relative;
+  @apply text-gray-300/90 hover:text-gray-100 dark:hover:bg-surface-800 transition-colors p-4 block relative;
 }
 
-.nav-link--cta {
-  background: var(--primary-200);
+.nav-btn {
+  @apply md:hidden;
 }
 
-.nav-link.active::before {
+.nav-link::before {
   content: "";
   position: absolute;
   bottom: 0;
   left: 0;
-  height: 100%;
-  width: 0.4rem;
-  background: var(--nav-link-active);
-}
+  width: 100%;
+  height: 0.2rem;
+  transition: opacity 200ms ease;
+  opacity: 0;
+  background: var(--p-primary-700);
 
-@media (hover: hover) {
-  .nav-links a:hover {
-    background: var(--primary-200);
+  @media screen and (max-width: 50em) {
+    width: 0.2rem;
+    height: 100%;
   }
 }
 
-@media screen and (min-width: 50em) {
-  .nav-link.active::before {
-    height: 0.4rem;
-    width: 100%;
-  }
-
-  .nav-links {
-    flex-direction: row;
-    position: relative;
-    translate: 0;
-    width: auto;
-  }
-
-  .nav-links__header {
-    display: none;
-  }
-
-  .nav-btn {
-    display: none;
-  }
+.nav-link.router-link-active::before {
+  opacity: 1;
 }
 </style>

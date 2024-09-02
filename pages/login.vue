@@ -12,14 +12,7 @@ definePageMeta({
 })
 </script>
 <template>
-  <main>
+  <div class="flex justify-center min-h-[70vh]">
     <SignInForm />
-  </main>
+  </div>
 </template>
-
-<style scoped>
-main {
-  display: flex;
-  justify-content: center;
-}
-</style>
