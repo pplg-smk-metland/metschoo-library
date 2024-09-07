@@ -301,6 +301,9 @@ ALTER TABLE ONLY "public"."buku"
 ALTER TABLE ONLY "public"."wishlist"
     ADD CONSTRAINT "wishlist_no_isbn_fkey" FOREIGN KEY ("no_isbn") REFERENCES "public"."buku"("no_isbn") ON UPDATE CASCADE ON DELETE SET NULL;
 
+create role admin;
+grant authenticated to admin;
+
 CREATE POLICY "Enable all actions for admin" ON "public"."kategori_buku" TO "admin" USING (true);
 
 CREATE POLICY "Enable all for admin" ON "public"."buku" TO "admin" USING (true) WITH CHECK (true);
