@@ -28,7 +28,7 @@ const isLoading = ref(false)
 
 const peminjamanQuery = supabase
   .from("peminjaman")
-  .select("*, pengguna(nama, kelas, jurusan), buku(*)")
+  .select("*, peminjaman_state(name), pengguna(nama, kelas, jurusan), buku(*)")
 export type AdminPeminjamanData = QueryData<typeof peminjamanQuery>
 const peminjamanData = ref<AdminPeminjamanData>([])
 
