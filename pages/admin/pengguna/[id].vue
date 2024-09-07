@@ -49,8 +49,10 @@ onMounted(async () => {
     </PageHeader>
 
     <PageHeader v-else :heading="pengguna.nama">
-      <p>{{ pengguna.kelas ? pengguna.kelas : "tidak ada kelas" }}</p>
-      <p>{{ pengguna.jurusan ? pengguna.jurusan : "tidak ada jurusan" }}</p>
+      <routerLink to="/admin/pengguna">kembali</routerLink>
+
+      <p>kelas: {{ pengguna.kelas ? pengguna.kelas : "tidak ada kelas" }}</p>
+      <p>jurusan: {{ pengguna.jurusan ? pengguna.jurusan : "tidak ada jurusan" }}</p>
     </PageHeader>
 
     <Divider />
