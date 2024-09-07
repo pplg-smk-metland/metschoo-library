@@ -8,7 +8,7 @@ export async function getAdminPeminjamanData(): Promise<AdminPeminjamanData> {
   try {
     const { data, error } = await supabase
       .from("peminjaman")
-      .select("*, pengguna(nama, kelas, jurusan), buku(*)")
+      .select("*, peminjaman_state(name), pengguna(nama, kelas, jurusan), buku(*)")
 
     if (error) throw error
     return data as AdminPeminjamanData

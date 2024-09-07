@@ -14,25 +14,7 @@ definePageMeta({
   layout: "admin",
 })
 
-const peminjamanData = ref<AdminPeminjamanData>([])
-
-const peminjamanDataWeek = computed(() => {
-  const now = new Date()
-  const nowAWeekLater = new Date().setDate(now.getDate() + 7)
-  const weekRange = nowAWeekLater - now.getTime()
-
-  return peminjamanData.value.filter(
-    (data) => now.getTime() - new Date(data.tgl_pinjam).getTime() < weekRange
-  )
-})
-
-const borrowPending = computed(() => {
-  return peminjamanData.value.filter(({ state_id }) => state_id === 1)
-})
-
-const returnPending = computed(() => {
-  return peminjamanData.value.filter(({ state_id }) => state_id === 4)
-})
+const peminjamanData = ref<Peminjaman[]>([])
 
 const isLoading = ref(false)
 
@@ -58,7 +40,14 @@ const lateClass = (data: AdminPeminjamanData[number]) => {
   <section class="main-section">
     <h2>Belum dikonfirmasi</h2>
 
-    <DataTable :value="borrowPending" scrollable :loading="isLoading" striped-rows>
+    <DataTable
+      :value="peminjamanData"
+      scrollable
+      :loading="isLoading"
+      striped-rows
+      paginator
+      rows="20"
+    >
       <template #empty>
         <p>Belum ada yang meminjam</p>
       </template>
@@ -70,87 +59,20 @@ const lateClass = (data: AdminPeminjamanData[number]) => {
       <Column field="pengguna.nama" header="Peminjam" />
       <Column field="buku.judul" header="Judul buku" />
       <Column field="no_isbn" header="ISBN" />
-      <Column field="tgl_pinjam" header="Tanggal pinjam">
+      <Column field="tgl_pinjam" header="Tanggal pinjam" sortable>
         <template #body="slotProps">
           {{ formatDate(new Date(slotProps.data.tgl_pinjam)) }}
         </template>
       </Column>
-      <Column field="tenggat_waktu" header="Tenggat waktu">
-        <template #body="slotProps">
-          {{ formatDate(new Date(slotProps.data.tenggat_waktu)) }}
-        </template>
-      </Column>
-    </DataTable>
-  </section>
-
-  <section class="main-section">
-    <h2>Mau dikembalikan</h2>
-    <p>Buku yang mau dikembalikan</p>
-
-    <DataTable :value="returnPending" scrollable>
-      <template #empty>
-        <p>Tidak ada data</p>
-      </template>
-
-      <Column field="pengguna.nama" header="Peminjam" />
-      <Column field="buku.judul" header="Judul buku" />
-      <Column field="tgl_pinjam" header="Tanggal pinjam" />
-    </DataTable>
-  </section>
-
-  <section class="main-section">
-    <h2>Data peminjaman Seminggu terakhir</h2>
-
-    <DataTable
-      :value="peminjamanDataWeek"
-      sort-field="tenggat_waktu"
-      :sort-order="-1"
-      scrollable
-      :row-class="lateClass"
-    >
-      <template #empty>
-        <p>Tidak peminjaman selama seminggu terakhir.</p>
-      </template>
-
-      <Column field="pengguna.nama" header="Peminjam">
-        <template #body="slotProps">
-          <p>
-            <span>
-              {{ slotProps.data.pengguna.nama }}
-            </span>
-            -
-            <span>
-              {{ slotProps.data.pengguna.kelas }}
-              {{ slotProps.data.pengguna.jurusan }}
-            </span>
-          </p>
-        </template>
-      </Column>
-
-      <Column field="buku.judul" header="Judul">
-        <template #body="slotProps">
-          <NuxtLink :to="`/admin/buku/${slotProps.data.no_isbn}`">
-            {{ slotProps.data.buku.judul }}
-          </NuxtLink>
-        </template>
-      </Column>
-      <Column field="no_isbn" header="ISBN" />
-
-      <Column field="tgl_pinjam" header="Tanggal Pinjam" sortable>
-        <template #body="slotProps">
-          {{ formatDate(new Date(slotProps.data.tgl_pinjam)) }}
-        </template>
-      </Column>
-
-      <Column field="tenggat_waktu" header="Tenggat Waktu" :sortable="true">
+      <Column field="tenggat_waktu" header="Tenggat waktu" sortable>
         <template #body="slotProps">
           {{ formatDate(new Date(slotProps.data.tenggat_waktu)) }}
         </template>
       </Column>
 
-      <Column field="tgl_kembali" header="Tanggal Kembali" sortable>
+      <Column header="keterangan" field="state_id" sortable>
         <template #body="slotProps">
-          {{ slotProps.data.tgl_kembali ? formatDate(new Date(slotProps.data.tgl_kembali)) : "-" }}
+          {{ slotProps.data.peminjaman_state.name }}
         </template>
       </Column>
     </DataTable>
