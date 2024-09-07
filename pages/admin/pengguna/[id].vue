@@ -29,11 +29,29 @@ onMounted(async () => {
   const { data: peminjamanData } = await supabase
     .from("peminjaman")
     .select("*, buku(judul)")
+    .order("tgl_pinjam", { ascending: true })
     .eq("user_id", userId)
   peminjaman.value = peminjamanData
 
   isLoading.value = false
 })
+
+const keteranganText = (state_id: Peminjaman["state_id"]) => {
+  switch (state_id) {
+    case 1:
+      return "menunggu konfirmasi"
+    case 2:
+      return "sedang dipinjam"
+    case 3:
+      return "dibatalkan"
+    case 4:
+      return "menunggu konfirmasi pengembalian"
+    case 5:
+      return "dikembalikan"
+    case 6:
+      return "terlambat"
+  }
+}
 </script>
 
 <template>
@@ -87,8 +105,14 @@ onMounted(async () => {
               terlambat
             </span>
             <span v-else>
-              {{ data.tgl_kembali ? formatDate(new Date(data.tgl_kembali)) : "belum dikembalikan" }}
+              {{ data.tgl_kembali ? formatDate(new Date(data.tgl_kembali)) : "-" }}
             </span>
+          </template>
+        </Column>
+
+        <Column header="keterangan">
+          <template #body="slotProps">
+            {{ keteranganText(slotProps.data.state_id) }}
           </template>
         </Column>
       </DataTable>
