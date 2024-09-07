@@ -15,14 +15,20 @@ definePageMeta({
 })
 
 const peminjamanData = ref<Peminjaman[]>([])
+const startDate = ref<Date | null>(null)
+const endDate = ref<Date | null>(null)
 
 const isLoading = ref(false)
 
 onMounted(async () => {
-  isLoading.value = true
-  peminjamanData.value = await getPeminjamanData()
-  isLoading.value = false
+  handleFilterPeminjaman()
 })
+
+async function handleFilterPeminjaman() {
+  isLoading.value = true
+  peminjamanData.value = await getPeminjamanData(startDate.value, endDate.value)
+  isLoading.value = false
+}
 
 const lateClass = (data: Peminjaman) => {
   if (data.tgl_kembali) {
@@ -40,13 +46,35 @@ const lateClass = (data: Peminjaman) => {
   <section class="main-section">
     <h2>Belum dikonfirmasi</h2>
 
+    <form class="pt-8 pb-4 flex gap-4" @submit.prevent="handleFilterPeminjaman">
+      <FloatLabel>
+        <DatePicker
+          v-model="startDate"
+          :invalid="!endDate || !startDate || endDate < startDate"
+          input-id="start-date"
+        />
+        <label for="start-date">Tanggal awal</label>
+      </FloatLabel>
+
+      <FloatLabel>
+        <DatePicker
+          v-model="endDate"
+          :invalid="!endDate || !startDate || startDate < endDate"
+          input-id="end-date"
+        />
+        <label for="end-date">Tanggal akhir</label>
+      </FloatLabel>
+
+      <CTA type="submit" label="filter" class="ml-auto" />
+    </form>
+
     <DataTable
       :value="peminjamanData"
       scrollable
       :loading="isLoading"
       striped-rows
       paginator
-      rows="20"
+      :rows="20"
     >
       <template #empty>
         <p>Belum ada yang meminjam</p>
