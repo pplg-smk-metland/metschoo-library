@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const themeStore = useThemeStore()
+
 useHead({
   titleTemplate: (title) => (title ? `${title} - Metschoo Library` : "Metschoo Library"),
   meta: [
@@ -23,7 +25,9 @@ useHead({
     },
   ],
   bodyAttrs: {
-    class: "bg-surface-200/80 dark:bg-surface-900 dark:text-gray-300",
+    class: computed(
+      () => `bg-surface-200/80 dark:bg-surface-900 dark:text-gray-300 ${themeStore.theme}`
+    ),
   },
 })
 </script>

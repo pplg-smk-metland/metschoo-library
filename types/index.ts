@@ -15,3 +15,5 @@ export interface PeminjamanState {
   isCancellable: boolean
   isReturnable: boolean
 }
+
+export type Theme = "light" | "dark"

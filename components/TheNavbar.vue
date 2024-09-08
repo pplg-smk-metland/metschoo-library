@@ -30,6 +30,7 @@ const isAdmin = computed(() =>
       <img src="/logo.svg" alt="Logo Metschoo Library" class="h-14" />
     </div>
 
+    <ThemeToggle />
     <ul
       ref="navlinks"
       class="flex flex-col absolute top-0 left-0 -translate-y-full w-full md:flex-row md:relative md:translate-y-0 md:w-auto bg-inherit dark:bg-surface-700 transition-transform z-10"
