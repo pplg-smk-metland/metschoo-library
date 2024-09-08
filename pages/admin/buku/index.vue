@@ -40,7 +40,7 @@ interface SearchResult {
 
 const searchResults = ref<SearchResult[] | never>([])
 
-interface HandleSearchBuku {
+interface BukuSearchArgs {
   searchTerm?: string
   category?: Kategori["id"] | null
 }
@@ -50,7 +50,7 @@ interface HandleSearchBuku {
  * Both searchTerm and category is optional so when both isn't needed you need
  * to pass an empty obj
  */
-async function searchBukus({ searchTerm, category }: HandleSearchBuku) {
+async function searchBukus({ searchTerm, category }: BukuSearchArgs) {
   let query = supabase
     .from("buku")
     .select(`no_isbn, judul, penulis, penerbit, tahun_terbit, kategori_buku(kategori)`)
@@ -75,20 +75,36 @@ async function searchBukus({ searchTerm, category }: HandleSearchBuku) {
 
 const isLoading = ref(false)
 
+const route = useRoute()
+
+watch(
+  () => route.query,
+  async () => {
+    const { term, category } = route.query
+
+    searchResults.value = await searchBukus({
+      searchTerm: term as string,
+      category: Number(category),
+    })
+  }
+)
+
 onMounted(async () => {
   searchResults.value = await searchBukus({})
   allCategories.value = await getAllAvailableCategories()
 })
+
+async function handleSearchBuku() {
+  await navigateTo({
+    path: route.path,
+    query: { term: searchTerm.value, category: selectedCategory.value },
+  })
+}
 </script>
 
 <template>
   <PageHeader heading="Data buku">
-    <form
-      class="w-full flex gap-4 items-center justify-end"
-      @submit.prevent="
-        async () => (searchResults = await searchBukus({ searchTerm, category: selectedCategory }))
-      "
-    >
+    <form class="w-full flex gap-4 items-center justify-end" @submit.prevent="handleSearchBuku">
       <InputText
         id="search-term"
         v-model="searchTerm"
