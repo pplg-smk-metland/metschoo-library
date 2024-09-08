@@ -165,6 +165,15 @@ supabase
 
   <template v-else>
     <section class="main-section">
+      <ul class="grid grid-cols-4 gap-4">
+        <AdminInfoChip to="buku" :data="700" label="Jumlah buku" />
+        <AdminInfoChip to="buku" :data="90" label="Buku sedang dipinjam" />
+        <AdminInfoChip to="buku" :data="80" label="Buku tersedia" />
+        <AdminInfoChip to="pengguna" :data="20" label="Pengguna aktif" />
+      </ul>
+    </section>
+
+    <section class="main-section">
       <h2>Buku yang belum dikonfirmasi</h2>
       <ul class="data-list">
         <li v-if="bukusBorrowPending && !bukusBorrowPending.length">belum ada bukunya</li>
