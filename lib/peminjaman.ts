@@ -1,7 +1,6 @@
 import type { PostgrestError } from "@supabase/supabase-js"
 import type { Database } from "@/types/database.types.ts"
-import type { AdminPeminjamanData } from "@/pages/admin/index.vue"
-import type { PeminjamanData } from "@/pages/profil/index.vue"
+import type { PeminjamanData } from "@/pages/admin/index.vue"
 
 export async function getPeminjamanData(
   startDate?: Date | null,
@@ -24,7 +23,7 @@ export async function getPeminjamanData(
     const { data, error } = await query
 
     if (error) throw error
-    return data as AdminPeminjamanData
+    return data
   } catch (error) {
     console.log(error as PostgrestError)
     return []

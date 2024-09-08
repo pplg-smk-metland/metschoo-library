@@ -9,7 +9,7 @@ import type { Buku, Peminjaman } from "@/types"
 import DataRow from "@/components/admin/DataRow.vue"
 import ConfirmDialog from "primevue/confirmdialog"
 import Toast from "primevue/toast"
-import { getAdminPeminjamanData } from "@/lib/peminjaman"
+import { getPeminjamanData } from "@/lib/peminjaman"
 import { useConfirm } from "primevue/useconfirm"
 import { useToast } from "primevue/usetoast"
 import type { Database } from "~/types/database.types.ts"
@@ -29,8 +29,8 @@ const isLoading = ref(false)
 const peminjamanQuery = supabase
   .from("peminjaman")
   .select("*, peminjaman_state(name), pengguna(nama, kelas, jurusan), buku(*)")
-export type AdminPeminjamanData = QueryData<typeof peminjamanQuery>
-const peminjamanData = ref<AdminPeminjamanData>([])
+export type PeminjamanData = QueryData<typeof peminjamanQuery>
+const peminjamanData = ref<PeminjamanData>([])
 
 const bukusBorrowPending = computed(() => {
   return peminjamanData.value.filter((data) => data.state_id === 1)
@@ -46,7 +46,7 @@ const bukusReturnPending = computed(() => {
 
 onMounted(async () => {
   isLoading.value = true
-  peminjamanData.value = await getAdminPeminjamanData()
+  peminjamanData.value = await getPeminjamanData()
   isLoading.value = false
 })
 
