@@ -163,37 +163,44 @@ supabase
 
   <LoadingSpinner v-if="isLoading" />
 
-  <section v-else class="main-section">
-    <h2>Buku yang belum dikonfirmasi</h2>
-    <ul class="data-list">
-      <li v-if="bukusBorrowPending && !bukusBorrowPending.length">belum ada bukunya</li>
-      <DataRow
-        v-for="data in bukusBorrowPending"
-        :key="data.id"
-        :data="data"
-        :buku="data.buku"
-        @konfirmasi-peminjaman="konfirmasiPeminjaman(data.id)"
-      />
-    </ul>
+  <template v-else>
+    <section class="main-section">
+      <h2>Buku yang belum dikonfirmasi</h2>
+      <ul class="data-list">
+        <li v-if="bukusBorrowPending && !bukusBorrowPending.length">belum ada bukunya</li>
+        <DataRow
+          v-for="data in bukusBorrowPending"
+          :key="data.id"
+          :data="data"
+          :buku="data.buku"
+          @konfirmasi-peminjaman="konfirmasiPeminjaman(data.id)"
+        />
+      </ul>
 
-    <h2>Buku yang sedang dipinjam</h2>
-    <ul class="data-list">
-      <li v-if="bukusBorrowConfirmed && !bukusBorrowConfirmed.length">belum ada bukunya</li>
-      <DataRow v-for="data in bukusBorrowConfirmed" :key="data.id" :data="data" :buku="data.buku" />
-    </ul>
+      <h2>Buku yang sedang dipinjam</h2>
+      <ul class="data-list">
+        <li v-if="bukusBorrowConfirmed && !bukusBorrowConfirmed.length">belum ada bukunya</li>
+        <DataRow
+          v-for="data in bukusBorrowConfirmed"
+          :key="data.id"
+          :data="data"
+          :buku="data.buku"
+        />
+      </ul>
 
-    <h2>Buku untuk dikembalikan</h2>
-    <ul class="data-list">
-      <li v-if="bukusReturnPending && !bukusReturnPending.length">belum ada bukunya</li>
-      <DataRow
-        v-for="data in bukusReturnPending"
-        :key="data.id"
-        :data="data"
-        :buku="data.buku"
-        @konfirmasi-pengembalian="konfirmasiPengembalian(data, data.buku!)"
-      />
-    </ul>
-  </section>
+      <h2>Buku untuk dikembalikan</h2>
+      <ul class="data-list">
+        <li v-if="bukusReturnPending && !bukusReturnPending.length">belum ada bukunya</li>
+        <DataRow
+          v-for="data in bukusReturnPending"
+          :key="data.id"
+          :data="data"
+          :buku="data.buku"
+          @konfirmasi-pengembalian="konfirmasiPengembalian(data, data.buku!)"
+        />
+      </ul>
+    </section>
+  </template>
 
   <ConfirmDialog position="top" group="headless">
     <template #container="{ message, acceptCallback, rejectCallback }">
