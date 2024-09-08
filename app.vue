@@ -24,10 +24,11 @@ useHead({
       rel: "stylesheet",
     },
   ],
+  htmlAttrs: {
+    class: computed(() => themeStore.theme),
+  },
   bodyAttrs: {
-    class: computed(
-      () => `bg-surface-200/80 dark:bg-surface-900 dark:text-gray-300 ${themeStore.theme}`
-    ),
+    class: "bg-surface-100/80 dark:bg-surface-900 dark:text-gray-300",
   },
 })
 </script>

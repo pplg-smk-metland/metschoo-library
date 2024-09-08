@@ -13,7 +13,6 @@ input {
 
 label {
   display: block;
-  padding-block-start: 0.75rem;
   line-height: 1;
 
   @apply dark:text-gray-300;
