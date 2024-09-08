@@ -43,18 +43,18 @@
   --p-primary-700: #23514e;
   --p-primary-900: #1c4240;
 
-  --p-surface-0: #ffffff;
-  --p-surface-50: #f8fafc;
-  --p-surface-100: #f1f5f9;
-  --p-surface-200: #e2e8f0;
-  --p-surface-300: #cbd5e1;
-  --p-surface-400: #94a3b8;
-  --p-surface-500: #64748b;
-  --p-surface-600: #475569;
-  --p-surface-700: #23514e;
-  --p-surface-800: #121d31;
-  --p-surface-900: #0f172a;
-  --p-surface-950: #030e0d;
+  --p-surface-0: hsl(0 0% 100%);
+  --p-surface-50: hsl(210 40% 98%);
+  --p-surface-100: hsl(210 32% 91%);
+  --p-surface-200: hsl(210 35% 80%);
+  --p-surface-300: hsl(213 27% 84%);
+  --p-surface-400: hsl(215 20% 65%);
+  --p-surface-500: hsl(215 16% 47%);
+  --p-surface-600: hsl(215 19% 35%);
+  --p-surface-700: hsl(219 35% 17%);
+  --p-surface-800: hsl(219 46% 13%);
+  --p-surface-900: hsl(222 47% 11%);
+  --p-surface-950: hsl(175 65% 3%);
 
   --p-content-border-radius: 0.5rem;
 }

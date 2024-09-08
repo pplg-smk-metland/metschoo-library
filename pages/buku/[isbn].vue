@@ -271,7 +271,9 @@ onMounted(() => (isClient.value = true))
     v-else-if="buku && isClient"
     class="main-section grid grid-cols-1 md:grid-cols-6 md:grid-rows-2 gap-4 justify-items-start"
   >
-    <figure class="col-span-1 md:col-span-2 md:row-span-2 place-self-center">
+    <figure
+      class="col-span-1 md:col-span-2 md:row-span-2 place-self-center relative dark:brightness-75 z-0"
+    >
       <img class="buku__gambar" :src="imgURL" alt="" width="400" height="600" />
       <img
         class="buku__gambar buku__gambar--bayangan"
@@ -423,7 +425,7 @@ onMounted(() => (isClient.value = true))
   bottom: -10px;
   left: 10px;
   opacity: 80%;
-  z-index: -2;
+  z-index: -1;
   filter: blur(10px);
 }
 
