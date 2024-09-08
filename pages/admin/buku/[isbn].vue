@@ -4,8 +4,6 @@ import { useDialog } from "@/composables"
 import type { Kategori } from "@/types"
 import type { PostgrestError, QueryData } from "@supabase/supabase-js"
 
-import LoadingSpinner from "@/components/LoadingSpinner.vue"
-import Select from "primevue/select"
 import type { Database } from "~/types/database.types.ts"
 
 definePageMeta({
@@ -15,7 +13,7 @@ definePageMeta({
 const supabase = useSupabaseClient<Database>()
 const isLoading = ref(false)
 
-const availableCategories = ref<Kategori[] | null>([])
+const availableCategories = ref<Kategori[]>([])
 const router = useRouter()
 const currentRoute = useRoute()
 
@@ -173,13 +171,11 @@ function toggleFormVisibility() {
           required
         />
         <label for="buku-jumlah">Jumlah</label>
-        <InputText
+        <InputNumber
           id="buku-jumlah"
           v-model="buku.jumlah_exspl"
-          type="number"
+          :invalid="0 > buku.jumlah_exspl || buku.jumlah_exspl > 1000"
           name="buku-jumlah"
-          min="0"
-          max="10000"
           required
         />
         <label for="buku-kategori">Kategori</label>

@@ -208,13 +208,12 @@ const router = useRouter()
 
       <label for="buku-jumlah">
         Jumlah
-        <InputText
+        <InputNumber
           id="buku-jumlah"
           v-model="buku.jumlah_exspl"
-          type="number"
+          :min="0"
+          :max="10000"
           name="buku-jumlah"
-          min="0"
-          max="10000"
           placeholder="jumlah buku"
           required
         />

@@ -122,7 +122,7 @@ async function insertPeminjamandata(payload: RealtimePostgresChangesPayload<Pemi
   try {
     const { data, error } = await supabase
       .from("peminjaman")
-      .select("pengguna(nama, kelas, jurusan), buku(*)")
+      .select("peminjaman_state(name), pengguna(nama, kelas, jurusan), buku(*)")
       .eq("id", (payload.new as Peminjaman).id)
       .single()
     if (error) throw error
