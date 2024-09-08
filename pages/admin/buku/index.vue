@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import type { Kategori } from "@/types"
-import type { PostgrestError } from "@supabase/supabase-js"
 
 import DataTable from "primevue/datatable"
 import Column from "primevue/column"
 import Select from "primevue/select"
-import type { Database } from "~/types/database.types.ts"
 import PageHeader from "~/components/PageHeader.vue"
 
 useHead({
@@ -15,8 +13,6 @@ useHead({
 definePageMeta({
   layout: "admin",
 })
-
-const supabase = useSupabaseClient<Database>()
 
 const searchTerm = ref("")
 const allCategories = ref<Kategori[]>([])
@@ -39,39 +35,6 @@ interface SearchResult {
 }
 
 const searchResults = ref<SearchResult[] | never>([])
-
-interface BukuSearchArgs {
-  searchTerm?: string
-  category?: Kategori["id"] | null
-}
-
-/**
- * search bukus.
- * Both searchTerm and category is optional so when both isn't needed you need
- * to pass an empty obj
- */
-async function searchBukus({ searchTerm, category }: BukuSearchArgs) {
-  let query = supabase
-    .from("buku")
-    .select(`no_isbn, judul, penulis, penerbit, tahun_terbit, kategori_buku(kategori)`)
-
-  if (searchTerm) {
-    query = query.textSearch("judul", searchTerm, { type: "websearch" })
-  }
-
-  if (category) {
-    query = query.eq("kategori_id", category)
-  }
-
-  try {
-    const { data, error } = await query.limit(100)
-    if (error) throw error
-    return data
-  } catch (error) {
-    console.trace(error as PostgrestError)
-    return []
-  }
-}
 
 const isLoading = ref(false)
 
