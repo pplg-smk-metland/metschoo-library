@@ -45,6 +45,9 @@ const isAdmin = computed(() =>
         </button>
       </li>
       <li>
+        <ThemeToggle class="nav-link text-lg" />
+      </li>
+      <li>
         <NuxtLink class="nav-link" to="/"> Beranda </NuxtLink>
       </li>
       <li>

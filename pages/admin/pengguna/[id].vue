@@ -57,16 +57,16 @@ const keteranganText = (state_id: Peminjaman["state_id"]) => {
 <template>
   <LoadingSpinner v-if="isLoading" />
 
-  <div v-if="!isLoading && !pengguna" class="max-w-100ch mx-auto">
+  <div v-else-if="!pengguna" class="max-w-100ch mx-auto">
     <h1>pengguna tidak ditemukan!</h1>
+
+    <PageHeader heading="gagal memuat pengguna!">
+      <p>Silahkan coba lagi.</p>
+    </PageHeader>
   </div>
 
   <div v-else class="max-w-[100ch] mx-auto">
-    <PageHeader v-if="!pengguna" heading="gagal memuat pengguna!">
-      <p>Silahkan coba lagi.</p>
-    </PageHeader>
-
-    <PageHeader v-else :heading="pengguna.nama">
+    <PageHeader :heading="pengguna.nama">
       <routerLink to="/admin/pengguna">kembali</routerLink>
 
       <p>kelas: {{ pengguna.kelas ? pengguna.kelas : "tidak ada kelas" }}</p>

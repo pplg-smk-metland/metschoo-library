@@ -44,9 +44,7 @@ const lateClass = (data: Peminjaman) => {
   <PageHeader heading="Data peminjaman" />
 
   <section class="main-section">
-    <h2>Belum dikonfirmasi</h2>
-
-    <form class="pt-8 pb-4 flex gap-4" @submit.prevent="handleFilterPeminjaman">
+    <form class="py-4 flex gap-4" @submit.prevent="handleFilterPeminjaman">
       <FloatLabel>
         <DatePicker
           v-model="startDate"

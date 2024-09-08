@@ -3,6 +3,7 @@ import type { PostgrestError, QueryData } from "@supabase/supabase-js"
 import { getPeminjamanData } from "~/lib/peminjaman"
 import type { Pengguna } from "~/types"
 import type { Database } from "~/types/database.types"
+import type { PeminjamanData } from "@/pages/admin/index.vue"
 
 useHead({
   title: "Profil",
@@ -13,9 +14,6 @@ definePageMeta({
 })
 
 const supabase = useSupabaseClient<Database>()
-
-const peminjamanQuery = supabase.from("peminjaman").select("*, buku(*)")
-export type PeminjamanData = QueryData<typeof peminjamanQuery>
 
 const bukuYangDipinjam = ref<PeminjamanData>([])
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AdminPeminjamanData as PeminjamanData } from "@/pages/admin/index.vue"
+import type { PeminjamanData } from "@/pages/admin/index.vue"
 
 interface Props {
   data: PeminjamanData[number]
