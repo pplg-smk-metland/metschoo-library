@@ -19,8 +19,13 @@ definePageMeta({
 const supabase = useSupabaseClient<Database>()
 
 const searchTerm = ref("")
-const availableCategories = ref<Kategori[]>([])
-const selectedCategory = ref<Kategori["id"]>(1)
+const allCategories = ref<Kategori[]>([])
+
+const categoryOptions = computed(() => {
+  return [{ id: 0, kategori: "semua" }, ...allCategories.value]
+})
+
+const selectedCategory = ref<Kategori["id"] | null>(null)
 
 interface SearchResult {
   no_isbn: string
@@ -32,11 +37,12 @@ interface SearchResult {
     kategori: string
   } | null
 }
+
 const searchResults = ref<SearchResult[] | never>([])
 
 interface HandleSearchBuku {
   searchTerm?: string
-  category?: Kategori["id"]
+  category?: Kategori["id"] | null
 }
 
 /**
@@ -71,13 +77,14 @@ const isLoading = ref(false)
 
 onMounted(async () => {
   searchResults.value = await searchBukus({})
-  availableCategories.value = await getAllAvailableCategories()
+  allCategories.value = await getAllAvailableCategories()
 })
 </script>
 
 <template>
   <PageHeader heading="Data buku">
     <form
+      class="w-full flex gap-4 items-center justify-end"
       @submit.prevent="
         async () => (searchResults = await searchBukus({ searchTerm, category: selectedCategory }))
       "
@@ -92,13 +99,13 @@ onMounted(async () => {
       <Select
         v-model="selectedCategory"
         placeholder="pilih kategori"
-        :options="availableCategories"
+        :options="categoryOptions"
         option-label="kategori"
         option-value="id"
         checkmark
         required
       />
-      <CTA type="submit" label="Cari" />
+      <CTA type="submit" label="Cari" class="px-6" />
     </form>
   </PageHeader>
 
@@ -124,14 +131,3 @@ onMounted(async () => {
     </DataTable>
   </section>
 </template>
-
-<style scoped>
-form {
-  display: flex;
-  gap: 1rem;
-}
-
-input {
-  flex-grow: 1;
-}
-</style>
