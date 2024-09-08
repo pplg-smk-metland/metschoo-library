@@ -34,12 +34,31 @@ interface SearchResult {
 }
 const searchResults = ref<SearchResult[] | never>([])
 
-async function searchBukus() {
+interface HandleSearchBuku {
+  searchTerm?: string
+  category?: Kategori["id"]
+}
+
+/**
+ * search bukus.
+ * Both searchTerm and category is optional so when both isn't needed you need
+ * to pass an empty obj
+ */
+async function searchBukus({ searchTerm, category }: HandleSearchBuku) {
+  let query = supabase
+    .from("buku")
+    .select(`no_isbn, judul, penulis, penerbit, tahun_terbit, kategori_buku(kategori)`)
+
+  if (searchTerm) {
+    query = query.textSearch("judul", searchTerm, { type: "websearch" })
+  }
+
+  if (category) {
+    query = query.eq("kategori_id", category)
+  }
+
   try {
-    const { data, error } = await supabase
-      .from("buku")
-      .select(`no_isbn, judul, penulis, penerbit, tahun_terbit, kategori_buku(kategori)`)
-      .limit(20)
+    const { data, error } = await query.limit(100)
     if (error) throw error
     return data
   } catch (error) {
@@ -49,28 +68,9 @@ async function searchBukus() {
 }
 
 const isLoading = ref(false)
-async function searchBooks(searchTerm: string, searchCategory: Kategori["id"]) {
-  try {
-    isLoading.value = true
-    const { data, error } = await supabase
-      .from("buku")
-      .select(`no_isbn, judul, penulis, penerbit, tahun_terbit, kategori_buku(kategori)`)
-      .textSearch("judul", searchTerm, { type: "websearch" })
-      .eq("kategori_id", searchCategory)
-      .limit(30)
-
-    if (error) throw error
-    return data
-  } catch (err) {
-    console.trace((err as PostgrestError).message)
-    return []
-  } finally {
-    isLoading.value = false
-  }
-}
 
 onMounted(async () => {
-  searchResults.value = await searchBukus()
+  searchResults.value = await searchBukus({})
   availableCategories.value = await getAllAvailableCategories()
 })
 </script>
@@ -79,7 +79,7 @@ onMounted(async () => {
   <PageHeader heading="Data buku">
     <form
       @submit.prevent="
-        async () => (searchResults = await searchBooks(searchTerm, selectedCategory))
+        async () => (searchResults = await searchBukus({ searchTerm, category: selectedCategory }))
       "
     >
       <InputText
@@ -88,7 +88,6 @@ onMounted(async () => {
         type="text"
         name="search-term"
         placeholder="cari judul buku..."
-        required
       />
       <Select
         v-model="selectedCategory"
@@ -97,28 +96,33 @@ onMounted(async () => {
         option-label="kategori"
         option-value="id"
         checkmark
+        required
       />
       <CTA type="submit" label="Cari" />
     </form>
   </PageHeader>
 
-  <LoadingSpinner v-if="isLoading" />
-  <DataTable v-else :value="searchResults" scrollable>
-    <Column field="judul" header="Judul">
-      <template #body="slotProps">
-        <NuxtLink :to="`/admin/buku/${slotProps.data.no_isbn}`">
-          {{ slotProps.data.judul }}
-        </NuxtLink>
-      </template>
-    </Column>
-    <Column field="no_isbn" header="ISBN" />
-    <Column field="penulis" header="Penulis" />
-    <Column field="penerbit" header="Penerbit" />
-    <Column field="tahun_terbit" header="Tahun Terbit" />
-    <Column field="kategori_buku.kategori" header="Kategori" />
-    <template #empty>Tidak ada buku ditemukan.</template>
-    <template #footer>Menampilkan {{ searchResults.length }} buku.</template>
-  </DataTable>
+  <section class="main-section">
+    <LoadingSpinner v-if="isLoading" />
+
+    <DataTable v-else :value="searchResults" scrollable paginator :rows="20">
+      <Column field="judul" header="Judul">
+        <template #body="slotProps">
+          <NuxtLink :to="`/admin/buku/${slotProps.data.no_isbn}`">
+            {{ slotProps.data.judul }}
+          </NuxtLink>
+        </template>
+      </Column>
+      <Column field="no_isbn" header="ISBN" />
+      <Column field="penulis" header="Penulis" />
+      <Column field="penerbit" header="Penerbit" />
+      <Column field="tahun_terbit" header="Tahun Terbit" sortable />
+      <Column field="kategori_buku.kategori" header="Kategori" sortable />
+
+      <template #empty>Tidak ada buku ditemukan.</template>
+      <template #footer>Menampilkan {{ searchResults.length }} buku.</template>
+    </DataTable>
+  </section>
 </template>
 
 <style scoped>
