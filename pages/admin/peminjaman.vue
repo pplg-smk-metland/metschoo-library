@@ -69,6 +69,7 @@ const lateClass = (data: Peminjaman) => {
     <DataTable
       :value="peminjamanData"
       scrollable
+      scroll-height="60vh"
       :loading="isLoading"
       striped-rows
       paginator
@@ -83,7 +84,16 @@ const lateClass = (data: Peminjaman) => {
       </template>
 
       <Column field="pengguna.nama" header="Peminjam" />
-      <Column field="buku.judul" header="Judul buku" />
+      <Column header="Judul buku" class="!p-0">
+        <template #body="{ data }">
+          <NuxtLink
+            :to="`/admin/buku/${data.buku.no_isbn}`"
+            class="hover:underline py-4 w-full inline-block"
+          >
+            {{ data.buku.judul }}
+          </NuxtLink>
+        </template>
+      </Column>
       <Column field="no_isbn" header="ISBN" />
       <Column field="tgl_pinjam" header="Tanggal pinjam" sortable>
         <template #body="slotProps">
