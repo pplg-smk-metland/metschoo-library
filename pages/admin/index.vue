@@ -154,6 +154,14 @@ supabase
     updatePeminjamanData
   )
   .subscribe()
+
+const bukuCount = ref<number | null>(0)
+const penggunaCount = ref<number | null>(0)
+
+onMounted(async () => {
+  bukuCount.value = await countBukus()
+  penggunaCount.value = await countPenggunas()
+})
 </script>
 
 <template>
@@ -164,15 +172,6 @@ supabase
   <LoadingSpinner v-if="isLoading" />
 
   <template v-else>
-    <section class="main-section">
-      <ul class="grid grid-cols-4 gap-4">
-        <AdminInfoChip to="buku" :data="700" label="Jumlah buku" />
-        <AdminInfoChip to="buku" :data="90" label="Buku sedang dipinjam" />
-        <AdminInfoChip to="buku" :data="80" label="Buku tersedia" />
-        <AdminInfoChip to="pengguna" :data="20" label="Pengguna aktif" />
-      </ul>
-    </section>
-
     <section class="main-section">
       <h2>Buku yang belum dikonfirmasi</h2>
       <ul class="data-list">
@@ -210,6 +209,14 @@ supabase
       </ul>
     </section>
   </template>
+
+  <section class="main-section">
+    <ul class="grid grid-cols-4 gap-4">
+      <AdminInfoChip to="buku" :data="90" label="Buku sedang dipinjam" />
+      <AdminInfoChip to="buku" :data="bukuCount" label="Buku tersedia" />
+      <AdminInfoChip to="pengguna" :data="penggunaCount" label="Pengguna aktif" />
+    </ul>
+  </section>
 
   <ConfirmDialog position="top" group="headless">
     <template #container="{ message, acceptCallback, rejectCallback }">

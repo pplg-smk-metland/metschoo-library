@@ -36,6 +36,28 @@ export async function getBukus(typeId?: Kategori["id"]) {
   return data
 }
 
+/**
+ * count the amount of bukus available.
+ * */
+export async function countBukus() {
+  const supabase = useSupabaseClient<Database>()
+
+  const { count, error } = await supabase.from("buku").select("*", { count: "exact", head: true })
+  if (error) throw error
+
+  return count
+}
+
+export async function countPenggunas() {
+  const supabase = useSupabaseClient<Database>()
+
+  const { count, error } = await supabase
+    .from("pengguna")
+    .select("*", { count: "exact", head: true })
+  if (error) throw error
+  return count
+}
+
 interface BukuSearchArgs {
   searchTerm?: string
   category?: Kategori["id"] | null
