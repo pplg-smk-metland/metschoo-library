@@ -1,4 +1,5 @@
 import path from "path"
+import config from "primevue/config"
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -19,6 +20,42 @@ export default defineNuxtConfig({
   primevue: {
     options: {
       unstyled: true,
+      locale: {
+        accept: "Ya",
+        reject: "Tidak",
+        dayNamesShort: ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"],
+        dayNames: ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"],
+        dayNamesMin: ["Se", "Se", "Ra", "Ka", "Ju", "Sa", "Mi"],
+        monthNames: [
+          "Januari",
+          "Februari",
+          "Maret",
+          "April",
+          "Mei",
+          "Juni",
+          "Juli",
+          "Agustus",
+          "September",
+          "Oktober",
+          "November",
+          "Desember",
+        ],
+        monthNamesShort: [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "Mei",
+          "Jun",
+          "Jul",
+          "Agu",
+          "Sep",
+          "Okt",
+          "Nov",
+          "Des",
+        ],
+        fileSizeTypes: ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
+      },
     },
     importPT: { from: path.resolve(__dirname, "./assets/presets/lara") },
   },
