@@ -5,10 +5,8 @@ import type {
   RealtimePostgresChangesPayload,
 } from "@supabase/supabase-js"
 import type { Buku, Peminjaman } from "@/types"
+import { formatDate } from "#imports"
 
-import DataRow from "@/components/admin/DataRow.vue"
-import ConfirmDialog from "primevue/confirmdialog"
-import Toast from "primevue/toast"
 import { getPeminjamanData } from "@/lib/peminjaman"
 import { useConfirm } from "primevue/useconfirm"
 import { useToast } from "primevue/usetoast"
@@ -56,7 +54,6 @@ const toast = useToast()
 async function konfirmasiPeminjaman(id: Peminjaman["id"]) {
   try {
     confirm.require({
-      group: "headless",
       header: "Konfirmasi peminjaman",
       message: "Beneran nih mau konfirmasi peminjaman buku?",
       accept: async () => {
@@ -92,7 +89,6 @@ async function konfirmasiPeminjaman(id: Peminjaman["id"]) {
 async function konfirmasiPengembalian(dataPeminjaman: Peminjaman, buku: Buku) {
   try {
     confirm.require({
-      group: "headless",
       header: "Konfirmasi pengembalian",
       message: "Beneran mau konfirmasi buku ini?",
       accept: async () => {
@@ -171,71 +167,76 @@ onMounted(async () => {
 
   <LoadingSpinner v-if="isLoading" />
 
-  <template v-else>
+  <div v-else class="grid grid-cols-2 gap-4">
     <section class="main-section">
       <h2>Buku yang belum dikonfirmasi</h2>
-      <ul class="data-list">
-        <li v-if="bukusBorrowPending && !bukusBorrowPending.length">belum ada bukunya</li>
-        <DataRow
-          v-for="data in bukusBorrowPending"
-          :key="data.id"
-          :data="data"
-          :buku="data.buku"
-          @konfirmasi-peminjaman="konfirmasiPeminjaman(data.id)"
-        />
-      </ul>
 
+      <DataTable :value="bukusBorrowPending" size="small">
+        <template #empty>
+          <span class="text-gray-300 dark:text-gray-600">Belum ada</span>
+        </template>
+
+        <Column field="buku.judul" header="Buku" />
+        <Column field="pengguna.nama" header="Peminjam" />
+        <Column field="pengguna.kelas" header="Kelas" />
+        <Column header="aksi">
+          <template #body="{ data }">
+            <CTA label="konfirmasi" @click="konfirmasiPeminjaman(data.id)" />
+          </template>
+        </Column>
+      </DataTable>
+    </section>
+
+    <section class="main-section flex-1">
+      <h2>Buku mau dikembalikan</h2>
+
+      <DataTable :value="bukusReturnPending" size="small">
+        <template #empty>
+          <span class="text-gray-300 dark:text-gray-600">Belum ada</span>
+        </template>
+
+        <Column field="buku.judul" header="buku" />
+        <Column field="pengguna.nama" header="peminjam" />
+        <Column field="pengguna.kelas" header="kelas" />
+        <Column header="aksi">
+          <template #body="{ data }">
+            <CTA label="Konfirmasi" @click="konfirmasiPengembalian(data.id, data.buku)" />
+          </template>
+        </Column>
+      </DataTable>
+    </section>
+
+    <section class="main-section col-span-full">
       <h2>Buku yang sedang dipinjam</h2>
-      <ul class="data-list">
-        <li v-if="bukusBorrowConfirmed && !bukusBorrowConfirmed.length">belum ada bukunya</li>
-        <DataRow
-          v-for="data in bukusBorrowConfirmed"
-          :key="data.id"
-          :data="data"
-          :buku="data.buku"
-        />
-      </ul>
 
-      <h2>Buku untuk dikembalikan</h2>
-      <ul class="data-list">
-        <li v-if="bukusReturnPending && !bukusReturnPending.length">belum ada bukunya</li>
-        <DataRow
-          v-for="data in bukusReturnPending"
-          :key="data.id"
-          :data="data"
-          :buku="data.buku"
-          @konfirmasi-pengembalian="konfirmasiPengembalian(data, data.buku!)"
-        />
+      <DataTable :value="bukusBorrowConfirmed">
+        <template #empty>
+          <span class="text-gray-300 dark:text-gray-600">Belum ada</span>
+        </template>
+
+        <Column field="buku.judul" header="Buku" />
+        <Column field="pengguna.nama" header="Peminjam" />
+        <Column field="pengguna.kelas" header="Kelas" />
+        <Column header="Dipinjam pada">
+          <template #body="{ data }">
+            {{ formatDate(new Date(data.tgl_pinjam), { dateStyle: "long", timeStyle: "long" }) }}
+          </template>
+        </Column>
+      </DataTable>
+    </section>
+
+    <section class="main-section col-span-full">
+      <ul class="grid grid-cols-4 gap-4">
+        <AdminInfoChip to="buku" :data="90" label="Buku sedang dipinjam" />
+        <AdminInfoChip to="buku" :data="bukuCount" label="Buku tersedia" />
+        <AdminInfoChip to="pengguna" :data="penggunaCount" label="Pengguna aktif" />
       </ul>
     </section>
-  </template>
+  </div>
 
-  <section class="main-section">
-    <ul class="grid grid-cols-4 gap-4">
-      <AdminInfoChip to="buku" :data="90" label="Buku sedang dipinjam" />
-      <AdminInfoChip to="buku" :data="bukuCount" label="Buku tersedia" />
-      <AdminInfoChip to="pengguna" :data="penggunaCount" label="Pengguna aktif" />
-    </ul>
-  </section>
+  <ConfirmDialog position="top" />
 
-  <ConfirmDialog position="top" group="headless">
-    <template #container="{ message, acceptCallback, rejectCallback }">
-      <header class="p-confirmdialog-header">
-        <span class="p-confirmdialog-title">{{ message.header }}</span>
-      </header>
-
-      <div class="p-confirmdialog-content">
-        <span>{{ message.message }}</span>
-      </div>
-
-      <footer class="p-confirmdialog-footer">
-        <CTA label="Tidak" @click="rejectCallback" />
-        <CTA fill label="Ya" @click="acceptCallback" />
-      </footer>
-    </template>
-  </ConfirmDialog>
-
-  <Toast :unstyled="false" />
+  <Toast />
 </template>
 
 <style scoped>
