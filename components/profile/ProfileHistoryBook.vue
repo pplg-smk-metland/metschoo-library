@@ -30,20 +30,22 @@ onMounted(async () => {
     </figure>
 
     <div class="flex flex-col justify-between py-2 flex-1 leading-none">
-      <header>
-        <h3>{{ buku.judul }}</h3>
-        <p class="m-0">{{ buku.penulis }}</p>
-      </header>
+      <h3 class="text-lg font-normal leading-[.9]">{{ buku.judul }}</h3>
 
       <p>
-        dipinjam pada <span class="block font-bold">{{ formatDate(new Date(tgl_pinjam!)) }}</span>
+        <span class="text-sm text-gray-500 dark:text-gray-400">dipinjam pada</span>
+        <span class="block">{{ formatDate(new Date(tgl_pinjam!)) }}</span>
       </p>
-      <p v-if="tgl_kembali">
-        dikembalikan pada
-        <span class="block font-bold">{{ formatDate(new Date(tgl_kembali)) }}</span>
+
+      <p v-if="tgl_kembali" class="m-0">
+        <span class="text-sm text-gray-500 dark:text-gray-400">dikembalikan pada</span>
+        <span class="block">{{ formatDate(new Date(tgl_kembali)) }}</span>
       </p>
-      <p v-else class="text-red-400 leading-normal">Dibatalkan</p>
-      <p v-if="late" class="text-red-500 ring-red-500">Terlambat</p>
+
+      <p v-else class="m-0 text-sm leading-normal">
+        <span class="text-red-400">Dibatalkan</span>
+        <span v-if="late" class="text-red-500 ring-red-500">Terlambat</span>
+      </p>
     </div>
   </NuxtLink>
 </template>
