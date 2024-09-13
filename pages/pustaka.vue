@@ -20,12 +20,13 @@ const supabase = useSupabaseClient<Database>()
 
 const searchTerm = ref(route.query.term ?? "")
 
-const books = ref<Buku[] | null>(null)
+const books = ref<Buku[]>([])
 const isLoading = ref(false)
 
 watch(
   () => route.query.term,
   async (newTerm, _) => {
+    if (!newTerm) searchTerm.value = ""
     searchTerm.value = newTerm as string
     await cariBuku(searchTerm.value)
   }
@@ -46,6 +47,7 @@ async function cariBuku(term: string) {
     books.value = data
   } catch (err) {
     alert((err as PostgrestError).message)
+    books.value = []
   } finally {
     isLoading.value = false
   }
@@ -59,14 +61,23 @@ onMounted(async () => {
 <template>
   <TheHeader>
     <template #header-heading> Pustaka </template>
-    <template #header-text> Eksplor buku disini </template>
+    <template #header-text>
+      <span v-if="searchTerm.length && books">
+        Menampilkan {{ books.length }} hasil pencarian untuk
+        <span class="font-bold">{{ searchTerm }}</span>
+      </span>
+      <span v-else> Eksplor buku di sini. </span>
+    </template>
   </TheHeader>
 
-  <h2>Hasil pencarian</h2>
-
-  <ul class="book-list">
+  <section class="main-section">
     <LoadingSpinner v-show="isLoading" />
-    <li v-show="!isLoading && !books?.length" class="mesasge">ga ada buku woi</li>
-    <BookItem v-for="buku in books" v-show="!isLoading" :key="buku.no_isbn" :buku="buku" />
-  </ul>
+    <p v-if="!isLoading && !books.length" class="text-center text-gray-400 dark:text-gray-500">
+      ga ada bukunya nih. Coba cari yang lain...
+    </p>
+
+    <ul class="book-list">
+      <BookItem v-for="buku in books" v-show="!isLoading" :key="buku.no_isbn" :buku="buku" />
+    </ul>
+  </section>
 </template>
