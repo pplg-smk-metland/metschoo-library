@@ -8,7 +8,7 @@ const { profile } = authStore
 </script>
 
 <template>
-  <div class="flex flex-col gap-4">
+  <div class="flex flex-col gap-4 max-w-screen-2xl mx-auto">
     <TheHeader>
       <template #header-heading>
         <span v-if="profile">Halo, {{ profile.nama }}.</span>
