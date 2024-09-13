@@ -1,6 +1,10 @@
 <script setup lang="ts">
 const themeStore = useThemeStore()
 
+onMounted(() => {
+  themeStore.theme = themeStore.getTheme()
+})
+
 useHead({
   titleTemplate: (title) => (title ? `${title} - Metschoo Library` : "Metschoo Library"),
   meta: [
