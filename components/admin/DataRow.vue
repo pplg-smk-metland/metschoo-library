@@ -17,24 +17,23 @@ const returnPending = computed(() => data.state_id === 4)
 <template>
   <li v-if="!buku">anying lah</li>
 
-  <li v-else class="data-row">
-    <div class="data-buku">
+  <li v-else class="grid grid-cols-2 gap-2 p-4 outline outline-1 outline-primary">
+    <section>
       <NuxtLink :to="`/admin/buku/${buku.no_isbn}`">
-        <h1>{{ buku.judul }}</h1>
+        <h1 class="text-lg">{{ buku.judul }}</h1>
         <p>{{ buku.no_isbn }}</p>
         <p>{{ buku.jumlah_exspl }}</p>
-        <p class="status">
-          <span v-if="borrowConfirmed">sudah dikonfirmasi</span>
-          <span v-if="borrowPending">belum dipinjam</span>
-          <span v-if="returnPending">belum dikembalikan</span>
-        </p>
-      </NuxtLink>
-    </div>
 
-    <div class="data-pengguna">
+        <Message severity="info" v-if="borrowConfirmed">sudah dikonfirmasi</Message>
+        <Message severity="info" v-if="borrowPending">belum dipinjam</Message>
+        <Message severity="info" v-if="returnPending">belum dikembalikan</Message>
+      </NuxtLink>
+    </section>
+
+    <section class="data-pengguna">
       <p>{{ data.pengguna!.nama }}</p>
       <p>{{ data.pengguna!.kelas }} - {{ data.pengguna!.jurusan }}</p>
-    </div>
+    </section>
 
     <CTA
       v-show="borrowPending"
@@ -48,18 +47,3 @@ const returnPending = computed(() => data.state_id === 4)
     />
   </li>
 </template>
-
-<style scoped>
-.data-row {
-  outline: 2px solid var(--primary);
-  padding: 1rem 2rem;
-
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.5rem;
-}
-
-.data-row h1 {
-  line-height: 1;
-}
-</style>

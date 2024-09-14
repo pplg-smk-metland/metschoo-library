@@ -36,6 +36,63 @@ export async function getBukus(typeId?: Kategori["id"]) {
   return data
 }
 
+/**
+ * count the amount of bukus available.
+ * */
+export async function countBukus() {
+  const supabase = useSupabaseClient<Database>()
+
+  const { count, error } = await supabase.from("buku").select("*", { count: "exact", head: true })
+  if (error) throw error
+
+  return count
+}
+
+export async function countPenggunas() {
+  const supabase = useSupabaseClient<Database>()
+
+  const { count, error } = await supabase
+    .from("pengguna")
+    .select("*", { count: "exact", head: true })
+  if (error) throw error
+  return count
+}
+
+interface BukuSearchArgs {
+  searchTerm?: string
+  category?: Kategori["id"] | null
+}
+
+/**
+ * search bukus.
+ * Both searchTerm and category is optional so when both isn't needed you need
+ * to pass an empty obj
+ */
+export async function searchBukus({ searchTerm, category }: BukuSearchArgs) {
+  const supabase = useSupabaseClient<Database>()
+
+  let query = supabase
+    .from("buku")
+    .select(`no_isbn, judul, penulis, penerbit, tahun_terbit, kategori_buku(kategori)`)
+
+  if (searchTerm) {
+    query = query.textSearch("judul", searchTerm, { type: "websearch" })
+  }
+
+  if (category) {
+    query = query.eq("kategori_id", category)
+  }
+
+  try {
+    const { data, error } = await query.limit(100)
+    if (error) throw error
+    return data
+  } catch (error) {
+    console.trace(error as PostgrestError)
+    return []
+  }
+}
+
 export async function getBukuImage(isbn: Buku["no_isbn"]) {
   const config = useRuntimeConfig()
   const supabase = useSupabaseClient<Database>()

@@ -47,7 +47,7 @@ const sidebarLinks = ref<SidebarLink[]>([
 </script>
 
 <template>
-  <nav class="p-4 dark:bg-slate-900 sticky top-8 sidebar">
+  <nav class="p-4 sticky top-8 sidebar">
     <PanelMenu :model="sidebarLinks">
       <template #item="{ item }">
         <NuxtLink
@@ -57,9 +57,11 @@ const sidebarLinks = ref<SidebarLink[]>([
         >
           {{ item.label }}
         </NuxtLink>
-        <button v-else class="sidebar__link" @click="item.isExpanded = !item.isExpanded">
+        <button v-else class="sidebar__link w-full" @click="item.isExpanded = !item.isExpanded">
           <span>{{ item.label }}</span>
-          <IconArrowDownDrop :class="['icon', { rotate: item.isExpanded }]" />
+          <IconArrowDownDrop
+            :class="['icon transition-transform', { 'rotate-180': item.isExpanded }]"
+          />
         </button>
       </template>
     </PanelMenu>
