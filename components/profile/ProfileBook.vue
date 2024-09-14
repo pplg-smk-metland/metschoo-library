@@ -18,11 +18,15 @@ onMounted(async () => {
 <template>
   <li v-if="!buku"></li>
   <li v-else>
-    <NuxtLink v-if="buku" :to="`/buku/${buku.no_isbn}`" class="buku">
+    <NuxtLink
+      v-if="buku"
+      :to="`/buku/${buku.no_isbn}`"
+      class="p-4 rounded-lg h-full flex flex-col gap-4 shadow-md hover:bg-primary/10"
+    >
       <figure>
         <img
           :src="imgURL"
-          class="buku__gambar"
+          class="w-full object-cover"
           alt="gambar buku"
           loading="lazy"
           width="200"
@@ -32,26 +36,28 @@ onMounted(async () => {
 
       <figcaption class="buku__info">
         <div class="buku__metadata">
-          <h3 class="buku__judul">
+          <h3 class="leading-tight">
             {{ buku.judul }}
           </h3>
-          <p>{{ buku.no_isbn }}</p>
-          <p class="buku__penulis">
+
+          <p class="text-sm my-0">{{ buku.no_isbn }}</p>
+          <p class="text-sm my-0">
             {{ buku.penulis }} -<span class="buku__tahun-terbit">{{ buku.tahun_terbit }}</span>
           </p>
         </div>
       </figcaption>
 
-      <div class="tanggal">
+      <div class="mt-auto">
         <p>
-          Dipinjam pada:
-          <time :datetime="new Date(data.tgl_pinjam).toString()">
+          <span class="text-gray-500 dark:text-gray-400"> Dipinjam pada </span>
+          <time class="block" :datetime="new Date(data.tgl_pinjam).toString()">
             {{ new Date(data.tgl_pinjam).toLocaleDateString() }}
           </time>
         </p>
+
         <p>
-          Tenggat pengembalian:
-          <time :datetime="new Date(data.tenggat_waktu).toString()">
+          <span class="text-gray-500 dark:text-gray-400"> Tenggat pengembalian </span>
+          <time class="block" :datetime="new Date(data.tenggat_waktu).toString()">
             {{ new Date(data.tenggat_waktu).toLocaleDateString() }}
           </time>
         </p>
@@ -59,49 +65,3 @@ onMounted(async () => {
     </NuxtLink>
   </li>
 </template>
-
-<style scoped>
-.buku {
-  outline: 1px solid var(--primary);
-  border-radius: 0.5rem;
-  overflow: hidden;
-  padding: 1rem;
-  height: 100%;
-
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.buku:hover {
-  background: var(--dark-grey);
-}
-
-.buku__gambar {
-  width: 100%;
-  object-fit: cover;
-}
-
-.buku__metadata p {
-  line-height: 1;
-}
-
-.buku__judul {
-  margin-block: 0 0.2rem;
-  line-height: 1;
-}
-
-.tanggal {
-  margin-block-start: auto;
-}
-
-.tanggal > * {
-  line-height: 1.2;
-  margin-block: 0.5rem;
-}
-
-.tanggal time {
-  font-weight: bold;
-  display: block;
-}
-</style>

@@ -96,22 +96,48 @@ onMounted(async () => {
     </section>
 
     <section class="main-section col-span-full lg:col-span-9">
-      <h2>Buku yang dipinjam</h2>
       <LoadingSpinner v-if="isLoading" />
       <p v-else-if="!isLoading && bukuYangDipinjam.length === 0">Ga ada buku yang dipinjam</p>
 
-      <h3>Belum dikonfirmasi</h3>
-      <ul class="book-list">
-        <li v-if="!bukuBlumDikonfirmasi.length">ga ada bukunya nih</li>
-        <ProfileBook v-for="data in bukuBlumDikonfirmasi" :key="data.no_isbn" :data="data" />
-      </ul>
+      <Tabs v-else value="belum-dikonfirmasi">
+        <TabList>
+          <Tab value="belum-dikonfirmasi" class="flex gap-2 items-center">
+            Belum dikonfirmasi
+            <Badge
+              v-show="bukuBlumDikonfirmasi.length"
+              :value="bukuBlumDikonfirmasi.length"
+              severity="secondary"
+              size="small"
+            />
+          </Tab>
 
-      <h3>Sudah dikonfirmasi</h3>
+          <Tab value="sudah-dikonfirmasi" class="flex gap-2 items-center">
+            Sudah dikonfirmasi
+            <Badge
+              v-show="bukuSudahDikonfirmasi.length"
+              :value="bukuSudahDikonfirmasi.length"
+              severity="secondary"
+              size="small"
+            />
+          </Tab>
+        </TabList>
 
-      <ul class="book-list">
-        <li v-if="!bukuSudahDikonfirmasi.length">ga ada bukunya nih</li>
-        <ProfileBook v-for="data in bukuSudahDikonfirmasi" :key="data.no_isbn" :data="data" />
-      </ul>
+        <TabPanels>
+          <TabPanel value="belum-dikonfirmasi">
+            <ul class="book-list">
+              <li v-if="!bukuBlumDikonfirmasi.length">ga ada bukunya nih</li>
+              <ProfileBook v-for="data in bukuBlumDikonfirmasi" :key="data.no_isbn" :data="data" />
+            </ul>
+          </TabPanel>
+
+          <TabPanel value="sudah-dikonfirmasi">
+            <ul class="book-list">
+              <li v-if="!bukuSudahDikonfirmasi.length">ga ada bukunya nih</li>
+              <ProfileBook v-for="data in bukuSudahDikonfirmasi" :key="data.no_isbn" :data="data" />
+            </ul>
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
     </section>
 
     <aside class="main-section rounded-lg col-span-full lg:row-span-3 lg:col-span-3">

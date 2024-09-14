@@ -8,7 +8,7 @@
   }
 
   h2 {
-    @apply text-2xl;
+    @apply leading-[1] mb-2 dark:text-gray-400;
   }
 
   h3 {

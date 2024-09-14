@@ -2,8 +2,6 @@
 import { type Buku } from "@/types/"
 import { type PostgrestError, type QueryData } from "@supabase/supabase-js"
 
-import LoadingSpinner from "@/components/LoadingSpinner.vue"
-import WishlistBook from "@/components/wishlist/WishlistBook.vue"
 import Toast from "primevue/toast"
 import { useToast } from "primevue/usetoast"
 import type { Database } from "~/types/database.types.ts"
@@ -74,27 +72,29 @@ const user = useSupabaseUser()
 </script>
 
 <template>
-  <h1>Wishlist</h1>
-  <section v-if="!user">
-    <p>Kamu harus login dlu ya untuk menambahkan buku ke wishlist</p>
-    <p>
-      <NuxtLink to="/"> Kembali ke beranda </NuxtLink>
-    </p>
-  </section>
+  <div class="max-w-screen-2xl mx-auto">
+    <h1>Wishlist</h1>
+    <section v-if="!user">
+      <p>Kamu harus login dlu ya untuk menambahkan buku ke wishlist</p>
+      <p>
+        <NuxtLink to="/"> Kembali ke beranda </NuxtLink>
+      </p>
+    </section>
 
-  <section v-else class="main-section">
-    <LoadingSpinner v-if="isLoading" />
-    <p v-if="!isLoading && !wishlist?.length">Kamu belum punya apa-apa dalam wishlist kamu.</p>
-    <ul v-if="wishlist?.length" class="book-list">
-      <WishlistBook
-        v-for="wishlistItem in wishlist"
-        :key="wishlistItem.id"
-        :buku="wishlistItem.buku!"
-        @pinjam-buku="router.push(`/buku/${wishlistItem.no_isbn}`)"
-        @hapus-buku="hapusBukuDariWishlist(wishlistItem.buku!)"
-      />
-    </ul>
-  </section>
+    <section v-else class="main-section">
+      <LoadingSpinner v-if="isLoading" />
+      <p v-if="!isLoading && !wishlist?.length">Kamu belum punya apa-apa dalam wishlist kamu.</p>
+      <ul v-if="wishlist?.length" class="book-list">
+        <WishlistBook
+          v-for="wishlistItem in wishlist"
+          :key="wishlistItem.id"
+          :buku="wishlistItem.buku!"
+          @pinjam-buku="router.push(`/buku/${wishlistItem.no_isbn}`)"
+          @hapus-buku="hapusBukuDariWishlist(wishlistItem.buku!)"
+        />
+      </ul>
+    </section>
 
-  <Toast :unstyled="false" />
+    <Toast />
+  </div>
 </template>

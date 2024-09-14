@@ -91,7 +91,7 @@ async function handleSearchBuku() {
   <section class="main-section">
     <LoadingSpinner v-if="isLoading" />
 
-    <DataTable v-else :value="searchResults" scrollable paginator :rows="20">
+    <DataTable v-else :value="searchResults" scroll-height="60vh" scrollable paginator :rows="20">
       <Column field="judul" header="Judul">
         <template #body="slotProps">
           <NuxtLink :to="`/admin/buku/${slotProps.data.no_isbn}`">
