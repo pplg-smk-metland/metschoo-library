@@ -180,7 +180,7 @@ onMounted(async () => {
         <Column field="pengguna.nama" header="Peminjam" />
         <Column field="pengguna.kelas" header="Kelas" />
         <Column header="aksi">
-          <template #body="{ data }">
+          <template #body="{ data }: { data: PeminjamanData[number] }">
             <CTA label="konfirmasi" @click="konfirmasiPeminjaman(data.id)" />
           </template>
         </Column>
@@ -199,8 +199,8 @@ onMounted(async () => {
         <Column field="pengguna.nama" header="peminjam" />
         <Column field="pengguna.kelas" header="kelas" />
         <Column header="aksi">
-          <template #body="{ data }">
-            <CTA label="Konfirmasi" @click="konfirmasiPengembalian(data.id, data.buku)" />
+          <template #body="{ data }: { data: PeminjamanData[number] }">
+            <CTA label="Konfirmasi" @click="konfirmasiPengembalian(data, data.buku as Buku)" />
           </template>
         </Column>
       </DataTable>
@@ -218,7 +218,7 @@ onMounted(async () => {
         <Column field="pengguna.nama" header="Peminjam" />
         <Column field="pengguna.kelas" header="Kelas" />
         <Column header="Dipinjam pada">
-          <template #body="{ data }">
+          <template #body="{ data }: { data: PeminjamanData[number] }">
             {{ formatDate(new Date(data.tgl_pinjam), { dateStyle: "long", timeStyle: "long" }) }}
           </template>
         </Column>
