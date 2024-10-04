@@ -1,5 +1,4 @@
 import path from "path"
-import config from "primevue/config"
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({

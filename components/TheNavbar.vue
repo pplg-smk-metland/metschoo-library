@@ -27,7 +27,7 @@ const isAdmin = computed(() =>
     class="flex justify-between items-center sticky top-0 bg-primary dark:bg-surface-700/90 text-primary-contrast z-10 shadow-md navbar"
   >
     <div class="logo">
-      <img src="/logo.svg" alt="Logo Metschoo Library" class="h-14" >
+      <img src="/logo.svg" alt="Logo Metschoo Library" class="h-14" />
     </div>
 
     <ul
@@ -37,7 +37,7 @@ const isAdmin = computed(() =>
       <li class="flex justify-between md:hidden md:appearance-none">
         <div class="logo">
           <NuxtLink to="/">
-            <img src="/logo.svg" alt="Logo Metschoo Library" height="50" class="w-16" >
+            <img src="/logo.svg" alt="Logo Metschoo Library" height="50" class="w-16" />
           </NuxtLink>
         </div>
         <button ref="closeNavBtn" class="nav-btn" @click="closeNav">

@@ -25,7 +25,7 @@ onMounted(async () => {
           loading="lazy"
           width="200"
           height="300"
-        >
+        />
       </NuxtLink>
     </figure>
     <figcaption class="buku__info">

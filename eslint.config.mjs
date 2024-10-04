@@ -1,5 +1,6 @@
 // @ts-check
 import withNuxt from "./.nuxt/eslint.config.mjs"
+import eslintConfigPrettier from "eslint-config-prettier"
 
 export default withNuxt(
   // Your custom configs here
@@ -16,5 +17,6 @@ export default withNuxt(
       "prefer-const": "error",
       "vue/no-multiple-template-root": "off", // we're not using Vue 2
     },
-  }
+  },
+  eslintConfigPrettier
 )

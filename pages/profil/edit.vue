@@ -19,7 +19,9 @@ const supabaseUser = useSupabaseUser()
 const user = ref<Pengguna | null>(null)
 
 onMounted(async () => {
-  //@ts-ignore
+  /** @ts-expect-error - This line triggers an error when deploying to Netlify.
+   * When checking types and building locally it works. Idk why
+   */
   user.value = await authStore.getProfile(supabaseUser.value.id)
 })
 
@@ -55,7 +57,7 @@ async function updateProfile() {
 
   <section v-if="user" class="main-section flex gap-4">
     <figure class="flex flex-col gap-4">
-      <img class="profile__picture" src="@/assets/profilepicture.svg" alt="Foto kamu disini" >
+      <img class="profile__picture" src="@/assets/profilepicture.svg" alt="Foto kamu disini" />
       <CTA label="Edit foto profil" />
     </figure>
 
