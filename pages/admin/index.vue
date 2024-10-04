@@ -169,7 +169,7 @@ onMounted(async () => {
 
   <div v-else class="grid grid-cols-2 gap-4">
     <section class="main-section">
-      <h2>Buku yang belum dikonfirmasi</h2>
+      <h2 class="leading-relaxed mb-4">Buku yang belum dikonfirmasi</h2>
 
       <DataTable :value="bukusBorrowPending" size="small">
         <template #empty>
@@ -188,7 +188,7 @@ onMounted(async () => {
     </section>
 
     <section class="main-section flex-1">
-      <h2>Buku mau dikembalikan</h2>
+      <h2 class="leading-relaxed mb-4">Buku mau dikembalikan</h2>
 
       <DataTable :value="bukusReturnPending" size="small">
         <template #empty>
@@ -207,7 +207,7 @@ onMounted(async () => {
     </section>
 
     <section class="main-section col-span-full">
-      <h2>Buku yang sedang dipinjam</h2>
+      <h2 class="leading-relaxed mb-4">Buku yang sedang dipinjam</h2>
 
       <DataTable :value="bukusBorrowConfirmed">
         <template #empty>
