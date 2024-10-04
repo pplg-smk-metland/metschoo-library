@@ -24,10 +24,10 @@ const supabase = useSupabaseClient<Database>()
 
 const isLoading = ref(false)
 
-const peminjamanQuery = supabase
+const _peminjamanQuery = supabase
   .from("peminjaman")
   .select("*, peminjaman_state(name), pengguna(nama, kelas, jurusan), buku(*)")
-export type PeminjamanData = QueryData<typeof peminjamanQuery>
+export type PeminjamanData = QueryData<typeof _peminjamanQuery>
 const peminjamanData = ref<PeminjamanData>([])
 
 const bukusBorrowPending = computed(() => {
