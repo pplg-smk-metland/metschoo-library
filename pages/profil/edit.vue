@@ -19,6 +19,7 @@ const supabaseUser = useSupabaseUser()
 const user = ref<Pengguna | null>(null)
 
 onMounted(async () => {
+  //@ts-ignore
   user.value = await authStore.getProfile(supabaseUser.value.id)
 })
 
