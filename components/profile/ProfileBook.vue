@@ -16,7 +16,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <li v-if="!buku"></li>
+  <li v-if="!buku"/>
   <li v-else>
     <NuxtLink
       v-if="buku"
@@ -31,7 +31,7 @@ onMounted(async () => {
           loading="lazy"
           width="200"
           height="300"
-        />
+        >
       </figure>
 
       <figcaption class="buku__info">

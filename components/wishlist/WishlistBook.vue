@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type Buku } from "@/types/index"
+import type { Buku } from "@/types/index"
 
 interface Props {
   buku: Buku
@@ -25,7 +25,7 @@ onMounted(async () => {
           loading="lazy"
           width="200"
           height="300"
-        />
+        >
       </NuxtLink>
     </figure>
     <figcaption class="buku__info">

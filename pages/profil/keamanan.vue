@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useDialog } from "@/composables"
 
-import { type AuthError } from "@supabase/supabase-js"
+import type { AuthError } from "@supabase/supabase-js"
 import type { Database } from "~/types/database.types.ts"
 
 useHead({
