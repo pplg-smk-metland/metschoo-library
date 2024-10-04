@@ -19,7 +19,9 @@ const supabaseUser = useSupabaseUser()
 const user = ref<Pengguna | null>(null)
 
 onMounted(async () => {
-  //@ts-ignore
+  /** @ts-expect-error - This line triggers an error when deploying to Netlify.
+   * When checking types and building locally it works. Idk why
+   */
   user.value = await authStore.getProfile(supabaseUser.value.id)
 })
 
