@@ -43,8 +43,5 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Run linters
-        uses: wearerequired/lint-action@v2
-        with:
-          eslint: true
-          prettier: true
+      - name: Run ESLint
+        run: pnpm lint
