@@ -1,6 +1,6 @@
 <script setup lang="ts">
 interface Props {
-  data: any
+  data: unknown
   label: string
   to: string
 }

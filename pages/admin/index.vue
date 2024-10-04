@@ -24,6 +24,7 @@ const supabase = useSupabaseClient<Database>()
 
 const isLoading = ref(false)
 
+// @ts-ignore
 const peminjamanQuery = supabase
   .from("peminjaman")
   .select("*, peminjaman_state(name), pengguna(nama, kelas, jurusan), buku(*)")

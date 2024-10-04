@@ -55,7 +55,7 @@ async function updateProfile() {
 
   <section v-if="user" class="main-section flex gap-4">
     <figure class="flex flex-col gap-4">
-      <img class="profile__picture" src="@/assets/profilepicture.svg" alt="Foto kamu disini" >
+      <img class="profile__picture" src="@/assets/profilepicture.svg" alt="Foto kamu disini" />
       <CTA label="Edit foto profil" />
     </figure>
 

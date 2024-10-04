@@ -26,7 +26,7 @@ onMounted(async () => {
     class="flex gap-2 hover:bg-primary-500/20 rounded-lg"
   >
     <figure class="max-w-24">
-      <img :src="imgUrl" :alt="`Cover ${buku.judul}`" width="100" class="size-full object-cover" >
+      <img :src="imgUrl" :alt="`Cover ${buku.judul}`" width="100" class="size-full object-cover" />
     </figure>
 
     <div class="flex flex-col justify-between py-2 flex-1 leading-none">
