@@ -51,6 +51,9 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.45.2
         version: 2.45.2
+      '@types/eslint-config-prettier':
+        specifier: ^6.11.3
+        version: 6.11.3
       eslint-config-prettier:
         specifier: ^9.1.0
         version: 9.1.0(eslint@8.57.0)
@@ -1250,6 +1253,9 @@ packages:
   '@trysound/sax@0.2.0':
     resolution: {integrity: sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==}
     engines: {node: '>=10.13.0'}
+
+  '@types/eslint-config-prettier@6.11.3':
+    resolution: {integrity: sha512-3wXCiM8croUnhg9LdtZUJQwNcQYGWxxdOWDjPe1ykCqJFPVpzAKfs/2dgSoCtAvdPeaponcWPI7mPcGGp9dkKQ==}
 
   '@types/eslint@9.6.1':
     resolution: {integrity: sha512-FXx2pKgId/WyYo2jXw63kk7/+TY7u7AziEJxJAnSFzHlqTAS3Ync6SvgYAN/k4/PQpnnVuzoMuVnByKK2qp0ag==}
@@ -6013,6 +6019,8 @@ snapshots:
       - utf-8-validate
 
   '@trysound/sax@0.2.0': {}
+
+  '@types/eslint-config-prettier@6.11.3': {}
 
   '@types/eslint@9.6.1':
     dependencies:
