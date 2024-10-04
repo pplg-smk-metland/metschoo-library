@@ -76,7 +76,7 @@ onMounted(async () => {
           width="300"
           height="300"
           alt="Foto kamu disini"
-        />
+        >
       </figure>
 
       <div class="profile__details">

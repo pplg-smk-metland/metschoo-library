@@ -29,15 +29,6 @@ async function handleFilterPeminjaman() {
   peminjamanData.value = await getPeminjamanData(startDate.value, endDate.value)
   isLoading.value = false
 }
-
-const lateClass = (data: Peminjaman) => {
-  if (data.tgl_kembali) {
-    const isLate = new Date(data.tenggat_waktu).getTime() < new Date(data.tgl_kembali).getTime()
-    return [{ late: isLate }]
-  } else {
-    return [{ late: false }]
-  }
-}
 </script>
 
 <template>

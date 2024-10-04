@@ -1,5 +1,5 @@
 import { ref } from "vue"
-import { type Theme } from "@/types"
+import type { Theme } from "@/types"
 
 export const useThemeStore = defineStore("theme", () => {
   const THEME_KEY = "ml-app-theme"

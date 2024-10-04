@@ -106,7 +106,7 @@ const router = useRouter()
         width="450"
         height="800"
         :alt="`gambar buku ${buku?.judul}`"
-      />
+      >
 
       <p v-else class="text-center">Gambar buku akan muncul di sini.</p>
     </figure>

@@ -274,14 +274,14 @@ onMounted(() => (isClient.value = true))
     <figure
       class="col-span-1 md:col-span-2 md:row-span-2 place-self-center relative dark:brightness-75 z-0"
     >
-      <img class="buku__gambar" :src="imgURL" alt="" width="400" height="600" />
+      <img class="buku__gambar" :src="imgURL" alt="" width="400" height="600" >
       <img
         class="buku__gambar buku__gambar--bayangan"
         :src="imgURL"
         alt=""
         width="400"
         height="600"
-      />
+      >
     </figure>
 
     <figcaption class="buku__info col-span-1 md:col-span-4">

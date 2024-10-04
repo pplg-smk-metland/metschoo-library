@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { type Buku } from "@/types/"
-import { type PostgrestError, type QueryData } from "@supabase/supabase-js"
+import type { Buku } from "@/types/"
+import type { PostgrestError, QueryData } from "@supabase/supabase-js"
 
 import Toast from "primevue/toast"
 import { useToast } from "primevue/usetoast"

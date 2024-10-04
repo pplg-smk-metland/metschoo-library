@@ -29,7 +29,7 @@ onMounted(async () => {
           :alt="`cover buku ${buku.judul}`"
           loading="lazy"
           height="400"
-        />
+        >
       </figure>
       <figcaption class="mt-4">
         <div class="metadata">

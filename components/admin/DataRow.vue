@@ -24,9 +24,9 @@ const returnPending = computed(() => data.state_id === 4)
         <p>{{ buku.no_isbn }}</p>
         <p>{{ buku.jumlah_exspl }}</p>
 
-        <Message severity="info" v-if="borrowConfirmed">sudah dikonfirmasi</Message>
-        <Message severity="info" v-if="borrowPending">belum dipinjam</Message>
-        <Message severity="info" v-if="returnPending">belum dikembalikan</Message>
+        <Message v-if="borrowConfirmed" severity="info">sudah dikonfirmasi</Message>
+        <Message v-if="borrowPending" severity="info">belum dipinjam</Message>
+        <Message v-if="returnPending" severity="info">belum dikembalikan</Message>
       </NuxtLink>
     </section>
 
