@@ -169,7 +169,7 @@ onMounted(async () => {
 
   <div v-else class="grid grid-cols-2 gap-4">
     <section class="main-section">
-      <h2>Buku yang belum dikonfirmasi</h2>
+      <h2 class="leading-relaxed mb-4">Buku yang belum dikonfirmasi</h2>
 
       <DataTable :value="bukusBorrowPending" size="small">
         <template #empty>
@@ -180,7 +180,7 @@ onMounted(async () => {
         <Column field="pengguna.nama" header="Peminjam" />
         <Column field="pengguna.kelas" header="Kelas" />
         <Column header="aksi">
-          <template #body="{ data }">
+          <template #body="{ data }: { data: PeminjamanData[number] }">
             <CTA label="konfirmasi" @click="konfirmasiPeminjaman(data.id)" />
           </template>
         </Column>
@@ -188,7 +188,7 @@ onMounted(async () => {
     </section>
 
     <section class="main-section flex-1">
-      <h2>Buku mau dikembalikan</h2>
+      <h2 class="leading-relaxed mb-4">Buku mau dikembalikan</h2>
 
       <DataTable :value="bukusReturnPending" size="small">
         <template #empty>
@@ -199,15 +199,15 @@ onMounted(async () => {
         <Column field="pengguna.nama" header="peminjam" />
         <Column field="pengguna.kelas" header="kelas" />
         <Column header="aksi">
-          <template #body="{ data }">
-            <CTA label="Konfirmasi" @click="konfirmasiPengembalian(data.id, data.buku)" />
+          <template #body="{ data }: { data: PeminjamanData[number] }">
+            <CTA label="Konfirmasi" @click="konfirmasiPengembalian(data, data.buku as Buku)" />
           </template>
         </Column>
       </DataTable>
     </section>
 
     <section class="main-section col-span-full">
-      <h2>Buku yang sedang dipinjam</h2>
+      <h2 class="leading-relaxed mb-4">Buku yang sedang dipinjam</h2>
 
       <DataTable :value="bukusBorrowConfirmed">
         <template #empty>
@@ -218,7 +218,7 @@ onMounted(async () => {
         <Column field="pengguna.nama" header="Peminjam" />
         <Column field="pengguna.kelas" header="Kelas" />
         <Column header="Dipinjam pada">
-          <template #body="{ data }">
+          <template #body="{ data }: { data: PeminjamanData[number] }">
             {{ formatDate(new Date(data.tgl_pinjam), { dateStyle: "long", timeStyle: "long" }) }}
           </template>
         </Column>
