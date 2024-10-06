@@ -1,5 +1,7 @@
 # Metschoo Library
 
+Metschoo Library is now in Alpha! Read [ANNOUNCEMENT](ANNOUNCEMENT.md) to learn more
+
 Source code of Metschoo Library web app, made with Vue 3 and Supabase. Please see
 [DEVELOPMENT.md](DEVELOPMENT.md) before doing anything
 
