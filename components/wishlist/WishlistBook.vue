@@ -15,7 +15,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <li class="buku">
+  <li class="buku dark:hover:bg-primary/20">
     <figure>
       <NuxtLink :to="`/buku/${buku.no_isbn}`">
         <img
@@ -29,7 +29,7 @@ onMounted(async () => {
       </NuxtLink>
     </figure>
     <figcaption class="buku__info">
-      <h3 class="buku__judul">
+      <h3 class="buku__judul mt-2">
         {{ buku.judul }}
       </h3>
       <p>
@@ -54,10 +54,6 @@ onMounted(async () => {
   flex-direction: column;
 }
 
-.buku:hover {
-  background: var(--dark-grey);
-}
-
 .buku__info {
   flex: 1;
 
@@ -67,11 +63,13 @@ onMounted(async () => {
 
 .buku__gambar {
   width: 100%;
+  aspect-ratio: 1 / 1.55;
   object-fit: cover;
   border-radius: 0.5rem;
 }
 
 .button-container {
   flex-direction: column;
+  margin-top: auto;
 }
 </style>
