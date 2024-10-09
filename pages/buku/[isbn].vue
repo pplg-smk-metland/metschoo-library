@@ -271,22 +271,22 @@ onMounted(() => (isClient.value = true))
   <LoadingSpinner v-if="isLoading" />
   <section
     v-else-if="buku && isClient"
-    class="main-section grid grid-cols-1 md:grid-cols-6 md:grid-rows-2 gap-4 justify-items-start"
+    class="main-section max-w-6xl mx-auto grid grid-cols-6 grid-rows-2 gap-4 justify-items-start"
   >
     <figure
-      class="col-span-1 md:col-span-2 md:row-span-2 place-self-center relative dark:brightness-75 z-0"
+      class="self-start col-span-2 md:row-span-2 place-self-center relative dark:brightness-75 z-0"
     >
-      <img class="buku__gambar" :src="imgURL" alt="" width="400" height="600" />
       <img
-        class="buku__gambar buku__gambar--bayangan"
+        class="w-48 max-w-100 h-100"
         :src="imgURL"
-        alt=""
+        :alt="`sampul buku ${buku.judul}`"
         width="400"
         height="600"
       />
+      <img class="buku__gambar--bayangan" :src="imgURL" alt="" width="400" height="600" />
     </figure>
 
-    <figcaption class="buku__info col-span-1 md:col-span-4">
+    <figcaption class="buku__info col-span-4">
       <h1 class="judul max-w-5xl">
         {{ buku.judul }}
       </h1>
@@ -351,10 +351,10 @@ onMounted(() => (isClient.value = true))
       </div>
     </figcaption>
 
-    <article class="md:col-span-4">
+    <article class="col-span-full md:col-span-4 justify-self-stretch overflow-x-auto h-min">
       <h2>Informasi bibliografi</h2>
-      <table class="tabel-bibliografi">
-        <tbody>
+      <table class="tabel-bibliografi block">
+        <tbody class="table-auto block">
           <tr>
             <td>judul</td>
             <td>{{ buku?.judul }}</td>
@@ -407,21 +407,6 @@ onMounted(() => (isClient.value = true))
 </template>
 
 <style scoped>
-.buku figure {
-  position: relative;
-
-  flex: 0 1 max-content;
-  align-self: flex-start;
-
-  @media screen and (max-width: 50em) {
-    flex: 1 0 10ch;
-  }
-}
-
-.buku__gambar {
-  height: 100%;
-}
-
 .buku__gambar--bayangan {
   position: absolute;
   bottom: -10px;
@@ -437,5 +422,6 @@ onMounted(() => (isClient.value = true))
 
 .tabel-bibliografi td {
   padding: 0.5rem;
+  text-wrap: wrap;
 }
 </style>
