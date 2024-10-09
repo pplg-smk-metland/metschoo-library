@@ -67,6 +67,7 @@ onMounted(async () => {
 
 .buku__gambar {
   width: 100%;
+  aspect-ratio: 1 / 1.55;
   object-fit: cover;
   border-radius: 0.5rem;
 }
