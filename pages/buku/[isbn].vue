@@ -2,6 +2,7 @@
 import { useDialog } from "@/composables"
 import type { Buku, Peminjaman, PeminjamanState } from "@/types"
 import type { PostgrestError, RealtimePostgresChangesPayload } from "@supabase/supabase-js"
+import IconArrowLeft from "~icons/mdi/arrow-left"
 
 import ConfirmPopup from "primevue/confirmpopup"
 import { useConfirm } from "primevue/useconfirm"
@@ -17,6 +18,7 @@ definePageMeta({
 
 const supabase = useSupabaseClient<Database>()
 const route = useRoute()
+const router = useRouter()
 const isbn = route.params.isbn as string
 
 const toast = useToast()
@@ -261,7 +263,7 @@ onMounted(() => (isClient.value = true))
 </script>
 
 <template>
-  <div v-if="!buku" class="not-found">
+  <div v-if="!buku && !isLoading" class="not-found">
     <h1>Tidak ada buku!</h1>
     <p>Bukunya ga ada brok</p>
 
@@ -269,10 +271,18 @@ onMounted(() => (isClient.value = true))
   </div>
 
   <LoadingSpinner v-if="isLoading" />
+
   <section
     v-else-if="buku && isClient"
-    class="main-section max-w-6xl mx-auto grid grid-cols-6 grid-rows-2 gap-4 justify-items-start"
+    class="buku main-section max-w-6xl mx-auto grid grid-cols-6 grid-rows-2 gap-4 justify-items-start"
   >
+    <header class="col-span-full">
+      <div class="flex gap-2 items-center relative">
+        <IconArrowLeft class="absolute left-4" />
+        <CTA label="kembali" @click="router.go(-1)" link class="pl-12" />
+      </div>
+    </header>
+
     <figure
       class="self-start col-span-2 md:row-span-2 place-self-center relative dark:brightness-75 z-0"
     >
@@ -407,6 +417,10 @@ onMounted(() => (isClient.value = true))
 </template>
 
 <style scoped>
+.buku {
+  grid-template-rows: min-content auto;
+}
+
 .buku__gambar--bayangan {
   position: absolute;
   bottom: -10px;
