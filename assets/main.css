@@ -53,6 +53,7 @@ a {
   display: flex;
   flex-direction: column;
   align-items: center;
+  @apply h-80;
 }
 
 .main-section {

@@ -264,6 +264,8 @@ onMounted(() => (isClient.value = true))
   <div v-if="!buku" class="not-found">
     <h1>Tidak ada buku!</h1>
     <p>Bukunya ga ada brok</p>
+
+    <CTA label="cari buku lain" fill as="router-link" to="/pustaka" />
   </div>
 
   <LoadingSpinner v-if="isLoading" />
@@ -431,10 +433,6 @@ onMounted(() => (isClient.value = true))
 
 .judul {
   font-size: clamp(2rem, 2.5vw, 3.5rem);
-}
-
-.tabel-bibliografi {
-  border-collapse: collapse;
 }
 
 .tabel-bibliografi td {
