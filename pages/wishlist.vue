@@ -74,11 +74,13 @@ const user = useSupabaseUser()
 <template>
   <div class="max-w-screen-2xl mx-auto">
     <h1>Wishlist</h1>
-    <section v-if="!user">
-      <p>Kamu harus login dlu ya untuk menambahkan buku ke wishlist</p>
-      <p>
-        <NuxtLink to="/"> Kembali ke beranda </NuxtLink>
-      </p>
+    <section v-if="!user" class="flex flex-col items-center justify-center h-80">
+      <p>Kamu harus login dulu ya untuk menambahkan buku ke wishlist..</p>
+
+      <div class="flex gap-4">
+        <CTA label="Login" to="/login" fill />
+        <CTA label="Kembali ke beranda" to="/" />
+      </div>
     </section>
 
     <section v-else class="main-section">

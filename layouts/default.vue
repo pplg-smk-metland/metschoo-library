@@ -8,7 +8,7 @@ onMounted(async () => {
 
 <template>
   <TheNavbar />
-  <main>
+  <main class="p-2 md:p-8">
     <slot />
   </main>
   <TheFooter />
@@ -24,7 +24,6 @@ body {
 }
 
 main {
-  padding: 1.5rem;
   min-height: 70vh;
   flex-grow: 1;
 }
