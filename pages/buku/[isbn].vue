@@ -2,6 +2,7 @@
 import { useDialog } from "@/composables"
 import type { Buku, Peminjaman, PeminjamanState } from "@/types"
 import type { PostgrestError, RealtimePostgresChangesPayload } from "@supabase/supabase-js"
+import IconArrowLeft from "~icons/mdi/arrow-left"
 
 import ConfirmPopup from "primevue/confirmpopup"
 import { useConfirm } from "primevue/useconfirm"
@@ -17,6 +18,7 @@ definePageMeta({
 
 const supabase = useSupabaseClient<Database>()
 const route = useRoute()
+const router = useRouter()
 const isbn = route.params.isbn as string
 
 const toast = useToast()
@@ -261,30 +263,40 @@ onMounted(() => (isClient.value = true))
 </script>
 
 <template>
-  <div v-if="!buku" class="not-found">
+  <div v-if="!buku && !isLoading" class="not-found">
     <h1>Tidak ada buku!</h1>
     <p>Bukunya ga ada brok</p>
+
+    <CTA label="cari buku lain" fill as="router-link" to="/pustaka" />
   </div>
 
   <LoadingSpinner v-if="isLoading" />
+
   <section
     v-else-if="buku && isClient"
-    class="main-section grid grid-cols-1 md:grid-cols-6 md:grid-rows-2 gap-4 justify-items-start"
+    class="buku main-section max-w-6xl mx-auto grid grid-cols-6 grid-rows-2 gap-4 justify-items-start"
   >
+    <header class="col-span-full">
+      <div class="flex gap-2 items-center relative">
+        <IconArrowLeft class="absolute left-4" />
+        <CTA label="kembali" @click="router.go(-1)" link class="pl-12" />
+      </div>
+    </header>
+
     <figure
-      class="col-span-1 md:col-span-2 md:row-span-2 place-self-center relative dark:brightness-75 z-0"
+      class="self-start col-span-2 md:row-span-2 place-self-center relative dark:brightness-75 z-0"
     >
-      <img class="buku__gambar" :src="imgURL" alt="" width="400" height="600" />
       <img
-        class="buku__gambar buku__gambar--bayangan"
+        class="w-48 max-w-100 h-100"
         :src="imgURL"
-        alt=""
+        :alt="`sampul buku ${buku.judul}`"
         width="400"
         height="600"
       />
+      <img class="buku__gambar--bayangan" :src="imgURL" alt="" width="400" height="600" />
     </figure>
 
-    <figcaption class="buku__info col-span-1 md:col-span-4">
+    <figcaption class="buku__info col-span-4">
       <h1 class="judul max-w-5xl">
         {{ buku.judul }}
       </h1>
@@ -349,10 +361,10 @@ onMounted(() => (isClient.value = true))
       </div>
     </figcaption>
 
-    <article class="md:col-span-4">
+    <article class="col-span-full md:col-span-4 justify-self-stretch overflow-x-auto h-min">
       <h2>Informasi bibliografi</h2>
-      <table class="tabel-bibliografi">
-        <tbody>
+      <table class="tabel-bibliografi block">
+        <tbody class="table-auto block">
           <tr>
             <td>judul</td>
             <td>{{ buku?.judul }}</td>
@@ -405,19 +417,8 @@ onMounted(() => (isClient.value = true))
 </template>
 
 <style scoped>
-.buku figure {
-  position: relative;
-
-  flex: 0 1 max-content;
-  align-self: flex-start;
-
-  @media screen and (max-width: 50em) {
-    flex: 1 0 10ch;
-  }
-}
-
-.buku__gambar {
-  height: 100%;
+.buku {
+  grid-template-rows: min-content auto;
 }
 
 .buku__gambar--bayangan {
@@ -433,11 +434,8 @@ onMounted(() => (isClient.value = true))
   font-size: clamp(2rem, 2.5vw, 3.5rem);
 }
 
-.tabel-bibliografi {
-  border-collapse: collapse;
-}
-
 .tabel-bibliografi td {
   padding: 0.5rem;
+  text-wrap: wrap;
 }
 </style>
