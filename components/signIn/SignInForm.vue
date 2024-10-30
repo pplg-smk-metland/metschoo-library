@@ -38,10 +38,15 @@ async function handleSignIn() {
     console.error(err)
 
     if (err instanceof AuthError) {
+      let detail = "Ada sebuah kesalahan saat mendaftar. Silahkan coba lagi"
+      if (err.message === "Invalid login credentials") {
+        detail = "email atau password salah."
+      }
+
       toast.add({
         severity: "error",
         summary: "Gagal masuk!",
-        detail: "Ada sebuah kesalahan saat masuk. Silahkan coba lagi",
+        detail,
       })
     }
   }
