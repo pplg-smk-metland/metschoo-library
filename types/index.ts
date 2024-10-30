@@ -16,4 +16,11 @@ export interface PeminjamanState {
   isReturnable: boolean
 }
 
+export type SignUpData = {
+  nama: string
+  email: string
+  password: string
+  confirmPassword: string
+}
+
 export type Theme = "light" | "dark"
