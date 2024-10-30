@@ -3,6 +3,25 @@ import type { RouteLocationRaw } from "vue-router"
 
 import IconArrowDownDrop from "~icons/mdi/arrow-down-drop"
 import PanelMenu from "primevue/panelmenu"
+import type { Pengguna } from "@/types"
+
+definePageMeta({
+  layout: "admin",
+})
+
+interface Props {
+  profile: Pengguna | null
+}
+
+const props = defineProps<Props>()
+
+const router = useRouter()
+const authStore = useAuthStore()
+
+async function signOut() {
+  await authStore.handleSignOut()
+  router.push("/")
+}
 
 interface SidebarLink {
   label: string
@@ -47,7 +66,15 @@ const sidebarLinks = ref<SidebarLink[]>([
 </script>
 
 <template>
-  <nav class="p-4 sticky top-8 sidebar">
+  <section class="p-4 sticky top-8 sidebar flex flex-col gap-4">
+    <header>
+      <p>
+        <span class="font-bold text-lg">Admin</span>
+        <span class="block">{{ props.profile?.email }}</span>
+      </p>
+      <CTA label="Keluar akun" @click="signOut" />
+    </header>
+
     <PanelMenu :model="sidebarLinks">
       <template #item="{ item }">
         <NuxtLink
@@ -65,7 +92,7 @@ const sidebarLinks = ref<SidebarLink[]>([
         </button>
       </template>
     </PanelMenu>
-  </nav>
+  </section>
 </template>
 
 <style scoped>

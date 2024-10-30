@@ -1,8 +1,26 @@
+<script lang="ts" setup>
+import type { Pengguna } from "@/types"
+import { ref } from "vue"
+
+const authStore = useAuthStore()
+
+const profile = ref<Pengguna | null>(null)
+
+onMounted(async () => {
+  await authStore.init()
+  authStore.$subscribe((_, state) => {
+    if (!state.profile) return
+
+    profile.value = state.profile
+  })
+})
+</script>
+
 <template>
   <div class="grid flex-1 wrapper">
     <TheNavbar />
-    <AdminSidebar />
-    <main class="flex flex-col align-stretch gap-4 mx-auto">
+    <AdminSidebar :profile="profile" />
+    <main class="p-4 flex flex-col align-stretch gap-4 mx-auto">
       <slot />
     </main>
   </div>
