@@ -63,17 +63,29 @@ const sidebarLinks = ref<SidebarLink[]>([
     ],
   },
 ])
+
+const popover = ref()
+
+const toggle = (e: Event) => {
+  popover.value.toggle(e)
+}
 </script>
 
 <template>
   <section class="p-4 sticky top-8 sidebar flex flex-col gap-4">
-    <header>
-      <p>
-        <span class="font-bold text-lg">Admin</span>
-        <span class="block">{{ props.profile?.email }}</span>
+    <header class="grid grid-cols-[1fr,5rem]">
+      <h2 class="font-bold text-lg m-0">Admin</h2>
+      <p class="order-last m-0">
+        {{ props.profile?.email }}
       </p>
-      <CTA label="Keluar akun" @click="signOut" />
+      <CTA label="toggle" @click="toggle" class="row-span-2">
+        <IconArrowDownDrop class="text-lg" />
+      </CTA>
     </header>
+
+    <Popover ref="popover">
+      <CTA label="Keluar akun" @click="signOut" />
+    </Popover>
 
     <PanelMenu :model="sidebarLinks">
       <template #item="{ item }">

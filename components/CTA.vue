@@ -14,5 +14,7 @@ defineProps<Props>()
     :label="label"
     :class="['select-none active:translate-y-1 focus:none focus-visible:ring-primary']"
     :outlined="!fill"
-  />
+  >
+    <slot />
+  </Button>
 </template>
