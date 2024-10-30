@@ -279,7 +279,7 @@ onMounted(() => (isClient.value = true))
     <header class="col-span-full">
       <div class="flex gap-2 items-center relative">
         <IconArrowLeft class="absolute left-4" />
-        <CTA label="kembali" @click="router.go(-1)" link class="pl-12" />
+        <CTA label="kembali" link class="pl-12" @click="router.go(-1)" />
       </div>
     </header>
 

@@ -62,16 +62,19 @@ const router = useRouter()
 async function signOut() {
   const reallySigningOut = confirm("Beneran nih mau keluar akun?")
 
-  if (reallySigningOut) {
-    await authStore.handleSignOut()
-    router.push("/")
+  if (!reallySigningOut) {
+    return
   }
+
+  await authStore.handleSignOut()
+  router.push("/")
 }
 
-const { profile } = authStore
-
 onMounted(async () => {
-  kredensialPengguna.value.email = profile!.email
+  authStore.$subscribe((_, state) => {
+    if (!state.profile) return
+    kredensialPengguna.value.email = state.profile.email
+  })
 })
 </script>
 

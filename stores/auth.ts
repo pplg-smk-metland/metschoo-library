@@ -1,7 +1,7 @@
 import { defineStore } from "pinia"
 import { ref } from "vue"
 import { AuthError, type PostgrestError } from "@supabase/supabase-js"
-import type { Pengguna } from "@/types"
+import type { Pengguna, SignUpData } from "@/types"
 import type { Database } from "~/types/database.types"
 
 export const useAuthStore = defineStore("auth", () => {
@@ -21,12 +21,21 @@ export const useAuthStore = defineStore("auth", () => {
     })
   }
 
-  async function handleSignUp(email: string, password: string) {
+  async function handleSignUp({
+    nama,
+    email,
+    password,
+  }: Required<Pick<SignUpData, "nama" | "email" | "password">>) {
     const { error } = await supabase.auth.signUp({
       email,
       password,
     })
-    return error
+
+    const { error: addNameError } = await supabase
+      .from("pengguna")
+      .update({ nama })
+      .eq("email", email)
+    return error || addNameError
   }
 
   async function handleSignIn(email: string, password: string) {

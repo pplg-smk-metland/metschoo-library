@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { AuthError } from "@supabase/supabase-js"
+import type { SignUpData } from "~/types"
 
 const isSigningIn = ref(false)
 const buttonLabel = computed(() =>
@@ -17,7 +18,8 @@ function handleSwitchForm() {
   isSigningIn.value = !isSigningIn.value
 }
 
-const data = ref({
+const data = ref<SignUpData>({
+  nama: "",
   email: "",
   password: "",
   confirmPassword: "",
@@ -36,17 +38,22 @@ async function handleSignIn() {
     console.error(err)
 
     if (err instanceof AuthError) {
+      let detail = "Ada sebuah kesalahan saat mendaftar. Silahkan coba lagi"
+      if (err.message === "Invalid login credentials") {
+        detail = "email atau password salah."
+      }
+
       toast.add({
         severity: "error",
         summary: "Gagal masuk!",
-        detail: "Ada sebuah kesalahan saat masuk. Silahkan coba lagi",
+        detail,
       })
     }
   }
 }
 
 async function handleSignUp() {
-  const { email, password, confirmPassword } = data.value
+  const { nama, email, password, confirmPassword } = data.value
 
   if (confirmPassword !== password) {
     alert("passwordnya ga sama")
@@ -54,7 +61,7 @@ async function handleSignUp() {
   }
 
   try {
-    await authStore.handleSignUp(email, password)
+    await authStore.handleSignUp({ nama, email, password })
     alert("Cek email lu ya buat verifikasi email!")
   } catch (err) {
     console.error(err)
@@ -116,7 +123,14 @@ async function handleSignUp() {
     <div v-else class="flex-1">
       <form class="flex flex-col gap-2" @submit.prevent="handleSignUp">
         <label for="nama">Nama</label>
-        <InputText id="nama" type="text" name="nama" placeholder="Siapa namamu?" required />
+        <InputText
+          id="nama"
+          v-model="data.nama"
+          type="text"
+          name="nama"
+          placeholder="Siapa namamu?"
+          required
+        />
 
         <label for="signup-email">Email</label>
         <InputText
