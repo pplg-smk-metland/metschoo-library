@@ -115,12 +115,11 @@ function toggleFormVisibility() {
 
   <div v-else class="wrapper">
     <article v-if="!formIsVisible" class="buku">
-      <div class="flex gap-2 items-center my-5">
-        <IconArrowLeft class="" />
-        <CTA label="kembali" link class="pl-12 pl-0 relative right-10" @click="router.back()" />
-      </div>
-      <!-- yang ini -->
-      <PageHeader :heading="`${buku.judul} - ${buku.jumlah_exspl}`"> </PageHeader>
+      <PageHeader :heading="`${buku.judul} - ${buku.jumlah_exspl}`">
+        <CTA label="kembali" link class="order-first" @click="router.back()">
+          <IconArrowLeft />
+        </CTA>
+      </PageHeader>
 
       <p>{{ buku.penulis }}</p>
       <p>{{ buku.asal }}</p>

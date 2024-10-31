@@ -277,10 +277,9 @@ onMounted(() => (isClient.value = true))
     class="buku main-section max-w-6xl mx-auto grid grid-cols-6 grid-rows-2 gap-4 justify-items-start"
   >
     <header class="col-span-full">
-      <div class="flex gap-2 items-center relative">
-        <IconArrowLeft class="absolute left-4" />
-        <CTA label="kembali" link class="pl-12" @click="router.go(-1)" />
-      </div>
+      <CTA label="kembali" link class="order-first" @click="router.go(-1)">
+        <IconArrowLeft />
+      </CTA>
     </header>
 
     <figure

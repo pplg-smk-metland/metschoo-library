@@ -88,11 +88,11 @@ const router = useRouter()
 </script>
 
 <template>
-  <div class="flex items-center my-5 ml-2">
-    <IconArrowLeft class="" />
-    <CTA label="kembali" link class="pl-12 pl-0 relative right-10" @click="router.back()" />
-  </div>
-  <PageHeader heading="Tambah buku"></PageHeader>
+  <PageHeader heading="Tambah buku">
+    <CTA label="kembali" link class="order-first" @click="router.go(-1)">
+      <IconArrowLeft />
+    </CTA>
+  </PageHeader>
 
   <section v-if="!buku">
     <p>Ada kesalahan saat mengambil data buku. Silahkan coba lagi</p>
