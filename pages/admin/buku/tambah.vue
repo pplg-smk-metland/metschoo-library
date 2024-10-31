@@ -4,7 +4,7 @@ import Select from "primevue/select"
 import { StorageError } from "@supabase/storage-js"
 import type { Buku, Kategori } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
-
+import IconArrowLeft from "~icons/mdi/arrow-left"
 import type { Database } from "~/types/database.types.ts"
 
 useHead({
@@ -88,9 +88,11 @@ const router = useRouter()
 </script>
 
 <template>
-  <PageHeader heading="Tambah buku">
-    <NuxtLink to="/admin/buku">Kembali</NuxtLink>
-  </PageHeader>
+  <div class="flex items-center my-5 ml-2">
+    <IconArrowLeft class="" />
+    <CTA label="kembali" link class="pl-12 pl-0 relative right-10" @click="router.back()" />
+  </div>
+  <PageHeader heading="Tambah buku"></PageHeader>
 
   <section v-if="!buku">
     <p>Ada kesalahan saat mengambil data buku. Silahkan coba lagi</p>
