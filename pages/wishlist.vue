@@ -78,8 +78,8 @@ const user = useSupabaseUser()
       <p>Kamu harus login dulu ya untuk menambahkan buku ke wishlist..</p>
 
       <div class="flex gap-4">
-        <CTA label="Login" to="/login" fill />
-        <CTA label="Kembali ke beranda" to="/" />
+        <CTA label="Login" as="router-link" to="/login" fill />
+        <CTA label="Kembali ke beranda" as="router-link" to="/" />
       </div>
     </section>
 
