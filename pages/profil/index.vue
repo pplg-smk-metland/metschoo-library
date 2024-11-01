@@ -80,7 +80,7 @@ onMounted(async () => {
       </figure>
 
       <div class="profile__details">
-        <h2>{{ profile?.nama }}</h2>
+        <h2 class="text-lg font-bold">{{ profile?.nama }}</h2>
         <p>{{ profile?.kelas }} - {{ profile?.jurusan }}</p>
         <p>{{ profile?.email }}</p>
 
@@ -141,9 +141,9 @@ onMounted(async () => {
     </section>
 
     <aside class="main-section rounded-lg col-span-full lg:row-span-3 lg:col-span-3">
-      <h2>Riwayat Peminjaman</h2>
+      <h2 class="text-xl font-bold mb-8">Riwayat Peminjaman</h2>
 
-      <ul class="history-list">
+      <ul class="flex flex-col gap-4">
         <li v-if="!history.length" class="message">bukunya ga ada ges</li>
         <ProfileHistoryBook
           v-for="data in history"
@@ -157,35 +157,7 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-@media screen and (max-width: 50em) {
-  .wrapper {
-    grid-template-columns: 1fr;
-  }
-
-  .profile {
-    flex-direction: column;
-  }
-}
-
-.profile {
-  display: flex;
-  gap: 2rem;
-}
-
 .profile-picture {
   flex-basis: 35ch;
-}
-
-.profile-form {
-  flex-grow: 1;
-}
-
-.history-list {
-  margin: 0;
-  padding: 0;
-
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
 }
 </style>
