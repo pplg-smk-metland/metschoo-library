@@ -13,21 +13,6 @@ useHead({
       content: "Aplikasi Perpustakan Metschoo.",
     },
   ],
-  link: [
-    {
-      rel: "preconnect",
-      href: "https://fonts.googleapis.com",
-    },
-    {
-      rel: "preconnect",
-      href: "https://fonts.gstatic.com",
-      crossorigin: "anonymous",
-    },
-    {
-      href: "https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@100;200;300;400;500&display=swap",
-      rel: "stylesheet",
-    },
-  ],
   htmlAttrs: {
     class: computed(() => themeStore.theme),
   },

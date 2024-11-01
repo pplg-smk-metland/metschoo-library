@@ -12,6 +12,7 @@ export default defineNuxtConfig({
     "unplugin-icons/nuxt",
     "@nuxt/image",
     "@nuxtjs/tailwindcss",
+    "@nuxt/fonts"
   ],
   typescript: {
     typeCheck: true,
