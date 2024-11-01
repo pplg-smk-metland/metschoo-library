@@ -51,7 +51,7 @@ async function getPeminjamanHistory() {
 const authStore = useAuthStore()
 const profile = ref<Pengguna | null>()
 
-authStore.$subscribe((mutation, state) => {
+authStore.$subscribe((_, state) => {
   profile.value = state.profile
 })
 

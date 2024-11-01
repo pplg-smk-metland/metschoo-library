@@ -4,7 +4,7 @@ import Select from "primevue/select"
 import { StorageError } from "@supabase/storage-js"
 import type { Buku, Kategori } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
-
+import IconArrowLeft from "~icons/mdi/arrow-left"
 import type { Database } from "~/types/database.types.ts"
 
 useHead({
@@ -89,7 +89,9 @@ const router = useRouter()
 
 <template>
   <PageHeader heading="Tambah buku">
-    <NuxtLink to="/admin/buku">Kembali</NuxtLink>
+    <CTA label="kembali" link class="order-first" @click="router.go(-1)">
+      <IconArrowLeft />
+    </CTA>
   </PageHeader>
 
   <section v-if="!buku">

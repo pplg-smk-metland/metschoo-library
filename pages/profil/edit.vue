@@ -7,6 +7,8 @@ import type { Pengguna } from "@/types"
 import { useToast } from "primevue/usetoast"
 import MdiArrowLeft from "~icons/mdi/arrow-left"
 
+import IconArrowLeft from "~icons/mdi/arrow-left"
+
 useHead({
   title: "Edit profil",
 })
@@ -52,7 +54,9 @@ async function updateProfile() {
 
 <template>
   <PageHeader heading="Edit profil">
-    <NuxtLink to="/profil" class="flex gap-1"> <MdiArrowLeft />Kembali</NuxtLink>
+    <CTA as="router-link" link to="/profil" label="Kembali" class="order-first">
+      <IconArrowLeft class="order-first" />
+    </CTA>
   </PageHeader>
 
   <section v-if="user" class="main-section flex gap-4">
