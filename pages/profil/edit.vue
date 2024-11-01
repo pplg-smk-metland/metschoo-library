@@ -6,8 +6,6 @@ import Toast from "primevue/toast"
 import type { Pengguna } from "@/types"
 import { useToast } from "primevue/usetoast"
 
-import IconArrowLeft from "~icons/mdi/arrow-left"
-
 useHead({
   title: "Edit profil",
 })
