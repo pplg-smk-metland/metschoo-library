@@ -5,10 +5,6 @@ import IconArrowDownDrop from "~icons/mdi/arrow-down-drop"
 import PanelMenu from "primevue/panelmenu"
 import type { Pengguna } from "@/types"
 
-definePageMeta({
-  layout: "admin",
-})
-
 interface Props {
   profile: Pengguna | null
 }
