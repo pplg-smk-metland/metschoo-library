@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import InputText from "primevue/inputtext"
+import Password from "primevue/password"
 import { AuthError } from "@supabase/supabase-js"
-import type { SignUpData } from "~/types"
+import type { SignUpData } from "@/types"
 
 const isSigningIn = ref(false)
 const buttonLabel = computed(() =>
