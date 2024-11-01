@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import InputText from "primevue/inputtext"
 import type { PostgrestError } from "@supabase/supabase-js"
-
 import Select from "primevue/select"
 import Toast from "primevue/toast"
 import type { Pengguna } from "@/types"
 import { useToast } from "primevue/usetoast"
+import MdiArrowLeft from "~icons/mdi/arrow-left"
 
 useHead({
   title: "Edit profil",
@@ -51,7 +52,7 @@ async function updateProfile() {
 
 <template>
   <PageHeader heading="Edit profil">
-    <NuxtLink to="/profil">Kembali</NuxtLink>
+    <NuxtLink to="/profil" class="flex gap-1"> <MdiArrowLeft />Kembali</NuxtLink>
   </PageHeader>
 
   <section v-if="user" class="main-section flex gap-4">
@@ -81,7 +82,7 @@ async function updateProfile() {
 
   <section v-else>
     <h1>Pengguna tidak ditemukan!</h1>
-    <p>silahkan coba lagi.</p>
+    <p>silahkan refresh jika profil anda tidak muncul.</p>
   </section>
 
   <Toast />
