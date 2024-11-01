@@ -5,6 +5,7 @@ import type { Kategori } from "@/types"
 import type { PostgrestError, QueryData } from "@supabase/supabase-js"
 
 import type { Database } from "~/types/database.types.ts"
+import IconArrowLeft from "~icons/mdi/arrow-left"
 
 definePageMeta({
   layout: "admin",
@@ -115,7 +116,9 @@ function toggleFormVisibility() {
   <div v-else class="wrapper">
     <article v-if="!formIsVisible" class="buku">
       <PageHeader :heading="`${buku.judul} - ${buku.jumlah_exspl}`">
-        <NuxtLink @click="router.back()">Kembali</NuxtLink>
+        <CTA label="kembali" link class="order-first" @click="router.back()">
+          <IconArrowLeft />
+        </CTA>
       </PageHeader>
 
       <p>{{ buku.penulis }}</p>
