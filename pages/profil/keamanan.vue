@@ -4,6 +4,8 @@ import { useDialog } from "@/composables"
 import type { AuthError } from "@supabase/supabase-js"
 import type { Database } from "~/types/database.types.ts"
 
+import IconArrowLeft from "~icons/mdi/arrow-left"
+
 useHead({
   title: "Keamanan Profil",
 })
@@ -79,10 +81,11 @@ onMounted(async () => {
 </script>
 
 <template>
-  <section class="nav">
-    <h1>Ubah kredensial</h1>
-    <NuxtLink to="/profil"> Kembali </NuxtLink>
-  </section>
+  <PageHeader heading="Ubah kredensial" class="nav">
+    <CTA as="router-link" link to="/profil" label="Kembali" class="order-first">
+      <IconArrowLeft />
+    </CTA>
+  </PageHeader>
 
   <section class="main-section">
     <h2>Ubah password</h2>

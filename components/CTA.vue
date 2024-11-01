@@ -11,10 +11,12 @@ defineProps<Props>()
 
 <template>
   <Button
-    :label="label"
-    :class="['select-none active:translate-y-1 focus:none focus-visible:ring-primary']"
+    :class="[
+      'select-none active:translate-y-1 focus:none focus-visible:ring-primary flex items-center gap-2',
+    ]"
     :outlined="!fill"
   >
     <slot />
+    <span>{{ label }}</span>
   </Button>
 </template>
