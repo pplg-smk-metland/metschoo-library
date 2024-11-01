@@ -19,15 +19,11 @@ h3 {
   border-radius: 0.5rem;
 }
 
-input {
-  width: 100%;
-}
-
 label {
   display: block;
   line-height: 1;
 
-  @apply dark:text-gray-300;
+  @apply dark:text-gray-400;
 }
 
 button:disabled {
