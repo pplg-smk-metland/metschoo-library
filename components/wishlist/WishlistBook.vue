@@ -28,7 +28,7 @@ onMounted(async () => {
         />
       </NuxtLink>
     </figure>
-    <figcaption class="buku__info">
+    <article class="buku__info">
       <h3 class="buku__judul mt-2">
         {{ buku.judul }}
       </h3>
@@ -39,9 +39,9 @@ onMounted(async () => {
 
       <div class="button-container">
         <CTA label="Pinjam buku" @click="$emit('pinjamBuku')" />
-        <CTA label="Hapus dari wishlist" @click="$emit('hapusBuku')" />
+        <CTA label="Hapus dari wishlist" @click="$emit('hapusBuku')" severity="danger" />
       </div>
-    </figcaption>
+    </article>
   </li>
 </template>
 

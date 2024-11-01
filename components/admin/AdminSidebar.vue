@@ -80,7 +80,7 @@ const toggle = (e: Event) => {
     </header>
 
     <Popover ref="popover">
-      <CTA label="Keluar akun" @click="signOut" />
+      <CTA label="Keluar akun" @click="signOut" severity="danger" />
     </Popover>
 
     <PanelMenu :model="sidebarLinks">
