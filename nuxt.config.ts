@@ -1,5 +1,3 @@
-import path from "path"
-
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2024-04-03",
@@ -12,14 +10,14 @@ export default defineNuxtConfig({
     "unplugin-icons/nuxt",
     "@nuxt/image",
     "@nuxtjs/tailwindcss",
-    "@nuxt/fonts"
+    "@nuxt/fonts",
   ],
   typescript: {
     typeCheck: true,
   },
   primevue: {
     options: {
-      unstyled: true,
+      theme: "none",
       locale: {
         accept: "Ya",
         reject: "Tidak",
@@ -57,7 +55,6 @@ export default defineNuxtConfig({
         fileSizeTypes: ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
       },
     },
-    importPT: { from: path.resolve(__dirname, "./assets/presets/lara") },
   },
   srcDir: ".",
   css: ["~/assets/base.css", "~/assets/main.css"],
@@ -77,3 +74,4 @@ export default defineNuxtConfig({
     },
   },
 })
+
