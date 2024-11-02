@@ -30,13 +30,14 @@ const isLoading = ref(false)
 const { buku } = useBuku()
 const imgURL = ref("")
 
-onMounted(async () => {
+/**
+ * get buku data on the server
+ */
+const { data } = useAsyncData(async () => {
   try {
-    buku.value = await getBuku(isbn)
+    return await getBuku(isbn)
   } catch (err) {
     console.error(err as PostgrestError)
-
-    buku.value = null
 
     toast.add({
       severity: "error",
@@ -44,22 +45,17 @@ onMounted(async () => {
       detail: "Gagal menemukan buku.",
       life: 10000,
     })
-  }
 
+    return null
+  }
+})
+
+onMounted(async () => {
+  buku.value = data.value
   imgURL.value = await getBukuImage(isbn)
 })
 
 const peminjamanState = ref<PeminjamanState | null>(null)
-
-onMounted(async () => {
-  try {
-    peminjamanState.value = await usePeminjamanState(isbn)
-    bukuAdaDiWishlist.value = await checkWishlist(isbn)
-  } catch (err) {
-    console.error(err as PostgrestError)
-  }
-})
-
 const bukuAdaDiWishlist = ref(false)
 
 async function checkWishlist(isbn: string) {
@@ -78,6 +74,24 @@ async function checkWishlist(isbn: string) {
     return false
   }
 }
+
+onMounted(async () => {
+  try {
+    const { data } = await useAsyncData(async () => {
+      const [peminjamanStateData, checkWishlistData] = await Promise.all([
+        usePeminjamanState(isbn),
+        checkWishlist(isbn),
+      ])
+
+      return { peminjamanStateData, checkWishlistData }
+    })
+
+    bukuAdaDiWishlist.value = data.value ? data.value.checkWishlistData : false
+    peminjamanState.value = data.value?.peminjamanStateData ?? null
+  } catch (err) {
+    console.error(err as PostgrestError)
+  }
+})
 
 const dialogIsVisible = ref(false)
 const { dialog: dialogError } = useDialog()
@@ -256,10 +270,6 @@ supabase
     perbaruiDataBuku
   )
   .subscribe()
-
-// render only on client to prevent hydration mismatch
-const isClient = ref(false)
-onMounted(() => (isClient.value = true))
 </script>
 
 <template>
@@ -273,7 +283,7 @@ onMounted(() => (isClient.value = true))
   <LoadingSpinner v-if="isLoading" />
 
   <section
-    v-else-if="buku && isClient"
+    v-else-if="buku"
     class="buku main-section max-w-6xl mx-auto grid grid-cols-6 grid-rows-2 gap-4 justify-items-start"
   >
     <header class="col-span-full">
@@ -295,7 +305,7 @@ onMounted(() => (isClient.value = true))
       <img class="buku__gambar--bayangan" :src="imgURL" alt="" width="400" height="600" />
     </figure>
 
-    <figcaption class="buku__info col-span-4">
+    <article class="buku__info col-span-4">
       <h1 class="judul max-w-5xl">
         {{ buku.judul }}
       </h1>
@@ -358,7 +368,7 @@ onMounted(() => (isClient.value = true))
           @click="konfirmasiMasukkanWishlist(buku, $event)"
         />
       </div>
-    </figcaption>
+    </article>
 
     <article class="col-span-full md:col-span-4 justify-self-stretch overflow-x-auto h-min">
       <h2>Informasi bibliografi</h2>
