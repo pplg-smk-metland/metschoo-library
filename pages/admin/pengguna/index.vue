@@ -13,24 +13,30 @@ definePageMeta({
 const supabase = useSupabaseClient<Database>()
 
 const toast = useToast()
-const penggunas = ref<Pengguna[] | null>([])
-const isLoading = ref(false)
+const penggunas = ref<Pengguna[] | null>(null)
+
+const { data } = await useAsyncData(async () => {
+  try {
+    const { data, error } = await supabase.from("pengguna").select("*, pengguna_roles(name)")
+    if (error) {
+      toast.add({
+        severity: "error",
+        summary: "Gagal mengambil data",
+        detail: "Gagal mengambil data pengguna, silahkan coba lagi.",
+      })
+    }
+
+    if (error) throw error
+
+    return data
+  } catch (err) {
+    console.error(err)
+    return null
+  }
+})
 
 onMounted(async () => {
-  isLoading.value = true
-
-  const { data, error } = await supabase.from("pengguna").select("*, pengguna_roles(name)")
-  if (error) {
-    toast.add({
-      severity: "error",
-      summary: "Gagal mengambil data",
-      detail: "Gagal mengambil data pengguna, silahkan coba lagi.",
-    })
-  }
-
-  penggunas.value = data
-
-  isLoading.value = false
+  penggunas.value = data.value
 })
 </script>
 
@@ -38,8 +44,6 @@ onMounted(async () => {
   <PageHeader heading="Manajemen pengguna">
     <p>Temukan pengguna dan kelola data mereka</p>
   </PageHeader>
-
-  <LoadingSpinner v-if="isLoading" />
 
   <section v-if="!penggunas">
     <p>Tidak ada pengguna di sini.</p>

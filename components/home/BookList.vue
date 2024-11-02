@@ -8,17 +8,13 @@ interface Props {
 
 const { typeId } = defineProps<Props>()
 
-const bukus = ref<Buku[]>([])
 const isLoading = ref(false)
 
-onMounted(async () => {
+const { data: bukus } = await useAsyncData(async () => {
   try {
-    isLoading.value = true
-    bukus.value = await getBukus(typeId)
+    return await getBukus(typeId)
   } catch (err) {
-    console.error((err as PostgrestError).message)
-  } finally {
-    isLoading.value = false
+    console.error(err as PostgrestError)
   }
 })
 </script>
@@ -26,7 +22,7 @@ onMounted(async () => {
 <template>
   <ul class="book-list">
     <LoadingSpinner v-if="isLoading" />
-    <li v-if="!isLoading && !bukus.length">Bukunya ga ada gaes</li>
+    <li v-if="!isLoading && !bukus">Bukunya ga ada gaes</li>
     <BookItem v-for="buku in bukus" v-else :key="buku.no_isbn" :buku="buku as Buku" />
   </ul>
 </template>

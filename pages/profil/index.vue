@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { PostgrestError, QueryData } from "@supabase/supabase-js"
 import { getPeminjamanData } from "~/lib/peminjaman"
-import type { Pengguna } from "~/types"
 import type { Database } from "~/types/database.types"
 
 useHead({
@@ -30,7 +29,7 @@ async function getPeminjamanHistory() {
 }
 
 const authStore = useAuthStore()
-const profile = ref<Pengguna | null>()
+const user = useSupabaseUser()
 
 const { data: profile } = useAsyncData(async () => await authStore.getProfile(user.value.id))
 
