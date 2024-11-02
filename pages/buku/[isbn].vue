@@ -37,15 +37,7 @@ const { data } = useAsyncData(async () => {
   try {
     return await getBuku(isbn)
   } catch (err) {
-    console.error(err as PostgrestError)
-
-    toast.add({
-      severity: "error",
-      summary: "Gagal",
-      detail: "Gagal menemukan buku.",
-      life: 10000,
-    })
-
+    console.error(err)
     return null
   }
 })
@@ -55,41 +47,33 @@ onMounted(async () => {
   imgURL.value = await getBukuImage(isbn)
 })
 
+/**
+ * get buku's peminjaman state and check wishlist
+ */
 const peminjamanState = ref<PeminjamanState | null>(null)
-const bukuAdaDiWishlist = ref(false)
-
-async function checkWishlist(isbn: string) {
-  try {
-    const { count, error } = await supabase
-      .from("wishlist")
-      .select("no_isbn", { count: "exact", head: true })
-      .eq("no_isbn", isbn)
-
-    if (error) throw error
-    if (!count) return false
-
-    return count !== null && count !== 0
-  } catch (err) {
-    console.trace(err as PostgrestError)
-    return false
-  }
-}
+const bukuAdaDiWishlist = ref<boolean | null>(null)
 
 onMounted(async () => {
-  try {
-    const { data } = await useAsyncData(async () => {
-      const [peminjamanStateData, checkWishlistData] = await Promise.all([
-        usePeminjamanState(isbn),
-        checkWishlist(isbn),
-      ])
+  const { data } = await useAsyncData(async () => {
+    const [peminjamanStateData, checkWishlistData] = await Promise.all([
+      usePeminjamanState(isbn),
+      useCheckWishlist(isbn),
+    ])
 
-      return { peminjamanStateData, checkWishlistData }
+    return { peminjamanStateData, checkWishlistData }
+  })
+
+  bukuAdaDiWishlist.value = data.value?.checkWishlistData ?? null
+  peminjamanState.value = data.value?.peminjamanStateData ?? null
+
+  if (bukuAdaDiWishlist === null || peminjamanState.value === null) {
+    toast.add({
+      severity: "error",
+      summary: "gagal mengambil data peminjaman atau wishlist",
+      detail:
+        "gagal mengambil data peminjaman atau wishlist. Silahkan refresh atau coba lagi dalam beberapa saat.",
+      life: 10000,
     })
-
-    bukuAdaDiWishlist.value = data.value ? data.value.checkWishlistData : false
-    peminjamanState.value = data.value?.peminjamanStateData ?? null
-  } catch (err) {
-    console.error(err as PostgrestError)
   }
 })
 
