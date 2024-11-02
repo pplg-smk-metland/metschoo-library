@@ -22,30 +22,37 @@ definePageMeta({
 
 const supabase = useSupabaseClient<Database>()
 
-const isLoading = ref(false)
-
 const _peminjamanQuery = supabase
   .from("peminjaman")
   .select("*, peminjaman_state(name), pengguna(nama, kelas, jurusan), buku(*)")
 export type PeminjamanData = QueryData<typeof _peminjamanQuery>
-const peminjamanData = ref<PeminjamanData>([])
+const { data: allPeminjamanData } = useAsyncData(async () => await getPeminjamanData())
 
-const bukusBorrowPending = computed(() => {
-  return peminjamanData.value.filter((data) => data.state_id === 1)
+const peminjamanData = computed(() => {
+  if (!allPeminjamanData.value) return null
+
+  const bukusBorrowConfirmed = allPeminjamanData.value.filter((data) => data.state_id === 1)
+  const bukusBorrowPending = allPeminjamanData.value.filter((data) => data.state_id === 2)
+  const bukusReturnPending = allPeminjamanData.value.filter((data) => data.state_id === 4)
+
+  return { bukusBorrowConfirmed, bukusBorrowPending, bukusReturnPending }
 })
 
-const bukusBorrowConfirmed = computed(() => {
-  return peminjamanData.value.filter((data) => data.state_id === 2)
-})
-
-const bukusReturnPending = computed(() => {
-  return peminjamanData.value.filter((data) => data.state_id === 4)
+const { data: counts } = await useAsyncData(async () => {
+  const [bukuCount, penggunaCount] = await Promise.all([countBukus(), countPenggunas()])
+  return { bukuCount, penggunaCount }
 })
 
 onMounted(async () => {
-  isLoading.value = true
-  peminjamanData.value = await getPeminjamanData()
-  isLoading.value = false
+  if (!counts.value) {
+    toast.add({
+      severity: "error",
+      summary: "gagal mengambil data dashboard",
+      detail:
+        "gagal mengambil data statistik dashboard. Silahkan coba refresh atau lagi dalam beberapa saat",
+      life: 10000,
+    })
+  }
 })
 
 const confirm = useConfirm()
@@ -124,14 +131,15 @@ async function insertPeminjamandata(payload: RealtimePostgresChangesPayload<Pemi
     if (error) throw error
 
     // merge data from payload and data from fetch
-    if (data) peminjamanData.value.push({ ...(payload.new as Peminjaman), ...data })
+    if (data && allPeminjamanData.value)
+      allPeminjamanData.value.push({ ...(payload.new as Peminjaman), ...data })
   } catch (err) {
     console.error(err)
   }
 }
 
 function updatePeminjamanData(payload: RealtimePostgresChangesPayload<Peminjaman>) {
-  const targetData = peminjamanData.value!.find(
+  const targetData = allPeminjamanData.value!.find(
     (data) => data.id === (payload.new as Peminjaman).id
   )
   if (targetData) targetData.state_id = (payload.new as Peminjaman).state_id
@@ -150,14 +158,6 @@ supabase
     updatePeminjamanData
   )
   .subscribe()
-
-const bukuCount = ref<number | null>(0)
-const penggunaCount = ref<number | null>(0)
-
-onMounted(async () => {
-  bukuCount.value = await countBukus()
-  penggunaCount.value = await countPenggunas()
-})
 </script>
 
 <template>
@@ -165,13 +165,11 @@ onMounted(async () => {
     <p>Halo admin</p>
   </PageHeader>
 
-  <LoadingSpinner v-if="isLoading" />
-
-  <div v-else class="grid grid-cols-2 gap-4">
+  <div class="grid grid-cols-2 gap-4">
     <section class="main-section">
       <h2 class="leading-relaxed mb-4">Buku yang belum dikonfirmasi</h2>
 
-      <DataTable :value="bukusBorrowPending" size="small">
+      <DataTable :value="peminjamanData?.bukusBorrowPending" size="small">
         <template #empty>
           <span class="text-gray-300 dark:text-gray-600">Belum ada</span>
         </template>
@@ -190,7 +188,7 @@ onMounted(async () => {
     <section class="main-section flex-1">
       <h2 class="leading-relaxed mb-4">Buku mau dikembalikan</h2>
 
-      <DataTable :value="bukusReturnPending" size="small">
+      <DataTable :value="peminjamanData?.bukusReturnPending" size="small">
         <template #empty>
           <span class="text-gray-300 dark:text-gray-600">Belum ada</span>
         </template>
@@ -209,7 +207,7 @@ onMounted(async () => {
     <section class="main-section col-span-full">
       <h2 class="leading-relaxed mb-4">Buku yang sedang dipinjam</h2>
 
-      <DataTable :value="bukusBorrowConfirmed">
+      <DataTable :value="peminjamanData?.bukusBorrowConfirmed">
         <template #empty>
           <span class="text-gray-300 dark:text-gray-600">Belum ada</span>
         </template>
@@ -228,8 +226,8 @@ onMounted(async () => {
     <section class="main-section col-span-full">
       <ul class="grid grid-cols-4 gap-4">
         <AdminInfoChip to="buku" :data="90" label="Buku sedang dipinjam" />
-        <AdminInfoChip to="buku" :data="bukuCount" label="Buku tersedia" />
-        <AdminInfoChip to="pengguna" :data="penggunaCount" label="Pengguna aktif" />
+        <AdminInfoChip to="buku" :data="counts?.bukuCount" label="Buku tersedia" />
+        <AdminInfoChip to="pengguna" :data="counts?.penggunaCount" label="Pengguna aktif" />
       </ul>
     </section>
   </div>
