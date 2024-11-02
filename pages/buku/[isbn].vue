@@ -19,7 +19,7 @@ definePageMeta({
 const supabase = useSupabaseClient<Database>()
 const route = useRoute()
 const router = useRouter()
-const isbn = route.params.isbn as string
+const isbn = toRef(route.params.isbn as string)
 
 const toast = useToast()
 const confirm = useConfirm()
@@ -27,15 +27,14 @@ const confirm = useConfirm()
 const user = useSupabaseUser()
 
 const isLoading = ref(false)
-const { buku } = useBuku()
 const imgURL = ref("")
 
 /**
  * get buku data on the server
  */
-const { data } = useAsyncData(async () => {
+const { data: buku } = useAsyncData(async () => {
   try {
-    return await getBuku(isbn)
+    return await getBuku(isbn.value)
   } catch (err) {
     console.error(err)
     return null
@@ -43,8 +42,7 @@ const { data } = useAsyncData(async () => {
 })
 
 onMounted(async () => {
-  buku.value = data.value
-  imgURL.value = await getBukuImage(isbn)
+  imgURL.value = await getBukuImage(isbn.value)
 })
 
 /**
@@ -53,20 +51,23 @@ onMounted(async () => {
 const peminjamanState = ref<PeminjamanState | null>(null)
 const bukuAdaDiWishlist = ref<boolean | null>(null)
 
-onMounted(async () => {
-  const { data } = await useAsyncData(async () => {
+const { data } = await useAsyncData(
+  async () => {
     const [peminjamanStateData, checkWishlistData] = await Promise.all([
-      usePeminjamanState(isbn),
-      useCheckWishlist(isbn),
+      usePeminjamanState(isbn.value),
+      useCheckWishlist(isbn.value),
     ])
 
     return { peminjamanStateData, checkWishlistData }
-  })
+  },
+  { watch: [isbn] }
+)
 
-  bukuAdaDiWishlist.value = data.value?.checkWishlistData ?? null
-  peminjamanState.value = data.value?.peminjamanStateData ?? null
+bukuAdaDiWishlist.value = data.value?.checkWishlistData ?? null
+peminjamanState.value = data.value?.peminjamanStateData ?? null
 
-  if (bukuAdaDiWishlist === null || peminjamanState.value === null) {
+onMounted(async () => {
+  if (bukuAdaDiWishlist.value === null || peminjamanState.value === null) {
     toast.add({
       severity: "error",
       summary: "gagal mengambil data peminjaman atau wishlist",
@@ -186,6 +187,9 @@ async function kembalikanBuku({ judul }: Buku, id: Peminjaman["id"]) {
 
 const confirmWishlistIsVisible = ref(false)
 
+/**
+ * handle confirmation for adding a new entry to wishlist.
+ */
 function konfirmasiMasukkanWishlist(buku: Buku, e: Event) {
   confirm.require({
     target: e.currentTarget as HTMLElement,
@@ -200,14 +204,16 @@ function konfirmasiMasukkanWishlist(buku: Buku, e: Event) {
   })
 }
 
+/**
+ * handle adding a new buku to wishlist.
+ */
 async function masukkanWishlist({ no_isbn }: Buku) {
   if (!user.value) {
-    toast.add({
+    return toast.add({
       severity: "warn",
       summary: "gagal memasukkan buku ke wishlist",
       detail: "silahkan masuk jika anda ingin menambahkan buku ke dalam wishlist",
     })
-    return
   }
 
   try {
@@ -233,6 +239,9 @@ async function masukkanWishlist({ no_isbn }: Buku) {
   }
 }
 
+/**
+ * function to subscribe to realtime peminjaman state change.
+ */
 async function perbaruiDataBuku(payload: RealtimePostgresChangesPayload<Peminjaman>) {
   try {
     peminjamanState.value = await usePeminjamanState((payload.new as Peminjaman).no_isbn)
