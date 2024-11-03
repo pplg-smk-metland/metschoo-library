@@ -92,20 +92,22 @@ onMounted(async () => {
 
     <form class="flex flex-col gap-2" @submit.prevent="ubahKredensial">
       <label for="password">Password</label>
-      <InputText
-        id="password"
+      <Password
         v-model="kredensialPengguna.password"
-        type="password"
+        input-id="password"
+        toggle-mask
+        fluid
         name="password"
         placeholder="Password rahasia anda"
         required
       />
 
       <label for="confirm-password">konfirmasi password</label>
-      <InputText
-        id="confirm-password"
+      <Password
         v-model="kredensialPengguna.passwordKonfirmasi"
-        type="password"
+        input-id="password"
+        toggle-mask
+        fluid
         name="confirm-password"
         placeholder="Password rahasia anda"
         required
