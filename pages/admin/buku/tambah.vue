@@ -78,7 +78,6 @@ async function addNewBook(buku: Buku) {
   }
 }
 
-// const availableCategories = ref<Kategori[] | null>([])
 const { data: availableCategories } = await useAsyncData(
   async () => await getAllAvailableCategories()
 )

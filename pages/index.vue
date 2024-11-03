@@ -17,12 +17,12 @@ const { profile } = authStore
     </TheHeader>
 
     <section class="main-section">
-      <h2>Rekomendasi</h2>
+      <h2 class="text-lg">Rekomendasi</h2>
       <HomeBookList :type-id="1" />
     </section>
 
     <section class="main-section">
-      <h2>Koleksi</h2>
+      <h2 class="text-lg">Koleksi</h2>
       <HomeBookList :type-id="2" />
     </section>
   </div>

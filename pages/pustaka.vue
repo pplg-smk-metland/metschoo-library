@@ -50,7 +50,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="max-w-screen-2xl mx-auto">
+  <div class="flex flex-col gap-4 max-w-screen-2xl mx-auto">
     <TheHeader>
       <template #header-heading> Pustaka </template>
       <template #header-text>

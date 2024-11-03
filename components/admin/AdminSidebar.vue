@@ -5,10 +5,6 @@ import IconArrowDownDrop from "~icons/mdi/arrow-down-drop"
 import PanelMenu from "primevue/panelmenu"
 import type { Pengguna } from "@/types"
 
-definePageMeta({
-  layout: "admin",
-})
-
 interface Props {
   profile: Pengguna | null
 }
@@ -84,7 +80,7 @@ const toggle = (e: Event) => {
     </header>
 
     <Popover ref="popover">
-      <CTA label="Keluar akun" @click="signOut" />
+      <CTA label="Keluar akun" severity="danger" @click="signOut" />
     </Popover>
 
     <PanelMenu :model="sidebarLinks">

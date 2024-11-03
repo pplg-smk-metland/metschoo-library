@@ -169,7 +169,7 @@ supabase
     <section class="main-section">
       <h2 class="leading-relaxed mb-4">Buku yang belum dikonfirmasi</h2>
 
-      <DataTable :value="peminjamanData?.bukusBorrowPending" size="small">
+      <DataTable :value="peminjamanData?.bukusBorrowPending">
         <template #empty>
           <span class="text-gray-300 dark:text-gray-600">Belum ada</span>
         </template>
@@ -188,7 +188,7 @@ supabase
     <section class="main-section flex-1">
       <h2 class="leading-relaxed mb-4">Buku mau dikembalikan</h2>
 
-      <DataTable :value="peminjamanData?.bukusReturnPending" size="small">
+      <DataTable :value="peminjamanData?.bukusReturnPending">
         <template #empty>
           <span class="text-gray-300 dark:text-gray-600">Belum ada</span>
         </template>

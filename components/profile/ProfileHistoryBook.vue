@@ -30,9 +30,9 @@ onMounted(async () => {
     </figure>
 
     <div class="flex flex-col justify-between py-2 flex-1 leading-none">
-      <h3 class="text-lg font-normal leading-[.9]">{{ buku.judul }}</h3>
+      <h3 class="font-normal leading-[.9] line-clamp-2">{{ buku.judul }}</h3>
 
-      <p>
+      <p class="mt-auto">
         <span class="text-sm text-gray-500 dark:text-gray-400">dipinjam pada</span>
         <span class="block">{{ formatDate(new Date(tgl_pinjam!)) }}</span>
       </p>
