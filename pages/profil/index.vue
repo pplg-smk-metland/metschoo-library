@@ -31,7 +31,7 @@ async function getPeminjamanHistory() {
 const authStore = useAuthStore()
 const user = useSupabaseUser()
 
-const { data: profile } = useAsyncData(async () => await authStore.getProfile(user.value.id))
+const { data: profile } = useAsyncData(async () => await authStore.getProfile(user.value!.id))
 
 const { data: peminjaman } = useAsyncData(async () => {
   const [history, dataPeminjaman] = await Promise.all([getPeminjamanHistory(), getPeminjamanData()])
