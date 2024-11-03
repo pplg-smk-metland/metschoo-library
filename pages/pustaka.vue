@@ -40,6 +40,7 @@ watch(
     const { data } = await useAsyncData("books", async () => cariBuku(newTerm as string))
 
     if (data.value) books.value = data.value
+    term.value = route.query.term
   }
 )
 
