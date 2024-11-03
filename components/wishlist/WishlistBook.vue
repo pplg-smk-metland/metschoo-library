@@ -39,7 +39,7 @@ onMounted(async () => {
 
       <div class="button-container">
         <CTA label="Pinjam buku" @click="$emit('pinjamBuku')" />
-        <CTA label="Hapus dari wishlist" @click="$emit('hapusBuku')" severity="danger" />
+        <CTA label="Hapus dari wishlist" severity="danger" @click="$emit('hapusBuku')" />
       </div>
     </article>
   </li>

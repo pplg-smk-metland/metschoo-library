@@ -74,13 +74,13 @@ const toggle = (e: Event) => {
       <p class="order-last m-0">
         {{ props.profile?.email }}
       </p>
-      <CTA label="toggle" @click="toggle" class="row-span-2">
+      <CTA label="toggle" class="row-span-2" @click="toggle">
         <IconArrowDownDrop class="text-lg" />
       </CTA>
     </header>
 
     <Popover ref="popover">
-      <CTA label="Keluar akun" @click="signOut" severity="danger" />
+      <CTA label="Keluar akun" severity="danger" @click="signOut" />
     </Popover>
 
     <PanelMenu :model="sidebarLinks">

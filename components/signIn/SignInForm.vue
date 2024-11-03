@@ -111,11 +111,12 @@ async function handleSignUp() {
         />
 
         <label for="login-password">Password</label>
-        <InputText
-          id="login-password"
+        <Password
           v-model="data.password"
+          fluid
+          toggle-mask
+          input-id="login-password"
           required
-          type="password"
           placeholder="Password Anda"
         />
         <CTA type="submit" label="Masuk" />
@@ -144,9 +145,9 @@ async function handleSignUp() {
         />
         <label for="signup-password">Password</label>
         <Password
-          id="signup-password"
           v-model="data.password"
-          class="w-full"
+          fluid
+          input-id="signup-password"
           required
           toggle-mask
           placeholder="Password Anda"
@@ -154,9 +155,11 @@ async function handleSignUp() {
         <label for="confirm-password">Konfirmasi Password</label>
         <Password
           v-model="data.confirmPassword"
-          class="w-full"
-          placeholder="Ketik Ulang Password"
+          fluid
+          input-id="confirm-password"
           required
+          toggle-mask
+          placeholder="Ketik Ulang Password"
         />
 
         <CTA type="submit" label="Daftar" class="block" />
