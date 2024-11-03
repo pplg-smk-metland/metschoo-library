@@ -1,6 +1,6 @@
 <template>
-  <header>
-    <div class="header__text">
+  <header class="flex flex-wrap justify-between">
+    <div class="flex-1">
       <h1>
         <slot name="header-heading"> Metschoo Library </slot>
       </h1>
@@ -9,19 +9,8 @@
       </p>
     </div>
 
-    <div class="header__search-bar">
+    <div class="flex-1">
       <SearchBar />
     </div>
   </header>
 </template>
-
-<style scoped>
-header {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-header > * {
-  flex-grow: 1;
-}
-</style>

@@ -171,7 +171,7 @@ onMounted(async () => {
     <section class="main-section">
       <h2 class="leading-relaxed mb-4">Buku yang belum dikonfirmasi</h2>
 
-      <DataTable :value="bukusBorrowPending" size="small">
+      <DataTable :value="bukusBorrowPending">
         <template #empty>
           <span class="text-gray-300 dark:text-gray-600">Belum ada</span>
         </template>
@@ -190,7 +190,7 @@ onMounted(async () => {
     <section class="main-section flex-1">
       <h2 class="leading-relaxed mb-4">Buku mau dikembalikan</h2>
 
-      <DataTable :value="bukusReturnPending" size="small">
+      <DataTable :value="bukusReturnPending">
         <template #empty>
           <span class="text-gray-300 dark:text-gray-600">Belum ada</span>
         </template>

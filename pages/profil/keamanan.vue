@@ -82,29 +82,32 @@ onMounted(async () => {
 
 <template>
   <PageHeader heading="Ubah kredensial" class="nav">
-    <CTA as="router-link" link to="/profil" label="Kembali" class="order-first">
+    <CTA as="router-link" link to="/profil" label="Kembali" class="order-first px-0">
       <IconArrowLeft />
     </CTA>
   </PageHeader>
 
   <section class="main-section">
-    <h2>Ubah password</h2>
+    <h2 class="text-lg mb-2">Ubah password</h2>
+
     <form class="flex flex-col gap-2" @submit.prevent="ubahKredensial">
       <label for="password">Password</label>
-      <InputText
-        id="password"
+      <Password
         v-model="kredensialPengguna.password"
-        type="password"
+        input-id="password"
+        toggle-mask
+        fluid
         name="password"
         placeholder="Password rahasia anda"
         required
       />
 
       <label for="confirm-password">konfirmasi password</label>
-      <InputText
-        id="confirm-password"
+      <Password
         v-model="kredensialPengguna.passwordKonfirmasi"
-        type="password"
+        input-id="password"
+        toggle-mask
+        fluid
         name="confirm-password"
         placeholder="Password rahasia anda"
         required
@@ -115,10 +118,8 @@ onMounted(async () => {
     </form>
   </section>
 
-  <Divider />
-
   <section class="main-section">
-    <h2>Ubah email</h2>
+    <h2 class="text-lg mb-2">Ubah email</h2>
 
     <form class="flex flex-col gap-2" @submit.prevent="ubahEmail">
       <label for="email">Email</label>
@@ -140,7 +141,7 @@ onMounted(async () => {
   <Divider />
 
   <section class="main-section">
-    <h2>Keluar dari akun</h2>
+    <h2 class="text-lg mb-2 text-red-500">Keluar dari akun</h2>
     <p>Klik disini untuk keluar dari akun anda</p>
 
     <div class="button-container">

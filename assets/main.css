@@ -1,5 +1,17 @@
 @import "./base.css";
 
+h1 {
+  @apply text-4xl;
+}
+
+h2 {
+  @apply leading-[1];
+}
+
+h3 {
+  @apply font-bold;
+}
+
 .form-control {
   background: transparent;
   outline: 2px solid var(--neutral);
@@ -7,15 +19,11 @@
   border-radius: 0.5rem;
 }
 
-input {
-  width: 100%;
-}
-
 label {
   display: block;
   line-height: 1;
 
-  @apply dark:text-gray-300;
+  @apply dark:text-gray-400;
 }
 
 button:disabled {
@@ -57,7 +65,7 @@ a {
 }
 
 .main-section {
-  @apply p-6 bg-slate-100 dark:bg-surface-800/70 rounded-lg;
+  @apply p-6 bg-slate-100 dark:bg-surface-700/50 rounded-lg;
 }
 
 table {

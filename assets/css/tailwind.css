@@ -1,21 +1,22 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+@import "../primevue/tailwind.css";
 
-@layer components {
-  h1 {
-    @apply text-4xl;
-  }
-
-  h2 {
-    @apply leading-[1] mb-2 dark:text-gray-400;
-  }
-
-  h3 {
-    @apply font-bold;
-  }
-
-  p {
-    @apply my-2;
-  }
-}
+/* @layer components { */
+/*   h1 { */
+/*     @apply text-4xl; */
+/*   } */
+/**/
+/*   h2 { */
+/*     @apply leading-[1] mb-2 dark:text-gray-400; */
+/*   } */
+/**/
+/*   h3 { */
+/*     @apply font-bold; */
+/*   } */
+/**/
+/*   p { */
+/*     @apply my-2; */
+/*   } */
+/* } */
