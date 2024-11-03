@@ -78,7 +78,7 @@ async function addNewBook(buku: Buku) {
   }
 }
 
-const availableCategories = ref<Kategori[] | null>([])
+const availableCategories = ref<Kategori[]>()
 
 onMounted(async () => {
   availableCategories.value = await getAllAvailableCategories()
