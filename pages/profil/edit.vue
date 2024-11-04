@@ -5,6 +5,7 @@ import Select from "primevue/select"
 import Toast from "primevue/toast"
 import type { Pengguna } from "@/types"
 import { useToast } from "primevue/usetoast"
+import IconArrowLeft from "~icons/mdi/arrow-left"
 
 useHead({
   title: "Edit profil",
@@ -52,7 +53,7 @@ async function updateProfile() {
 <template>
   <PageHeader heading="Edit profil">
     <CTA as="router-link" link to="/profil" label="Kembali" class="order-first">
-      <IconArrowLeft class="order-first" />
+      <IconArrowLeft />
     </CTA>
   </PageHeader>
 
@@ -70,7 +71,7 @@ async function updateProfile() {
       <Select
         v-model="user.kelas"
         :options="['X', 'XI', 'XII']"
-        placeholder="kelas berapa kamu"
+        placeholder="Kelas Berapa Kamu"
         checkmark
       />
 
@@ -83,7 +84,7 @@ async function updateProfile() {
 
   <section v-else>
     <h1>Pengguna tidak ditemukan!</h1>
-    <p>silahkan refresh jika profil anda tidak muncul.</p>
+    <p>Silahkan refresh jika profil anda tidak muncul.</p>
   </section>
 
   <Toast />
