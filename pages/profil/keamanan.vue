@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useDialog } from "@/composables"
-
+import InputText from "primevue/inputtext"
+import Password from "primevue/password"
 import type { AuthError } from "@supabase/supabase-js"
 import type { Database } from "~/types/database.types.ts"
 
