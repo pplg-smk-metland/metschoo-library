@@ -14,29 +14,16 @@ definePageMeta({
   layout: "admin",
 })
 
-const searchTerm = ref("")
-const allCategories = ref<Kategori[]>([])
+const { data: categories } = useAsyncData(async () => await getAllAvailableCategories())
 
-const categoryOptions = computed(() => {
-  return [{ id: 0, kategori: "semua" }, ...allCategories.value]
+const categoriesOptions = computed(() => {
+  return [{ id: 0, kategori: "semua" }, ...(categories.value || [])]
 })
 
 const selectedCategory = ref<Kategori["id"] | null>(null)
 
-interface SearchResult {
-  no_isbn: string
-  judul: string
-  penulis: string
-  penerbit: string
-  tahun_terbit: string
-  kategori_buku: {
-    kategori: string
-  } | null
-}
-
-const searchResults = ref<SearchResult[] | never>([])
-
-const isLoading = ref(false)
+const { data: searchResults } = useAsyncData(async () => await searchBukus({}))
+const searchTerm = ref("")
 
 const route = useRoute()
 
@@ -44,6 +31,8 @@ watch(
   () => route.query,
   async () => {
     const { term, category } = route.query
+    searchTerm.value = term as string
+    selectedCategory.value = Number(category)
 
     searchResults.value = await searchBukus({
       searchTerm: term as string,
@@ -51,11 +40,6 @@ watch(
     })
   }
 )
-
-onMounted(async () => {
-  searchResults.value = await searchBukus({})
-  allCategories.value = await getAllAvailableCategories()
-})
 
 async function handleSearchBuku() {
   await navigateTo({
@@ -78,7 +62,7 @@ async function handleSearchBuku() {
       <Select
         v-model="selectedCategory"
         placeholder="pilih kategori"
-        :options="categoryOptions"
+        :options="categoriesOptions"
         option-label="kategori"
         option-value="id"
         checkmark
@@ -89,9 +73,7 @@ async function handleSearchBuku() {
   </PageHeader>
 
   <section class="main-section">
-    <LoadingSpinner v-if="isLoading" />
-
-    <DataTable v-else :value="searchResults" scroll-height="60vh" scrollable paginator :rows="20">
+    <DataTable :value="searchResults" scroll-height="60vh" scrollable paginator :rows="20">
       <Column field="judul" header="Judul">
         <template #body="slotProps">
           <NuxtLink :to="`/admin/buku/${slotProps.data.no_isbn}`">
@@ -106,7 +88,7 @@ async function handleSearchBuku() {
       <Column field="kategori_buku.kategori" header="Kategori" sortable />
 
       <template #empty>Tidak ada buku ditemukan.</template>
-      <template #footer>Menampilkan {{ searchResults.length }} buku.</template>
+      <template #footer>Menampilkan {{ searchResults?.length }} buku.</template>
     </DataTable>
   </section>
 </template>
