@@ -2,7 +2,7 @@
 import { useBuku, useDialog } from "@/composables"
 import Select from "primevue/select"
 import { StorageError } from "@supabase/storage-js"
-import type { Buku, Kategori } from "@/types"
+import type { Buku } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
 import IconArrowLeft from "~icons/mdi/arrow-left"
 import type { Database } from "~/types/database.types.ts"
@@ -78,10 +78,21 @@ async function addNewBook(buku: Buku) {
   }
 }
 
-const availableCategories = ref<Kategori[]>()
+const { data: availableCategories } = await useAsyncData(
+  async () => await getAllAvailableCategories()
+)
+
+const toast = useToast()
 
 onMounted(async () => {
-  availableCategories.value = await getAllAvailableCategories()
+  if (!availableCategories.value) {
+    toast.add({
+      severity: "error",
+      summary: "Gagal membuat kategori",
+      detail: "gagal memuat kategori. Silahkan refresh atau coba lagi dalam beberapa saat.",
+      life: 10000,
+    })
+  }
 })
 
 const router = useRouter()
@@ -155,7 +166,7 @@ const router = useRouter()
         <Select
           v-model="buku.kategori_id"
           placeholder="Pilih kategori"
-          :options="availableCategories"
+          :options="availableCategories ?? []"
           checkmark
           option-label="kategori"
           option-value="id"
@@ -249,6 +260,8 @@ const router = useRouter()
       </TheDialog>
     </form>
   </section>
+
+  <Toast />
 </template>
 
 <style scoped>

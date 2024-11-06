@@ -8,6 +8,7 @@ onMounted(async () => {
 
 <template>
   <TheNavbar />
+  <NuxtLoadingIndicator />
   <main class="p-2 md:p-8">
     <slot />
   </main>

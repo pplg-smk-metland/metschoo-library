@@ -19,6 +19,7 @@ onMounted(async () => {
 <template>
   <div class="grid flex-1 wrapper">
     <TheNavbar />
+    <NuxtLoadingIndicator />
     <AdminSidebar :profile="profile" />
     <main class="p-4 flex flex-col align-stretch gap-4 mx-auto">
       <slot />

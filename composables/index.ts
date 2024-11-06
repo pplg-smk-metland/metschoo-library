@@ -1,5 +1,6 @@
-import type { Buku, PeminjamanState } from "@/types"
 import { ref } from "vue"
+import type { PostgrestError } from "@supabase/supabase-js"
+import type { Buku, PeminjamanState } from "@/types"
 import type { Database } from "~/types/database.types"
 
 /**
@@ -89,5 +90,24 @@ export async function usePeminjamanState(isbn: Buku["no_isbn"]): Promise<Peminja
     isBorrowable,
     isCancellable,
     isReturnable,
+  }
+}
+
+export async function useCheckWishlist(isbn: Buku["no_isbn"]): Promise<boolean> {
+  const supabase = useSupabaseClient<Database>()
+
+  try {
+    const { count, error } = await supabase
+      .from("wishlist")
+      .select("no_isbn", { count: "exact", head: true })
+      .eq("no_isbn", isbn)
+
+    if (error) throw error
+    if (!count) return false
+
+    return count !== null && count !== 0
+  } catch (err) {
+    console.trace(err as PostgrestError)
+    return false
   }
 }

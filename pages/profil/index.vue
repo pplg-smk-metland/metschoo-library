@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import type { PostgrestError, QueryData } from "@supabase/supabase-js"
 import { getPeminjamanData } from "~/lib/peminjaman"
-import type { Pengguna } from "~/types"
 import type { Database } from "~/types/database.types"
-import type { PeminjamanData } from "@/pages/admin/index.vue"
 
 useHead({
   title: "Profil",
@@ -15,27 +13,11 @@ definePageMeta({
 
 const supabase = useSupabaseClient<Database>()
 
-const bukuYangDipinjam = ref<PeminjamanData>([])
-
-/** daftar buku yang belum dikonfirmasi */
-const bukuBlumDikonfirmasi = computed(() => {
-  return bukuYangDipinjam.value.filter(({ state_id }) => state_id === 1)
-})
-
-const bukuSudahDikonfirmasi = computed(() => {
-  return bukuYangDipinjam.value.filter(({ state_id }) => state_id === 2)
-})
-
-const isLoading = ref(false)
-
 const historyQuery = supabase.from("peminjaman_history").select("*")
 export type History = QueryData<typeof historyQuery>
 
-const history = ref<History>([])
-
 async function getPeminjamanHistory() {
   try {
-    isLoading.value = true
     const { data, error } = await historyQuery
 
     if (error) throw error
@@ -43,22 +25,26 @@ async function getPeminjamanHistory() {
   } catch (err) {
     console.error((err as PostgrestError).message)
     return []
-  } finally {
-    isLoading.value = false
   }
 }
 
 const authStore = useAuthStore()
-const profile = ref<Pengguna | null>()
+const user = useSupabaseUser()
 
-authStore.$subscribe((_, state) => {
-  profile.value = state.profile
+const { data: profile } = useAsyncData(async () => await authStore.getProfile(user.value!.id))
+
+const { data: peminjaman } = useAsyncData(async () => {
+  const [history, dataPeminjaman] = await Promise.all([getPeminjamanHistory(), getPeminjamanData()])
+  return { history, dataPeminjaman }
 })
 
-onMounted(async () => {
-  history.value = await getPeminjamanHistory()
+/** daftar buku yang belum dikonfirmasi */
+const bukuBlumDikonfirmasi = computed(() => {
+  return peminjaman.value?.dataPeminjaman.filter(({ state_id }) => state_id === 1)
+})
 
-  bukuYangDipinjam.value = await getPeminjamanData()
+const bukuSudahDikonfirmasi = computed(() => {
+  return peminjaman.value?.dataPeminjaman.filter(({ state_id }) => state_id === 2)
 })
 </script>
 
@@ -96,16 +82,15 @@ onMounted(async () => {
     </section>
 
     <section class="main-section col-span-full lg:col-span-9">
-      <LoadingSpinner v-if="isLoading" />
-      <p v-else-if="!isLoading && bukuYangDipinjam.length === 0">Ga ada buku yang dipinjam</p>
+      <p v-if="peminjaman?.dataPeminjaman.length === 0">Ga ada buku yang dipinjam</p>
 
       <Tabs v-else value="belum-dikonfirmasi">
         <TabList>
           <Tab value="belum-dikonfirmasi" class="flex gap-2 items-center">
             Belum dikonfirmasi
             <Badge
-              v-show="bukuBlumDikonfirmasi.length"
-              :value="bukuBlumDikonfirmasi.length"
+              v-show="bukuBlumDikonfirmasi?.length"
+              :value="bukuBlumDikonfirmasi?.length"
               severity="secondary"
               size="small"
             />
@@ -114,8 +99,8 @@ onMounted(async () => {
           <Tab value="sudah-dikonfirmasi" class="flex gap-2 items-center">
             Sudah dikonfirmasi
             <Badge
-              v-show="bukuSudahDikonfirmasi.length"
-              :value="bukuSudahDikonfirmasi.length"
+              v-show="bukuSudahDikonfirmasi?.length"
+              :value="bukuSudahDikonfirmasi?.length"
               severity="secondary"
               size="small"
             />
@@ -125,14 +110,14 @@ onMounted(async () => {
         <TabPanels>
           <TabPanel value="belum-dikonfirmasi">
             <ul class="book-list">
-              <li v-if="!bukuBlumDikonfirmasi.length">ga ada bukunya nih</li>
+              <li v-if="!bukuBlumDikonfirmasi?.length">ga ada bukunya nih</li>
               <ProfileBook v-for="data in bukuBlumDikonfirmasi" :key="data.no_isbn" :data="data" />
             </ul>
           </TabPanel>
 
           <TabPanel value="sudah-dikonfirmasi">
             <ul class="book-list">
-              <li v-if="!bukuSudahDikonfirmasi.length">ga ada bukunya nih</li>
+              <li v-if="!bukuSudahDikonfirmasi?.length">ga ada bukunya nih</li>
               <ProfileBook v-for="data in bukuSudahDikonfirmasi" :key="data.no_isbn" :data="data" />
             </ul>
           </TabPanel>
@@ -144,9 +129,9 @@ onMounted(async () => {
       <h2 class="text-xl font-bold mb-8">Riwayat Peminjaman</h2>
 
       <ul class="flex flex-col gap-4">
-        <li v-if="!history.length" class="message">bukunya ga ada ges</li>
+        <li v-if="!peminjaman?.history.length" class="message">bukunya ga ada ges</li>
         <ProfileHistoryBook
-          v-for="data in history"
+          v-for="data in peminjaman?.history"
           :key="data.buku?.no_isbn"
           class="history-list__item"
           :data="data"

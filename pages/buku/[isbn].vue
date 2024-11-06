@@ -19,7 +19,7 @@ definePageMeta({
 const supabase = useSupabaseClient<Database>()
 const route = useRoute()
 const router = useRouter()
-const isbn = route.params.isbn as string
+const isbn = toRef(route.params.isbn as string)
 
 const toast = useToast()
 const confirm = useConfirm()
@@ -27,57 +27,56 @@ const confirm = useConfirm()
 const user = useSupabaseUser()
 
 const isLoading = ref(false)
-const { buku } = useBuku()
 const imgURL = ref("")
 
-onMounted(async () => {
+/**
+ * get buku data on the server
+ */
+const { data: buku } = useAsyncData(async () => {
   try {
-    buku.value = await getBuku(isbn)
+    return await getBuku(isbn.value)
   } catch (err) {
-    console.error(err as PostgrestError)
+    console.error(err)
+    return null
+  }
+})
 
-    buku.value = null
+onMounted(async () => {
+  imgURL.value = await getBukuImage(isbn.value)
+})
 
+/**
+ * get buku's peminjaman state and check wishlist
+ */
+const peminjamanState = ref<PeminjamanState | null>(null)
+const bukuAdaDiWishlist = ref<boolean | null>(null)
+
+const { data } = await useAsyncData(
+  async () => {
+    const [peminjamanStateData, checkWishlistData] = await Promise.all([
+      usePeminjamanState(isbn.value),
+      useCheckWishlist(isbn.value),
+    ])
+
+    return { peminjamanStateData, checkWishlistData }
+  },
+  { watch: [isbn] }
+)
+
+bukuAdaDiWishlist.value = data.value?.checkWishlistData ?? null
+peminjamanState.value = data.value?.peminjamanStateData ?? null
+
+onMounted(async () => {
+  if (bukuAdaDiWishlist.value === null || peminjamanState.value === null) {
     toast.add({
       severity: "error",
-      summary: "Gagal",
-      detail: "Gagal menemukan buku.",
+      summary: "gagal mengambil data peminjaman atau wishlist",
+      detail:
+        "gagal mengambil data peminjaman atau wishlist. Silahkan refresh atau coba lagi dalam beberapa saat.",
       life: 10000,
     })
   }
-
-  imgURL.value = await getBukuImage(isbn)
 })
-
-const peminjamanState = ref<PeminjamanState | null>(null)
-
-onMounted(async () => {
-  try {
-    peminjamanState.value = await usePeminjamanState(isbn)
-    bukuAdaDiWishlist.value = await checkWishlist(isbn)
-  } catch (err) {
-    console.error(err as PostgrestError)
-  }
-})
-
-const bukuAdaDiWishlist = ref(false)
-
-async function checkWishlist(isbn: string) {
-  try {
-    const { count, error } = await supabase
-      .from("wishlist")
-      .select("no_isbn", { count: "exact", head: true })
-      .eq("no_isbn", isbn)
-
-    if (error) throw error
-    if (!count) return false
-
-    return count !== null && count !== 0
-  } catch (err) {
-    console.trace(err as PostgrestError)
-    return false
-  }
-}
 
 const dialogIsVisible = ref(false)
 const { dialog: dialogError } = useDialog()
@@ -188,6 +187,9 @@ async function kembalikanBuku({ judul }: Buku, id: Peminjaman["id"]) {
 
 const confirmWishlistIsVisible = ref(false)
 
+/**
+ * handle confirmation for adding a new entry to wishlist.
+ */
 function konfirmasiMasukkanWishlist(buku: Buku, e: Event) {
   confirm.require({
     target: e.currentTarget as HTMLElement,
@@ -202,14 +204,16 @@ function konfirmasiMasukkanWishlist(buku: Buku, e: Event) {
   })
 }
 
+/**
+ * handle adding a new buku to wishlist.
+ */
 async function masukkanWishlist({ no_isbn }: Buku) {
   if (!user.value) {
-    toast.add({
+    return toast.add({
       severity: "warn",
       summary: "gagal memasukkan buku ke wishlist",
       detail: "silahkan masuk jika anda ingin menambahkan buku ke dalam wishlist",
     })
-    return
   }
 
   try {
@@ -235,6 +239,9 @@ async function masukkanWishlist({ no_isbn }: Buku) {
   }
 }
 
+/**
+ * function to subscribe to realtime peminjaman state change.
+ */
 async function perbaruiDataBuku(payload: RealtimePostgresChangesPayload<Peminjaman>) {
   try {
     peminjamanState.value = await usePeminjamanState((payload.new as Peminjaman).no_isbn)
@@ -256,10 +263,6 @@ supabase
     perbaruiDataBuku
   )
   .subscribe()
-
-// render only on client to prevent hydration mismatch
-const isClient = ref(false)
-onMounted(() => (isClient.value = true))
 </script>
 
 <template>
@@ -273,7 +276,7 @@ onMounted(() => (isClient.value = true))
   <LoadingSpinner v-if="isLoading" />
 
   <section
-    v-else-if="buku && isClient"
+    v-else-if="buku"
     class="buku main-section max-w-6xl mx-auto grid grid-cols-6 grid-rows-2 gap-4 justify-items-start"
   >
     <header class="col-span-full">
@@ -295,7 +298,7 @@ onMounted(() => (isClient.value = true))
       <img class="buku__gambar--bayangan" :src="imgURL" alt="" width="400" height="600" />
     </figure>
 
-    <figcaption class="buku__info col-span-4">
+    <article class="buku__info col-span-4">
       <h1 class="judul max-w-5xl">
         {{ buku.judul }}
       </h1>
@@ -358,7 +361,7 @@ onMounted(() => (isClient.value = true))
           @click="konfirmasiMasukkanWishlist(buku, $event)"
         />
       </div>
-    </figcaption>
+    </article>
 
     <article class="col-span-full md:col-span-4 justify-self-stretch overflow-x-auto h-min">
       <h2>Informasi bibliografi</h2>

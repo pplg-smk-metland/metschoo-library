@@ -18,21 +18,21 @@ const supabase = useSupabaseClient<Database>()
 
 const wishlistQuery = supabase.from("wishlist").select("*, buku(*)")
 type Wishlist = QueryData<typeof wishlistQuery>
-const wishlist = ref<Wishlist>()
+const wishlist = ref<Wishlist>([])
 
-const isLoading = ref(false)
 async function ambilWishlist() {
   try {
-    isLoading.value = true
     const { data, error } = await wishlistQuery
     if (error) throw error
     return data
   } catch (err) {
     console.error((err as PostgrestError).message)
-  } finally {
-    isLoading.value = false
+    return []
   }
 }
+
+const { data } = useAsyncData(async () => await ambilWishlist())
+wishlist.value = data.value ?? []
 
 const toast = useToast()
 
@@ -60,12 +60,9 @@ async function hapusBukuDariWishlist(buku: Buku) {
 }
 
 function hapusBuku(buku: Buku) {
-  wishlist.value = wishlist.value?.filter(({ no_isbn }) => no_isbn !== buku.no_isbn)
+  if (!wishlist.value) return
+  wishlist.value = wishlist.value.filter(({ no_isbn }) => no_isbn !== buku.no_isbn)
 }
-
-onMounted(async () => {
-  wishlist.value = await ambilWishlist()
-})
 
 const router = useRouter()
 const user = useSupabaseUser()
@@ -84,9 +81,8 @@ const user = useSupabaseUser()
     </section>
 
     <section v-else class="main-section">
-      <LoadingSpinner v-if="isLoading" />
-      <p v-if="!isLoading && !wishlist?.length">Kamu belum punya apa-apa dalam wishlist kamu.</p>
-      <ul v-if="wishlist?.length" class="book-list">
+      <p v-if="!wishlist.length">Kamu belum punya apa-apa dalam wishlist kamu.</p>
+      <ul v-else class="book-list">
         <WishlistBook
           v-for="wishlistItem in wishlist"
           :key="wishlistItem.id"

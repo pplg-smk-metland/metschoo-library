@@ -8,34 +8,36 @@ definePageMeta({
 })
 
 const route = useRoute()
+const userId = route.params.id
 
 const supabase = useSupabaseClient<Database>()
 
-const isLoading = ref(false)
 const pengguna = ref<Pengguna | null>(null)
 const peminjaman = ref()
 
-onMounted(async () => {
-  isLoading.value = true
-  const userId = route.params.id
-
+const { data } = await useAsyncData(async () => {
   const { data, error } = await supabase.from("pengguna").select("*").eq("user_id", userId).single()
-  if (error) {
-    console.error(error)
-  }
+  if (error) throw error
+  return data
+})
 
-  pengguna.value = data
-
-  const { data: peminjamanData } = await supabase
+const { data: peminjamanData } = await useAsyncData(async () => {
+  const { data, error } = await supabase
     .from("peminjaman")
     .select("*, buku(judul)")
     .order("tgl_pinjam", { ascending: true })
     .eq("user_id", userId)
-  peminjaman.value = peminjamanData
 
-  isLoading.value = false
+  if (error) throw error
+  return data
 })
 
+onMounted(async () => {
+  pengguna.value = data.value
+  peminjaman.value = peminjamanData.value
+})
+
+// TODO: pindah ke database
 const keteranganText = (state_id: Peminjaman["state_id"]) => {
   switch (state_id) {
     case 1:
@@ -55,9 +57,7 @@ const keteranganText = (state_id: Peminjaman["state_id"]) => {
 </script>
 
 <template>
-  <LoadingSpinner v-if="isLoading" />
-
-  <div v-else-if="!pengguna" class="max-w-100ch mx-auto">
+  <div v-if="!pengguna" class="max-w-100ch mx-auto">
     <h1>pengguna tidak ditemukan!</h1>
 
     <PageHeader heading="gagal memuat pengguna!">
