@@ -31,8 +31,8 @@ const { data: allPeminjamanData } = useAsyncData(async () => await getPeminjaman
 const peminjamanData = computed(() => {
   if (!allPeminjamanData.value) return null
 
-  const bukusBorrowConfirmed = allPeminjamanData.value.filter((data) => data.state_id === 1)
-  const bukusBorrowPending = allPeminjamanData.value.filter((data) => data.state_id === 2)
+  const bukusBorrowPending = allPeminjamanData.value.filter((data) => data.state_id === 1)
+  const bukusBorrowConfirmed = allPeminjamanData.value.filter((data) => data.state_id === 2)
   const bukusReturnPending = allPeminjamanData.value.filter((data) => data.state_id === 4)
 
   return { bukusBorrowConfirmed, bukusBorrowPending, bukusReturnPending }
@@ -59,11 +59,11 @@ const confirm = useConfirm()
 const toast = useToast()
 
 async function konfirmasiPeminjaman(id: Peminjaman["id"]) {
-  try {
-    confirm.require({
-      header: "Konfirmasi peminjaman",
-      message: "Beneran nih mau konfirmasi peminjaman buku?",
-      accept: async () => {
+  confirm.require({
+    header: "Konfirmasi peminjaman",
+    message: "Beneran nih mau konfirmasi peminjaman buku?",
+    accept: async () => {
+      try {
         await confirmBorrowBuku(id)
 
         toast.add({
@@ -72,25 +72,25 @@ async function konfirmasiPeminjaman(id: Peminjaman["id"]) {
           detail: "Sukses mengkonfirmasi peminjaman buku!",
           life: 10000,
         })
-      },
-      reject: () => {
-        toast.add({
-          severity: "info",
-          summary: "Gak jadi",
-          detail: "Gak jadi mengkonfirmasi peminjaman buku.",
-          life: 10000,
-        })
-      },
-    })
-  } catch (err) {
-    console.error((err as PostgrestError).message)
+      } catch (err) {
+        console.error((err as PostgrestError).message)
 
-    toast.add({
-      severity: "error",
-      summary: "Gagal konfirmasi peminjaman",
-      detail: "Gagal mengkonfirmasi peminjaman buku. Silahkan coba lagi",
-    })
-  }
+        toast.add({
+          severity: "error",
+          summary: "Gagal konfirmasi peminjaman",
+          detail: "Gagal mengkonfirmasi peminjaman buku. Silahkan coba lagi",
+        })
+      }
+    },
+    reject: () => {
+      toast.add({
+        severity: "info",
+        summary: "Gak jadi",
+        detail: "Gak jadi mengkonfirmasi peminjaman buku.",
+        life: 10000,
+      })
+    },
+  })
 }
 
 async function konfirmasiPengembalian(dataPeminjaman: Peminjaman, buku: Buku) {
