@@ -11,7 +11,7 @@ const { buku } = data
 const imgURL = ref("")
 
 onMounted(async () => {
-  imgURL.value = await getBukuImage(buku!.no_isbn)
+  imgURL.value = await getBukuImage(buku!.image)
 })
 </script>
 

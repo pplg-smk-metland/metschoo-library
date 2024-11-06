@@ -8,11 +8,7 @@ const props = defineProps<Props>()
 const imgURL = ref("")
 
 onMounted(async () => {
-  try {
-    imgURL.value = await getBukuImage(props.buku.no_isbn)
-  } catch (error) {
-    console.error(error)
-  }
+  imgURL.value = await getBukuImage(props.buku.image)
 })
 </script>
 

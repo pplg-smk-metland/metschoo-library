@@ -10,7 +10,7 @@ defineEmits(["pinjamBuku", "hapusBuku"])
 
 const imgURL = ref("")
 onMounted(async () => {
-  imgURL.value = await getBukuImage(props.buku.no_isbn)
+  imgURL.value = await getBukuImage(props.buku.image)
 })
 </script>
 

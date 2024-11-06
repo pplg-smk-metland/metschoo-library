@@ -15,7 +15,7 @@ const late = computed(() => {
 })
 
 onMounted(async () => {
-  imgUrl.value = await getBukuImage(buku!.no_isbn)
+  imgUrl.value = await getBukuImage(buku!.image)
 })
 </script>
 

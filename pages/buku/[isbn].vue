@@ -27,22 +27,18 @@ const confirm = useConfirm()
 const user = useSupabaseUser()
 
 const isLoading = ref(false)
-const imgURL = ref("")
 
 /**
  * get buku data on the server
  */
-const { data: buku } = useAsyncData(async () => {
-  try {
-    return await getBuku(isbn.value)
-  } catch (err) {
-    console.error(err)
-    return null
-  }
-})
+const { data: buku } = useAsyncData(async () => await getBuku(isbn.value))
 
-onMounted(async () => {
-  imgURL.value = await getBukuImage(isbn.value)
+if (!buku || !buku.value) {
+  console.error("buku tidak ditemukan: ", buku.value)
+}
+
+const { data: imgURL } = useAsyncData(async () => {
+  if (buku.value) return await getBukuImage(buku.value?.image)
 })
 
 /**
@@ -290,12 +286,12 @@ supabase
     >
       <img
         class="w-48 max-w-100 h-100"
-        :src="imgURL"
+        :src="imgURL as string"
         :alt="`sampul buku ${buku.judul}`"
         width="400"
         height="600"
       />
-      <img class="buku__gambar--bayangan" :src="imgURL" alt="" width="400" height="600" />
+      <img class="buku__gambar--bayangan" :src="imgURL as string" alt="" width="400" height="600" />
     </figure>
 
     <article class="buku__info col-span-4">
