@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { Pengguna } from "~/types"
 import type { Database } from "~/types/database.types"
 
 useHead({
@@ -13,9 +12,8 @@ definePageMeta({
 const supabase = useSupabaseClient<Database>()
 
 const toast = useToast()
-const penggunas = ref<Pengguna[] | null>(null)
 
-const { data } = await useAsyncData(async () => {
+const { data: penggunas } = await useAsyncData(async () => {
   try {
     const { data, error } = await supabase.from("pengguna").select("*, pengguna_roles(name)")
     if (error) {
@@ -33,10 +31,6 @@ const { data } = await useAsyncData(async () => {
     console.error(err)
     return null
   }
-})
-
-onMounted(async () => {
-  penggunas.value = data.value
 })
 </script>
 
