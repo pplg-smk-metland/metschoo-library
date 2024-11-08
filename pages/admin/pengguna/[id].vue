@@ -4,7 +4,7 @@ import type { Peminjaman, Pengguna } from "~/types"
 import type { Database } from "~/types/database.types"
 
 definePageMeta({
-  layout: "default",
+  layout: "profile-edit",
 })
 
 const route = useRoute()
@@ -57,15 +57,15 @@ const keteranganText = (state_id: Peminjaman["state_id"]) => {
 </script>
 
 <template>
-  <div v-if="!pengguna" class="max-w-100ch mx-auto">
+  <template v-if="!pengguna" class="max-w-100ch mx-auto">
     <h1>pengguna tidak ditemukan!</h1>
 
     <PageHeader heading="gagal memuat pengguna!">
       <p>Silahkan coba lagi.</p>
     </PageHeader>
-  </div>
+  </template>
 
-  <div v-else class="max-w-[100ch] mx-auto">
+  <template v-else class="max-w-[100ch] mx-auto">
     <PageHeader :heading="pengguna.nama">
       <routerLink to="/admin/pengguna">kembali</routerLink>
 
@@ -75,10 +75,12 @@ const keteranganText = (state_id: Peminjaman["state_id"]) => {
 
     <Divider />
 
-    <div class="main-section">
-      <h2>Data peminjaman untuk {{ pengguna.nama }}</h2>
+    <section class="main-section">
+      <DataTable :value="peminjaman" striped-rows>
+        <template #header>
+          <p>Data peminjaman untuk {{ pengguna.nama }}</p>
+        </template>
 
-      <DataTable :value="peminjaman">
         <Column header="Buku">
           <template #body="slotProps">
             {{ slotProps.data.buku.judul }}
@@ -116,10 +118,12 @@ const keteranganText = (state_id: Peminjaman["state_id"]) => {
           </template>
         </Column>
       </DataTable>
-    </div>
+    </section>
+
+    <Divider />
 
     <section class="main-section">
-      <h2>Aksi</h2>
+      <h2 class="text-lg font-bold">Aksi</h2>
 
       <div class="flex flex-col items-start gap-4">
         <CTA label="edit" />
@@ -127,5 +131,5 @@ const keteranganText = (state_id: Peminjaman["state_id"]) => {
         <CTA label="hapus" severity="danger" />
       </div>
     </section>
-  </div>
+  </template>
 </template>
