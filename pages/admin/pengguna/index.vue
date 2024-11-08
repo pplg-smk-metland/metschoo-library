@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { Pengguna } from "~/types"
 import type { Database } from "~/types/database.types"
 
 useHead({

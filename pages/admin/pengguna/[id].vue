@@ -49,15 +49,15 @@ const keteranganText = (state_id: Peminjaman["state_id"]) => {
 </script>
 
 <template>
-  <template v-if="!pengguna" class="max-w-100ch mx-auto">
+  <div v-if="!pengguna" class="max-w-100ch mx-auto">
     <h1>pengguna tidak ditemukan!</h1>
 
     <PageHeader heading="gagal memuat pengguna!">
       <p>Silahkan coba lagi.</p>
     </PageHeader>
-  </template>
+  </div>
 
-  <template v-else class="max-w-[100ch] mx-auto">
+  <div v-else class="max-w-[100ch] mx-auto">
     <PageHeader :heading="pengguna.nama">
       <routerLink to="/admin/pengguna">kembali</routerLink>
 
@@ -123,5 +123,5 @@ const keteranganText = (state_id: Peminjaman["state_id"]) => {
         <CTA label="hapus" severity="danger" />
       </div>
     </section>
-  </template>
+  </div>
 </template>
