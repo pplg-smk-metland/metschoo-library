@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { formatDate } from "#imports"
-import type { Peminjaman, Pengguna } from "~/types"
+import type { Peminjaman } from "~/types"
 import type { Database } from "~/types/database.types"
 
 definePageMeta({
@@ -12,16 +12,13 @@ const userId = route.params.id
 
 const supabase = useSupabaseClient<Database>()
 
-const pengguna = ref<Pengguna | null>(null)
-const peminjaman = ref()
-
-const { data } = await useAsyncData(async () => {
+const { data: pengguna } = await useAsyncData(async () => {
   const { data, error } = await supabase.from("pengguna").select("*").eq("user_id", userId).single()
   if (error) throw error
   return data
 })
 
-const { data: peminjamanData } = await useAsyncData(async () => {
+const { data: peminjaman } = await useAsyncData(async () => {
   const { data, error } = await supabase
     .from("peminjaman")
     .select("*, buku(judul)")
@@ -30,11 +27,6 @@ const { data: peminjamanData } = await useAsyncData(async () => {
 
   if (error) throw error
   return data
-})
-
-onMounted(async () => {
-  pengguna.value = data.value
-  peminjaman.value = peminjamanData.value
 })
 
 // TODO: pindah ke database
