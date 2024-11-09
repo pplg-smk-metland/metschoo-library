@@ -37,9 +37,12 @@ if (!buku || !buku.value) {
   console.error("buku tidak ditemukan: ", buku.value)
 }
 
-const { data: imgURL } = useAsyncData(async () => {
-  if (buku.value) return await getBukuImage(buku.value?.image)
-})
+const { data: imgURL } = useAsyncData(
+  async () => {
+    if (buku.value) return await getBukuImage(buku.value?.image)
+  },
+  { watch: [buku] }
+)
 
 /**
  * get buku's peminjaman state and check wishlist
