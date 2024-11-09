@@ -8,11 +8,7 @@ interface Props {
 const { data } = defineProps<Props>()
 const { buku } = data
 
-const imgURL = ref("")
-
-onMounted(async () => {
-  imgURL.value = await getBukuImage(buku!.image)
-})
+const { data: imgURL } = useAsyncData(buku!.no_isbn, async () => await getBukuImage(buku!.image))
 </script>
 
 <template>
@@ -25,7 +21,7 @@ onMounted(async () => {
     >
       <figure>
         <img
-          :src="imgURL"
+          :src="imgURL as string"
           class="w-full object-cover"
           alt="gambar buku"
           loading="lazy"
