@@ -3,7 +3,6 @@ import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import DataTable from "primevue/datatable"
 import Column from "primevue/column"
 import { getPeminjamanData } from "@/lib/peminjaman"
-import type { Peminjaman } from "@/types"
 import { formatDate } from "#imports"
 
 useHead({
@@ -14,15 +13,14 @@ definePageMeta({
   layout: "admin",
 })
 
-const peminjamanData = ref<Peminjaman[]>([])
 const startDate = ref<Date | null>(null)
 const endDate = ref<Date | null>(null)
 
-const isLoading = ref(false)
+const { data: peminjamanData } = useAsyncData(
+  async () => await getPeminjamanData(startDate.value, endDate.value)
+)
 
-onMounted(async () => {
-  handleFilterPeminjaman()
-})
+const isLoading = ref(false)
 
 async function handleFilterPeminjaman() {
   isLoading.value = true
@@ -72,6 +70,9 @@ async function handleFilterPeminjaman() {
 
       <template #loading>
         <LoadingSpinner />
+      </template>
+      <template #header>
+        <p>Menampilkan {{ peminjamanData?.length }} peminjaman.</p>
       </template>
 
       <Column field="pengguna.nama" header="Peminjam" />

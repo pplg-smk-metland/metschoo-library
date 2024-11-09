@@ -73,7 +73,18 @@ async function handleSearchBuku() {
   </PageHeader>
 
   <section class="main-section">
-    <DataTable :value="searchResults" scroll-height="60vh" scrollable paginator :rows="20">
+    <DataTable
+      :value="searchResults"
+      scroll-height="60vh"
+      scrollable
+      paginator
+      :rows="20"
+      striped-rows
+    >
+      <template #header>
+        <p>Menampilkan {{ searchResults?.length }} buku.</p>
+      </template>
+
       <Column field="judul" header="Judul">
         <template #body="slotProps">
           <NuxtLink :to="`/admin/buku/${slotProps.data.no_isbn}`">
@@ -88,7 +99,6 @@ async function handleSearchBuku() {
       <Column field="kategori_buku.kategori" header="Kategori" sortable />
 
       <template #empty>Tidak ada buku ditemukan.</template>
-      <template #footer>Menampilkan {{ searchResults?.length }} buku.</template>
     </DataTable>
   </section>
 </template>

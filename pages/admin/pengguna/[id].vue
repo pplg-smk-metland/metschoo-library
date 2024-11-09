@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { formatDate } from "#imports"
-import type { Peminjaman, Pengguna } from "~/types"
+import type { Peminjaman } from "~/types"
 import type { Database } from "~/types/database.types"
 
 definePageMeta({
-  layout: "default",
+  layout: "profile-edit",
 })
 
 const route = useRoute()
@@ -12,16 +12,13 @@ const userId = route.params.id
 
 const supabase = useSupabaseClient<Database>()
 
-const pengguna = ref<Pengguna | null>(null)
-const peminjaman = ref()
-
-const { data } = await useAsyncData(async () => {
+const { data: pengguna } = await useAsyncData(async () => {
   const { data, error } = await supabase.from("pengguna").select("*").eq("user_id", userId).single()
   if (error) throw error
   return data
 })
 
-const { data: peminjamanData } = await useAsyncData(async () => {
+const { data: peminjaman } = await useAsyncData(async () => {
   const { data, error } = await supabase
     .from("peminjaman")
     .select("*, buku(judul)")
@@ -30,11 +27,6 @@ const { data: peminjamanData } = await useAsyncData(async () => {
 
   if (error) throw error
   return data
-})
-
-onMounted(async () => {
-  pengguna.value = data.value
-  peminjaman.value = peminjamanData.value
 })
 
 // TODO: pindah ke database
@@ -75,10 +67,12 @@ const keteranganText = (state_id: Peminjaman["state_id"]) => {
 
     <Divider />
 
-    <div class="main-section">
-      <h2>Data peminjaman untuk {{ pengguna.nama }}</h2>
+    <section class="main-section">
+      <DataTable :value="peminjaman" striped-rows>
+        <template #header>
+          <p>Data peminjaman untuk {{ pengguna.nama }}</p>
+        </template>
 
-      <DataTable :value="peminjaman">
         <Column header="Buku">
           <template #body="slotProps">
             {{ slotProps.data.buku.judul }}
@@ -116,10 +110,12 @@ const keteranganText = (state_id: Peminjaman["state_id"]) => {
           </template>
         </Column>
       </DataTable>
-    </div>
+    </section>
+
+    <Divider />
 
     <section class="main-section">
-      <h2>Aksi</h2>
+      <h2 class="text-lg font-bold">Aksi</h2>
 
       <div class="flex flex-col items-start gap-4">
         <CTA label="edit" />
