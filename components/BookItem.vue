@@ -5,15 +5,10 @@ interface Props {
   buku: Buku
 }
 const props = defineProps<Props>()
-const imgURL = ref("")
-
-onMounted(async () => {
-  try {
-    imgURL.value = await getBukuImage(props.buku.no_isbn)
-  } catch (error) {
-    console.error(error)
-  }
-})
+const { data: imgURL } = await useAsyncData(
+  props.buku.no_isbn,
+  async () => await getBukuImage(props.buku.image)
+)
 </script>
 
 <template>
@@ -24,7 +19,7 @@ onMounted(async () => {
     >
       <figure>
         <img
-          :src="imgURL"
+          :src="imgURL as string"
           class="rounded-lg w-full min-h-96 object-cover bg-no-repeat"
           :alt="`cover buku ${buku.judul}`"
           loading="lazy"

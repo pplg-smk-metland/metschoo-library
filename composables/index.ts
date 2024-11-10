@@ -17,6 +17,7 @@ export function useBuku() {
     asal: "",
     jumlah_exspl: 0,
     kategori_id: 0,
+    image: null,
   })
 
   return { buku }

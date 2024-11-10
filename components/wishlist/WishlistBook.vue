@@ -8,10 +8,10 @@ const props = defineProps<Props>()
 
 defineEmits(["pinjamBuku", "hapusBuku"])
 
-const imgURL = ref("")
-onMounted(async () => {
-  imgURL.value = await getBukuImage(props.buku.no_isbn)
-})
+const { data: imgURL } = useAsyncData(
+  props.buku.no_isbn,
+  async () => await getBukuImage(props.buku.image)
+)
 </script>
 
 <template>
@@ -19,7 +19,7 @@ onMounted(async () => {
     <figure>
       <NuxtLink :to="`/buku/${buku.no_isbn}`">
         <img
-          :src="imgURL"
+          :src="imgURL as string"
           class="buku__gambar"
           alt="gambar buku"
           loading="lazy"

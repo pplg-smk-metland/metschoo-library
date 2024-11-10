@@ -10,7 +10,8 @@
     "postinstall": "nuxt prepare",
     "format": "prettier --write .",
     "lint": "eslint .  --ignore-pattern \"assets/presets/*\"",
-    "lint:fix": "eslint . --fix --ignore-pattern \"assets/presets/*\""
+    "lint:fix": "eslint . --fix --ignore-pattern \"assets/presets/*\"",
+    "typecheck": "nuxi typecheck"
   },
   "dependencies": {
     "@nuxt/eslint": "^0.5.4",
