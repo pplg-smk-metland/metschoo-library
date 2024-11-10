@@ -1,9 +1,7 @@
 <script setup lang="ts">
 const authStore = useAuthStore()
 
-onMounted(async () => {
-  await authStore.init()
-})
+useAsyncData(async () => await authStore.init())
 </script>
 
 <template>
