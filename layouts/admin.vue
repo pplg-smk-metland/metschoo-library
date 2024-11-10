@@ -1,18 +1,11 @@
 <script lang="ts" setup>
-import type { Pengguna } from "@/types"
-import { ref } from "vue"
-
 const authStore = useAuthStore()
+const user = useSupabaseUser()
 
-const profile = ref<Pengguna | null>(null)
+await authStore.init()
 
-onMounted(async () => {
-  await authStore.init()
-  authStore.$subscribe((_, state) => {
-    if (!state.profile) return
-
-    profile.value = state.profile
-  })
+const { data: profile } = await useAsyncData(async () => {
+  return await authStore.getProfile(user.value.id)
 })
 </script>
 
