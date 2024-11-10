@@ -17,11 +17,10 @@ definePageMeta({
 
 const authStore = useAuthStore()
 const supabaseUser = useSupabaseUser()
-const user = ref<Pengguna | null>(null)
 
-onMounted(async () => {
+const { data: user } = await useAsyncData(async () => {
   if (supabaseUser.value) {
-    user.value = await authStore.getProfile(supabaseUser.value.id)
+    return await authStore.getProfile(supabaseUser.value.id)
   }
 })
 
