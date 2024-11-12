@@ -13,6 +13,7 @@ useHead({
 
 definePageMeta({
   layout: "profile-edit",
+  middleware: "profil",
 })
 
 const supabase = useSupabaseClient<Database>()
@@ -22,7 +23,7 @@ const { dialog } = useDialog()
 const kredensialPengguna = ref({
   password: "",
   passwordKonfirmasi: "",
-  email: user.value.email,
+  email: user.value!.email,
 })
 
 async function ubahKredensial() {
