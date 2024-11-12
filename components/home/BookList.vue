@@ -8,9 +8,7 @@ interface Props {
 
 const { typeId } = defineProps<Props>()
 
-const isLoading = ref(false)
-
-const { data: bukus } = await useAsyncData(async () => {
+const { data: bukus } = await useAsyncData(String(typeId), async () => {
   try {
     return await getBukus(typeId)
   } catch (err) {
@@ -21,8 +19,7 @@ const { data: bukus } = await useAsyncData(async () => {
 
 <template>
   <ul class="book-list">
-    <LoadingSpinner v-if="isLoading" />
-    <li v-if="!isLoading && !bukus">Bukunya ga ada gaes</li>
+    <li v-if="!bukus">Bukunya ga ada gaes</li>
     <BookItem v-for="buku in bukus" v-else :key="buku.no_isbn" :buku="buku as Buku" />
   </ul>
 </template>
