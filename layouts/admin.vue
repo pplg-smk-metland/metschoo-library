@@ -1,11 +1,10 @@
 <script lang="ts" setup>
-const authStore = useAuthStore()
-const user = useSupabaseUser()
-
-await authStore.init()
-
 const { data: profile } = await useAsyncData(async () => {
-  return await authStore.getProfile(user.value.id)
+  const authStore = useAuthStore()
+  const user = useSupabaseUser()
+
+  await authStore.init()
+  return authStore.profile
 })
 </script>
 
