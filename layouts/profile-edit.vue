@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const authStore = useAuthStore()
 
-useAsyncData(async () => await authStore.init())
+await useAsyncData(() => authStore.init().then(() => true))
 </script>
 
 <template>
