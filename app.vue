@@ -22,6 +22,9 @@ useHead({
 onMounted(() => {
   themeStore.theme = themeStore.getTheme()
 })
+
+const authStore = useAuthStore()
+useLazyAsyncData(() => authStore.init().then(() => true))
 </script>
 
 <template>

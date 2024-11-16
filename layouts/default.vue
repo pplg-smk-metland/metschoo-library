@@ -1,9 +1,3 @@
-<script setup lang="ts">
-const authStore = useAuthStore()
-
-await useAsyncData(() => authStore.init().then(() => true))
-</script>
-
 <template>
   <TheNavbar />
   <main class="p-2 md:p-8">

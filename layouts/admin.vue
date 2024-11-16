@@ -1,8 +1,6 @@
 <script lang="ts" setup>
 const { data: profile } = await useAsyncData(async () => {
   const authStore = useAuthStore()
-
-  await authStore.init()
   return authStore.profile
 })
 </script>
