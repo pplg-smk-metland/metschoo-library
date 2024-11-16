@@ -3,7 +3,7 @@ definePageMeta({
   layout: "default",
 })
 
-const { data: profile } = await useAsyncData(async () => {
+const { data: profile } = await useLazyAsyncData(async () => {
   const authStore = useAuthStore()
   return authStore.profile
 })
