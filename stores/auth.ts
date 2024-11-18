@@ -18,7 +18,7 @@ export const useAuthStore = defineStore("auth", () => {
         return
       }
 
-      if (user) {
+      if (user.value) {
         profile.value = await getProfile(user.value.id)
       }
     })
