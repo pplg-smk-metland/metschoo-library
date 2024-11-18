@@ -18,7 +18,7 @@ definePageMeta({
 
 const authStore = useAuthStore()
 
-const { data: user } = await useAsyncData(async () => {
+const { data: user } = await useLazyAsyncData(async () => {
   return authStore.profile
 })
 
