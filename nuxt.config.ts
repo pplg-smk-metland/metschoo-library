@@ -15,6 +15,13 @@ export default defineNuxtConfig({
   typescript: {
     typeCheck: true,
   },
+  postcss: {
+    plugins: {
+      "postcss-import": {},
+      tailwindcss: {},
+      autoprefixer: {},
+    },
+  },
   primevue: {
     options: {
       theme: "none",
@@ -74,4 +81,3 @@ export default defineNuxtConfig({
     },
   },
 })
-
