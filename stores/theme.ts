@@ -3,11 +3,11 @@ import type { Theme } from "@/types"
 
 export const useThemeStore = defineStore("theme", () => {
   const THEME_KEY = "ml-app-theme"
-  const theme: Ref<Theme> = ref("dark")
+  const theme = ref<Theme>()
 
   function getTheme(): Theme {
-    const storedTheme = ref(localStorage.getItem(THEME_KEY) || "dark")
-    return storedTheme.value as Theme
+    const storedTheme = localStorage.getItem(THEME_KEY) || "dark"
+    return storedTheme as Theme
   }
 
   function setTheme(targetTheme: Theme) {

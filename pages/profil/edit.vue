@@ -13,16 +13,13 @@ useHead({
 
 definePageMeta({
   layout: "profile-edit",
+  middleware: "profil",
 })
 
 const authStore = useAuthStore()
-const supabaseUser = useSupabaseUser()
-const user = ref<Pengguna | null>(null)
 
-onMounted(async () => {
-  if (supabaseUser.value) {
-    user.value = await authStore.getProfile(supabaseUser.value.id)
-  }
+const { data: user } = await useAsyncData(async () => {
+  return authStore.profile
 })
 
 const toast = useToast()

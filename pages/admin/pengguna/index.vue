@@ -14,23 +14,18 @@ const supabase = useSupabaseClient<Database>()
 const toast = useToast()
 
 const { data: penggunas } = await useAsyncData(async () => {
-  try {
-    const { data, error } = await supabase.from("pengguna").select("*, pengguna_roles(name)")
-    if (error) {
-      toast.add({
-        severity: "error",
-        summary: "Gagal mengambil data",
-        detail: "Gagal mengambil data pengguna, silahkan coba lagi.",
-      })
-    }
-
-    if (error) throw error
-
-    return data
-  } catch (err) {
-    console.error(err)
-    return null
+  const { data, error } = await supabase.from("pengguna").select("*, pengguna_roles(name)")
+  if (error) {
+    toast.add({
+      severity: "error",
+      summary: "Gagal mengambil data",
+      detail: "Gagal mengambil data pengguna, silahkan coba lagi.",
+    })
   }
+
+  if (error) throw error
+
+  return data
 })
 </script>
 

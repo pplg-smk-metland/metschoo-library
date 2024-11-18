@@ -1,10 +1,6 @@
 <script setup lang="ts">
 const themeStore = useThemeStore()
 
-onMounted(() => {
-  themeStore.theme = themeStore.getTheme()
-})
-
 useHead({
   titleTemplate: (title) => (title ? `${title} - Metschoo Library` : "Metschoo Library"),
   meta: [
@@ -13,16 +9,26 @@ useHead({
       content: "Aplikasi Perpustakan Metschoo.",
     },
   ],
-  htmlAttrs: {
-    class: computed(() => themeStore.theme),
-  },
   bodyAttrs: {
-    class: "bg-surface-100/80 dark:bg-surface-900 dark:text-gray-300",
+    class: computed(() => [
+      "bg-surface-100/80 dark:bg-surface-900 dark:text-gray-300",
+      // on the server themeStore.theme is always undefined
+      // so we pass an empty string like so
+      themeStore.theme ?? "",
+    ]),
   },
 })
+
+onMounted(() => {
+  themeStore.theme = themeStore.getTheme()
+})
+
+const authStore = useAuthStore()
+useLazyAsyncData(() => authStore.init().then(() => true))
 </script>
 
 <template>
+  <NuxtLoadingIndicator />
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Buku } from "@/types/"
-import type { PostgrestError, QueryData } from "@supabase/supabase-js"
+import type { PostgrestError } from "@supabase/supabase-js"
 
 import Toast from "primevue/toast"
 import { useToast } from "primevue/usetoast"
@@ -17,8 +17,6 @@ definePageMeta({
 const supabase = useSupabaseClient<Database>()
 
 const wishlistQuery = supabase.from("wishlist").select("*, buku(*)")
-type Wishlist = QueryData<typeof wishlistQuery>
-const wishlist = ref<Wishlist>([])
 
 async function ambilWishlist() {
   try {
@@ -31,8 +29,7 @@ async function ambilWishlist() {
   }
 }
 
-const { data } = useAsyncData(async () => await ambilWishlist())
-wishlist.value = data.value ?? []
+const { data: wishlist } = useAsyncData(async () => await ambilWishlist())
 
 const toast = useToast()
 
@@ -81,7 +78,7 @@ const user = useSupabaseUser()
     </section>
 
     <section v-else class="main-section">
-      <p v-if="!wishlist.length">Kamu belum punya apa-apa dalam wishlist kamu.</p>
+      <p v-if="!wishlist">Kamu belum punya apa-apa dalam wishlist kamu.</p>
       <ul v-else class="book-list">
         <WishlistBook
           v-for="wishlistItem in wishlist"

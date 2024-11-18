@@ -1,14 +1,5 @@
-<script setup lang="ts">
-const authStore = useAuthStore()
-
-onMounted(async () => {
-  await authStore.init()
-})
-</script>
-
 <template>
   <TheNavbar />
-  <NuxtLoadingIndicator />
   <main class="p-2 md:p-8">
     <slot />
   </main>
