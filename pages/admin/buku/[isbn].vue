@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import Toast from "primevue/toast"
+import ConfirmPopup from "primevue/confirmpopup"
 import { StorageError } from "@supabase/storage-js"
-import { useDialog } from "@/composables"
 import type { PostgrestError } from "@supabase/supabase-js"
 
 import type { Database } from "~/types/database.types.ts"
@@ -18,9 +19,6 @@ const router = useRouter()
 const currentRoute = useRoute()
 
 const isbn = currentRoute.params.isbn
-
-const { dialog } = useDialog()
-const { dialog: errDialog } = useDialog()
 
 const { data: buku } = await useAsyncData(async () => {
   const { data, error } = await supabase
@@ -58,9 +56,25 @@ async function editBook(buku: Buku) {
       })
       .eq("no_isbn", isbn)
     if (error) throw error
+
+    toast.add({
+      severity: "success",
+      summary: "sukses mengubah data buku!",
+      life: 5000,
+    })
   } catch (err) {
     console.trace((err as PostgrestError).message)
   }
+}
+
+const toast = useToast()
+const confirm = useConfirm()
+
+async function confirmDeleteBuku(no_isbn: Buku["no_isbn"]) {
+  confirm.require({
+    message: "Apakah anda benar-benar ingin menghapus buku?",
+    accept: () => deleteBook(no_isbn),
+  })
 }
 
 async function deleteBook(isbn: string) {
@@ -72,17 +86,30 @@ async function deleteBook(isbn: string) {
     const response = await supabase.storage.from("Buku").remove([`${isbn}/${isbn}`])
     if (response.error) throw response.error
     if (error) throw error
-    dialog.value.open("Buku sukses dihapus.")
+
+    toast.add({
+      severity: "success",
+      summary: "Buku sukses dihapus.",
+      detail: "Sukses menghapus buku",
+      life: 5000,
+    })
   } catch (err) {
+    let summary = "Gagal menghapus gambar sampul buku!"
+    let detail = "Kesalahan terjadi saat menghapus data buku. Silahkan coba lagi."
+    console.trace(err)
+
     if (err instanceof StorageError) {
-      errDialog.value.open(
+      summary = "Gagal menghapus gambar sampul buku!"
+      detail =
         "Kesalahan terjadi saat menghapus gambar sampul buku. Silahkan coba lagi dalam beberapa saat."
-      )
-      console.trace(err.message)
     }
 
-    errDialog.value.open("Kesalahan terjadi saat menghapus data buku. Silahkan coba lagi.")
-    console.trace(err as PostgrestError)
+    return toast.add({
+      severity: "error",
+      summary,
+      detail,
+      life: 10000,
+    })
   } finally {
     isLoading.value = false
   }
@@ -103,7 +130,7 @@ function toggleFormVisibility() {
     <p>Silahkan coba lagi dalam beberapa saat.</p>
   </header>
 
-  <div v-else class="wrapper">
+  <div v-else class="main-section">
     <article v-if="!formIsVisible" class="buku">
       <PageHeader :heading="`${buku.judul} - ${buku.jumlah_exspl}`">
         <CTA label="kembali" link class="order-first" @click="router.back()">
@@ -186,27 +213,12 @@ function toggleFormVisibility() {
     </article>
 
     <div class="button-container">
-      <CTA severity="danger" label="Hapus" @click="deleteBook(buku.no_isbn)" />
+      <CTA severity="danger" label="Hapus" @click="confirmDeleteBuku(buku.no_isbn)" />
       <CTA v-show="!formIsVisible" label="Sunting" @click="toggleFormVisibility" />
+
+      <ConfirmPopup />
     </div>
   </div>
 
-  <TheDialog :is-open="errDialog.isOpen" @dialog-close="router.push('/admin/buku')">
-    <h2>Ada kesalahan!</h2>
-    <p>
-      {{ errDialog.message }}
-    </p>
-  </TheDialog>
-  <TheDialog :is-open="dialog.isOpen" @dialog-close="router.push('/admin/buku/')">
-    <h2>Sukses!</h2>
-    <p>
-      {{ dialog.message }}
-    </p>
-  </TheDialog>
+  <Toast />
 </template>
-
-<style scoped>
-.buku-edit button {
-  margin-block: 1rem;
-}
-</style>
