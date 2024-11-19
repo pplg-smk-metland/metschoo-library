@@ -17,9 +17,9 @@ export async function insertBookData(buku: Buku): Promise<PostgrestError | null>
 /**
  * get a single buku by its isbn.
  * @param {Buku['no_isbn']} isbn - isbn
- * @returns Buku
+ * @returns {Promise<Buku>} Buku
  */
-export async function getBuku(isbn: Buku["no_isbn"]) {
+export async function getBuku(isbn: Buku["no_isbn"]): Promise<Buku> {
   const supabase = useSupabaseClient<Database>()
   const { data, error } = await supabase
     .from("buku")
@@ -34,8 +34,10 @@ export async function getBuku(isbn: Buku["no_isbn"]) {
 
 /**
  * Get multiple bukus.
+ * @param {number} typeId - (optional) type id of the bukus
+ * @returns {Promise<Buku[]>} bukus
  */
-export async function getBukus(typeId?: Kategori["id"]) {
+export async function getBukus(typeId?: Kategori["id"]): Promise<Buku[]> {
   const supabase = useSupabaseClient<Database>()
   let query = supabase.from("buku").select(`*`).limit(20)
 
@@ -50,24 +52,29 @@ export async function getBukus(typeId?: Kategori["id"]) {
 
 /**
  * count the amount of bukus available.
+ * @returns {Promise<number>} buku count
  * */
-export async function countBukus() {
+export async function countBukus(): Promise<number> {
   const supabase = useSupabaseClient<Database>()
 
   const { count, error } = await supabase.from("buku").select("*", { count: "exact", head: true })
   if (error) throw error
 
-  return count
+  return count ?? 0
 }
 
-export async function countPenggunas() {
+/**
+ * count the amount of active users (pengguna).
+ * @returns {Promise<number>} pengguna count
+ * */
+export async function countPenggunas(): Promise<number> {
   const supabase = useSupabaseClient<Database>()
 
   const { count, error } = await supabase
     .from("pengguna")
     .select("*", { count: "exact", head: true })
   if (error) throw error
-  return count
+  return count ?? 0
 }
 
 interface BukuSearchArgs {
@@ -105,7 +112,14 @@ export async function searchBukus({ searchTerm, category }: BukuSearchArgs) {
   }
 }
 
-export async function getBukuImage(image: Buku["image"]) {
+/**
+ * get the valid path of a buku's image.
+ * meant to be directly used on the HTML image element
+ *
+ * @param {Buku['image']} image - image property of buku
+ * @returns {Promise<string>} path
+ * */
+export async function getBukuImage(image: Buku["image"]): Promise<string> {
   const config = useRuntimeConfig()
   if (!image) return "/assets/Image_not_available.png"
   return `${config.public.supabase.url}/storage/v1/object/public/Buku/${image}`
@@ -113,6 +127,8 @@ export async function getBukuImage(image: Buku["image"]) {
 
 /**
  * borrow a buku.
+ *
+ * @param {Buku['no_isbn']} no_isbn - field of buku
  */
 export async function borrowBuku(no_isbn: Buku["no_isbn"], tenggat_waktu: Date) {
   const supabase = useSupabaseClient<Database>()
@@ -124,6 +140,11 @@ export async function borrowBuku(no_isbn: Buku["no_isbn"], tenggat_waktu: Date) 
   if (error) throw error
 }
 
+/**
+ * cancel borrowing of a buku.
+ *
+ * @param {Peminjaman['id']} id - id of peminjaman
+ * */
 export async function cancelBorrowBuku(id: Peminjaman["id"]) {
   const supabase = useSupabaseClient<Database>()
   const { error } = await supabase
@@ -138,6 +159,8 @@ export async function cancelBorrowBuku(id: Peminjaman["id"]) {
 
 /**
  * return a buku.
+ *
+ * @param {Peminjaman['id']} id - id of peminjaman
  */
 export async function returnBuku(id: Peminjaman["id"]) {
   const supabase = useSupabaseClient<Database>()
@@ -147,6 +170,8 @@ export async function returnBuku(id: Peminjaman["id"]) {
 
 /**
  * confirm that a buku was borrowed.
+ *
+ * @param {Peminjaman['id']} id - id of peminjaman
  */
 export async function confirmBorrowBuku(id: Peminjaman["id"]) {
   const supabase = useSupabaseClient<Database>()
@@ -156,6 +181,9 @@ export async function confirmBorrowBuku(id: Peminjaman["id"]) {
 
 /**
  * confirm that a buku has been returned.
+ * @param {Peminjaman} peminjaman
+ * @param {Buku} buku
+ * @param {Date} tgl_kembali
  */
 export async function confirmReturnBuku(
   { id, tenggat_waktu }: Peminjaman,
@@ -181,8 +209,10 @@ export async function confirmReturnBuku(
 
 /**
  * Gets all available categories.
+ *
+ * @returns {Promise<Kategori[]>} kategori
  */
-export async function getAllAvailableCategories() {
+export async function getAllAvailableCategories(): Promise<Kategori[]> {
   const supabase = useSupabaseClient<Database>()
   try {
     const { data, error } = await supabase.from("kategori_buku").select("id, kategori")
@@ -196,8 +226,12 @@ export async function getAllAvailableCategories() {
 
 /**
  * wrapper of `Intl.DateTimeFormat` to format dates
+ *
+ * @param {Date} date - unformatted date
+ * @param {Intl.DateTimeFormatOptions} opts - format options
+ * @returns {string} formatted date string
  * */
-export function formatDate(date: Date, opts?: Intl.DateTimeFormatOptions) {
+export function formatDate(date: Date, opts?: Intl.DateTimeFormatOptions): string {
   if (!opts) {
     opts = {
       dateStyle: "long",
