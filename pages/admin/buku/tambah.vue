@@ -41,11 +41,6 @@ async function uploadBookImage(isbn: string, file: File) {
   return error
 }
 
-async function insertBookData(buku: Buku) {
-  const { error } = await supabase.from("buku").insert({ ...buku })
-  return error
-}
-
 async function addNewBook(buku: Buku) {
   isLoading.value = true
 

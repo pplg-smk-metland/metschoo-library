@@ -3,6 +3,18 @@ import type { PostgrestError } from "@supabase/supabase-js"
 import type { Database } from "~/types/database.types.ts"
 
 /**
+ * insert new buku.
+ * @param {Buku} buku - the buku you want to insert
+ * @returns {Promise<PostgrestError | null>} error
+ * */
+export async function insertBookData(buku: Buku): Promise<PostgrestError | null> {
+  const supabase = useSupabaseClient<Database>()
+
+  const { error } = await supabase.from("buku").insert({ ...buku })
+  return error
+}
+
+/**
  * get a single buku by its isbn.
  * @param {Buku['no_isbn']} isbn - isbn
  * @returns Buku
