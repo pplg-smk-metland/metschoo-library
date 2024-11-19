@@ -22,7 +22,7 @@ const isbn = currentRoute.params.isbn
 const { dialog } = useDialog()
 const { dialog: errDialog } = useDialog()
 
-const { data: buku } = await useAsyncData(async () => {
+const { data: buku } = await useLazyAsyncData(async () => {
   const { data, error } = await supabase
     .from("buku")
     .select("*, kategori_buku(kategori)")
@@ -37,7 +37,7 @@ const { data: buku } = await useAsyncData(async () => {
   return data
 })
 
-const { data: availableCategories } = await useAsyncData(
+const { data: availableCategories } = await useLazyAsyncData(
   async () => await getAllAvailableCategories()
 )
 
