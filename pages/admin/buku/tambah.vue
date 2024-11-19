@@ -146,12 +146,12 @@ const router = useRouter()
       <label for="buku-gambar">
         Gambar buku
         <FileUpload
+          id="buku-gambar"
           ref="buku-gambar"
           mode="basic"
-          id="buku-gambar"
           name="buku-gambar"
           accept="image/*"
-          customUpload
+          custom-upload
           auto
           @select="previewBukuImage"
         />
