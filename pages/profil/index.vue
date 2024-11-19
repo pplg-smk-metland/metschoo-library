@@ -9,6 +9,7 @@ useHead({
 
 definePageMeta({
   layout: "default",
+  middleware: "profil",
 })
 
 const supabase = useSupabaseClient<Database>()

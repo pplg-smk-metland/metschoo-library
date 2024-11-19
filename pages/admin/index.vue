@@ -26,7 +26,7 @@ const _peminjamanQuery = supabase
   .from("peminjaman")
   .select("*, peminjaman_state(name), pengguna(nama, kelas, jurusan), buku(*)")
 export type PeminjamanData = QueryData<typeof _peminjamanQuery>
-const { data: allPeminjamanData } = useAsyncData(async () => await getPeminjamanData())
+const { data: allPeminjamanData } = useLazyAsyncData(async () => await getPeminjamanData())
 
 const peminjamanData = computed(() => {
   if (!allPeminjamanData.value) return null
@@ -38,9 +38,9 @@ const peminjamanData = computed(() => {
   return { bukusBorrowConfirmed, bukusBorrowPending, bukusReturnPending }
 })
 
-const { data: counts } = await useAsyncData(async () => {
+const { data: counts } = await useLazyAsyncData(async () => {
   const [bukuCount, penggunaCount] = await Promise.all([countBukus(), countPenggunas()])
-  return { bukuCount, penggunaCount }
+  return { bukuCount: bukuCount ?? 0, penggunaCount: penggunaCount ?? 0 }
 })
 
 onMounted(async () => {

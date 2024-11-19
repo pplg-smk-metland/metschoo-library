@@ -13,15 +13,17 @@ useHead({
 
 definePageMeta({
   layout: "profile-edit",
+  middleware: "profil",
 })
 
 const supabase = useSupabaseClient<Database>()
+const user = useSupabaseUser()
 
 const { dialog } = useDialog()
 const kredensialPengguna = ref({
   password: "",
   passwordKonfirmasi: "",
-  email: "",
+  email: user.value!.email,
 })
 
 async function ubahKredensial() {
@@ -72,13 +74,6 @@ async function signOut() {
   await authStore.handleSignOut()
   router.push("/")
 }
-
-onMounted(async () => {
-  authStore.$subscribe((_, state) => {
-    if (!state.profile) return
-    kredensialPengguna.value.email = state.profile.email
-  })
-})
 </script>
 
 <template>

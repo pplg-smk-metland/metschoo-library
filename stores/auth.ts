@@ -6,18 +6,21 @@ import type { Database } from "~/types/database.types"
 
 export const useAuthStore = defineStore("auth", () => {
   const supabase = useSupabaseClient<Database>()
-  const user = useSupabaseUser()
 
   const profile = ref<Pengguna | null>(null)
 
   async function init() {
+    const user = useSupabaseUser()
+
     supabase.auth.onAuthStateChange(async (event) => {
       if (event === "SIGNED_OUT") {
         profile.value = null
         return
       }
 
-      if (user.value) profile.value = await getProfile(user.value.id)
+      if (user.value) {
+        profile.value = await getProfile(user.value.id)
+      }
     })
   }
 

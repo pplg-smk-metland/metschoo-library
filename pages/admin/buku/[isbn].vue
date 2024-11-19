@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { StorageError } from "@supabase/storage-js"
 import { useDialog } from "@/composables"
-import type { Kategori } from "@/types"
-import type { PostgrestError, QueryData } from "@supabase/supabase-js"
+import type { PostgrestError } from "@supabase/supabase-js"
 
 import type { Database } from "~/types/database.types.ts"
 import IconArrowLeft from "~icons/mdi/arrow-left"
+import type { Buku } from "~/types"
 
 definePageMeta({
   layout: "admin",
@@ -14,42 +14,32 @@ definePageMeta({
 const supabase = useSupabaseClient<Database>()
 const isLoading = ref(false)
 
-const availableCategories = ref<Kategori[]>([])
 const router = useRouter()
 const currentRoute = useRoute()
 
 const isbn = currentRoute.params.isbn
-const bukuQuery = supabase
-  .from("buku")
-  .select("*, kategori_buku(kategori)")
-  .eq("no_isbn", isbn)
-  .single()
 
 const { dialog } = useDialog()
 const { dialog: errDialog } = useDialog()
 
-type Buku = QueryData<typeof bukuQuery>
-const buku = ref<Buku | null>(null)
+const { data: buku } = await useAsyncData(async () => {
+  const { data, error } = await supabase
+    .from("buku")
+    .select("*, kategori_buku(kategori)")
+    .eq("no_isbn", isbn)
+    .single()
 
-async function ambilBuku(): Promise<Buku | null> {
-  try {
-    isLoading.value = true
-    const { data, error } = await bukuQuery
-    if (error) throw error
-    return data
-  } catch (err) {
-    console.trace((err as PostgrestError).message)
-    errDialog.value.open(`Buku dengan ISBN ${isbn} tidak ditemukan.`)
-    return null
-  } finally {
-    isLoading.value = false
+  if (error) {
+    console.error(error.message)
+    throw error
   }
-}
 
-onMounted(async () => {
-  buku.value = await ambilBuku()
-  availableCategories.value = await getAllAvailableCategories()
+  return data
 })
+
+const { data: availableCategories } = await useAsyncData(
+  async () => await getAllAvailableCategories()
+)
 
 async function editBook(buku: Buku) {
   try {
@@ -185,7 +175,7 @@ function toggleFormVisibility() {
         <Select
           v-model="buku.kategori_id"
           placeholder="Pilih kategori"
-          :options="availableCategories"
+          :options="availableCategories ?? []"
           checkmark
           option-label="kategori"
           option-value="id"

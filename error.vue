@@ -5,11 +5,11 @@ const themeStore = useThemeStore()
 
 useHead({
   title: "404 Gak Ketemu",
-  htmlAttrs: {
-    class: computed(() => themeStore.theme),
-  },
   bodyAttrs: {
-    class: "bg-surface-100/80 dark:bg-surface-900 dark:text-gray-300",
+    class: computed(() => [
+      "bg-surface-100/80 dark:bg-surface-900 dark:text-gray-300",
+      themeStore.theme ?? "",
+    ]),
   },
 })
 
