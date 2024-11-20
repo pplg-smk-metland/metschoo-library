@@ -126,9 +126,9 @@ const router = useRouter()
     <p>Ada kesalahan saat mengambil data buku. Silahkan coba lagi</p>
   </section>
 
-  <section v-else class="grid gap-4 lg:gap-6 lg:grid-cols-2 buku-container main-section">
+  <section v-else class="flex flex-col justify-center lg:flex-row gap-4 lg:gap-6 main-section">
     <figure
-      class="border-2 border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden flex justify-center items-center bg-gray-100 dark:bg-gray-800"
+      class="mx-auto lg:m-0 max-w-60 aspect-[2/3] align-self-start border-2 border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden flex justify-center items-center bg-gray-100 dark:bg-gray-800"
     >
       <img
         v-if="bukuGambarFile"
@@ -143,7 +143,7 @@ const router = useRouter()
       </p>
     </figure>
 
-    <form class="grid grid-cols-1 lg:grid-cols-2 gap-4" @submit.prevent="addNewBook(buku)">
+    <form class="grid grid-cols-1 sm:grid-cols-2 gap-4" @submit.prevent="addNewBook(buku)">
       <label for="buku-gambar" class="flex flex-col">
         <span class="font-semibold text-gray-700 dark:text-gray-300">Gambar buku</span>
         <FileUpload
@@ -167,8 +167,9 @@ const router = useRouter()
           type="text"
           name="buku-judul"
           placeholder="judul buku"
+          fluid
           required
-          class="rounded-md w-full border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+          class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
         />
       </label>
 
@@ -180,8 +181,9 @@ const router = useRouter()
           type="text"
           name="buku-isbn"
           placeholder="ISBN buku"
+          fluid
           required
-          class="rounded-md w-full border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+          class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
         />
       </label>
 
@@ -194,8 +196,9 @@ const router = useRouter()
           checkmark
           option-label="kategori"
           option-value="id"
+          fluid
           required
-          class="rounded-md w-full border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+          class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
         />
       </label>
 
@@ -207,8 +210,9 @@ const router = useRouter()
           type="text"
           name="buku-penulis"
           placeholder="penulis buku"
+          fluid
           required
-          class="rounded-md w-full border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+          class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
         />
       </label>
 
@@ -220,8 +224,9 @@ const router = useRouter()
           type="text"
           name="buku-penerbit"
           placeholder="penerbit"
+          fluid
           required
-          class="rounded-md w-full border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+          class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
         />
       </label>
 
@@ -233,8 +238,9 @@ const router = useRouter()
           type="text"
           name="buku-tahun-terbit"
           placeholder="tahun terbit"
+          fluid
           required
-          class="rounded-md w-full border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+          class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
         />
       </label>
 
@@ -246,8 +252,9 @@ const router = useRouter()
           type="text"
           name="buku-alamat-terbit"
           placeholder="alamat terbit"
+          fluid
           required
-          class="rounded-md w-full border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+          class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
         />
       </label>
 
@@ -259,8 +266,9 @@ const router = useRouter()
           type="text"
           name="buku-asal"
           placeholder="asal buku"
+          fluid
           required
-          class="rounded-md w-full border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+          class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
         />
       </label>
 
@@ -273,8 +281,9 @@ const router = useRouter()
           :max="10000"
           name="buku-jumlah"
           placeholder="jumlah buku"
+          fluid
           required
-          class="rounded-md w-full border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+          class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
         />
       </label>
 
@@ -283,7 +292,7 @@ const router = useRouter()
         :disabled="isLoading"
         :loading="isLoading"
         :label="tambahBtnLabel"
-        class="col-span-2"
+        class="sm:col-span-2"
       />
 
       <TheDialog :is-open="errDialog.isOpen" @dialog-close="errDialog.close()">
