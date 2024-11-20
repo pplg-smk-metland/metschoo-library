@@ -6,7 +6,7 @@ import type { Buku } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
 import IconArrowLeft from "~icons/mdi/arrow-left"
 import type { Database } from "~/types/database.types.ts"
-import { InputText, InputNumber } from "primevue"
+import { InputText, InputNumber, type FileUploadSelectEvent } from "primevue"
 
 useHead({
   title: "Tambah Buku",
@@ -23,29 +23,21 @@ const isLoading = ref(false)
 const { dialog } = useDialog()
 const { dialog: errDialog } = useDialog()
 
-const bukuGambarEl = ref<HTMLInputElement | null>(null)
 const bukuGambarURL = ref("")
-const bukuGambarFile = ref()
+const bukuGambarFile = ref<File>()
 
-function previewBookImage(bukuGambarEl: HTMLInputElement) {
-  bukuGambarFile.value = bukuGambarEl.files?.[0]
-  bukuGambarURL.value = URL.createObjectURL(bukuGambarFile.value)
+function previewBukuImage(e: FileUploadSelectEvent) {
+  bukuGambarFile.value = e.files[0]
+  if (bukuGambarFile.value) bukuGambarURL.value = URL.createObjectURL(bukuGambarFile.value)
 }
 
 async function uploadBookImage(isbn: string, file: File) {
-  isLoading.value = true
-  try {
-    const { error } = await supabase.storage.from("Buku").upload(`public/${isbn}`, file, {
-      upsert: false,
-    })
-    return error
-  } finally {
-    isLoading.value = false
-  }
-}
+  if (!buku.value) return console.trace("buku gak ada????")
 
-async function insertBookData(buku: Buku) {
-  const { error } = await supabase.from("buku").insert({ ...buku })
+  buku.value.image = `public/${isbn}`
+  const { error } = await supabase.storage.from("Buku").upload(buku.value.image, file, {
+    upsert: true,
+  })
   return error
 }
 
@@ -55,11 +47,14 @@ async function addNewBook(buku: Buku) {
   const { no_isbn } = buku
 
   try {
+    if (bukuGambarFile.value) {
+      const uploadError = await uploadBookImage(no_isbn, bukuGambarFile.value)
+      if (uploadError) throw uploadError
+    }
+
     const insertError = await insertBookData(buku)
     if (insertError) throw insertError
 
-    const uploadError = await uploadBookImage(no_isbn, bukuGambarFile.value)
-    if (uploadError) throw uploadError
     dialog.value.open("Buku berhasil ditambahkan!")
   } catch (error) {
     console.table(error as Error)
@@ -78,6 +73,27 @@ async function addNewBook(buku: Buku) {
     isLoading.value = false
   }
 }
+
+// silly loading animation
+const tambahBtnLabel = ref("Tambah buku baru")
+const labelRepeat = ref(0)
+let intervalID: NodeJS.Timeout | undefined = undefined
+
+watch(isLoading, (newIsLoading) => {
+  tambahBtnLabel.value = newIsLoading ? "Menambahkan buku baru" : "Tambah buku baru"
+
+  if (newIsLoading) {
+    intervalID = setInterval(() => {
+      tambahBtnLabel.value = "Menambahkan buku baru" + ".".repeat(labelRepeat.value)
+      labelRepeat.value += 1
+      if (labelRepeat.value > 3) labelRepeat.value = 0
+    }, 500)
+  } else {
+    labelRepeat.value = 0
+    clearInterval(intervalID)
+    intervalID = undefined
+  }
+})
 
 const { data: availableCategories } = await useAsyncData(
   async () => await getAllAvailableCategories()
@@ -115,10 +131,11 @@ const router = useRouter()
       class="border-2 border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden flex justify-center items-center bg-gray-100 dark:bg-gray-800"
     >
       <img
-        v-if="bukuGambarEl && bukuGambarFile"
+        v-if="bukuGambarFile"
         :src="bukuGambarURL"
         width="150"
         height="800"
+        class="size-full object-cover aspect-auto"
         :alt="`gambar buku ${buku?.judul}`"
       />
       <p v-else class="text-center text-gray-600 dark:text-gray-400">
@@ -129,15 +146,16 @@ const router = useRouter()
     <form class="grid grid-cols-1 lg:grid-cols-2 gap-4" @submit.prevent="addNewBook(buku)">
       <label for="buku-gambar" class="flex flex-col">
         <span class="font-semibold text-gray-700 dark:text-gray-300">Gambar buku</span>
-        <InputText
+        <FileUpload
           id="buku-gambar"
-          ref="bukuGambarEl"
-          type="file"
+          ref="buku-gambar"
+          mode="basic"
           name="buku-gambar"
           accept="image/*"
-          required
           class="rounded-md w-full border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
-          @change="previewBookImage(bukuGambarEl!)"
+          custom-upload
+          auto
+          @select="previewBukuImage"
         />
       </label>
 
@@ -261,12 +279,13 @@ const router = useRouter()
       </label>
 
       <CTA
-        class="w-full col-span-1 lg:col-span-2"
-        label="Simpan"
         type="submit"
-        loading="isLoading"
         :disabled="isLoading"
+        :loading="isLoading"
+        :label="tambahBtnLabel"
+        class="col-span-2"
       />
+
       <TheDialog :is-open="errDialog.isOpen" @dialog-close="errDialog.close()">
         <h2>Ada kesalahan!</h2>
         <p>{{ errDialog.message }}</p>
