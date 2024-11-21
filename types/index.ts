@@ -30,4 +30,10 @@ export interface GetPeminjaman {
   tenggat_waktu: Array<Date | null>
 }
 
+export interface BukuSearchArgs {
+  judul?: string
+  no_isbn?: Buku["no_isbn"]
+  kategori?: Kategori["id"] | null
+}
+
 export type Theme = "light" | "dark"

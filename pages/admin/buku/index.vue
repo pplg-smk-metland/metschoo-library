@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import type { Kategori } from "@/types"
-
 import DataTable from "primevue/datatable"
 import Column from "primevue/column"
 import Select from "primevue/select"
 import PageHeader from "~/components/PageHeader.vue"
+import type { BukuSearchArgs } from "~/types"
 
 useHead({
   title: "Data Buku",
@@ -22,7 +21,7 @@ const categoriesOptions = computed(() => {
 
 const { data: searchResults } = useAsyncData(async () => await searchBukus({}))
 
-const searchFor = ref({
+const searchFor = ref<BukuSearchArgs>({
   judul: "",
   no_isbn: "",
   kategori: 0,
@@ -36,8 +35,9 @@ watch(
     const { judul, no_isbn, kategori } = route.query
 
     searchResults.value = await searchBukus({
-      searchTerm: judul as string,
-      category: Number(kategori),
+      judul: judul as string,
+      no_isbn: no_isbn as string,
+      kategori: Number(kategori),
     })
   }
 )
