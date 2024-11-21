@@ -6,7 +6,7 @@ import type { Buku } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
 import IconArrowLeft from "~icons/mdi/arrow-left"
 import type { Database } from "~/types/database.types.ts"
-import { InputText, InputNumber, type FileUploadSelectEvent, FileUpload } from "primevue"
+import { InputText, InputNumber, FileUpload } from "primevue"
 
 useHead({
   title: "Tambah Buku",
