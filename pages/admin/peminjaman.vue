@@ -4,7 +4,7 @@ import DataTable from "primevue/datatable"
 import Column from "primevue/column"
 import { getPeminjamanData } from "@/lib/peminjaman"
 import { formatDate } from "#imports"
-import type { GetPeminjaman } from "~/types"
+import type { PeminjamanSearchArgs } from "~/types"
 
 useHead({
   title: "Peminjaman",
@@ -14,7 +14,7 @@ definePageMeta({
   layout: "admin",
 })
 
-const searchFor = ref<GetPeminjaman>({
+const searchFor = ref<PeminjamanSearchArgs>({
   peminjam: "",
   no_isbn: "",
   tgl_pinjam: [null, null],

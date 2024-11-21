@@ -23,7 +23,7 @@ export type SignUpData = {
   confirmPassword: string
 }
 
-export interface GetPeminjaman {
+export interface PeminjamanSearchArgs {
   peminjam: Pengguna["nama"]
   no_isbn: Buku["no_isbn"]
   tgl_pinjam: Array<Date | null>

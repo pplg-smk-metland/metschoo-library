@@ -1,9 +1,9 @@
 import type { PostgrestError } from "@supabase/supabase-js"
 import type { Database } from "@/types/database.types.ts"
 import type { PeminjamanData } from "@/pages/admin/index.vue"
-import type { GetPeminjaman } from "~/types"
+import type { PeminjamanSearchArgs } from "~/types"
 
-export async function getPeminjamanData(searchFor?: GetPeminjaman): Promise<PeminjamanData> {
+export async function getPeminjamanData(searchFor?: PeminjamanSearchArgs): Promise<PeminjamanData> {
   const supabase = useSupabaseClient<Database>()
 
   let query = supabase
