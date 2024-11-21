@@ -137,7 +137,7 @@ const { bukuGambarFile, bukuGambarURL, previewBukuImage } = usePreviewBukuImage(
 
     <section class="flex flex-col justify-center lg:flex-row gap-4 lg:gap-6 main-section">
       <figure
-        class="mx-auto lg:m-0 max-w-60 aspect-[2/3] align-self-start border-2 border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden flex justify-center items-center bg-gray-100 dark:bg-gray-800"
+        class="mx-auto lg:m-0 max-w-60 aspect-[2/3] border-2 border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden grid place-content-center bg-gray-100 dark:bg-gray-800"
       >
         <img
           v-show="bukuGambarFile"
@@ -164,7 +164,7 @@ const { bukuGambarFile, bukuGambarURL, previewBukuImage } = usePreviewBukuImage(
             mode="basic"
             name="buku-gambar"
             accept="image/*"
-            class="rounded-md w-full border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+            class="w-full border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
             custom-upload
             auto
             @select="previewBukuImage"
@@ -179,9 +179,10 @@ const { bukuGambarFile, bukuGambarURL, previewBukuImage } = usePreviewBukuImage(
             type="text"
             name="buku-judul"
             required
-            class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+            class="border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
         </label>
+
         <label for="buku-asal" class="flex flex-col">
           <span class="font-semibold text-gray-700 dark:text-gray-300">Asal</span>
           <InputText
@@ -190,9 +191,10 @@ const { bukuGambarFile, bukuGambarURL, previewBukuImage } = usePreviewBukuImage(
             type="text"
             name="buku-asal"
             required
-            class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+            class="border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
         </label>
+
         <label for="buku-penulis" class="flex flex-col">
           <span class="font-semibold text-gray-700 dark:text-gray-300">ISBN</span>
           <InputText
@@ -201,9 +203,10 @@ const { bukuGambarFile, bukuGambarURL, previewBukuImage } = usePreviewBukuImage(
             type="text"
             name="buku-isbn"
             required
-            class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+            class="border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
         </label>
+
         <label for="buku-penulis" class="flex flex-col">
           <span class="font-semibold text-gray-700 dark:text-gray-300">Penulis</span>
           <InputText
@@ -212,7 +215,7 @@ const { bukuGambarFile, bukuGambarURL, previewBukuImage } = usePreviewBukuImage(
             type="text"
             name="buku-penulis"
             required
-            class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+            class="border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
         </label>
 
@@ -224,9 +227,10 @@ const { bukuGambarFile, bukuGambarURL, previewBukuImage } = usePreviewBukuImage(
             type="text"
             name="buku-penerbit"
             required
-            class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+            class="border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
         </label>
+
         <label for="buku-tahun-terbit" class="flex flex-col">
           <span class="font-semibold text-gray-700 dark:text-gray-300">Tahun terbit</span>
           <InputText
@@ -235,9 +239,10 @@ const { bukuGambarFile, bukuGambarURL, previewBukuImage } = usePreviewBukuImage(
             type="text"
             name="buku-tahun-terbit"
             required
-            class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+            class="border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
         </label>
+
         <label for="buku-alamat-terbit" class="flex flex-col">
           <span class="font-semibold text-gray-700 dark:text-gray-300">Alamat terbit</span>
           <InputText
@@ -246,9 +251,10 @@ const { bukuGambarFile, bukuGambarURL, previewBukuImage } = usePreviewBukuImage(
             type="text"
             name="buku-alamat-terbit"
             required
-            class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+            class="border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
         </label>
+
         <label for="buku-jumlah" class="flex flex-col">
           <span class="font-semibold text-gray-700 dark:text-gray-300">Jumlah</span>
           <InputNumber
@@ -256,10 +262,12 @@ const { bukuGambarFile, bukuGambarURL, previewBukuImage } = usePreviewBukuImage(
             v-model="buku.jumlah_exspl"
             :invalid="0 > buku.jumlah_exspl || buku.jumlah_exspl > 1000"
             name="buku-jumlah"
+            fluid
             required
-            class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+            class="border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
         </label>
+
         <label for="buku-kategori" class="flex flex-col">
           <span class="font-semibold text-gray-700 dark:text-gray-300">Kategori</span>
           <Select
@@ -269,19 +277,20 @@ const { bukuGambarFile, bukuGambarURL, previewBukuImage } = usePreviewBukuImage(
             checkmark
             option-label="kategori"
             option-value="id"
-            class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+            class="border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
         </label>
+
         <CTA type="submit" label="Simpan perubahan" class="sm:col-span-2" />
       </form>
     </section>
+
+    <div class="button-container">
+      <CTA severity="danger" label="Hapus" @click="confirmDeleteBuku(buku.no_isbn)" />
+
+      <ConfirmPopup />
+    </div>
   </template>
-
-  <div class="button-container">
-    <CTA severity="danger" label="Hapus" @click="confirmDeleteBuku(buku.no_isbn)" />
-
-    <ConfirmPopup />
-  </div>
 
   <Toast />
 </template>
