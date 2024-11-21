@@ -23,13 +23,7 @@ const isLoading = ref(false)
 const { dialog } = useDialog()
 const { dialog: errDialog } = useDialog()
 
-const bukuGambarURL = ref("")
-const bukuGambarFile = ref<File>()
-
-function previewBukuImage(e: FileUploadSelectEvent) {
-  bukuGambarFile.value = e.files[0]
-  if (bukuGambarFile.value) bukuGambarURL.value = URL.createObjectURL(bukuGambarFile.value)
-}
+const { newImage, previewURL, previewImage } = usePreviewImage()
 
 async function uploadBookImage(isbn: string, file: File) {
   if (!buku.value) return console.trace("buku gak ada????")
@@ -47,8 +41,8 @@ async function addNewBook(buku: Buku) {
   const { no_isbn } = buku
 
   try {
-    if (bukuGambarFile.value) {
-      const uploadError = await uploadBookImage(no_isbn, bukuGambarFile.value)
+    if (newImage.value) {
+      const uploadError = await uploadBookImage(no_isbn, newImage.value)
       if (uploadError) throw uploadError
     }
 
@@ -131,8 +125,8 @@ const router = useRouter()
       class="mx-auto lg:m-0 max-w-60 aspect-[2/3] align-self-start border-2 border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden flex justify-center items-center bg-gray-100 dark:bg-gray-800"
     >
       <img
-        v-if="bukuGambarFile"
-        :src="bukuGambarURL"
+        v-if="newImage"
+        :src="previewURL"
         width="150"
         height="800"
         class="size-full object-cover aspect-auto"
@@ -155,7 +149,7 @@ const router = useRouter()
           class="rounded-md w-full border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
           custom-upload
           auto
-          @select="previewBukuImage"
+          @select="previewImage"
         />
       </label>
 

@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import Toast from "primevue/toast"
 import ConfirmPopup from "primevue/confirmpopup"
+import FileUpload from "primevue/fileupload"
+import { InputText, InputNumber } from "primevue"
 import { StorageError } from "@supabase/storage-js"
 import type { PostgrestError } from "@supabase/supabase-js"
 import Select from "primevue/select"
 import type { Database } from "~/types/database.types.ts"
 import IconArrowLeft from "~icons/mdi/arrow-left"
 import type { Buku } from "~/types"
-import { InputText, InputNumber } from "primevue"
 
 definePageMeta({
   layout: "admin",
@@ -121,6 +122,8 @@ const formIsVisible = ref(false)
 function toggleFormVisibility() {
   formIsVisible.value = !formIsVisible.value
 }
+
+const { bukuGambarFile, bukuGambarURL, previewBukuImage } = usePreviewBukuImage()
 </script>
 
 <template>
@@ -148,30 +151,54 @@ function toggleFormVisibility() {
 
     <article v-else class="buku">
       <header class="flex flex-col gap-2 mb-2">
-        <h1 class="text-2xl font-bold">Edit</h1>
-        <CTA label="kembali" class="w-fit justify-start text-sm p-1" @click="toggleFormVisibility">
+        <h1 class="text-2xl font-bold">Menyunting {{ buku.judul }}</h1>
+        <CTA
+          label="kembali"
+          link
+          class="w-fit justify-start text-sm p-1 order-first"
+          @click="toggleFormVisibility"
+        >
           <IconArrowLeft />
         </CTA>
       </header>
+
       <section class="flex flex-col justify-center lg:flex-row gap-4 lg:gap-6 main-section">
         <!-- ISI V-IF NYA DI SINI YA @KLRFL -->
         <figure
           class="mx-auto lg:m-0 max-w-60 aspect-[2/3] align-self-start border-2 border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden flex justify-center items-center bg-gray-100 dark:bg-gray-800"
         >
           <img
-            width="150"
-            height="800"
+            v-show="bukuGambarFile"
+            :src="bukuGambarURL"
+            width="300"
+            height="450"
             class="size-full object-cover aspect-auto"
             :alt="`gambar buku ${buku?.judul}`"
           />
-          <p class="text-center text-gray-600 dark:text-gray-400">
+          <p v-show="!bukuGambarFile" class="text-center text-gray-600 dark:text-gray-400">
             Gambar buku akan muncul di sini.
           </p>
         </figure>
+
         <form
           class="buku-edit grid grid-cols-1 sm:grid-cols-2 gap-4"
           @submit.prevent="editBook(buku)"
         >
+          <label for="buku-gambar">
+            <span>Gambar buku</span>
+            <FileUpload
+              id="buku-gambar"
+              ref="buku-gambar"
+              mode="basic"
+              name="buku-gambar"
+              accept="image/*"
+              class="rounded-md w-full border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+              custom-upload
+              auto
+              @select="previewBukuImage"
+            />
+          </label>
+
           <label for="buku-judul" class="flex flex-col">
             <span class="font-semibold text-gray-700 dark:text-gray-300">Judul</span>
             <InputText
