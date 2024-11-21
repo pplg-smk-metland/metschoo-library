@@ -117,12 +117,6 @@ async function deleteBook(isbn: string) {
   }
 }
 
-const formIsVisible = ref(false)
-
-function toggleFormVisibility() {
-  formIsVisible.value = !formIsVisible.value
-}
-
 const { bukuGambarFile, bukuGambarURL, previewBukuImage } = usePreviewBukuImage()
 </script>
 
@@ -134,182 +128,159 @@ const { bukuGambarFile, bukuGambarURL, previewBukuImage } = usePreviewBukuImage(
     <p>Silahkan coba lagi dalam beberapa saat.</p>
   </header>
 
-  <div v-else class="main-section">
-    <article v-if="!formIsVisible" class="buku">
-      <PageHeader :heading="`${buku.judul} - ${buku.jumlah_exspl}`">
-        <CTA label="kembali" link class="order-first" @click="router.back()">
-          <IconArrowLeft />
-        </CTA>
-      </PageHeader>
+  <template v-else>
+    <PageHeader :heading="`Menyunting ${buku.judul}`">
+      <CTA label="kembali" link class="order-first" @click="router.go(-1)">
+        <IconArrowLeft />
+      </CTA>
+    </PageHeader>
 
-      <p>{{ buku.penulis }}</p>
-      <p>{{ buku.asal }}</p>
-      <p>{{ buku.penerbit }}</p>
-      <p>{{ buku.tahun_terbit }} - {{ buku.alamat_terbit }}</p>
-      <p>{{ buku.kategori_buku?.kategori }}</p>
-    </article>
+    <section class="flex flex-col justify-center lg:flex-row gap-4 lg:gap-6 main-section">
+      <figure
+        class="mx-auto lg:m-0 max-w-60 aspect-[2/3] align-self-start border-2 border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden flex justify-center items-center bg-gray-100 dark:bg-gray-800"
+      >
+        <img
+          v-show="bukuGambarFile"
+          :src="bukuGambarURL"
+          width="300"
+          height="450"
+          class="size-full object-cover aspect-auto"
+          :alt="`gambar buku ${buku?.judul}`"
+        />
+        <p v-show="!bukuGambarFile" class="text-center text-gray-600 dark:text-gray-400">
+          Gambar buku akan muncul di sini.
+        </p>
+      </figure>
 
-    <article v-else class="buku">
-      <header class="flex flex-col gap-2 mb-2">
-        <h1 class="text-2xl font-bold">Menyunting {{ buku.judul }}</h1>
-        <CTA
-          label="kembali"
-          link
-          class="w-fit justify-start text-sm p-1 order-first"
-          @click="toggleFormVisibility"
-        >
-          <IconArrowLeft />
-        </CTA>
-      </header>
-
-      <section class="flex flex-col justify-center lg:flex-row gap-4 lg:gap-6 main-section">
-        <!-- ISI V-IF NYA DI SINI YA @KLRFL -->
-        <figure
-          class="mx-auto lg:m-0 max-w-60 aspect-[2/3] align-self-start border-2 border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden flex justify-center items-center bg-gray-100 dark:bg-gray-800"
-        >
-          <img
-            v-show="bukuGambarFile"
-            :src="bukuGambarURL"
-            width="300"
-            height="450"
-            class="size-full object-cover aspect-auto"
-            :alt="`gambar buku ${buku?.judul}`"
+      <form
+        class="buku-edit grid grid-cols-1 sm:grid-cols-2 gap-4"
+        @submit.prevent="editBook(buku)"
+      >
+        <label for="buku-gambar">
+          <span>Gambar buku</span>
+          <FileUpload
+            id="buku-gambar"
+            ref="buku-gambar"
+            mode="basic"
+            name="buku-gambar"
+            accept="image/*"
+            class="rounded-md w-full border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+            custom-upload
+            auto
+            @select="previewBukuImage"
           />
-          <p v-show="!bukuGambarFile" class="text-center text-gray-600 dark:text-gray-400">
-            Gambar buku akan muncul di sini.
-          </p>
-        </figure>
+        </label>
 
-        <form
-          class="buku-edit grid grid-cols-1 sm:grid-cols-2 gap-4"
-          @submit.prevent="editBook(buku)"
-        >
-          <label for="buku-gambar">
-            <span>Gambar buku</span>
-            <FileUpload
-              id="buku-gambar"
-              ref="buku-gambar"
-              mode="basic"
-              name="buku-gambar"
-              accept="image/*"
-              class="rounded-md w-full border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
-              custom-upload
-              auto
-              @select="previewBukuImage"
-            />
-          </label>
+        <label for="buku-judul" class="flex flex-col">
+          <span class="font-semibold text-gray-700 dark:text-gray-300">Judul</span>
+          <InputText
+            id="buku-judul"
+            v-model="buku.judul"
+            type="text"
+            name="buku-judul"
+            required
+            class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+          />
+        </label>
+        <label for="buku-asal" class="flex flex-col">
+          <span class="font-semibold text-gray-700 dark:text-gray-300">Asal</span>
+          <InputText
+            id="buku-asal"
+            v-model="buku.asal"
+            type="text"
+            name="buku-asal"
+            required
+            class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+          />
+        </label>
+        <label for="buku-penulis" class="flex flex-col">
+          <span class="font-semibold text-gray-700 dark:text-gray-300">ISBN</span>
+          <InputText
+            id="buku-isbn"
+            v-model="buku.no_isbn"
+            type="text"
+            name="buku-isbn"
+            required
+            class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+          />
+        </label>
+        <label for="buku-penulis" class="flex flex-col">
+          <span class="font-semibold text-gray-700 dark:text-gray-300">Penulis</span>
+          <InputText
+            id="buku-penulis"
+            v-model="buku.penulis"
+            type="text"
+            name="buku-penulis"
+            required
+            class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+          />
+        </label>
 
-          <label for="buku-judul" class="flex flex-col">
-            <span class="font-semibold text-gray-700 dark:text-gray-300">Judul</span>
-            <InputText
-              id="buku-judul"
-              v-model="buku.judul"
-              type="text"
-              name="buku-judul"
-              required
-              class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
-            />
-          </label>
-          <label for="buku-asal" class="flex flex-col">
-            <span class="font-semibold text-gray-700 dark:text-gray-300">Asal</span>
-            <InputText
-              id="buku-asal"
-              v-model="buku.asal"
-              type="text"
-              name="buku-asal"
-              required
-              class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
-            />
-          </label>
-          <label for="buku-penulis" class="flex flex-col">
-            <span class="font-semibold text-gray-700 dark:text-gray-300">ISBN</span>
-            <InputText
-              id="buku-isbn"
-              v-model="buku.no_isbn"
-              type="text"
-              name="buku-isbn"
-              required
-              class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
-            />
-          </label>
-          <label for="buku-penulis" class="flex flex-col">
-            <span class="font-semibold text-gray-700 dark:text-gray-300">Penulis</span>
-            <InputText
-              id="buku-penulis"
-              v-model="buku.penulis"
-              type="text"
-              name="buku-penulis"
-              required
-              class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
-            />
-          </label>
+        <label for="buku-penerbit" class="flex flex-col">
+          <span class="font-semibold text-gray-700 dark:text-gray-300">Penerbit</span>
+          <InputText
+            id="buku-penerbit"
+            v-model="buku.penerbit"
+            type="text"
+            name="buku-penerbit"
+            required
+            class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+          />
+        </label>
+        <label for="buku-tahun-terbit" class="flex flex-col">
+          <span class="font-semibold text-gray-700 dark:text-gray-300">Tahun terbit</span>
+          <InputText
+            id="buku-tahun-terbit"
+            v-model="buku.tahun_terbit"
+            type="text"
+            name="buku-tahun-terbit"
+            required
+            class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+          />
+        </label>
+        <label for="buku-alamat-terbit" class="flex flex-col">
+          <span class="font-semibold text-gray-700 dark:text-gray-300">Alamat terbit</span>
+          <InputText
+            id="buku-alamat-terbit"
+            v-model="buku.alamat_terbit"
+            type="text"
+            name="buku-alamat-terbit"
+            required
+            class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+          />
+        </label>
+        <label for="buku-jumlah" class="flex flex-col">
+          <span class="font-semibold text-gray-700 dark:text-gray-300">Jumlah</span>
+          <InputNumber
+            id="buku-jumlah"
+            v-model="buku.jumlah_exspl"
+            :invalid="0 > buku.jumlah_exspl || buku.jumlah_exspl > 1000"
+            name="buku-jumlah"
+            required
+            class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+          />
+        </label>
+        <label for="buku-kategori" class="flex flex-col">
+          <span class="font-semibold text-gray-700 dark:text-gray-300">Kategori</span>
+          <Select
+            v-model="buku.kategori_id"
+            placeholder="Pilih kategori"
+            :options="availableCategories ?? []"
+            checkmark
+            option-label="kategori"
+            option-value="id"
+            class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+          />
+        </label>
+        <CTA type="submit" label="Simpan perubahan" class="sm:col-span-2" />
+      </form>
+    </section>
+  </template>
 
-          <label for="buku-penerbit" class="flex flex-col">
-            <span class="font-semibold text-gray-700 dark:text-gray-300">Penerbit</span>
-            <InputText
-              id="buku-penerbit"
-              v-model="buku.penerbit"
-              type="text"
-              name="buku-penerbit"
-              required
-              class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
-            />
-          </label>
-          <label for="buku-tahun-terbit" class="flex flex-col">
-            <span class="font-semibold text-gray-700 dark:text-gray-300">Tahun terbit</span>
-            <InputText
-              id="buku-tahun-terbit"
-              v-model="buku.tahun_terbit"
-              type="text"
-              name="buku-tahun-terbit"
-              required
-              class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
-            />
-          </label>
-          <label for="buku-alamat-terbit" class="flex flex-col">
-            <span class="font-semibold text-gray-700 dark:text-gray-300">Alamat terbit</span>
-            <InputText
-              id="buku-alamat-terbit"
-              v-model="buku.alamat_terbit"
-              type="text"
-              name="buku-alamat-terbit"
-              required
-              class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
-            />
-          </label>
-          <label for="buku-jumlah" class="flex flex-col">
-            <span class="font-semibold text-gray-700 dark:text-gray-300">Jumlah</span>
-            <InputNumber
-              id="buku-jumlah"
-              v-model="buku.jumlah_exspl"
-              :invalid="0 > buku.jumlah_exspl || buku.jumlah_exspl > 1000"
-              name="buku-jumlah"
-              required
-              class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
-            />
-          </label>
-          <label for="buku-kategori" class="flex flex-col">
-            <span class="font-semibold text-gray-700 dark:text-gray-300">Kategori</span>
-            <Select
-              v-model="buku.kategori_id"
-              placeholder="Pilih kategori"
-              :options="availableCategories ?? []"
-              checkmark
-              option-label="kategori"
-              option-value="id"
-              class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
-            />
-          </label>
-          <CTA type="submit" label="Simpan perubahan" class="sm:col-span-2" />
-        </form>
-      </section>
-    </article>
-    <div class="button-container">
-      <CTA severity="danger" label="Hapus" @click="confirmDeleteBuku(buku.no_isbn)" />
-      <CTA v-show="!formIsVisible" label="Sunting" @click="toggleFormVisibility" />
+  <div class="button-container">
+    <CTA severity="danger" label="Hapus" @click="confirmDeleteBuku(buku.no_isbn)" />
 
-      <ConfirmPopup />
-    </div>
+    <ConfirmPopup />
   </div>
 
   <Toast />
