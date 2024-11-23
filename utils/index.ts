@@ -119,7 +119,7 @@ export async function searchBukus({ searchTerm, category }: BukuSearchArgs) {
  * @param {Buku['image']} image - image property of buku
  * @returns {Promise<string>} path
  * */
-export async function getBukuImage(image: Buku["image"]): Promise<string> {
+export async function getBukuImage(image?: Buku["image"]): Promise<string> {
   const config = useRuntimeConfig()
   if (!image) return "/assets/Image_not_available.png"
   return `${config.public.supabase.url}/storage/v1/object/public/Buku/${image}`
