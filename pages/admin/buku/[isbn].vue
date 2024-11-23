@@ -117,7 +117,8 @@ async function deleteBook(isbn: string) {
   }
 }
 
-const { bukuGambarFile, bukuGambarURL, previewBukuImage } = usePreviewBukuImage()
+const { newImage, previewURL, previewImage } = usePreviewImage()
+const { data: imgURL } = await useAsyncData(async () => await getBukuImage(buku.value?.image))
 </script>
 
 <template>
@@ -140,14 +141,14 @@ const { bukuGambarFile, bukuGambarURL, previewBukuImage } = usePreviewBukuImage(
         class="mx-auto lg:m-0 max-w-60 aspect-[2/3] border-2 border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden grid place-content-center bg-gray-100 dark:bg-gray-800"
       >
         <img
-          v-show="bukuGambarFile"
-          :src="bukuGambarURL"
+          v-if="newImage || imgURL"
+          :src="previewURL === '' ? (imgURL as string) : previewURL"
           width="300"
           height="450"
           class="size-full object-cover aspect-auto"
           :alt="`gambar buku ${buku?.judul}`"
         />
-        <p v-show="!bukuGambarFile" class="text-center text-gray-600 dark:text-gray-400">
+        <p v-else class="text-center text-gray-600 dark:text-gray-400">
           Gambar buku akan muncul di sini.
         </p>
       </figure>
@@ -167,7 +168,7 @@ const { bukuGambarFile, bukuGambarURL, previewBukuImage } = usePreviewBukuImage(
             class="w-full border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
             custom-upload
             auto
-            @select="previewBukuImage"
+            @select="previewImage"
           />
         </label>
 
