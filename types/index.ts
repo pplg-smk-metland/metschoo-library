@@ -23,4 +23,17 @@ export type SignUpData = {
   confirmPassword: string
 }
 
+export interface PeminjamanSearchArgs {
+  peminjam: Pengguna["nama"]
+  no_isbn: Buku["no_isbn"]
+  tgl_pinjam: Array<Date | null>
+  tenggat_waktu: Array<Date | null>
+}
+
+export interface BukuSearchArgs {
+  judul?: string
+  no_isbn?: Buku["no_isbn"]
+  kategori?: Kategori["id"] | null
+}
+
 export type Theme = "light" | "dark"
