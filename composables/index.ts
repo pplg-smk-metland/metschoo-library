@@ -2,6 +2,7 @@ import { ref } from "vue"
 import type { PostgrestError } from "@supabase/supabase-js"
 import type { Buku, PeminjamanState } from "@/types"
 import type { Database } from "~/types/database.types"
+import type { FileUploadSelectEvent } from "primevue"
 
 /**
  * Returns a blank Buku ref.
@@ -111,4 +112,16 @@ export async function useCheckWishlist(isbn: Buku["no_isbn"]): Promise<boolean> 
     console.trace(err as PostgrestError)
     return false
   }
+}
+
+export function usePreviewImage() {
+  const previewURL = ref("")
+  const newImage = ref<File>()
+
+  function previewImage(e: FileUploadSelectEvent) {
+    if (newImage.value) previewURL.value = URL.createObjectURL(newImage.value)
+    newImage.value = e.files[0]
+  }
+
+  return { newImage, previewURL, previewImage }
 }

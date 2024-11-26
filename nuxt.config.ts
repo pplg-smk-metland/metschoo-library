@@ -60,6 +60,7 @@ export default defineNuxtConfig({
           "Des",
         ],
         fileSizeTypes: ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
+        choose: "pilih",
       },
     },
   },
@@ -81,3 +82,4 @@ export default defineNuxtConfig({
     },
   },
 })
+
