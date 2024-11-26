@@ -150,6 +150,7 @@ const router = useRouter()
           custom-upload
           auto
           @select="previewImage"
+          @change="previewImage"
         />
       </label>
 
