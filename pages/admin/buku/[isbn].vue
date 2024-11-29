@@ -169,6 +169,7 @@ const { data: imgURL } = await useAsyncData(async () => await getBukuImage(buku.
             custom-upload
             auto
             @select="previewImage"
+            @change="previewImage"
           />
         </label>
 
