@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { Kategori } from "@/types"
-
 import DataTable from "primevue/datatable"
 import Column from "primevue/column"
 import Select from "primevue/select"
+import { InputText } from "primevue"
 import PageHeader from "~/components/PageHeader.vue"
+import type { BukuSearchArgs } from "~/types"
 
 useHead({
   title: "Data Buku",
@@ -20,23 +20,25 @@ const categoriesOptions = computed(() => {
   return [{ id: 0, kategori: "semua" }, ...(categories.value || [])]
 })
 
-const selectedCategory = ref<Kategori["id"] | null>(null)
-
 const { data: searchResults } = useAsyncData(async () => await searchBukus({}))
-const searchTerm = ref("")
+
+const searchFor = ref<BukuSearchArgs>({
+  judul: "",
+  no_isbn: "",
+  kategori: 0,
+})
 
 const route = useRoute()
 
 watch(
   () => route.query,
   async () => {
-    const { term, category } = route.query
-    searchTerm.value = term as string
-    selectedCategory.value = Number(category)
+    const { judul, no_isbn, kategori } = route.query
 
     searchResults.value = await searchBukus({
-      searchTerm: term as string,
-      category: Number(category),
+      judul: judul as string,
+      no_isbn: no_isbn as string,
+      kategori: Number(kategori),
     })
   }
 )
@@ -44,23 +46,32 @@ watch(
 async function handleSearchBuku() {
   await navigateTo({
     path: route.path,
-    query: { term: searchTerm.value, category: selectedCategory.value },
+    // query: { term: searchTerm.value, category: selectedCategory.value },
+    query: searchFor.value,
   })
 }
 </script>
 
 <template>
-  <PageHeader heading="Data buku">
-    <form class="w-full flex gap-4 items-center justify-end" @submit.prevent="handleSearchBuku">
+  <PageHeader heading="Data buku" />
+
+  <section class="main-section">
+    <form class="w-full flex gap-4 items-center pb-4" @submit.prevent="handleSearchBuku">
+      <label for="search-term" class="sr-only">Judul</label>
       <InputText
-        id="search-term"
-        v-model="searchTerm"
-        type="text"
+        input-id="search-term"
+        v-model="searchFor.judul"
         name="search-term"
-        placeholder="cari judul buku..."
+        placeholder="Judul buku"
       />
+
+      <label for="search-isbn" class="sr-only">ISBN</label>
+      <InputText input-id="search-isbn" placeholder="ISBN" v-model="searchFor.no_isbn" />
+
+      <label for="search-category" class="sr-only">Kategori</label>
       <Select
-        v-model="selectedCategory"
+        input-id="search-category"
+        v-model="searchFor.kategori"
         placeholder="pilih kategori"
         :options="categoriesOptions"
         option-label="kategori"
@@ -68,11 +79,9 @@ async function handleSearchBuku() {
         checkmark
         required
       />
-      <CTA type="submit" label="Cari" class="px-6" />
+      <CTA fill type="submit" label="Cari" class="px-6 ms-auto" />
     </form>
-  </PageHeader>
 
-  <section class="main-section">
     <DataTable
       :value="searchResults"
       scroll-height="60vh"
@@ -87,7 +96,10 @@ async function handleSearchBuku() {
 
       <Column field="judul" header="Judul">
         <template #body="slotProps">
-          <NuxtLink :to="`/admin/buku/${slotProps.data.no_isbn}`">
+          <NuxtLink
+            :to="`/admin/buku/${slotProps.data.no_isbn}`"
+            class="hover:underline inline-block max-w-72 overflow-hidden whitespace-nowrap text-ellipsis"
+          >
             {{ slotProps.data.judul }}
           </NuxtLink>
         </template>

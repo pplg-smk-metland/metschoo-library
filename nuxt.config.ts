@@ -23,6 +23,7 @@ export default defineNuxtConfig({
     },
   },
   primevue: {
+    autoImport: true,
     options: {
       theme: "none",
       locale: {
@@ -82,4 +83,3 @@ export default defineNuxtConfig({
     },
   },
 })
-

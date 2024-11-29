@@ -4,6 +4,8 @@ import DataTable from "primevue/datatable"
 import Column from "primevue/column"
 import { getPeminjamanData } from "@/lib/peminjaman"
 import { formatDate } from "#imports"
+import type { PeminjamanSearchArgs } from "~/types"
+import { InputText, DatePicker, FloatLabel } from "primevue"
 
 useHead({
   title: "Peminjaman",
@@ -13,18 +15,20 @@ definePageMeta({
   layout: "admin",
 })
 
-const startDate = ref<Date | null>(null)
-const endDate = ref<Date | null>(null)
+const searchFor = ref<PeminjamanSearchArgs>({
+  peminjam: "",
+  no_isbn: "",
+  tgl_pinjam: [null, null],
+  tenggat_waktu: [null, null],
+})
 
-const { data: peminjamanData } = useAsyncData(
-  async () => await getPeminjamanData(startDate.value, endDate.value)
-)
+const { data: peminjamanData } = useAsyncData(async () => await getPeminjamanData(searchFor.value))
 
 const isLoading = ref(false)
 
 async function handleFilterPeminjaman() {
   isLoading.value = true
-  peminjamanData.value = await getPeminjamanData(startDate.value, endDate.value)
+  peminjamanData.value = await getPeminjamanData(searchFor.value)
   isLoading.value = false
 }
 </script>
@@ -35,24 +39,56 @@ async function handleFilterPeminjaman() {
   <section class="main-section">
     <form class="py-4 flex gap-4" @submit.prevent="handleFilterPeminjaman">
       <FloatLabel>
-        <DatePicker
-          v-model="startDate"
-          :invalid="!endDate || !startDate || endDate < startDate"
-          input-id="start-date"
-        />
-        <label for="start-date">Tanggal awal</label>
+        <InputText v-model="searchFor.peminjam" input-id="peminjam" fluid />
+        <label for="peminjam">Peminjam</label>
+      </FloatLabel>
+
+      <FloatLabel>
+        <InputText v-model="searchFor.no_isbn" input-id="no-isbn" fluid />
+        <label for="no-isbn">ISBN</label>
       </FloatLabel>
 
       <FloatLabel>
         <DatePicker
-          v-model="endDate"
-          :invalid="!endDate || !startDate || startDate < endDate"
-          input-id="end-date"
+          v-model="searchFor.tgl_pinjam[0]"
+          input-id="tgl-pinjam-awal"
+          show-button-bar
+          :manual-input="true"
         />
-        <label for="end-date">Tanggal akhir</label>
+        <label for="tgl-pinjam-awal">Tanggal pinjam awal</label>
       </FloatLabel>
 
-      <CTA type="submit" label="filter" class="ml-auto" />
+      <FloatLabel>
+        <DatePicker
+          v-model="searchFor.tgl_pinjam[1]"
+          input-id="tgl-pinjam-akhir"
+          show-button-bar
+          :manual-input="true"
+        />
+        <label for="tgl-pinjam-akhir">Tanggal pinjam akhir</label>
+      </FloatLabel>
+
+      <FloatLabel>
+        <DatePicker
+          v-model="searchFor.tenggat_waktu[0]"
+          input-id="tenggat-waktu-awal"
+          show-button-bar
+          :manual-input="true"
+        />
+        <label for="tenggat-waktu-awal">Tenggat waktu awal</label>
+      </FloatLabel>
+
+      <FloatLabel>
+        <DatePicker
+          v-model="searchFor.tenggat_waktu[1]"
+          input-id="tenggat-waktu-akhir"
+          show-button-bar
+          :manual-input="true"
+        />
+        <label for="tenggat-waktu-akhir">Tenggat waktu akhir</label>
+      </FloatLabel>
+
+      <CTA fill type="submit" label="filter" class="ms-auto" />
     </form>
 
     <DataTable
@@ -80,7 +116,7 @@ async function handleFilterPeminjaman() {
         <template #body="{ data }">
           <NuxtLink
             :to="`/admin/buku/${data.buku.no_isbn}`"
-            class="hover:underline py-4 w-full inline-block"
+            class="hover:underline py-4 w-full inline-block max-w-72 overflow-hidden whitespace-nowrap text-ellipsis"
           >
             {{ data.buku.judul }}
           </NuxtLink>

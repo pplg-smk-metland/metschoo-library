@@ -1,4 +1,4 @@
-import type { Buku, Kategori, Peminjaman } from "@/types"
+import type { Buku, BukuSearchArgs, Kategori, Peminjaman } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
 import type { Database } from "~/types/database.types.ts"
 
@@ -77,29 +77,31 @@ export async function countPenggunas(): Promise<number> {
   return count ?? 0
 }
 
-interface BukuSearchArgs {
-  searchTerm?: string
-  category?: Kategori["id"] | null
-}
-
 /**
  * search bukus.
  * Both searchTerm and category is optional so when both isn't needed you need
  * to pass an empty obj
  */
-export async function searchBukus({ searchTerm, category }: BukuSearchArgs) {
+export async function searchBukus(searchFor?: BukuSearchArgs) {
   const supabase = useSupabaseClient<Database>()
 
   let query = supabase
     .from("buku")
     .select(`no_isbn, judul, penulis, penerbit, tahun_terbit, kategori_buku(kategori)`)
 
-  if (searchTerm) {
-    query = query.textSearch("judul", searchTerm, { type: "websearch" })
-  }
+  if (searchFor) {
+    const { judul, no_isbn, kategori } = searchFor
+    if (judul) {
+      query = query.textSearch("judul", judul, { type: "websearch" })
+    }
 
-  if (category) {
-    query = query.eq("kategori_id", category)
+    if (no_isbn) {
+      query = query.ilike("no_isbn", `%${no_isbn}%`)
+    }
+
+    if (kategori) {
+      query = query.eq("kategori_id", kategori)
+    }
   }
 
   try {
