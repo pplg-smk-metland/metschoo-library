@@ -6,7 +6,8 @@ import type {
 } from "@supabase/supabase-js"
 import type { Buku, Peminjaman } from "@/types"
 import { formatDate } from "#imports"
-
+import DataTable from "primevue/datatable"
+import Column from "primevue/column"
 import { getPeminjamanData } from "@/lib/peminjaman"
 import { useConfirm } from "primevue/useconfirm"
 import { useToast } from "primevue/usetoast"

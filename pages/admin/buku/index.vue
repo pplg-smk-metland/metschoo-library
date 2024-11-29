@@ -2,6 +2,7 @@
 import DataTable from "primevue/datatable"
 import Column from "primevue/column"
 import Select from "primevue/select"
+import { InputText } from "primevue"
 import PageHeader from "~/components/PageHeader.vue"
 import type { BukuSearchArgs } from "~/types"
 
@@ -61,7 +62,7 @@ async function handleSearchBuku() {
         input-id="search-term"
         v-model="searchFor.judul"
         name="search-term"
-        placeholder="judul buku"
+        placeholder="Judul buku"
       />
 
       <label for="search-isbn" class="sr-only">ISBN</label>

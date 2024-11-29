@@ -5,6 +5,7 @@ import Column from "primevue/column"
 import { getPeminjamanData } from "@/lib/peminjaman"
 import { formatDate } from "#imports"
 import type { PeminjamanSearchArgs } from "~/types"
+import { InputText, DatePicker, FloatLabel } from "primevue"
 
 useHead({
   title: "Peminjaman",

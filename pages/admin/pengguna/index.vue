@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import DataTable from "primevue/datatable"
+import Column from "primevue/column"
 import type { Database } from "~/types/database.types"
 
 useHead({
