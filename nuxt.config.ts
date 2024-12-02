@@ -29,9 +29,9 @@ export default defineNuxtConfig({
       locale: {
         accept: "Ya",
         reject: "Tidak",
-        dayNamesShort: ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"],
-        dayNames: ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"],
-        dayNamesMin: ["Se", "Se", "Ra", "Ka", "Ju", "Sa", "Mi"],
+        dayNamesShort: ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"],
+        dayNames: ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"],
+        dayNamesMin: ["Mi", "Se", "Se", "Ra", "Ka", "Ju", "Sa"],
         monthNames: [
           "Januari",
           "Februari",
