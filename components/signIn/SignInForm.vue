@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import InputText from "primevue/inputtext"
 import Password from "primevue/password"
+import InputNumber from "primevue/inputnumber"
 import { AuthError } from "@supabase/supabase-js"
 import type { SignUpData } from "@/types"
 
@@ -23,6 +24,7 @@ function handleSwitchForm() {
 const data = ref<SignUpData>({
   nama: "",
   email: "",
+  phoneNumber: "",
   password: "",
   confirmPassword: "",
 })
@@ -55,7 +57,7 @@ async function handleSignIn() {
 }
 
 async function handleSignUp() {
-  const { nama, email, password, confirmPassword } = data.value
+  const { nama, email, phoneNumber, password, confirmPassword } = data.value
 
   if (confirmPassword !== password) {
     alert("passwordnya ga sama")
@@ -63,7 +65,7 @@ async function handleSignUp() {
   }
 
   try {
-    await authStore.handleSignUp({ nama, email, password })
+    await authStore.handleSignUp({ nama, email, phoneNumber, password })
     alert("Cek email lu ya buat verifikasi email!")
   } catch (err) {
     console.error(err)
@@ -142,6 +144,13 @@ async function handleSignUp() {
           required
           type="email"
           placeholder="Email"
+        />
+        <label for="signup-number">No. HP</label>
+        <InputNumber
+          id="signup-number"
+          type="text"
+          required
+          placeholder="0878 kapan kapan kita ke dufan"
         />
         <label for="signup-password">Password</label>
         <Password

@@ -24,6 +24,7 @@ const kredensialPengguna = ref({
   password: "",
   passwordKonfirmasi: "",
   email: user.value!.email,
+  phoneNumber: "",
 })
 
 async function ubahKredensial() {
@@ -82,6 +83,27 @@ async function signOut() {
       <IconArrowLeft />
     </CTA>
   </PageHeader>
+
+  <section class="main-section">
+    <h2 class="text-lg mb-2">Ubah No. HP</h2>
+
+    <form class="flex flex-col gap-2">
+      <label for="number">No. HP</label>
+      <InputText
+        id="number"
+        v-model="kredensialPengguna.phoneNumber"
+        type="text"
+        name="phone number"
+        placeholder="0878 kapan kapan kita ke dufan"
+        required
+      />
+      <p>{{ kredensialPengguna.phoneNumber }}</p>
+
+      <div class="button-container">
+        <CTA label="Ubah No. HP" />
+      </div>
+    </form>
+  </section>
 
   <section class="main-section">
     <h2 class="text-lg mb-2">Ubah password</h2>
