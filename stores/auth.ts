@@ -27,8 +27,9 @@ export const useAuthStore = defineStore("auth", () => {
   async function handleSignUp({
     nama,
     email,
+    phoneNumber,
     password,
-  }: Required<Pick<SignUpData, "nama" | "email" | "password">>) {
+  }: Required<Pick<SignUpData, "nama" | "phoneNumber" | "email" | "password">>) {
     const { error } = await supabase.auth.signUp({
       email,
       password,
