@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import InputText from "primevue/inputtext"
 import Password from "primevue/password"
-import InputNumber from "primevue/inputnumber"
 import { AuthError } from "@supabase/supabase-js"
 import type { SignUpData } from "@/types"
 
@@ -146,11 +145,12 @@ async function handleSignUp() {
           placeholder="Email"
         />
         <label for="signup-number">No. HP</label>
-        <InputNumber
+        <InputText
           id="signup-number"
           type="text"
           required
           placeholder="0878 kapan kapan kita ke dufan"
+          maxlength="14"
         />
         <label for="signup-password">Password</label>
         <Password

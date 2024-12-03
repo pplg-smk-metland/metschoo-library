@@ -96,9 +96,8 @@ async function signOut() {
         name="phone number"
         placeholder="0878 kapan kapan kita ke dufan"
         required
+        maxlength="14"
       />
-      <p>{{ kredensialPengguna.phoneNumber }}</p>
-
       <div class="button-container">
         <CTA label="Ubah No. HP" />
       </div>
