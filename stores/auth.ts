@@ -37,7 +37,7 @@ export const useAuthStore = defineStore("auth", () => {
 
     const { error: addNameError } = await supabase
       .from("pengguna")
-      .update({ nama })
+      .update({ nama, phone_no: phoneNumber })
       .eq("email", email)
     return error || addNameError
   }
@@ -64,7 +64,7 @@ export const useAuthStore = defineStore("auth", () => {
     try {
       const { data, error } = await supabase
         .from("pengguna")
-        .select("user_id, nama, email, kelas, jurusan, role_id")
+        .select("user_id, nama, email, kelas, jurusan, phone_no, role_id")
         .eq("user_id", id)
         .single()
       if (error) throw error
