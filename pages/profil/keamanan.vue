@@ -24,7 +24,7 @@ const kredensialPengguna = ref({
   password: "",
   passwordKonfirmasi: "",
   email: user.value!.email,
-  phoneNumber: "",
+  phoneNumber: user.value?.user_metadata.phone_no,
 })
 
 async function ubahKredensial() {
@@ -94,10 +94,11 @@ async function signOut() {
         v-model="kredensialPengguna.phoneNumber"
         type="text"
         name="phone number"
-        placeholder="0878 kapan kapan kita ke dufan"
+        placeholder="08xx"
         required
         maxlength="14"
       />
+
       <div class="button-container">
         <CTA label="Ubah No. HP" />
       </div>

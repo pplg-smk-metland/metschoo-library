@@ -19,6 +19,31 @@ export const useAuthStore = defineStore("auth", () => {
       }
 
       if (user.value) {
+        if (event === "INITIAL_SESSION" || "SIGNED_IN") {
+          if (user.value.user_metadata.new) {
+            const { nama, phone_no } = user.value.user_metadata
+
+            const { error } = await supabase
+              .from("pengguna")
+              .update({ nama, phone_no })
+              .eq("user_id", user.value.id)
+
+            if (error) console.error("gagal memperbarui metadata pengguna.")
+
+            const { data, error: updateNewError } = await supabase.auth.admin.updateUserById(
+              user.value.id,
+              {
+                user_metadata: {
+                  new: false,
+                },
+              }
+            )
+
+            if (updateNewError)
+              console.error("gagal memperbarui metadata pengguna (complete signup flow).")
+          }
+        }
+
         profile.value = await getProfile(user.value.id)
       }
     })
@@ -33,13 +58,16 @@ export const useAuthStore = defineStore("auth", () => {
     const { error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          nama,
+          phone_no: phoneNumber,
+          new: true,
+        },
+      },
     })
 
-    const { error: addNameError } = await supabase
-      .from("pengguna")
-      .update({ nama, phone_no: phoneNumber })
-      .eq("email", email)
-    return error || addNameError
+    return error
   }
 
   async function handleSignIn(email: string, password: string) {
