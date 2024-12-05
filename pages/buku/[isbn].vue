@@ -31,11 +31,7 @@ const isLoading = ref(false)
 /**
  * get buku data on the server
  */
-const { data: buku } = useAsyncData(async () => await getBuku(isbn.value))
-
-if (!buku || !buku.value) {
-  console.error("buku tidak ditemukan: ", buku.value)
-}
+const { data: buku } = useLazyAsyncData(async () => await getBuku(isbn.value))
 
 const { data: imgURL } = useAsyncData(
   async () => {
@@ -321,8 +317,7 @@ supabase
         />
 
         <CTA
-          v-else
-          :disabled="!peminjamanState?.isCancellable"
+          v-if="peminjamanState?.isCancellable"
           severity="danger"
           label="batalkan peminjaman"
           @click="batalkanPeminjamanBuku(buku, peminjamanState?.id!)"

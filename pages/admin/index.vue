@@ -25,19 +25,32 @@ const supabase = useSupabaseClient<Database>()
 
 const _peminjamanQuery = supabase
   .from("peminjaman")
-  .select("*, peminjaman_state(name), pengguna(nama, kelas, jurusan), buku(*)")
+  .select(
+    "*, peminjaman_detail(state_id, created_at), peminjaman_state(name), pengguna(nama, kelas, jurusan), buku(*)"
+  )
+  .order("created_at", { referencedTable: "peminjaman_detail", dec })
+  .limit(1, { referencedTable: "peminjaman_detail" })
 export type PeminjamanData = QueryData<typeof _peminjamanQuery>
+
+/**
+ * get all peminjaman data
+ */
 const { data: allPeminjamanData } = useLazyAsyncData(async () => await getPeminjamanData())
 
 const peminjamanData = computed(() => {
   if (!allPeminjamanData.value) return null
 
-  const bukusBorrowPending = allPeminjamanData.value.filter((data) => data.state_id === 1)
-  const bukusBorrowConfirmed = allPeminjamanData.value.filter((data) => data.state_id === 2)
-  const bukusReturnPending = allPeminjamanData.value.filter((data) => data.state_id === 4)
+  const activePeminjaman = allPeminjamanData.value.filter(
+    (data) => data.peminjaman_detail.length !== 0 && data.tgl_kembali === null
+  )
+  const bukusBorrowPending = activePeminjaman.filter((data) => data.state_id === 1)
+  const bukusBorrowConfirmed = activePeminjaman.filter((data) => data.state_id === 2)
+  const bukusReturnPending = activePeminjaman.filter((data) => data.state_id === 4)
 
   return { bukusBorrowConfirmed, bukusBorrowPending, bukusReturnPending }
 })
+
+console.log(peminjamanData)
 
 const { data: counts } = await useLazyAsyncData(async () => {
   const [bukuCount, penggunaCount] = await Promise.all([countBukus(), countPenggunas()])
@@ -124,13 +137,11 @@ async function konfirmasiPengembalian(dataPeminjaman: Peminjaman, buku: Buku) {
 
 async function insertPeminjamandata(payload: RealtimePostgresChangesPayload<Peminjaman>) {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await _peminjamanQuery.eq("id", (payload.new as Peminjaman).id).single()
+    if (error) throw error
+    supabase
       .from("peminjaman")
       .select("peminjaman_state(name), pengguna(nama, kelas, jurusan), buku(*)")
-      .eq("id", (payload.new as Peminjaman).id)
-      .single()
-    if (error) throw error
-
     // merge data from payload and data from fetch
     if (data && allPeminjamanData.value)
       allPeminjamanData.value.push({ ...(payload.new as Peminjaman), ...data })

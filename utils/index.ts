@@ -134,12 +134,22 @@ export async function getBukuImage(image?: Buku["image"]): Promise<string> {
  */
 export async function borrowBuku(no_isbn: Buku["no_isbn"], tenggat_waktu: Date) {
   const supabase = useSupabaseClient<Database>()
-  const { error } = await supabase.from("peminjaman").insert({
-    no_isbn,
-    tgl_pinjam: new Date().toISOString(),
-    tenggat_waktu: tenggat_waktu.toISOString(),
-  })
+  const { data: peminjaman, error } = await supabase
+    .from("peminjaman")
+    .insert({
+      no_isbn,
+      tenggat_waktu: tenggat_waktu.toISOString(),
+    })
+    .select()
+    .single()
   if (error) throw error
+
+  const { error: detailError } = await supabase.from("peminjaman_detail").insert({
+    peminjaman_id: peminjaman.id,
+    state_id: 1,
+  })
+
+  if (detailError) throw detailError
 }
 
 /**
@@ -149,12 +159,10 @@ export async function borrowBuku(no_isbn: Buku["no_isbn"], tenggat_waktu: Date) 
  * */
 export async function cancelBorrowBuku(id: Peminjaman["id"]) {
   const supabase = useSupabaseClient<Database>()
-  const { error } = await supabase
-    .from("peminjaman")
-    .update({
-      state_id: 6,
-    })
-    .eq("id", id)
+  const { error } = await supabase.from("peminjaman_detail").insert({
+    peminjaman_id: id,
+    state_id: 6,
+  })
 
   if (error) throw error
 }
@@ -166,7 +174,11 @@ export async function cancelBorrowBuku(id: Peminjaman["id"]) {
  */
 export async function returnBuku(id: Peminjaman["id"]) {
   const supabase = useSupabaseClient<Database>()
-  const { error } = await supabase.from("peminjaman").update({ state_id: 4 }).eq("id", id)
+  const { error } = await supabase.from("peminjaman_detail").insert({
+    peminjaman_id: id,
+    state_id: 4,
+  })
+
   if (error) throw error
 }
 
@@ -177,7 +189,11 @@ export async function returnBuku(id: Peminjaman["id"]) {
  */
 export async function confirmBorrowBuku(id: Peminjaman["id"]) {
   const supabase = useSupabaseClient<Database>()
-  const { error } = await supabase.from("peminjaman").update({ state_id: 2 }).eq("id", id)
+  const { error } = await supabase.from("peminjaman_detail").insert({
+    peminjaman_id: id,
+    state_id: 2,
+  })
+
   if (error) throw error
 }
 
@@ -194,12 +210,11 @@ export async function confirmReturnBuku(
 ) {
   const supabase = useSupabaseClient<Database>()
   let state_id = 5
-  if (new Date(tenggat_waktu) < new Date(tgl_kembali)) state_id = 6
 
-  const { error } = await supabase
-    .from("peminjaman")
-    .update({ state_id, tgl_kembali: tgl_kembali.toISOString() })
-    .eq("id", id)
+  const isLate = new Date(tenggat_waktu) < new Date(tgl_kembali)
+  if (isLate) state_id = 6
+
+  const { error } = await supabase.from("peminjaman_detail").insert({ state_id, peminjaman_id: id })
   if (error) throw error
 
   const { error: updateError } = await supabase

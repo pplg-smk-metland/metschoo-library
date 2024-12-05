@@ -14,7 +14,7 @@ definePageMeta({
 
 const supabase = useSupabaseClient<Database>()
 
-const historyQuery = supabase.from("peminjaman_history").select("*")
+const historyQuery = supabase.from("peminjaman").select("*, buku(*)")
 export type History = QueryData<typeof historyQuery>
 
 async function getPeminjamanHistory() {
