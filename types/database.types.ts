@@ -1,4 +1,10 @@
-export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
 
 export type Database = {
   public: {
@@ -120,6 +126,42 @@ export type Database = {
           },
         ]
       }
+      peminjaman_detail: {
+        Row: {
+          created_at: string
+          id: number
+          peminjaman_id: string
+          state_id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          peminjaman_id: string
+          state_id: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          peminjaman_id?: string
+          state_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "peminjaman_detail_peminjaman_id_fkey"
+            columns: ["peminjaman_id"]
+            isOneToOne: false
+            referencedRelation: "peminjaman"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "peminjaman_detail_state_id_fkey"
+            columns: ["state_id"]
+            isOneToOne: false
+            referencedRelation: "peminjaman_state"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       peminjaman_state: {
         Row: {
           id: number
@@ -216,25 +258,7 @@ export type Database = {
       }
     }
     Views: {
-      peminjaman_history: {
-        Row: {
-          buku: Database["public"]["Tables"]["buku"]["Row"] | null
-          peminjaman_state: string | null
-          state_id: number | null
-          tenggat_waktu: string | null
-          tgl_kembali: string | null
-          tgl_pinjam: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "peminjaman_state_id_fkey"
-            columns: ["state_id"]
-            isOneToOne: false
-            referencedRelation: "peminjaman_state"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+      [_ in never]: never
     }
     Functions: {
       [_ in never]: never
@@ -265,8 +289,10 @@ export type Tables<
     }
     ? R
     : never
-  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] & PublicSchema["Views"])
-    ? (PublicSchema["Tables"] & PublicSchema["Views"])[PublicTableNameOrOptions] extends {
+  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
+        PublicSchema["Views"])
+    ? (PublicSchema["Tables"] &
+        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
         Row: infer R
       }
       ? R
@@ -274,7 +300,9 @@ export type Tables<
     : never
 
 export type TablesInsert<
-  PublicTableNameOrOptions extends keyof PublicSchema["Tables"] | { schema: keyof Database },
+  PublicTableNameOrOptions extends
+    | keyof PublicSchema["Tables"]
+    | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
     : never = never,
@@ -293,7 +321,9 @@ export type TablesInsert<
     : never
 
 export type TablesUpdate<
-  PublicTableNameOrOptions extends keyof PublicSchema["Tables"] | { schema: keyof Database },
+  PublicTableNameOrOptions extends
+    | keyof PublicSchema["Tables"]
+    | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
     : never = never,
@@ -312,7 +342,9 @@ export type TablesUpdate<
     : never
 
 export type Enums<
-  PublicEnumNameOrOptions extends keyof PublicSchema["Enums"] | { schema: keyof Database },
+  PublicEnumNameOrOptions extends
+    | keyof PublicSchema["Enums"]
+    | { schema: keyof Database },
   EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
@@ -336,3 +368,4 @@ export type CompositeTypes<
   : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
     ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
+
