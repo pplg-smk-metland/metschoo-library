@@ -59,19 +59,19 @@ async function handleSearchBuku() {
     <form class="w-full flex gap-4 items-center pb-4" @submit.prevent="handleSearchBuku">
       <label for="search-term" class="sr-only">Judul</label>
       <InputText
-        input-id="search-term"
         v-model="searchFor.judul"
+        input-id="search-term"
         name="search-term"
         placeholder="Judul buku"
       />
 
       <label for="search-isbn" class="sr-only">ISBN</label>
-      <InputText input-id="search-isbn" placeholder="ISBN" v-model="searchFor.no_isbn" />
+      <InputText v-model="searchFor.no_isbn" input-id="search-isbn" placeholder="ISBN" />
 
       <label for="search-category" class="sr-only">Kategori</label>
       <Select
-        input-id="search-category"
         v-model="searchFor.kategori"
+        input-id="search-category"
         placeholder="pilih kategori"
         :options="categoriesOptions"
         option-label="kategori"

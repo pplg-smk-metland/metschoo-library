@@ -24,6 +24,7 @@ const kredensialPengguna = ref({
   password: "",
   passwordKonfirmasi: "",
   email: user.value!.email,
+  phoneNumber: user.value?.user_metadata.phone_no,
 })
 
 async function ubahKredensial() {
@@ -61,6 +62,29 @@ async function ubahEmail() {
   }
 }
 
+async function changePhoneNumber() {
+  try {
+    const phoneNumber = kredensialPengguna.value.phoneNumber
+    if (!phoneNumber.match(/^08\d{10,14}$/)) {
+      dialog.value.open(
+        "Nomor HP tidak valid. Harus dimulai dengan 08 dan terdiri dari 10-14 angka."
+      )
+      return
+    }
+
+    const { error } = await supabase.auth.updateUser({
+      data: { phone_no: phoneNumber },
+    })
+
+    if (error) throw error
+
+    dialog.value.open("Nomor HP berhasil diperbarui.")
+  } catch (err) {
+    console.error(err)
+    dialog.value.open("Terjadi kesalahan saat memperbarui nomor HP.")
+  }
+}
+
 const authStore = useAuthStore()
 const router = useRouter()
 
@@ -82,6 +106,27 @@ async function signOut() {
       <IconArrowLeft />
     </CTA>
   </PageHeader>
+
+  <section class="main-section">
+    <h2 class="text-lg mb-2">Ubah No. HP</h2>
+
+    <form class="flex flex-col gap-2" @submit.prevent="changePhoneNumber">
+      <label for="number">No. HP</label>
+      <InputText
+        id="number"
+        v-model="kredensialPengguna.phoneNumber"
+        type="text"
+        name="phone number"
+        placeholder="08xx"
+        required
+        maxlength="14"
+      />
+
+      <div class="button-container">
+        <CTA label="Ubah No. HP" type="submit" />
+      </div>
+    </form>
+  </section>
 
   <section class="main-section">
     <h2 class="text-lg mb-2">Ubah password</h2>
@@ -109,7 +154,7 @@ async function signOut() {
         required
       />
       <div class="button-container">
-        <CTA label="Ubah kredensial" />
+        <CTA label="Ubah kredensial" type="submit" />
       </div>
     </form>
   </section>
@@ -129,7 +174,7 @@ async function signOut() {
       />
 
       <div class="button-container">
-        <CTA label="Ubah email" />
+        <CTA label="Ubah email" type="submit" />
       </div>
     </form>
   </section>

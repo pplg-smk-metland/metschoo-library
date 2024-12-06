@@ -1,8 +1,8 @@
 <template>
   <footer class="dark:bg-surface-700">
-    <p>Klrfl, 2023.</p>
-    <a class="block" href="https://github.com/pplg-smkmetland/metschoo-library">
-      This website on Github
+    <p>PPLG Angkatan 9, {{ new Date().getFullYear() }}.</p>
+    <a class="block w-fit" href="https://github.com/pplg-smkmetland/metschoo-library">
+      This website is on Github
     </a>
   </footer>
 </template>

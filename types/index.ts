@@ -20,6 +20,7 @@ export interface PeminjamanState {
 export type SignUpData = {
   nama: string
   email: string
+  phoneNumber: string
   password: string
   confirmPassword: string
 }
