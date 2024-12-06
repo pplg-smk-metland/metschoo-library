@@ -2,6 +2,7 @@
 import { formatDate } from "#imports"
 import type { Peminjaman } from "~/types"
 import type { Database } from "~/types/database.types"
+import type { PeminjamanData } from "../index.vue"
 
 definePageMeta({
   layout: "profile-edit",
@@ -21,8 +22,9 @@ const { data: pengguna } = await useAsyncData(async () => {
 const { data: peminjaman } = await useAsyncData(async () => {
   const { data, error } = await supabase
     .from("peminjaman")
-    .select("*, buku(judul)")
+    .select("*, peminjaman_detail(state_id, created_at), buku(judul)")
     .order("tgl_pinjam", { ascending: true })
+    .order("created_at", { referencedTable: "peminjaman_detail", ascending: false })
     .eq("user_id", userId)
 
   if (error) throw error
@@ -74,39 +76,35 @@ const keteranganText = (state_id: Peminjaman["state_id"]) => {
         </template>
 
         <Column header="Buku">
-          <template #body="slotProps">
-            {{ slotProps.data.buku.judul }}
+          <template #body="{ data }">
+            {{ data.buku.judul }}
           </template>
         </Column>
 
         <Column header="tanggal pinjam">
-          <template #body="slotProps">
-            {{ formatDate(new Date(slotProps.data.tgl_pinjam)) }}
+          <template #body="{ data }: { data: PeminjamanData[number] }">
+            {{ getPeminjamanStateDate(data, 1) }}
           </template>
         </Column>
 
         <Column header="tenggat waktu">
-          <template #body="slotProps">
-            {{ formatDate(new Date(slotProps.data.tenggat_waktu)) }}
+          <template #body="{ data }: { data: PeminjamanData[number] }">
+            {{ formatDate(new Date(data.tenggat_waktu)) }}
           </template>
         </Column>
 
         <Column header="tanggal kembali">
-          <template #body="{ data }">
-            <span
-              v-if="new Date(data.tenggat_waktu).getTime() < new Date(data.tgl_pinjam).getTime()"
-            >
-              terlambat
-            </span>
+          <template #body="{ data }: { data: PeminjamanData[number] }">
+            <span v-if="data.peminjaman_detail[0].state_id === 6"> terlambat </span>
             <span v-else>
-              {{ data.tgl_kembali ? formatDate(new Date(data.tgl_kembali)) : "-" }}
+              {{ getPeminjamanStateDate(data, 5) }}
             </span>
           </template>
         </Column>
 
         <Column header="keterangan">
-          <template #body="slotProps">
-            {{ keteranganText(slotProps.data.state_id) }}
+          <template #body="{ data }: { data: PeminjamanData[number] }">
+            {{ keteranganText(data.peminjaman_detail[0].state_id) }}
           </template>
         </Column>
       </DataTable>
