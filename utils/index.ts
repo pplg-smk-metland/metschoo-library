@@ -157,7 +157,7 @@ export async function borrowBuku(no_isbn: Buku["no_isbn"], tenggat_waktu: Date) 
  *
  * @param {Peminjaman['id']} id - id of peminjaman
  * */
-export async function cancelBorrowBuku(id: Peminjaman["id"]) {
+export async function cancelBorrowBuku(id: Peminjaman["id"], { jumlah_exspl, no_isbn }: Buku) {
   const supabase = useSupabaseClient<Database>()
   const { error } = await supabase.from("peminjaman_detail").insert({
     peminjaman_id: id,
@@ -165,6 +165,12 @@ export async function cancelBorrowBuku(id: Peminjaman["id"]) {
   })
 
   if (error) throw error
+
+  const { error: updateError } = await supabase
+    .from("buku")
+    .update({ jumlah_exspl: jumlah_exspl + 1 })
+    .eq("no_isbn", no_isbn)
+  if (updateError) throw error
 }
 
 /**
