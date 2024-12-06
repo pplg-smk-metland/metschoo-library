@@ -6,6 +6,7 @@ import { getPeminjamanData } from "@/lib/peminjaman"
 import { formatDate } from "#imports"
 import type { PeminjamanSearchArgs } from "~/types"
 import { InputText, DatePicker, FloatLabel } from "primevue"
+import type { PeminjamanData } from "./index.vue"
 
 useHead({
   title: "Peminjaman",
@@ -122,12 +123,21 @@ async function handleFilterPeminjaman() {
           </NuxtLink>
         </template>
       </Column>
+
       <Column field="no_isbn" header="ISBN" />
-      <Column field="tgl_pinjam" header="Tanggal pinjam" sortable>
-        <template #body="slotProps">
-          {{ formatDate(new Date(slotProps.data.tgl_pinjam)) }}
+
+      <Column header="Tanggal pinjam" sortable>
+        <template #body="{ data }: { data: PeminjamanData[number] }">
+          {{ getPeminjamanStateDate(data, 1) }}
         </template>
       </Column>
+
+      <Column header="Tanggal kembali" sortable>
+        <template #body="{ data }: { data: PeminjamanData[number] }">
+          {{ getPeminjamanStateDate(data, 5) }}
+        </template>
+      </Column>
+
       <Column field="tenggat_waktu" header="Tenggat waktu" sortable>
         <template #body="slotProps">
           {{ formatDate(new Date(slotProps.data.tenggat_waktu)) }}
@@ -136,7 +146,8 @@ async function handleFilterPeminjaman() {
 
       <Column header="keterangan" field="state_id" sortable>
         <template #body="slotProps">
-          {{ slotProps.data.peminjaman_state.name }}
+          <!-- latest status is on top  -->
+          {{ slotProps.data.peminjaman_detail[0].peminjaman_state.name }}
         </template>
       </Column>
     </DataTable>

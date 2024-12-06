@@ -1,5 +1,6 @@
 import type { Buku, BukuSearchArgs, Kategori, Peminjaman } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
+import type { PeminjamanData } from "~/pages/admin/index.vue"
 import type { Database } from "~/types/database.types.ts"
 
 /**
@@ -261,4 +262,17 @@ export function formatDate(date: Date, opts?: Intl.DateTimeFormatOptions): strin
     }
   }
   return new Intl.DateTimeFormat("id-ID", opts).format(date)
+}
+
+/**
+ * get date of peminjaman state changes
+ * you can use it to get date of any peminjaman event
+ *
+ * @returns {string} formatted date string of peminjaman event date
+ */
+export function getPeminjamanStateDate(data: PeminjamanData[number], state_id: number): string {
+  const target = data.peminjaman_detail.find((data) => data.state_id === state_id)
+
+  if (target === undefined) return "-"
+  else return formatDate(new Date(target.created_at))
 }

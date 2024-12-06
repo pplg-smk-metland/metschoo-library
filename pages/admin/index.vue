@@ -26,7 +26,7 @@ const supabase = useSupabaseClient<Database>()
 const _peminjamanQuery = supabase
   .from("peminjaman")
   .select(
-    "*, peminjaman_detail(*), peminjaman_state(name), pengguna(nama, kelas, jurusan), buku(*)"
+    "*, peminjaman_detail(*, peminjaman_state(name)), pengguna(nama, kelas, jurusan), buku(*)"
   )
   .order("created_at", { referencedTable: "peminjaman_detail", ascending: false })
   .limit(1, { referencedTable: "peminjaman_detail" })
@@ -146,7 +146,9 @@ async function insertPeminjamandata(payload: RealtimePostgresChangesPayload<Pemi
     if (error) throw error
     supabase
       .from("peminjaman")
-      .select("peminjaman_state(name), pengguna(nama, kelas, jurusan), buku(*)")
+      .select(
+        "peminjaman_detail(*, peminjaman_state(name)), pengguna(nama, kelas, jurusan), buku(*)"
+      )
     // merge data from payload and data from fetch
     if (data && allPeminjamanData.value)
       allPeminjamanData.value.push({ ...(payload.new as Peminjaman), ...data })
@@ -160,7 +162,12 @@ function updatePeminjamanData(payload: RealtimePostgresChangesPayload<Peminjaman
     (data) => data.id === (payload.new as PeminjamanDetail).peminjaman_id
   )
 
-  if (targetData) targetData.peminjaman_detail[0] = payload.new as PeminjamanDetail
+  if (targetData) {
+    targetData.peminjaman_detail[0] = {
+      peminjaman_state: targetData.peminjaman_detail[0].peminjaman_state,
+      ...(payload.new as PeminjamanDetail),
+    }
+  }
 }
 
 supabase
