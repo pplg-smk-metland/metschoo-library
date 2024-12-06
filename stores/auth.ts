@@ -19,7 +19,7 @@ export const useAuthStore = defineStore("auth", () => {
       }
 
       if (user.value) {
-        if (event === "INITIAL_SESSION" || "SIGNED_IN") {
+        if (event === "INITIAL_SESSION" || event === "SIGNED_IN") {
           if (user.value.user_metadata.new) {
             const { nama, phone_no } = user.value.user_metadata
 
@@ -30,7 +30,7 @@ export const useAuthStore = defineStore("auth", () => {
 
             if (error) console.error("gagal memperbarui metadata pengguna.")
 
-            const { data, error: updateNewError } = await supabase.auth.admin.updateUserById(
+            const { error: updateNewError } = await supabase.auth.admin.updateUserById(
               user.value.id,
               {
                 user_metadata: {
