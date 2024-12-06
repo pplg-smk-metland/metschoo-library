@@ -1,21 +1,25 @@
 <script setup lang="ts">
-import type { History } from "@/pages/profil/index.vue"
 import { formatDate } from "#imports"
+import type { PeminjamanData } from "~/pages/admin/index.vue"
 
 interface Props {
-  data: History[number]
+  data: PeminjamanData[number]
 }
 
 const props = defineProps<Props>()
-const { buku, tgl_pinjam, tgl_kembali, tenggat_waktu } = props.data
+const { buku, tenggat_waktu, peminjaman_detail } = props.data
 
 const { data: imgURL } = await useAsyncData(
   buku!.no_isbn,
   async () => await getBukuImage(buku!.image)
 )
 
-const late = computed(() => {
-  return new Date(tenggat_waktu!) < new Date(tgl_kembali!)
+const peminjamanState = computed(() => {
+  return {
+    isReturned: peminjaman_detail[0].state_id === 5,
+    isLate: peminjaman_detail[0].state_id === 6,
+    isCancelled: peminjaman_detail[0].state_id === 7,
+  }
 })
 </script>
 
@@ -39,17 +43,19 @@ const late = computed(() => {
 
       <p class="mt-auto">
         <span class="text-sm text-gray-500 dark:text-gray-400">dipinjam pada</span>
-        <span class="block">{{ formatDate(new Date(tgl_pinjam!)) }}</span>
+        <span class="block">{{ formatDate(new Date(peminjaman_detail[0].created_at)) }}</span>
       </p>
 
-      <p v-if="tgl_kembali" class="m-0">
+      <p v-if="peminjamanState.isReturned" class="m-0">
         <span class="text-sm text-gray-500 dark:text-gray-400">dikembalikan pada</span>
-        <span class="block">{{ formatDate(new Date(tgl_kembali)) }}</span>
+        <span class="block">{{ formatDate(new Date(peminjaman_detail[0].created_at)) }}</span>
       </p>
 
-      <p v-else class="m-0 text-sm leading-normal">
+      <p v-if="peminjamanState.isCancelled" class="m-0 text-sm leading-normal">
         <span class="text-red-400">Dibatalkan</span>
-        <span v-if="late" class="text-red-500 ring-red-500">Terlambat</span>
+        <span v-if="peminjamanState.isLate" class="text-red-500 ring-red-500"
+          >Terlambat ({{ formatDate(new Date(tenggat_waktu)) }})</span
+        >
       </p>
     </div>
   </NuxtLink>
