@@ -78,7 +78,7 @@ const user = useSupabaseUser()
     </section>
 
     <section v-else class="main-section">
-      <p v-if="!wishlist">Kamu belum punya apa-apa dalam wishlist kamu.</p>
+      <p v-if="!wishlist || wishlist.length === 0">Kamu belum punya apa-apa dalam wishlist kamu.</p>
       <ul v-else class="book-list">
         <WishlistBook
           v-for="wishlistItem in wishlist"
