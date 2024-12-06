@@ -147,6 +147,7 @@ async function handleSignUp() {
         <label for="signup-number">No. HP</label>
         <InputText
           id="signup-number"
+          v-model="data.phoneNumber"
           type="text"
           required
           placeholder="0878 kapan kapan kita ke dufan"
