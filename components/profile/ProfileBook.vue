@@ -46,8 +46,8 @@ const { data: imgURL } = useAsyncData(buku!.no_isbn, async () => await getBukuIm
       <div class="mt-auto">
         <p>
           <span class="text-gray-500 dark:text-gray-400"> Dipinjam pada </span>
-          <time class="block" :datetime="new Date(data.tgl_pinjam).toString()">
-            {{ new Date(data.tgl_pinjam).toLocaleDateString() }}
+          <time class="block" :datetime="getPeminjamanStateDate(data, 1)">
+            {{ getPeminjamanStateDate(data, 1) }}
           </time>
         </p>
 
