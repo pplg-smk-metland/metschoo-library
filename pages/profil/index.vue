@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { getPeminjamanData } from "~/lib/peminjaman"
-import type { Database } from "~/types/database.types"
 
 useHead({
   title: "Profil",

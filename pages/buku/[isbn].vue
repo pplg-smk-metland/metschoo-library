@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useDialog } from "@/composables"
-import type { Buku, Peminjaman, PeminjamanDetail, PeminjamanState } from "@/types"
+import type { Buku, Peminjaman, PeminjamanState } from "@/types"
 import type { PostgrestError, RealtimePostgresChangesPayload } from "@supabase/supabase-js"
 import IconArrowLeft from "~icons/mdi/arrow-left"
 
@@ -236,7 +236,7 @@ async function masukkanWishlist({ no_isbn }: Buku) {
 /**
  * function to subscribe to realtime peminjaman state change.
  */
-async function perbaruiDataBuku(payload: RealtimePostgresChangesPayload<PeminjamanDetail>) {
+async function perbaruiDataBuku() {
   try {
     peminjamanState.value = await usePeminjamanState(buku.value!.no_isbn)
   } catch (err) {
@@ -263,7 +263,7 @@ supabase
       schema: "public",
       table: "peminjaman",
     },
-    (payload) => {
+    (payload: RealtimePostgresChangesPayload<Peminjaman>) => {
       // a new insert that matches the current book
       // is automatically cancellable
       if ((payload.new as Peminjaman).no_isbn !== isbn.value) return
