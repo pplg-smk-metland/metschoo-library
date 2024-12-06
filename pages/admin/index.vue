@@ -4,7 +4,7 @@ import type {
   QueryData,
   RealtimePostgresChangesPayload,
 } from "@supabase/supabase-js"
-import type { Buku, Peminjaman } from "@/types"
+import type { Buku, Peminjaman, PeminjamanDetail } from "@/types"
 import { formatDate } from "#imports"
 import DataTable from "primevue/datatable"
 import Column from "primevue/column"
@@ -155,11 +155,12 @@ async function insertPeminjamandata(payload: RealtimePostgresChangesPayload<Pemi
   }
 }
 
-function updatePeminjamanData(payload: RealtimePostgresChangesPayload<Peminjaman>) {
+function updatePeminjamanData(payload: RealtimePostgresChangesPayload<PeminjamanDetail>) {
   const targetData = allPeminjamanData.value!.find(
-    (data) => data.id === (payload.new as Peminjaman).id
+    (data) => data.id === (payload.new as PeminjamanDetail).peminjaman_id
   )
-  if (targetData) targetData.state_id = (payload.new as Peminjaman).state_id
+
+  if (targetData) targetData.peminjaman_detail[0] = payload.new as PeminjamanDetail
 }
 
 supabase
@@ -171,7 +172,7 @@ supabase
   )
   .on(
     "postgres_changes",
-    { event: "UPDATE", schema: "public", table: "peminjaman" },
+    { event: "INSERT", schema: "public", table: "peminjaman_detail" },
     updatePeminjamanData
   )
   .subscribe()
@@ -234,7 +235,12 @@ supabase
         <Column field="pengguna.kelas" header="Kelas" />
         <Column header="Dipinjam pada">
           <template #body="{ data }: { data: PeminjamanData[number] }">
-            {{ formatDate(new Date(data.tgl_pinjam), { dateStyle: "long", timeStyle: "long" }) }}
+            {{
+              formatDate(new Date(data.peminjaman_detail[0].created_at), {
+                dateStyle: "long",
+                timeStyle: "long",
+              })
+            }}
           </template>
         </Column>
       </DataTable>

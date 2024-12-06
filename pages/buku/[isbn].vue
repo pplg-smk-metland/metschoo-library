@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useDialog } from "@/composables"
-import type { Buku, Peminjaman, PeminjamanState } from "@/types"
+import type { Buku, Peminjaman, PeminjamanDetail, PeminjamanState } from "@/types"
 import type { PostgrestError, RealtimePostgresChangesPayload } from "@supabase/supabase-js"
 import IconArrowLeft from "~icons/mdi/arrow-left"
 
@@ -236,9 +236,9 @@ async function masukkanWishlist({ no_isbn }: Buku) {
 /**
  * function to subscribe to realtime peminjaman state change.
  */
-async function perbaruiDataBuku(payload: RealtimePostgresChangesPayload<Peminjaman>) {
+async function perbaruiDataBuku(payload: RealtimePostgresChangesPayload<PeminjamanDetail>) {
   try {
-    peminjamanState.value = await usePeminjamanState((payload.new as Peminjaman).no_isbn)
+    peminjamanState.value = await usePeminjamanState(buku.value!.no_isbn)
   } catch (err) {
     dialogError.value.open("Gagal mengambil data peminjaman, silahkan coba lagi.")
     console.error(err as PostgrestError)
@@ -250,11 +250,30 @@ supabase
   .on(
     "postgres_changes",
     {
-      event: "*",
+      event: "INSERT",
+      schema: "public",
+      table: "peminjaman_detail",
+    },
+    perbaruiDataBuku
+  )
+  .on(
+    "postgres_changes",
+    {
+      event: "INSERT",
       schema: "public",
       table: "peminjaman",
     },
-    perbaruiDataBuku
+    (payload) => {
+      // a new insert that matches the current book
+      // is automatically cancellable
+      if ((payload.new as Peminjaman).no_isbn !== isbn.value) return
+
+      peminjamanState.value = {
+        isBorrowable: false,
+        isReturnable: false,
+        isCancellable: true,
+      }
+    }
   )
   .subscribe()
 </script>
