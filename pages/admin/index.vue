@@ -26,9 +26,9 @@ const supabase = useSupabaseClient<Database>()
 const _peminjamanQuery = supabase
   .from("peminjaman")
   .select(
-    "*, peminjaman_detail(state_id, created_at), peminjaman_state(name), pengguna(nama, kelas, jurusan), buku(*)"
+    "*, peminjaman_detail(*), peminjaman_state(name), pengguna(nama, kelas, jurusan), buku(*)"
   )
-  .order("created_at", { referencedTable: "peminjaman_detail", dec })
+  .order("created_at", { referencedTable: "peminjaman_detail", ascending: false })
   .limit(1, { referencedTable: "peminjaman_detail" })
 export type PeminjamanData = QueryData<typeof _peminjamanQuery>
 
@@ -41,16 +41,21 @@ const peminjamanData = computed(() => {
   if (!allPeminjamanData.value) return null
 
   const activePeminjaman = allPeminjamanData.value.filter(
-    (data) => data.peminjaman_detail.length !== 0 && data.tgl_kembali === null
+    (data) => data.peminjaman_detail.length && data.tgl_kembali === null
   )
-  const bukusBorrowPending = activePeminjaman.filter((data) => data.state_id === 1)
-  const bukusBorrowConfirmed = activePeminjaman.filter((data) => data.state_id === 2)
-  const bukusReturnPending = activePeminjaman.filter((data) => data.state_id === 4)
+
+  const bukusBorrowPending = activePeminjaman.filter(
+    (data) => data.peminjaman_detail[0].state_id === 1
+  )
+  const bukusBorrowConfirmed = activePeminjaman.filter(
+    (data) => data.peminjaman_detail[0].state_id === 2
+  )
+  const bukusReturnPending = activePeminjaman.filter(
+    (data) => data.peminjaman_detail[0].state_id === 4
+  )
 
   return { bukusBorrowConfirmed, bukusBorrowPending, bukusReturnPending }
 })
-
-console.log(peminjamanData)
 
 const { data: counts } = await useLazyAsyncData(async () => {
   const [bukuCount, penggunaCount] = await Promise.all([countBukus(), countPenggunas()])

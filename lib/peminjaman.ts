@@ -8,7 +8,11 @@ export async function getPeminjamanData(searchFor?: PeminjamanSearchArgs): Promi
 
   let query = supabase
     .from("peminjaman")
-    .select("*, peminjaman_state(name), pengguna(nama, kelas, jurusan), buku(*)")
+    .select(
+      "*, peminjaman_detail(*), peminjaman_state(name), pengguna(nama, kelas, jurusan), buku(*)"
+    )
+    .order("created_at", { referencedTable: "peminjaman_detail", ascending: false })
+    .limit(1, { referencedTable: "peminjaman_detail" })
 
   if (searchFor) {
     const { peminjam, no_isbn, tgl_pinjam, tenggat_waktu } = searchFor
