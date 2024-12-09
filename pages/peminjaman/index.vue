@@ -52,15 +52,51 @@ onMounted(() => {
     </PageHeader>
 
     <section class="main-section">
-      <ul>
-        <PeminjamanItem
-          v-for="peminjaman in historicalPeminjaman"
-          :key="peminjaman.id"
-          :peminjaman="peminjaman"
-        />
+      <Tabs value="aktif">
+        <TabList>
+          <Tab value="aktif">Aktif</Tab>
+          <Tab value="selesai">Selesai</Tab>
+          <Tab value="semua">Semua</Tab>
+        </TabList>
 
-        <li v-if="!peminjamans">belum ada peminjaman.</li>
-      </ul>
+        <TabPanels>
+          <TabPanel value="aktif">
+            <ul>
+              <PeminjamanItem
+                v-for="peminjaman in activePeminjaman"
+                :key="peminjaman.id"
+                :peminjaman="peminjaman"
+              />
+
+              <li v-if="!peminjamans">belum ada peminjaman.</li>
+            </ul>
+          </TabPanel>
+
+          <TabPanel value="selesai">
+            <ul>
+              <PeminjamanItem
+                v-for="peminjaman in historicalPeminjaman"
+                :key="peminjaman.id"
+                :peminjaman="peminjaman"
+              />
+
+              <li v-if="!peminjamans">belum ada peminjaman.</li>
+            </ul>
+          </TabPanel>
+
+          <TabPanel value="semua">
+            <ul>
+              <PeminjamanItem
+                v-for="peminjaman in peminjamans"
+                :key="peminjaman.id"
+                :peminjaman="peminjaman"
+              />
+
+              <li v-if="!peminjamans">belum ada peminjaman.</li>
+            </ul>
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
     </section>
   </div>
 </template>
