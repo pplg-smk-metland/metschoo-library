@@ -46,16 +46,15 @@ const peminjamanState = computed(() => {
         <span class="block">{{ formatDate(new Date(peminjaman_detail[0].created_at)) }}</span>
       </p>
 
-      <p v-if="peminjamanState.isReturned" class="m-0">
+      <p v-if="peminjamanState.isReturned || peminjamanState.isLate" class="m-0">
         <span class="text-sm text-gray-500 dark:text-gray-400">dikembalikan pada</span>
         <span class="block">{{ formatDate(new Date(peminjaman_detail[0].created_at)) }}</span>
+
+        <span v-if="peminjamanState.isLate" class="text-red-500 ring-red-500">Terlambat</span>
       </p>
 
       <p v-if="peminjamanState.isCancelled" class="m-0 text-sm leading-normal">
         <span class="text-red-400">Dibatalkan</span>
-        <span v-if="peminjamanState.isLate" class="text-red-500 ring-red-500"
-          >Terlambat ({{ formatDate(new Date(tenggat_waktu)) }})</span
-        >
       </p>
     </div>
   </NuxtLink>
