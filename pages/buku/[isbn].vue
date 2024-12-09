@@ -33,12 +33,7 @@ const isLoading = ref(false)
  */
 const { data: buku } = useLazyAsyncData(async () => await getBuku(isbn.value))
 
-const { data: imgURL } = useAsyncData(
-  async () => {
-    if (buku.value) return await getBukuImage(buku.value?.image)
-  },
-  { watch: [buku] }
-)
+const imgURL = ref(getBukuImage(buku.value?.image))
 
 /**
  * get buku's peminjaman state and check wishlist

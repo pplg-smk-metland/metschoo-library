@@ -5,10 +5,7 @@ interface Props {
   buku: Buku
 }
 const props = defineProps<Props>()
-const { data: imgURL } = await useAsyncData(
-  props.buku.no_isbn,
-  async () => await getBukuImage(props.buku.image)
-)
+const imgURL = ref(getBukuImage(props.buku.image))
 </script>
 
 <template>

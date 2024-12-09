@@ -8,7 +8,7 @@ interface Props {
 const { data } = defineProps<Props>()
 const { buku } = data
 
-const { data: imgURL } = useAsyncData(buku!.no_isbn, async () => await getBukuImage(buku!.image))
+const imgURL = ref(getBukuImage(buku?.image))
 </script>
 
 <template>
