@@ -72,6 +72,10 @@ onMounted(() => {
               </span>
             </li>
           </ul>
+
+          <Divider
+            class="!mt-0 col-span-full before:w-8/12 before:border-t-2 before:border-surface-100/60 dark:before:border-surface-600/50 before:left-[unset]"
+          />
         </li>
 
         <li v-if="!peminjamans">belum ada peminjaman.</li>
@@ -84,10 +88,6 @@ onMounted(() => {
 .peminjaman-item {
   grid-template-columns: 20ch repeat(2, 1fr);
   grid-template-rows: min-content 1fr;
-}
-
-.peminjaman-item + .peminjaman-item {
-  @apply pt-4;
 }
 
 .detail-item {
