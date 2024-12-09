@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { QueryData } from "@supabase/supabase-js"
 import IconArrowLeft from "~icons/mdi/arrow-left"
 
 definePageMeta({
@@ -7,18 +8,34 @@ definePageMeta({
 
 const supabase = useSupabaseClient()
 
+const _peminjamanQuery = supabase
+  .from("peminjaman")
+  .select("*, buku(no_isbn, judul, penulis, image), peminjaman_detail(*, peminjaman_state(name))")
+  .order("tgl_pinjam", { ascending: false })
+  .order("created_at", { referencedTable: "peminjaman_detail", ascending: false })
+
+export type PeminjamanItem = QueryData<typeof _peminjamanQuery>
+
 const { data: peminjamans, error } = await useAsyncData(async () => {
-  const { data, error } = await supabase
-    .from("peminjaman")
-    .select("*, buku(no_isbn, judul, penulis, image), peminjaman_detail(*, peminjaman_state(name))")
-    .order("tgl_pinjam", { ascending: false })
-    .order("created_at", { referencedTable: "peminjaman_detail", ascending: false })
+  const { data, error } = await _peminjamanQuery
   if (error) {
     console.error(error)
     return []
   }
 
   return data
+})
+
+const historicalPeminjaman = computed(() => {
+  return peminjamans.value
+    ? peminjamans.value.filter((data) => [5, 6].includes(data.peminjaman_detail[0].state_id))
+    : []
+})
+
+const activePeminjaman = computed(() => {
+  return peminjamans.value
+    ? peminjamans.value.filter((data) => ![5, 6].includes(data.peminjaman_detail[0].state_id))
+    : []
 })
 
 onMounted(() => {
@@ -36,55 +53,11 @@ onMounted(() => {
 
     <section class="main-section">
       <ul>
-        <li
-          v-for="peminjaman in peminjamans"
+        <PeminjamanItem
+          v-for="peminjaman in historicalPeminjaman"
           :key="peminjaman.id"
-          class="grid gap-4 items-start grid-flow-dense rounded-lg peminjaman-item"
-        >
-          <figure v-if="peminjaman.buku" class="contents">
-            <RouterLink :to="`/buku/${peminjaman.buku.no_isbn}`" class="row-span-2">
-              <Image
-                :src="getBukuImage(peminjaman.buku?.image)"
-                width="400"
-                height="600"
-                class="size-full object-cover aspect-[2/3] rounded-md"
-              />
-            </RouterLink>
-
-            <figcaption>
-              <p class="font-bold text-lg max-w-lg leading-[1]">{{ peminjaman.buku.judul }}</p>
-              <p class="text-sm">{{ peminjaman.buku.penulis }}</p>
-            </figcaption>
-          </figure>
-
-          <article>
-            <p>Tenggat waktu pengembalian: {{ formatDate(new Date(peminjaman.tenggat_waktu)) }}</p>
-            <ul>
-              <li
-                v-for="detail in peminjaman.peminjaman_detail"
-                :key="detail.id"
-                class="detail-item"
-              >
-                <span class="block text-gray-600 dark:text-gray-400 text-sm order-[-1]">
-                  {{
-                    formatDate(new Date(detail.created_at), {
-                      dateStyle: "long",
-                      timeStyle: "medium",
-                    })
-                  }}
-                </span>
-
-                <span class="order-last pb-2">
-                  {{ detail.peminjaman_state!.name }}
-                </span>
-              </li>
-            </ul>
-          </article>
-
-          <Divider
-            class="!mt-0 col-span-full before:w-8/12 before:border-t-2 before:border-surface-100/60 dark:before:border-surface-600/50 before:left-[unset]"
-          />
-        </li>
+          :peminjaman="peminjaman"
+        />
 
         <li v-if="!peminjamans">belum ada peminjaman.</li>
       </ul>
