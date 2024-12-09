@@ -40,7 +40,7 @@ onMounted(() => {
           v-for="peminjaman in peminjamans"
           class="grid gap-4 items-start grid-flow-dense rounded-lg peminjaman-item"
         >
-          <template v-if="peminjaman.buku">
+          <figure v-if="peminjaman.buku" class="contents">
             <RouterLink :to="`/buku/${peminjaman.buku.no_isbn}`" class="row-span-2">
               <Image
                 :src="getBukuImage(peminjaman.buku?.image)"
@@ -50,28 +50,35 @@ onMounted(() => {
               />
             </RouterLink>
 
-            <article class="col-span-2">
-              <p class="font-bold text-lg">{{ peminjaman.buku.judul }}</p>
-              <p>{{ peminjaman.buku.penulis }}</p>
-            </article>
-          </template>
+            <figcaption>
+              <p class="font-bold text-lg max-w-lg leading-[1]">{{ peminjaman.buku.judul }}</p>
+              <p class="text-sm">{{ peminjaman.buku.penulis }}</p>
+            </figcaption>
+          </figure>
 
-          <ul class="col-span-2">
-            <li v-for="detail in peminjaman.peminjaman_detail" class="detail-item">
-              <span class="block text-gray-600 dark:text-gray-400 text-sm order-[-1]">
-                {{
-                  formatDate(new Date(detail.created_at), {
-                    dateStyle: "long",
-                    timeStyle: "medium",
-                  })
-                }}
-              </span>
+          <article>
+            <p>Tenggat waktu pengembalian: {{ formatDate(new Date(peminjaman.tenggat_waktu)) }}</p>
+            <ul>
+              <li
+                v-for="detail in peminjaman.peminjaman_detail"
+                :key="detail.id"
+                class="detail-item"
+              >
+                <span class="block text-gray-600 dark:text-gray-400 text-sm order-[-1]">
+                  {{
+                    formatDate(new Date(detail.created_at), {
+                      dateStyle: "long",
+                      timeStyle: "medium",
+                    })
+                  }}
+                </span>
 
-              <span class="order-last pb-2">
-                {{ detail.peminjaman_state!.name }}
-              </span>
-            </li>
-          </ul>
+                <span class="order-last pb-2">
+                  {{ detail.peminjaman_state!.name }}
+                </span>
+              </li>
+            </ul>
+          </article>
 
           <Divider
             class="!mt-0 col-span-full before:w-8/12 before:border-t-2 before:border-surface-100/60 dark:before:border-surface-600/50 before:left-[unset]"
@@ -86,7 +93,7 @@ onMounted(() => {
 
 <style>
 .peminjaman-item {
-  grid-template-columns: 20ch repeat(2, 1fr);
+  grid-template-columns: 20ch 1fr;
   grid-template-rows: min-content 1fr;
 }
 
