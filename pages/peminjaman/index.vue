@@ -101,7 +101,7 @@ onMounted(() => {
   </div>
 </template>
 
-<style>
+<style scoped>
 .peminjaman-item {
   grid-template-columns: 20ch 1fr;
   grid-template-rows: min-content 1fr;

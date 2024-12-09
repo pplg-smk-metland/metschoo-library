@@ -109,7 +109,7 @@ const bukuSudahDikonfirmasi = computed(() => {
     </section>
 
     <aside
-      class="main-section rounded-lg col-span-full lg:row-span-3 lg:col-span-3 flex flex-col gap-8"
+      class="main-section rounded-lg col-span-full lg:row-span-2 lg:col-span-3 flex flex-col gap-8"
     >
       <header>
         <h2 class="text-xl font-bold">Riwayat Peminjaman</h2>
