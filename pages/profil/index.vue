@@ -112,7 +112,7 @@ const bukuSudahDikonfirmasi = computed(() => {
 
       <ul class="flex flex-col gap-4">
         <li v-if="!peminjaman?.length" class="message">bukunya ga ada ges</li>
-        <ProfileHistoryBook
+        <ProfileHistoryCard
           v-for="data in history"
           :key="data.id"
           class="history-list__item"
