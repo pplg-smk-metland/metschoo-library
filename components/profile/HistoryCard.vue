@@ -7,7 +7,7 @@ interface Props {
 }
 
 const props = defineProps<Props>()
-const { buku, tenggat_waktu, peminjaman_detail } = props.data
+const { buku, peminjaman_detail } = props.data
 
 const imgURL = ref(getBukuImage(buku!.image))
 

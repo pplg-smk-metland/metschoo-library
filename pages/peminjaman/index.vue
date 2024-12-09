@@ -38,6 +38,7 @@ onMounted(() => {
       <ul>
         <li
           v-for="peminjaman in peminjamans"
+          :key="peminjaman.id"
           class="grid gap-4 items-start grid-flow-dense rounded-lg peminjaman-item"
         >
           <figure v-if="peminjaman.buku" class="contents">
