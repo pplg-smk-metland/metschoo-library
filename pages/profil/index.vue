@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { getPeminjamanData } from "~/lib/peminjaman"
+import IconArrowRight from "~icons/mdi/arrow-right"
 
 useHead({
   title: "Profil",
@@ -107,8 +108,21 @@ const bukuSudahDikonfirmasi = computed(() => {
       </Tabs>
     </section>
 
-    <aside class="main-section rounded-lg col-span-full lg:row-span-3 lg:col-span-3">
-      <h2 class="text-xl font-bold mb-8">Riwayat Peminjaman</h2>
+    <aside
+      class="main-section rounded-lg col-span-full lg:row-span-3 lg:col-span-3 flex flex-col gap-8"
+    >
+      <header>
+        <h2 class="text-xl font-bold">Riwayat Peminjaman</h2>
+        <CTA
+          link
+          as="router-link"
+          to="/peminjaman"
+          class="hover:text-underline px-0"
+          label="lihat selengkapnya"
+        >
+          <IconArrowRight size="20" class="order-last" />
+        </CTA>
+      </header>
 
       <ul class="flex flex-col gap-4">
         <li v-if="!peminjaman?.length" class="message">bukunya ga ada ges</li>

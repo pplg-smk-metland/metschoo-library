@@ -23,7 +23,7 @@ const peminjamanState = computed(() => {
 <template>
   <NuxtLink
     v-if="buku"
-    :to="`/buku/${buku.no_isbn}`"
+    :to="`/peminjaman/${data.id}`"
     class="flex gap-2 hover:bg-primary-500/20 rounded-lg"
   >
     <figure class="max-w-24">
@@ -36,7 +36,9 @@ const peminjamanState = computed(() => {
     </figure>
 
     <div class="flex flex-col justify-between py-2 flex-1 leading-none">
-      <h3 class="font-normal leading-[.9] line-clamp-2">{{ buku.judul }}</h3>
+      <NuxtLink :to="`/buku/${buku.no_isbn}`" class="hover:text-underline">
+        <h3 class="font-normal leading-[.9] line-clamp-2">{{ buku.judul }}</h3>
+      </NuxtLink>
 
       <p class="mt-auto">
         <span class="text-sm text-gray-500 dark:text-gray-400">dipinjam pada</span>
