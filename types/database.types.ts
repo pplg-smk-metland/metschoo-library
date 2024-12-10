@@ -1,3 +1,4 @@
+
 export type Json =
   | string
   | number
@@ -103,28 +104,28 @@ export type Database = {
         Row: {
           id: string
           no_isbn: string
-          state_id: number
+          state_id: number | null
           tenggat_waktu: string
           tgl_kembali: string | null
-          tgl_pinjam: string
+          tgl_pinjam: string | null
           user_id: string
         }
         Insert: {
           id?: string
           no_isbn: string
-          state_id?: number
+          state_id?: number | null
           tenggat_waktu: string
           tgl_kembali?: string | null
-          tgl_pinjam?: string
+          tgl_pinjam?: string | null
           user_id?: string
         }
         Update: {
           id?: string
           no_isbn?: string
-          state_id?: number
+          state_id?: number | null
           tenggat_waktu?: string
           tgl_kembali?: string | null
-          tgl_pinjam?: string
+          tgl_pinjam?: string | null
           user_id?: string
         }
         Relationships: [
@@ -148,6 +149,42 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "pengguna"
             referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      peminjaman_detail: {
+        Row: {
+          created_at: string
+          id: number
+          peminjaman_id: string
+          state_id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          peminjaman_id: string
+          state_id: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          peminjaman_id?: string
+          state_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "peminjaman_detail_peminjaman_id_fkey"
+            columns: ["peminjaman_id"]
+            isOneToOne: false
+            referencedRelation: "peminjaman"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "peminjaman_detail_state_id_fkey"
+            columns: ["state_id"]
+            isOneToOne: false
+            referencedRelation: "peminjaman_state"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -250,25 +287,7 @@ export type Database = {
       }
     }
     Views: {
-      peminjaman_history: {
-        Row: {
-          buku: Database["public"]["Tables"]["buku"]["Row"] | null
-          peminjaman_state: string | null
-          state_id: number | null
-          tenggat_waktu: string | null
-          tgl_kembali: string | null
-          tgl_pinjam: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "peminjaman_state_id_fkey"
-            columns: ["state_id"]
-            isOneToOne: false
-            referencedRelation: "peminjaman_state"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+      [_ in never]: never
     }
     Functions: {
       [_ in never]: never
@@ -693,4 +712,3 @@ export type CompositeTypes<
   : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
     ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
-

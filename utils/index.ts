@@ -1,5 +1,6 @@
 import type { Buku, BukuSearchArgs, Kategori, Peminjaman } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
+import type { PeminjamanData } from "~/pages/admin/index.vue"
 import type { Database } from "~/types/database.types.ts"
 
 /**
@@ -121,7 +122,7 @@ export async function searchBukus(searchFor?: BukuSearchArgs) {
  * @param {Buku['image']} image - image property of buku
  * @returns {Promise<string>} path
  * */
-export async function getBukuImage(image?: Buku["image"]): Promise<string> {
+export function getBukuImage(image?: Buku["image"]): string {
   const config = useRuntimeConfig()
   if (!image) return "/assets/Image_not_available.png"
   return `${config.public.supabase.url}/storage/v1/object/public/Buku/${image}`
@@ -134,12 +135,22 @@ export async function getBukuImage(image?: Buku["image"]): Promise<string> {
  */
 export async function borrowBuku(no_isbn: Buku["no_isbn"], tenggat_waktu: Date) {
   const supabase = useSupabaseClient<Database>()
-  const { error } = await supabase.from("peminjaman").insert({
-    no_isbn,
-    tgl_pinjam: new Date().toISOString(),
-    tenggat_waktu: tenggat_waktu.toISOString(),
-  })
+  const { data: peminjaman, error } = await supabase
+    .from("peminjaman")
+    .insert({
+      no_isbn,
+      tenggat_waktu: tenggat_waktu.toISOString(),
+    })
+    .select()
+    .single()
   if (error) throw error
+
+  const { error: detailError } = await supabase.from("peminjaman_detail").insert({
+    peminjaman_id: peminjaman.id,
+    state_id: 1,
+  })
+
+  if (detailError) throw detailError
 }
 
 /**
@@ -147,16 +158,20 @@ export async function borrowBuku(no_isbn: Buku["no_isbn"], tenggat_waktu: Date) 
  *
  * @param {Peminjaman['id']} id - id of peminjaman
  * */
-export async function cancelBorrowBuku(id: Peminjaman["id"]) {
+export async function cancelBorrowBuku(id: Peminjaman["id"], { jumlah_exspl, no_isbn }: Buku) {
   const supabase = useSupabaseClient<Database>()
-  const { error } = await supabase
-    .from("peminjaman")
-    .update({
-      state_id: 6,
-    })
-    .eq("id", id)
+  const { error } = await supabase.from("peminjaman_detail").insert({
+    peminjaman_id: id,
+    state_id: 6,
+  })
 
   if (error) throw error
+
+  const { error: updateError } = await supabase
+    .from("buku")
+    .update({ jumlah_exspl: jumlah_exspl + 1 })
+    .eq("no_isbn", no_isbn)
+  if (updateError) throw error
 }
 
 /**
@@ -166,7 +181,11 @@ export async function cancelBorrowBuku(id: Peminjaman["id"]) {
  */
 export async function returnBuku(id: Peminjaman["id"]) {
   const supabase = useSupabaseClient<Database>()
-  const { error } = await supabase.from("peminjaman").update({ state_id: 4 }).eq("id", id)
+  const { error } = await supabase.from("peminjaman_detail").insert({
+    peminjaman_id: id,
+    state_id: 4,
+  })
+
   if (error) throw error
 }
 
@@ -177,7 +196,11 @@ export async function returnBuku(id: Peminjaman["id"]) {
  */
 export async function confirmBorrowBuku(id: Peminjaman["id"]) {
   const supabase = useSupabaseClient<Database>()
-  const { error } = await supabase.from("peminjaman").update({ state_id: 2 }).eq("id", id)
+  const { error } = await supabase.from("peminjaman_detail").insert({
+    peminjaman_id: id,
+    state_id: 2,
+  })
+
   if (error) throw error
 }
 
@@ -194,12 +217,11 @@ export async function confirmReturnBuku(
 ) {
   const supabase = useSupabaseClient<Database>()
   let state_id = 5
-  if (new Date(tenggat_waktu) < new Date(tgl_kembali)) state_id = 6
 
-  const { error } = await supabase
-    .from("peminjaman")
-    .update({ state_id, tgl_kembali: tgl_kembali.toISOString() })
-    .eq("id", id)
+  const isLate = new Date(tenggat_waktu) < new Date(tgl_kembali)
+  if (isLate) state_id = 6
+
+  const { error } = await supabase.from("peminjaman_detail").insert({ state_id, peminjaman_id: id })
   if (error) throw error
 
   const { error: updateError } = await supabase
@@ -240,4 +262,17 @@ export function formatDate(date: Date, opts?: Intl.DateTimeFormatOptions): strin
     }
   }
   return new Intl.DateTimeFormat("id-ID", opts).format(date)
+}
+
+/**
+ * get date of peminjaman state changes
+ * you can use it to get date of any peminjaman event
+ *
+ * @returns {string} formatted date string of peminjaman event date
+ */
+export function getPeminjamanStateDate(data: PeminjamanData[number], state_id: number): string {
+  const target = data.peminjaman_detail.find((data) => data.state_id === state_id)
+
+  if (target === undefined) return "-"
+  else return formatDate(new Date(target.created_at))
 }

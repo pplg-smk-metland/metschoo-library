@@ -8,10 +8,7 @@ const props = defineProps<Props>()
 
 defineEmits(["pinjamBuku", "hapusBuku"])
 
-const { data: imgURL } = useAsyncData(
-  props.buku.no_isbn,
-  async () => await getBukuImage(props.buku.image)
-)
+const imgURL = ref(getBukuImage(props.buku.image))
 </script>
 
 <template>

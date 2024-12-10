@@ -118,7 +118,7 @@ async function deleteBook(isbn: string) {
 }
 
 const { newImage, previewURL, previewImage } = usePreviewImage()
-const { data: imgURL } = await useAsyncData(async () => await getBukuImage(buku.value?.image))
+const imgURL = ref(getBukuImage(buku.value?.image))
 </script>
 
 <template>
