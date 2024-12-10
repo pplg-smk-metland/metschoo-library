@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { QueryData } from "@supabase/supabase-js"
 import IconArrowLeft from "~icons/mdi/arrow-left"
+import { Tabs, Tab, TabList, TabPanel, TabPanels } from "primevue"
 
 definePageMeta({
   layout: "default",
