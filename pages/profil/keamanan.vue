@@ -2,7 +2,7 @@
 import { useDialog } from "@/composables"
 import InputText from "primevue/inputtext"
 import Password from "primevue/password"
-import type { AuthError } from "@supabase/supabase-js"
+import { AuthError, PostgrestError } from "@supabase/supabase-js"
 import type { Database } from "~/types/database.types.ts"
 
 import IconArrowLeft from "~icons/mdi/arrow-left"
@@ -86,7 +86,13 @@ async function changePhoneNumber() {
     dialog.value.open("Nomor HP berhasil diperbarui.")
   } catch (err) {
     console.error(err)
-    dialog.value.open("Terjadi kesalahan saat memperbarui nomor HP.")
+    let message =
+      "Terjadi kesalahan saat memperbarui nomor HP, pastikan anda tersambung ke internet."
+    if (err instanceof AuthError) {
+      message = "Terjadi kesalahan saat memperbarui nomor HP (lokal)."
+    }
+
+    dialog.value.open(message)
   }
 }
 
