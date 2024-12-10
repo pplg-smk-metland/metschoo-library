@@ -76,7 +76,12 @@ async function changePhoneNumber() {
       data: { phone_no: phoneNumber },
     })
 
-    if (error) throw error
+    const { error: updateError } = await supabase
+      .from("pengguna")
+      .update({ phone_no: phoneNumber })
+      .eq("user_id", user.value!.id)
+
+    if (error || updateError) throw error
 
     dialog.value.open("Nomor HP berhasil diperbarui.")
   } catch (err) {
