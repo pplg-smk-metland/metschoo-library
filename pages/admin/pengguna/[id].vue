@@ -3,6 +3,8 @@ import { formatDate } from "#imports"
 import type { Peminjaman } from "~/types"
 import type { Database } from "~/types/database.types"
 import type { PeminjamanData } from "../index.vue"
+import { DataTable, Column, Divider } from "primevue"
+import IconArrowLeft from "~icons/mdi/arrow-left"
 
 definePageMeta({
   layout: "profile-edit",
@@ -48,6 +50,10 @@ const keteranganText = (state_id: Peminjaman["state_id"]) => {
       return "terlambat"
   }
 }
+const formatPhoneNumber = (phoneNo: string | null): string => {
+  if (!phoneNo) return ""
+  return phoneNo.replace(/^0/, "62")
+}
 </script>
 
 <template>
@@ -60,11 +66,24 @@ const keteranganText = (state_id: Peminjaman["state_id"]) => {
   </div>
 
   <div v-else class="max-w-[100ch] mx-auto">
+    <CTA as="router-link" link to="/admin/pengguna" label="Kembali" class="order-first px-0">
+      <IconArrowLeft />
+    </CTA>
     <PageHeader :heading="pengguna.nama">
-      <routerLink to="/admin/pengguna">kembali</routerLink>
-
       <p>kelas: {{ pengguna.kelas ? pengguna.kelas : "tidak ada kelas" }}</p>
       <p>jurusan: {{ pengguna.jurusan ? pengguna.jurusan : "tidak ada jurusan" }}</p>
+      <p>
+        Nomor telepon:
+        <span v-if="!pengguna.phone_no">tidak ada nomor telepon</span>
+        <a
+          v-else
+          :href="`https://wa.me/${formatPhoneNumber(pengguna.phone_no)}`"
+          class="hover:underline text-green-700"
+          target="_blank"
+        >
+          {{ pengguna.phone_no }}
+        </a>
+      </p>
     </PageHeader>
 
     <Divider />
