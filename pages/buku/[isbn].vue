@@ -44,7 +44,7 @@ const bukuAdaDiWishlist = ref<boolean | null>(null)
 const { data } = await useAsyncData(
   async () => {
     const [peminjamanStateData, checkWishlistData] = await Promise.all([
-      usePeminjamanState(isbn.value),
+      usePeminjamanState(isbn.value, buku.value!.jumlah_exspl),
       useCheckWishlist(isbn.value),
     ])
 
@@ -132,7 +132,7 @@ async function batalkanPeminjamanBuku({ judul }: Buku, id: Peminjaman["id"]) {
   }
 
   try {
-    await cancelBorrowBuku(id, buku.value!)
+    await cancelBorrowBuku(id)
 
     toast.add({
       severity: "success",
