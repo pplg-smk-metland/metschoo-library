@@ -118,7 +118,7 @@ async function konfirmasiPengembalian(dataPeminjaman: Peminjaman, buku: Buku) {
       header: "Konfirmasi pengembalian",
       message: "Beneran mau konfirmasi buku ini?",
       accept: async () => {
-        await confirmReturnBuku(dataPeminjaman, buku, new Date())
+        await confirmReturnBuku(dataPeminjaman, new Date())
 
         toast.add({
           severity: "success",

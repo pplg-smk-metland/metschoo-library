@@ -132,7 +132,7 @@ async function batalkanPeminjamanBuku({ judul }: Buku, id: Peminjaman["id"]) {
   }
 
   try {
-    await cancelBorrowBuku(id, buku.value!)
+    await cancelBorrowBuku(id)
 
     toast.add({
       severity: "success",

@@ -158,7 +158,7 @@ export async function borrowBuku(no_isbn: Buku["no_isbn"], tenggat_waktu: Date) 
  *
  * @param {Peminjaman['id']} id - id of peminjaman
  * */
-export async function cancelBorrowBuku(id: Peminjaman["id"], { jumlah_exspl, no_isbn }: Buku) {
+export async function cancelBorrowBuku(id: Peminjaman["id"]) {
   const supabase = useSupabaseClient<Database>()
   const { error } = await supabase.from("peminjaman_detail").insert({
     peminjaman_id: id,
@@ -166,12 +166,6 @@ export async function cancelBorrowBuku(id: Peminjaman["id"], { jumlah_exspl, no_
   })
 
   if (error) throw error
-
-  const { error: updateError } = await supabase
-    .from("buku")
-    .update({ jumlah_exspl: jumlah_exspl + 1 })
-    .eq("no_isbn", no_isbn)
-  if (updateError) throw error
 }
 
 /**
@@ -207,14 +201,9 @@ export async function confirmBorrowBuku(id: Peminjaman["id"]) {
 /**
  * confirm that a buku has been returned.
  * @param {Peminjaman} peminjaman
- * @param {Buku} buku
  * @param {Date} tgl_kembali
  */
-export async function confirmReturnBuku(
-  { id, tenggat_waktu }: Peminjaman,
-  { jumlah_exspl, no_isbn }: Buku,
-  tgl_kembali: Date
-) {
+export async function confirmReturnBuku({ id, tenggat_waktu }: Peminjaman, tgl_kembali: Date) {
   const supabase = useSupabaseClient<Database>()
   let state_id = 5
 
@@ -223,12 +212,6 @@ export async function confirmReturnBuku(
 
   const { error } = await supabase.from("peminjaman_detail").insert({ state_id, peminjaman_id: id })
   if (error) throw error
-
-  const { error: updateError } = await supabase
-    .from("buku")
-    .update({ jumlah_exspl: jumlah_exspl + 1 })
-    .eq("no_isbn", no_isbn)
-  if (updateError) throw error
 }
 
 /**
