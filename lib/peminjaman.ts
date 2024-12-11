@@ -6,9 +6,14 @@ import type { PeminjamanSearchArgs } from "~/types"
 export async function getPeminjamanData(searchFor?: PeminjamanSearchArgs): Promise<PeminjamanData> {
   const supabase = useSupabaseClient<Database>()
 
+  // inefficient multi-purpose query
+  // TODO: refactor
   let query = supabase
     .from("peminjaman")
-    .select("*, peminjaman_state(name), pengguna(nama, kelas, jurusan), buku(*)")
+    .select(
+      "*, peminjaman_detail(*, peminjaman_state(name)), pengguna(nama, kelas, jurusan), buku(*)"
+    )
+    .order("created_at", { referencedTable: "peminjaman_detail", ascending: false })
 
   if (searchFor) {
     const { peminjam, no_isbn, tgl_pinjam, tenggat_waktu } = searchFor

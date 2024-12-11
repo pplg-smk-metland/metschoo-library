@@ -31,18 +31,9 @@ const isLoading = ref(false)
 /**
  * get buku data on the server
  */
-const { data: buku } = useAsyncData(async () => await getBuku(isbn.value))
+const { data: buku } = useLazyAsyncData(async () => await getBuku(isbn.value))
 
-if (!buku || !buku.value) {
-  console.error("buku tidak ditemukan: ", buku.value)
-}
-
-const { data: imgURL } = useAsyncData(
-  async () => {
-    if (buku.value) return await getBukuImage(buku.value?.image)
-  },
-  { watch: [buku] }
-)
+const imgURL = ref(getBukuImage(buku.value?.image))
 
 /**
  * get buku's peminjaman state and check wishlist
@@ -53,7 +44,7 @@ const bukuAdaDiWishlist = ref<boolean | null>(null)
 const { data } = await useAsyncData(
   async () => {
     const [peminjamanStateData, checkWishlistData] = await Promise.all([
-      usePeminjamanState(isbn.value),
+      usePeminjamanState(buku.value!),
       useCheckWishlist(isbn.value),
     ])
 
@@ -240,9 +231,9 @@ async function masukkanWishlist({ no_isbn }: Buku) {
 /**
  * function to subscribe to realtime peminjaman state change.
  */
-async function perbaruiDataBuku(payload: RealtimePostgresChangesPayload<Peminjaman>) {
+async function perbaruiDataBuku() {
   try {
-    peminjamanState.value = await usePeminjamanState((payload.new as Peminjaman).no_isbn)
+    peminjamanState.value = await usePeminjamanState(buku.value!)
   } catch (err) {
     dialogError.value.open("Gagal mengambil data peminjaman, silahkan coba lagi.")
     console.error(err as PostgrestError)
@@ -254,11 +245,30 @@ supabase
   .on(
     "postgres_changes",
     {
-      event: "*",
+      event: "INSERT",
+      schema: "public",
+      table: "peminjaman_detail",
+    },
+    perbaruiDataBuku
+  )
+  .on(
+    "postgres_changes",
+    {
+      event: "INSERT",
       schema: "public",
       table: "peminjaman",
     },
-    perbaruiDataBuku
+    (payload: RealtimePostgresChangesPayload<Peminjaman>) => {
+      // a new insert that matches the current book
+      // is automatically cancellable
+      if ((payload.new as Peminjaman).no_isbn !== isbn.value) return
+
+      peminjamanState.value = {
+        isBorrowable: false,
+        isReturnable: false,
+        isCancellable: true,
+      }
+    }
   )
   .subscribe()
 </script>
@@ -321,8 +331,7 @@ supabase
         />
 
         <CTA
-          v-else
-          :disabled="!peminjamanState?.isCancellable"
+          v-if="peminjamanState?.isCancellable"
           severity="danger"
           label="batalkan peminjaman"
           @click="batalkanPeminjamanBuku(buku, peminjamanState?.id!)"
