@@ -4,7 +4,7 @@ import type {
   QueryData,
   RealtimePostgresChangesPayload,
 } from "@supabase/supabase-js"
-import type { Buku, Peminjaman } from "@/types"
+import type { Peminjaman, PeminjamanDetail } from "@/types"
 import { formatDate } from "#imports"
 import DataTable from "primevue/datatable"
 import Column from "primevue/column"
@@ -25,16 +25,37 @@ const supabase = useSupabaseClient<Database>()
 
 const _peminjamanQuery = supabase
   .from("peminjaman")
-  .select("*, peminjaman_state(name), pengguna(nama, kelas, jurusan), buku(*)")
+  .select(
+    "*, peminjaman_detail(*, peminjaman_state(name)), pengguna(nama, kelas, jurusan), buku(*)"
+  )
+  .order("created_at", { referencedTable: "peminjaman_detail", ascending: false })
+  .limit(1, { referencedTable: "peminjaman_detail" })
 export type PeminjamanData = QueryData<typeof _peminjamanQuery>
+
+/**
+ * get all peminjaman data
+ */
 const { data: allPeminjamanData } = useLazyAsyncData(async () => await getPeminjamanData())
 
 const peminjamanData = computed(() => {
   if (!allPeminjamanData.value) return null
 
-  const bukusBorrowPending = allPeminjamanData.value.filter((data) => data.state_id === 1)
-  const bukusBorrowConfirmed = allPeminjamanData.value.filter((data) => data.state_id === 2)
-  const bukusReturnPending = allPeminjamanData.value.filter((data) => data.state_id === 4)
+  const activePeminjaman = allPeminjamanData.value.filter((data) => {
+    if (!data.peminjaman_detail.length) return false
+
+    const returnedStates = [5, 6, 7]
+    return !returnedStates.includes(data.peminjaman_detail[0].state_id)
+  })
+
+  const bukusBorrowPending = activePeminjaman.filter(
+    (data) => data.peminjaman_detail[0].state_id === 1
+  )
+  const bukusBorrowConfirmed = activePeminjaman.filter(
+    (data) => data.peminjaman_detail[0].state_id === 2
+  )
+  const bukusReturnPending = activePeminjaman.filter(
+    (data) => data.peminjaman_detail[0].state_id === 4
+  )
 
   return { bukusBorrowConfirmed, bukusBorrowPending, bukusReturnPending }
 })
@@ -94,13 +115,13 @@ async function konfirmasiPeminjaman(id: Peminjaman["id"]) {
   })
 }
 
-async function konfirmasiPengembalian(dataPeminjaman: Peminjaman, buku: Buku) {
+async function konfirmasiPengembalian(dataPeminjaman: Peminjaman) {
   try {
     confirm.require({
       header: "Konfirmasi pengembalian",
       message: "Beneran mau konfirmasi buku ini?",
       accept: async () => {
-        await confirmReturnBuku(dataPeminjaman, buku, new Date())
+        await confirmReturnBuku(dataPeminjaman, new Date())
 
         toast.add({
           severity: "success",
@@ -124,13 +145,13 @@ async function konfirmasiPengembalian(dataPeminjaman: Peminjaman, buku: Buku) {
 
 async function insertPeminjamandata(payload: RealtimePostgresChangesPayload<Peminjaman>) {
   try {
-    const { data, error } = await supabase
-      .from("peminjaman")
-      .select("peminjaman_state(name), pengguna(nama, kelas, jurusan), buku(*)")
-      .eq("id", (payload.new as Peminjaman).id)
-      .single()
+    const { data, error } = await _peminjamanQuery.eq("id", (payload.new as Peminjaman).id).single()
     if (error) throw error
-
+    supabase
+      .from("peminjaman")
+      .select(
+        "peminjaman_detail(*, peminjaman_state(name)), pengguna(nama, kelas, jurusan), buku(*)"
+      )
     // merge data from payload and data from fetch
     if (data && allPeminjamanData.value)
       allPeminjamanData.value.push({ ...(payload.new as Peminjaman), ...data })
@@ -139,11 +160,17 @@ async function insertPeminjamandata(payload: RealtimePostgresChangesPayload<Pemi
   }
 }
 
-function updatePeminjamanData(payload: RealtimePostgresChangesPayload<Peminjaman>) {
+function updatePeminjamanData(payload: RealtimePostgresChangesPayload<PeminjamanDetail>) {
   const targetData = allPeminjamanData.value!.find(
-    (data) => data.id === (payload.new as Peminjaman).id
+    (data) => data.id === (payload.new as PeminjamanDetail).peminjaman_id
   )
-  if (targetData) targetData.state_id = (payload.new as Peminjaman).state_id
+
+  if (targetData) {
+    targetData.peminjaman_detail[0] = {
+      peminjaman_state: targetData.peminjaman_detail[0].peminjaman_state,
+      ...(payload.new as PeminjamanDetail),
+    }
+  }
 }
 
 supabase
@@ -155,7 +182,7 @@ supabase
   )
   .on(
     "postgres_changes",
-    { event: "UPDATE", schema: "public", table: "peminjaman" },
+    { event: "INSERT", schema: "public", table: "peminjaman_detail" },
     updatePeminjamanData
   )
   .subscribe()
@@ -199,7 +226,7 @@ supabase
         <Column field="pengguna.kelas" header="kelas" />
         <Column header="aksi">
           <template #body="{ data }: { data: PeminjamanData[number] }">
-            <CTA label="Konfirmasi" @click="konfirmasiPengembalian(data, data.buku as Buku)" />
+            <CTA label="Konfirmasi" @click="konfirmasiPengembalian(data)" />
           </template>
         </Column>
       </DataTable>
@@ -218,7 +245,12 @@ supabase
         <Column field="pengguna.kelas" header="Kelas" />
         <Column header="Dipinjam pada">
           <template #body="{ data }: { data: PeminjamanData[number] }">
-            {{ formatDate(new Date(data.tgl_pinjam), { dateStyle: "long", timeStyle: "long" }) }}
+            {{
+              formatDate(new Date(data.peminjaman_detail[0].created_at), {
+                dateStyle: "long",
+                timeStyle: "long",
+              })
+            }}
           </template>
         </Column>
       </DataTable>

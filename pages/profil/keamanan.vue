@@ -2,7 +2,7 @@
 import { useDialog } from "@/composables"
 import InputText from "primevue/inputtext"
 import Password from "primevue/password"
-import type { AuthError } from "@supabase/supabase-js"
+import { AuthError } from "@supabase/supabase-js"
 import type { Database } from "~/types/database.types.ts"
 
 import IconArrowLeft from "~icons/mdi/arrow-left"
@@ -76,12 +76,23 @@ async function changePhoneNumber() {
       data: { phone_no: phoneNumber },
     })
 
-    if (error) throw error
+    const { error: updateError } = await supabase
+      .from("pengguna")
+      .update({ phone_no: phoneNumber })
+      .eq("user_id", user.value!.id)
+
+    if (error || updateError) throw error
 
     dialog.value.open("Nomor HP berhasil diperbarui.")
   } catch (err) {
     console.error(err)
-    dialog.value.open("Terjadi kesalahan saat memperbarui nomor HP.")
+    let message =
+      "Terjadi kesalahan saat memperbarui nomor HP, pastikan anda tersambung ke internet."
+    if (err instanceof AuthError) {
+      message = "Terjadi kesalahan saat memperbarui nomor HP (lokal)."
+    }
+
+    dialog.value.open(message)
   }
 }
 

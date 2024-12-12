@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { PostgrestError, QueryData } from "@supabase/supabase-js"
 import { getPeminjamanData } from "~/lib/peminjaman"
-import type { Database } from "~/types/database.types"
+import IconArrowRight from "~icons/mdi/arrow-right"
+import { Tab, Tabs, TabList, Badge, TabPanels, TabPanel } from "primevue"
 
 useHead({
   title: "Profil",
@@ -12,40 +12,37 @@ definePageMeta({
   middleware: "profil",
 })
 
-const supabase = useSupabaseClient<Database>()
-
-const historyQuery = supabase.from("peminjaman_history").select("*")
-export type History = QueryData<typeof historyQuery>
-
-async function getPeminjamanHistory() {
-  try {
-    const { data, error } = await historyQuery
-
-    if (error) throw error
-    return data
-  } catch (err) {
-    console.error((err as PostgrestError).message)
-    return []
-  }
-}
-
 const authStore = useAuthStore()
 const user = useSupabaseUser()
 
 const { data: profile } = useAsyncData(async () => await authStore.getProfile(user.value!.id))
 
-const { data: peminjaman } = useAsyncData(async () => {
-  const [history, dataPeminjaman] = await Promise.all([getPeminjamanHistory(), getPeminjamanData()])
-  return { history, dataPeminjaman }
+const { data: peminjaman } = useAsyncData(async () => await getPeminjamanData())
+const activePeminjaman = computed(() => {
+  return peminjaman.value
+    ? peminjaman.value.filter((data) => [6, 7].includes(data.peminjaman_detail[0]?.state_id))
+    : []
 })
+
+const pastPeminjaman = computed(() =>
+  peminjaman.value
+    ? peminjaman.value.filter(({ peminjaman_detail }) =>
+        [5, 6, 7].includes(peminjaman_detail[0].state_id)
+      )
+    : []
+)
 
 /** daftar buku yang belum dikonfirmasi */
 const bukuBlumDikonfirmasi = computed(() => {
-  return peminjaman.value?.dataPeminjaman.filter(({ state_id }) => state_id === 1)
+  return activePeminjaman.value?.filter(
+    ({ peminjaman_detail }) => peminjaman_detail[0]?.state_id === 1
+  )
 })
 
 const bukuSudahDikonfirmasi = computed(() => {
-  return peminjaman.value?.dataPeminjaman.filter(({ state_id }) => state_id === 2)
+  return activePeminjaman.value?.filter(
+    ({ peminjaman_detail }) => peminjaman_detail[0]?.state_id === 2
+  )
 })
 </script>
 
@@ -83,7 +80,7 @@ const bukuSudahDikonfirmasi = computed(() => {
     </section>
 
     <section class="main-section col-span-full lg:col-span-9">
-      <p v-if="peminjaman?.dataPeminjaman.length === 0">Ga ada buku yang dipinjam</p>
+      <p v-if="peminjaman?.length === 0">Ga ada buku yang dipinjam</p>
 
       <Tabs v-else value="belum-dikonfirmasi">
         <TabList>
@@ -126,14 +123,27 @@ const bukuSudahDikonfirmasi = computed(() => {
       </Tabs>
     </section>
 
-    <aside class="main-section rounded-lg col-span-full lg:row-span-3 lg:col-span-3">
-      <h2 class="text-xl font-bold mb-8">Riwayat Peminjaman</h2>
+    <aside
+      class="main-section rounded-lg col-span-full lg:row-span-2 lg:col-span-3 flex flex-col gap-8"
+    >
+      <header>
+        <h2 class="text-xl font-bold">Riwayat Peminjaman</h2>
+        <CTA
+          link
+          as="router-link"
+          to="/peminjaman"
+          class="hover:text-underline px-0"
+          label="lihat selengkapnya"
+        >
+          <IconArrowRight size="20" class="order-last" />
+        </CTA>
+      </header>
 
       <ul class="flex flex-col gap-4">
-        <li v-if="!peminjaman?.history.length" class="message">bukunya ga ada ges</li>
-        <ProfileHistoryBook
-          v-for="data in peminjaman?.history"
-          :key="data.buku?.no_isbn"
+        <li v-if="!pastPeminjaman?.length" class="message">bukunya ga ada ges</li>
+        <ProfileHistoryCard
+          v-for="data in pastPeminjaman"
+          :key="data.id"
           class="history-list__item"
           :data="data"
         />
