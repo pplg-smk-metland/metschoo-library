@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { PeminjamanItem } from "~/pages/peminjaman/index.vue"
+import { Divider, Image } from "primevue"
 
 interface Props {
   peminjaman: PeminjamanItem[number]
