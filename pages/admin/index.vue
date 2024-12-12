@@ -4,7 +4,7 @@ import type {
   QueryData,
   RealtimePostgresChangesPayload,
 } from "@supabase/supabase-js"
-import type { Buku, Peminjaman, PeminjamanDetail } from "@/types"
+import type { Peminjaman, PeminjamanDetail } from "@/types"
 import { formatDate } from "#imports"
 import DataTable from "primevue/datatable"
 import Column from "primevue/column"
@@ -112,7 +112,7 @@ async function konfirmasiPeminjaman(id: Peminjaman["id"]) {
   })
 }
 
-async function konfirmasiPengembalian(dataPeminjaman: Peminjaman, buku: Buku) {
+async function konfirmasiPengembalian(dataPeminjaman: Peminjaman) {
   try {
     confirm.require({
       header: "Konfirmasi pengembalian",
@@ -223,7 +223,7 @@ supabase
         <Column field="pengguna.kelas" header="kelas" />
         <Column header="aksi">
           <template #body="{ data }: { data: PeminjamanData[number] }">
-            <CTA label="Konfirmasi" @click="konfirmasiPengembalian(data, data.buku as Buku)" />
+            <CTA label="Konfirmasi" @click="konfirmasiPengembalian(data)" />
           </template>
         </Column>
       </DataTable>

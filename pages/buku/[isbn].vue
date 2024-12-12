@@ -44,7 +44,7 @@ const bukuAdaDiWishlist = ref<boolean | null>(null)
 const { data } = await useAsyncData(
   async () => {
     const [peminjamanStateData, checkWishlistData] = await Promise.all([
-      usePeminjamanState(isbn.value),
+      usePeminjamanState(buku.value!),
       useCheckWishlist(isbn.value),
     ])
 
@@ -233,7 +233,7 @@ async function masukkanWishlist({ no_isbn }: Buku) {
  */
 async function perbaruiDataBuku() {
   try {
-    peminjamanState.value = await usePeminjamanState(buku.value!.no_isbn)
+    peminjamanState.value = await usePeminjamanState(buku.value!)
   } catch (err) {
     dialogError.value.open("Gagal mengambil data peminjaman, silahkan coba lagi.")
     console.error(err as PostgrestError)

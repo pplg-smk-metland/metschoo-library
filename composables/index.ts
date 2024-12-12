@@ -58,13 +58,16 @@ export function useDialog() {
  * @param {Buku['no_isbn']} isbn - isbn of book
  * @returns {Promise<PeminjamanState>} state of peminjaman
  */
-export async function usePeminjamanState(isbn: Buku["no_isbn"]): Promise<PeminjamanState> {
+export async function usePeminjamanState({
+  no_isbn,
+  jumlah_exspl,
+}: Buku): Promise<PeminjamanState> {
   const supabase = useSupabaseClient<Database>()
 
   const peminjamanQuery = supabase
     .from("peminjaman_detail")
     .select("state_id, peminjaman(id, no_isbn), peminjaman_state(name)")
-    .eq("peminjaman.no_isbn", isbn)
+    .eq("peminjaman.no_isbn", no_isbn)
     .order("created_at", { ascending: false })
     .limit(1)
     .single()
@@ -93,8 +96,9 @@ export async function usePeminjamanState(isbn: Buku["no_isbn"]): Promise<Peminja
     }
 
   const borrowableConditions = ["borrow cancelled", "return confirmed", "return late"]
-  const isBorrowable = borrowableConditions.includes(data.peminjaman_state.name)
   const isCancellable = data.peminjaman_state.name === "borrow pending"
+  const isBorrowable =
+    borrowableConditions.includes(data.peminjaman_state.name) && jumlah_exspl >= 0
   const isReturnable = data.peminjaman_state.name === "borrow confirmed"
 
   return {
