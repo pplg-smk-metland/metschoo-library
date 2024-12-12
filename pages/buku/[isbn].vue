@@ -19,7 +19,7 @@ definePageMeta({
 const supabase = useSupabaseClient<Database>()
 const route = useRoute()
 const router = useRouter()
-const isbn = toRef(route.params.isbn as string)
+const isbn = route.params.isbn as string
 
 const toast = useToast()
 const confirm = useConfirm()
@@ -31,9 +31,9 @@ const isLoading = ref(false)
 /**
  * get buku data on the server
  */
-const { data: buku } = useLazyAsyncData(async () => await getBuku(isbn.value))
+const { data: buku } = useLazyAsyncData(async () => await getBuku(isbn))
 
-const imgURL = ref(getBukuImage(buku.value?.image))
+const imgURL = computed(() => getBukuImage(buku.value?.image))
 
 /**
  * get buku's peminjaman state and check wishlist
@@ -41,17 +41,14 @@ const imgURL = ref(getBukuImage(buku.value?.image))
 const peminjamanState = ref<PeminjamanState | null>(null)
 const bukuAdaDiWishlist = ref<boolean | null>(null)
 
-const { data } = await useAsyncData(
-  async () => {
-    const [peminjamanStateData, checkWishlistData] = await Promise.all([
-      usePeminjamanState(buku.value!),
-      useCheckWishlist(isbn.value),
-    ])
+const { data } = await useAsyncData(async () => {
+  const [peminjamanStateData, checkWishlistData] = await Promise.all([
+    usePeminjamanState(buku.value!),
+    useCheckWishlist(isbn),
+  ])
 
-    return { peminjamanStateData, checkWishlistData }
-  },
-  { watch: [isbn] }
-)
+  return { peminjamanStateData, checkWishlistData }
+})
 
 bukuAdaDiWishlist.value = data.value?.checkWishlistData ?? null
 peminjamanState.value = data.value?.peminjamanStateData ?? null
@@ -261,7 +258,7 @@ supabase
     (payload: RealtimePostgresChangesPayload<Peminjaman>) => {
       // a new insert that matches the current book
       // is automatically cancellable
-      if ((payload.new as Peminjaman).no_isbn !== isbn.value) return
+      if ((payload.new as Peminjaman).no_isbn !== isbn) return
 
       peminjamanState.value = {
         isBorrowable: false,
