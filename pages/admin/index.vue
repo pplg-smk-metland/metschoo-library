@@ -40,9 +40,12 @@ const { data: allPeminjamanData } = useLazyAsyncData(async () => await getPeminj
 const peminjamanData = computed(() => {
   if (!allPeminjamanData.value) return null
 
-  const activePeminjaman = allPeminjamanData.value.filter(
-    (data) => data.peminjaman_detail.length && data.tgl_kembali === null
-  )
+  const activePeminjaman = allPeminjamanData.value.filter((data) => {
+    if (!data.peminjaman_detail.length) return false
+
+    const returnedStates = [5, 6, 7]
+    return !returnedStates.includes(data.peminjaman_detail[0].state_id)
+  })
 
   const bukusBorrowPending = activePeminjaman.filter(
     (data) => data.peminjaman_detail[0].state_id === 1
