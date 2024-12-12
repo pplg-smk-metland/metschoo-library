@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { getPeminjamanData } from "~/lib/peminjaman"
 import IconArrowRight from "~icons/mdi/arrow-right"
+import { Tab, Tabs, TabList, Badge, TabPanels, TabPanel } from "primevue"
 
 useHead({
   title: "Profil",
