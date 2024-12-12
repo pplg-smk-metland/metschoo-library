@@ -8,6 +8,7 @@ definePageMeta({
 })
 
 const supabase = useSupabaseClient()
+const user = useSupabaseUser()
 
 const _peminjamanQuery = supabase
   .from("peminjaman")
@@ -17,30 +18,38 @@ const _peminjamanQuery = supabase
 
 export type PeminjamanItem = QueryData<typeof _peminjamanQuery>
 
-const { data: peminjamans, error } = await useAsyncData(async () => {
-  const { data, error } = await _peminjamanQuery
-  if (error) {
-    console.error(error)
-    return []
-  }
+const { data: peminjamans } = await useAsyncData(
+  "peminjaman",
+  async () => {
+    const { data, error } = await _peminjamanQuery
+    if (error) {
+      console.error(error)
+      return []
+    }
 
-  return data
-})
+    return data
+  },
+  { watch: [user.value!] }
+)
+
+const returnedStates = [5, 6, 7]
 
 const historicalPeminjaman = computed(() => {
   return peminjamans.value
-    ? peminjamans.value.filter((data) => [5, 6].includes(data.peminjaman_detail[0].state_id))
+    ? peminjamans.value.filter((data) => {
+        const latestStateId = data.peminjaman_detail[0].state_id
+        return returnedStates.includes(latestStateId)
+      })
     : []
 })
 
 const activePeminjaman = computed(() => {
   return peminjamans.value
-    ? peminjamans.value.filter((data) => ![5, 6].includes(data.peminjaman_detail[0].state_id))
+    ? peminjamans.value.filter((data) => {
+        const latestStateId = data.peminjaman_detail[0].state_id
+        return !returnedStates.includes(latestStateId)
+      })
     : []
-})
-
-onMounted(() => {
-  if (error) console.error(error)
 })
 </script>
 

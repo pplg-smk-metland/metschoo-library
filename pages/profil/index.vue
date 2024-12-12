@@ -18,17 +18,31 @@ const user = useSupabaseUser()
 const { data: profile } = useAsyncData(async () => await authStore.getProfile(user.value!.id))
 
 const { data: peminjaman } = useAsyncData(async () => await getPeminjamanData())
-const history = computed(() => {
-  return peminjaman.value ? peminjaman.value.filter((data) => data.tgl_kembali === null) : []
+const activePeminjaman = computed(() => {
+  return peminjaman.value
+    ? peminjaman.value.filter((data) => [6, 7].includes(data.peminjaman_detail[0]?.state_id))
+    : []
 })
+
+const pastPeminjaman = computed(() =>
+  peminjaman.value
+    ? peminjaman.value.filter(({ peminjaman_detail }) =>
+        [5, 6, 7].includes(peminjaman_detail[0].state_id)
+      )
+    : []
+)
 
 /** daftar buku yang belum dikonfirmasi */
 const bukuBlumDikonfirmasi = computed(() => {
-  return peminjaman.value?.filter(({ peminjaman_detail }) => peminjaman_detail[0].state_id === 1)
+  return activePeminjaman.value?.filter(
+    ({ peminjaman_detail }) => peminjaman_detail[0]?.state_id === 1
+  )
 })
 
 const bukuSudahDikonfirmasi = computed(() => {
-  return peminjaman.value?.filter(({ peminjaman_detail }) => peminjaman_detail[0].state_id === 2)
+  return activePeminjaman.value?.filter(
+    ({ peminjaman_detail }) => peminjaman_detail[0]?.state_id === 2
+  )
 })
 </script>
 
@@ -126,9 +140,9 @@ const bukuSudahDikonfirmasi = computed(() => {
       </header>
 
       <ul class="flex flex-col gap-4">
-        <li v-if="!peminjaman?.length" class="message">bukunya ga ada ges</li>
+        <li v-if="!pastPeminjaman?.length" class="message">bukunya ga ada ges</li>
         <ProfileHistoryCard
-          v-for="data in history"
+          v-for="data in pastPeminjaman"
           :key="data.id"
           class="history-list__item"
           :data="data"
