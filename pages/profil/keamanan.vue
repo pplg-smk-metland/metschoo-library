@@ -22,15 +22,15 @@ const user = useSupabaseUser()
 const { dialog } = useDialog()
 const kredensialPengguna = ref({
   password: "",
-  passwordKonfirmasi: "",
+  confirmPassword: "",
   email: user.value!.email,
   phoneNumber: user.value?.user_metadata.phone_no,
 })
 
-async function ubahKredensial() {
-  const { password, passwordKonfirmasi } = kredensialPengguna.value
+async function changePassword() {
+  const { password, confirmPassword } = kredensialPengguna.value
 
-  if (password !== passwordKonfirmasi) {
+  if (password !== confirmPassword) {
     dialog.value.open("Password tidak sama! coba lagi")
     return
   }
@@ -47,7 +47,7 @@ async function ubahKredensial() {
   }
 }
 
-async function ubahEmail() {
+async function changeEmail() {
   if (!confirm("beneran mau ubah email?")) return
 
   try {
@@ -142,7 +142,7 @@ async function signOut() {
   <section class="main-section">
     <h2 class="text-lg mb-2">Ubah password</h2>
 
-    <form class="flex flex-col gap-2" @submit.prevent="ubahKredensial">
+    <form class="flex flex-col gap-2" @submit.prevent="changePassword">
       <label for="password">Password</label>
       <Password
         v-model="kredensialPengguna.password"
@@ -157,7 +157,7 @@ async function signOut() {
 
       <label for="confirm-password">konfirmasi password</label>
       <Password
-        v-model="kredensialPengguna.passwordKonfirmasi"
+        v-model="kredensialPengguna.confirmPassword"
         input-id="password"
         toggle-mask
         fluid
@@ -175,7 +175,7 @@ async function signOut() {
   <section class="main-section">
     <h2 class="text-lg mb-2">Ubah email</h2>
 
-    <form class="flex flex-col gap-2" @submit.prevent="ubahEmail">
+    <form class="flex flex-col gap-2" @submit.prevent="changeEmail">
       <label for="email">Email</label>
       <InputText
         id="email"
