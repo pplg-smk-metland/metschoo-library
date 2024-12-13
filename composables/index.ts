@@ -75,14 +75,9 @@ export async function usePeminjamanState({
   const { data, error } = await peminjamanQuery
 
   // PGRST116 == empty
-  if (
-    (error !== null && error.code === "PGRST116") ||
-    !data ||
-    !data.peminjaman_state ||
-    !data.peminjaman
-  ) {
+  if ((error && error.code === "PGRST116") || !data || !data.peminjaman_state || !data.peminjaman) {
     return {
-      isBorrowable: true,
+      isBorrowable: jumlah_exspl > 0,
       isCancellable: false,
       isReturnable: false,
     }
@@ -95,10 +90,15 @@ export async function usePeminjamanState({
       isReturnable: false,
     }
 
-  const borrowableConditions = ["borrow cancelled", "return confirmed", "return late"]
+  const borrowableConditions = [
+    "borrow cancelled",
+    "return confirmed",
+    "return late",
+    "return cancelled",
+  ]
+
   const isCancellable = data.peminjaman_state.name === "borrow pending"
-  const isBorrowable =
-    borrowableConditions.includes(data.peminjaman_state.name) && jumlah_exspl >= 0
+  const isBorrowable = borrowableConditions.includes(data.peminjaman_state.name) && jumlah_exspl > 0
   const isReturnable = data.peminjaman_state.name === "borrow confirmed"
 
   return {
