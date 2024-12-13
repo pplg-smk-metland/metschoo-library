@@ -64,7 +64,7 @@ async function fetchLibraryStatus() {
   })
 
   if (error) {
-    console.error("Error fetching library status:", error)
+    console.error(error)
   } else if (data) {
     isPresent.value = !!data?.value
   }
