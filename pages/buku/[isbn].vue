@@ -31,7 +31,7 @@ const isLoading = ref(false)
 /**
  * get buku data on the server
  */
-const { data: buku } = useLazyAsyncData(async () => await getBuku(isbn))
+const { data: buku } = await useAsyncData(async () => await getBuku(isbn))
 
 const imgURL = computed(() => getBukuImage(buku.value?.image))
 
@@ -41,14 +41,17 @@ const imgURL = computed(() => getBukuImage(buku.value?.image))
 const peminjamanState = ref<PeminjamanState | null>(null)
 const bukuAdaDiWishlist = ref<boolean | null>(null)
 
-const { data } = await useAsyncData(async () => {
-  const [peminjamanStateData, checkWishlistData] = await Promise.all([
-    usePeminjamanState(buku.value!),
-    useCheckWishlist(isbn),
-  ])
+const { data } = await useAsyncData(
+  async () => {
+    const [peminjamanStateData, checkWishlistData] = await Promise.all([
+      usePeminjamanState(buku.value!),
+      useCheckWishlist(isbn),
+    ])
 
-  return { peminjamanStateData, checkWishlistData }
-})
+    return { peminjamanStateData, checkWishlistData }
+  },
+  { watch: [buku] }
+)
 
 bukuAdaDiWishlist.value = data.value?.checkWishlistData ?? null
 peminjamanState.value = data.value?.peminjamanStateData ?? null
@@ -319,9 +322,12 @@ supabase
         </span>
       </p>
 
+      {{ peminjamanState }}
+
       <div class="button-container">
         <CTA
-          v-if="peminjamanState?.isBorrowable"
+          :disabled="!peminjamanState?.isBorrowable && user"
+          v-if="!peminjamanState?.isCancellable && !peminjamanState?.isReturnable"
           fill
           label="Pinjam buku"
           @click="konfirmasiPinjamBuku"
