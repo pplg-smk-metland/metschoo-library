@@ -41,17 +41,14 @@ const imgURL = computed(() => getBukuImage(buku.value?.image))
 const peminjamanState = ref<PeminjamanState | null>(null)
 const bukuAdaDiWishlist = ref<boolean | null>(null)
 
-const { data } = await useAsyncData(
-  async () => {
-    const [peminjamanStateData, checkWishlistData] = await Promise.all([
-      usePeminjamanState(buku.value!),
-      useCheckWishlist(isbn),
-    ])
+const { data } = await useAsyncData(async () => {
+  const [peminjamanStateData, checkWishlistData] = await Promise.all([
+    usePeminjamanState(buku.value!),
+    useCheckWishlist(isbn),
+  ])
 
-    return { peminjamanStateData, checkWishlistData }
-  },
-  { watch: [buku] }
-)
+  return { peminjamanStateData, checkWishlistData }
+})
 
 bukuAdaDiWishlist.value = data.value?.checkWishlistData ?? null
 peminjamanState.value = data.value?.peminjamanStateData ?? null
@@ -240,7 +237,7 @@ async function perbaruiDataBuku() {
   }
 }
 
-supabase
+const channel = supabase
   .channel("peminjaman")
   .on(
     "postgres_changes",
@@ -270,7 +267,14 @@ supabase
       }
     }
   )
-  .subscribe()
+
+onMounted(() => {
+  channel.subscribe()
+})
+
+onUnmounted(() => {
+  channel.unsubscribe()
+})
 </script>
 
 <template>

@@ -173,7 +173,7 @@ function updatePeminjamanData(payload: RealtimePostgresChangesPayload<Peminjaman
   }
 }
 
-supabase
+const channel = supabase
   .channel("new_peminjaman")
   .on(
     "postgres_changes",
@@ -185,7 +185,14 @@ supabase
     { event: "INSERT", schema: "public", table: "peminjaman_detail" },
     updatePeminjamanData
   )
-  .subscribe()
+
+onMounted(() => {
+  channel.subscribe()
+})
+
+onUnmounted(() => {
+  channel.unsubscribe()
+})
 </script>
 
 <template>
