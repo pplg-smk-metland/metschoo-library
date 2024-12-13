@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { ref, onMounted } from "vue"
 import { getPeminjamanData } from "~/lib/peminjaman"
 import IconArrowRight from "~icons/mdi/arrow-right"
 import { Tab, Tabs, TabList, Badge, TabPanels, TabPanel, Toast, useToast } from "primevue"
+import type { Database } from "~/types/database.types"
 
 useHead({
   title: "Profil",
@@ -15,6 +17,8 @@ definePageMeta({
 const authStore = useAuthStore()
 const user = useSupabaseUser()
 const toast = useToast()
+const supabase = useSupabaseClient<Database>()
+const isPresent = ref(false)
 
 const { data: profile } = useAsyncData(async () => await authStore.getProfile(user.value!.id))
 
@@ -46,13 +50,68 @@ const bukuSudahDikonfirmasi = computed(() => {
   )
 })
 
-async function enterLibrary() {
-  toast.add({
-    severity: "success",
-    summary: "Sukses!",
-    detail: "Sukses masuk perpustakaan, selamat beraktivitas.",
-    life: 5000,
+async function fetchLibraryStatus() {
+  const { data, error } = await useAsyncData("libraryStatus", async () => {
+    const { data, error } = await supabase
+      .from("kunjungan")
+      .select("event")
+      .eq("user_id", user.value!.id)
+      .order("id")
+      .limit(1)
+      .maybeSingle()
+    if (error) throw error
+    return data?.event === "check_in"
   })
+
+  if (error) {
+    console.error("Error fetching library status:", error)
+  } else if (data) {
+    isPresent.value = !!data?.value
+  }
+}
+
+onMounted(fetchLibraryStatus)
+
+async function enterLibrary() {
+  try {
+    if (isPresent.value) {
+      const { error } = await supabase.from("kunjungan").insert({
+        event: "check_out",
+      })
+
+      if (error) throw error
+
+      toast.add({
+        severity: "success",
+        summary: "Sukses!",
+        detail: "Sukses keluar perpustakaan, semoga hari mu menyenangkan.",
+        life: 5000,
+      })
+      isPresent.value = false
+    } else {
+      const { error } = await supabase.from("kunjungan").insert({
+        event: "check_in",
+      })
+
+      if (error) throw error
+
+      toast.add({
+        severity: "success",
+        summary: "Sukses!",
+        detail: "Sukses masuk perpustakaan, selamat beraktivitas.",
+        life: 5000,
+      })
+      isPresent.value = true
+    }
+  } catch (error) {
+    toast.add({
+      severity: "error",
+      summary: "Gagal!",
+      detail: "Terjadi kesalahan saat masuk perpustakaan. Coba lagi nanti.",
+      life: 5000,
+    })
+    console.error(error)
+  }
 }
 </script>
 
@@ -87,7 +146,8 @@ async function enterLibrary() {
           </NuxtLink>
         </div>
         <form class="mt-4" @submit.prevent="enterLibrary">
-          <CTA label="masuk perpustakaan" type="submit" />
+          <CTA v-if="!isPresent" label="masuk perpustakaan" type="submit" />
+          <CTA v-else label="keluar perpustakaan" type="submit" />
         </form>
       </div>
     </section>
