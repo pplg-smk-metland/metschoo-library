@@ -153,6 +153,12 @@ async function enterLibrary() {
     </section>
 
     <section class="main-section col-span-full lg:col-span-9">
+      <h2>Kunjungan</h2>
+      <p v-if="isPresent">Kamu lagi di perpustakaan saat ini</p>
+      <p v-else>Kamu tidak ada di perpustakaan</p>
+    </section>
+
+    <section class="main-section col-span-full lg:col-span-9">
       <p v-if="peminjaman?.length === 0">Ga ada buku yang dipinjam</p>
 
       <Tabs v-else value="belum-dikonfirmasi">
