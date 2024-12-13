@@ -204,7 +204,10 @@ async function signOut() {
   </section>
 
   <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">
-    <h2>Info!!!</h2>
+    <template v-slot:header>
+      <h2 class="text-xl">Info!!!</h2>
+    </template>
+
     <p>{{ dialog.message }}</p>
   </TheDialog>
 </template>
