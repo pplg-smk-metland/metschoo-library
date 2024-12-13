@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { getPeminjamanData } from "~/lib/peminjaman"
 import IconArrowRight from "~icons/mdi/arrow-right"
-import { Tab, Tabs, TabList, Badge, TabPanels, TabPanel } from "primevue"
+import { Tab, Tabs, TabList, Badge, TabPanels, TabPanel, Toast, useToast } from "primevue"
 
 useHead({
   title: "Profil",
@@ -14,6 +14,7 @@ definePageMeta({
 
 const authStore = useAuthStore()
 const user = useSupabaseUser()
+const toast = useToast()
 
 const { data: profile } = useAsyncData(async () => await authStore.getProfile(user.value!.id))
 
@@ -44,6 +45,15 @@ const bukuSudahDikonfirmasi = computed(() => {
     ({ peminjaman_detail }) => peminjaman_detail[0]?.state_id === 2
   )
 })
+
+async function enterLibrary() {
+  toast.add({
+    severity: "success",
+    summary: "Sukses!",
+    detail: "Sukses masuk perpustakaan, selamat beraktivitas.",
+    life: 5000,
+  })
+}
 </script>
 
 <template>
@@ -76,6 +86,9 @@ const bukuSudahDikonfirmasi = computed(() => {
             <CTA label="Keamanan" />
           </NuxtLink>
         </div>
+        <form class="mt-4" @submit.prevent="enterLibrary">
+          <CTA label="masuk perpustakaan" type="submit" />
+        </form>
       </div>
     </section>
 
@@ -150,6 +163,7 @@ const bukuSudahDikonfirmasi = computed(() => {
       </ul>
     </aside>
   </div>
+  <Toast />
 </template>
 
 <style scoped>
