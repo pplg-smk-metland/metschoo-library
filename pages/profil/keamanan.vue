@@ -151,6 +151,7 @@ async function signOut() {
         fluid
         name="password"
         placeholder="Password rahasia anda"
+        minlength="8"
         required
       />
 
@@ -162,6 +163,7 @@ async function signOut() {
         fluid
         name="confirm-password"
         placeholder="Password rahasia anda"
+        minlength="8"
         required
       />
       <div class="button-container">

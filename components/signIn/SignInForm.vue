@@ -16,6 +16,8 @@ useHead({
   title: title,
 })
 
+const isLoading = ref(false)
+
 function handleSwitchForm() {
   isSigningIn.value = !isSigningIn.value
 }
@@ -32,7 +34,9 @@ const authStore = useAuthStore()
 const router = useRouter()
 
 const toast = useToast()
+
 async function handleSignIn() {
+  isLoading.value = true
   try {
     const error = await authStore.handleSignIn(data.value.email, data.value.password)
     if (error) throw error
@@ -40,18 +44,21 @@ async function handleSignIn() {
   } catch (err) {
     console.error(err)
 
+    let detail = "Ada sebuah kesalahan saat mendaftar. Silahkan coba lagi"
     if (err instanceof AuthError) {
-      let detail = "Ada sebuah kesalahan saat mendaftar. Silahkan coba lagi"
       if (err.message === "Invalid login credentials") {
         detail = "email atau password salah."
       }
-
-      toast.add({
-        severity: "error",
-        summary: "Gagal masuk!",
-        detail,
-      })
     }
+
+    toast.add({
+      severity: "error",
+      summary: "Gagal masuk!",
+      detail,
+      life: 10000,
+    })
+  } finally {
+    isLoading.value = false
   }
 }
 
@@ -63,19 +70,21 @@ async function handleSignUp() {
     return
   }
 
+  isLoading.value = true
   try {
     await authStore.handleSignUp({ nama, email, phoneNumber, password })
     alert("Cek email lu ya buat verifikasi email!")
   } catch (err) {
     console.error(err)
 
-    if (err instanceof AuthError) {
-      toast.add({
-        severity: "error",
-        summary: "Gagal mendaftar!",
-        detail: "Ada sebuah kesalahan saat mendaftar. Silahkan coba lagi",
-      })
-    }
+    toast.add({
+      severity: "error",
+      summary: "Gagal mendaftar!",
+      detail: "Ada sebuah kesalahan saat mendaftar. Silahkan coba lagi",
+      life: 10000,
+    })
+  } finally {
+    isLoading.value = false
   }
 }
 </script>
@@ -118,9 +127,10 @@ async function handleSignUp() {
           toggle-mask
           input-id="login-password"
           required
+          minlength="8"
           placeholder="Password Anda"
         />
-        <CTA type="submit" label="Masuk" />
+        <CTA type="submit" label="Masuk" :disabled="isLoading" />
       </form>
     </div>
 
@@ -160,6 +170,7 @@ async function handleSignUp() {
           input-id="signup-password"
           required
           toggle-mask
+          minlength="8"
           placeholder="Password Anda"
         />
         <label for="confirm-password">Konfirmasi Password</label>
@@ -169,10 +180,11 @@ async function handleSignUp() {
           input-id="confirm-password"
           required
           toggle-mask
+          minlength="8"
           placeholder="Ketik Ulang Password"
         />
 
-        <CTA type="submit" label="Daftar" class="block" />
+        <CTA type="submit" label="Daftar" class="block" :disabled="isLoading" />
       </form>
     </div>
 
