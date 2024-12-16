@@ -6,6 +6,7 @@ import { AuthError } from "@supabase/supabase-js"
 import type { Database } from "~/types/database.types.ts"
 
 import IconArrowLeft from "~icons/mdi/arrow-left"
+import { phoneIsValid } from "~/utils/auth"
 
 useHead({
   title: "Keamanan Profil",
@@ -62,13 +63,11 @@ async function changeEmail() {
   }
 }
 
-async function changePhoneNumber() {
+async function changePhoneNumber(phoneNumber: string) {
   try {
-    const phoneNumber = kredensialPengguna.value.phoneNumber
-    if (!phoneNumber.match(/^08\d{10,14}$/)) {
-      dialog.value.open(
-        "Nomor HP tidak valid. Harus dimulai dengan 08 dan terdiri dari 10-14 angka."
-      )
+    const { isValid, message } = phoneIsValid(phoneNumber)
+    if (!isValid) {
+      dialog.value.open(message)
       return
     }
 
@@ -121,7 +120,10 @@ async function signOut() {
   <section class="main-section">
     <h2 class="text-lg mb-2">Ubah No. HP</h2>
 
-    <form class="flex flex-col gap-2" @submit.prevent="changePhoneNumber">
+    <form
+      class="flex flex-col gap-2"
+      @submit.prevent="changePhoneNumber(kredensialPengguna.phoneNumber)"
+    >
       <label for="number">No. HP</label>
       <InputText
         id="number"

@@ -35,6 +35,18 @@ const router = useRouter()
 
 const toast = useToast()
 
+const formState = computed(() => {
+  return {
+    password: {
+      isStrong: data.value.password.length >= 8,
+      isConfirmed: data.value.confirmPassword === data.value.password,
+    },
+    phone: {
+      isValid: phoneIsValid(data.value.phoneNumber).isValid,
+    },
+  }
+})
+
 async function handleSignIn() {
   isLoading.value = true
   try {
@@ -61,13 +73,6 @@ async function handleSignIn() {
     isLoading.value = false
   }
 }
-
-const passwordState = computed(() => {
-  return {
-    isStrong: data.value.password.length >= 8,
-    isConfirmed: data.value.confirmPassword === data.value.password,
-  }
-})
 
 async function handleSignUp() {
   const { nama, email, phoneNumber, password } = data.value
@@ -129,11 +134,11 @@ async function handleSignUp() {
           toggle-mask
           input-id="login-password"
           required
-          :invalid="!passwordState.isStrong"
+          :invalid="!formState.password.isStrong"
           placeholder="Password Anda"
         />
 
-        <CTA type="submit" label="Masuk" :disabled="isLoading && !passwordState.isStrong" />
+        <CTA type="submit" label="Masuk" :disabled="isLoading && !formState.password.isStrong" />
       </form>
     </div>
 
@@ -163,6 +168,7 @@ async function handleSignUp() {
           v-model="data.phoneNumber"
           type="text"
           required
+          :invalid="!formState.phone.isValid"
           placeholder="0878 kapan kapan kita ke dufan"
           maxlength="14"
         />
@@ -174,7 +180,7 @@ async function handleSignUp() {
           input-id="signup-password"
           required
           toggle-mask
-          :invalid="!passwordState.isStrong"
+          :invalid="!formState.password.isStrong"
           placeholder="Password Anda"
           aria-describedby="weak-password-help"
         />
@@ -182,7 +188,7 @@ async function handleSignUp() {
         <span
           class="text-sm text-red-400 dark:text-red:500"
           id="weak-password-help"
-          v-show="!passwordState.isStrong"
+          v-show="!formState.password.isStrong"
         >
           Password harus memiliki panjang 8 karakter atau lebih.
         </span>
@@ -194,7 +200,7 @@ async function handleSignUp() {
           input-id="confirm-password"
           required
           toggle-mask
-          :invalid="!passwordState.isConfirmed"
+          :invalid="!formState.password.isConfirmed"
           placeholder="Ketik Ulang Password"
           aria-describedby="unconfirmed-password-help"
         />
@@ -202,7 +208,7 @@ async function handleSignUp() {
         <span
           class="text-sm text-red-400 dark:text-red:500"
           id="unconfirmed-password-help"
-          v-show="!passwordState.isConfirmed"
+          v-show="!formState.password.isConfirmed"
         >
           Password tidak sama.
         </span>
@@ -211,7 +217,7 @@ async function handleSignUp() {
           type="submit"
           label="Daftar"
           class="block"
-          :disabled="isLoading || !passwordState.isStrong || !passwordState.isConfirmed"
+          :disabled="isLoading || !formState.password.isStrong || !formState.password.isConfirmed"
         />
       </form>
     </div>
