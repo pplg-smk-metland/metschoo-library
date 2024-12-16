@@ -222,3 +222,9 @@ async function handleSignUp() {
     <Toast />
   </section>
 </template>
+
+<style scoped>
+form label {
+  @apply mt-2;
+}
+</style>
