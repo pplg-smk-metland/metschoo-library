@@ -153,9 +153,9 @@ async function enterLibrary() {
     </section>
 
     <section class="main-section col-span-full lg:col-span-9">
-      <h2>Kunjungan</h2>
-      <p v-if="isPresent">Kamu lagi di perpustakaan saat ini</p>
-      <p v-else>Kamu tidak ada di perpustakaan</p>
+      <h3>✨ Zona Kunjunganmu! ✨</h3>
+      <p v-if="isPresent">Wow! kamu lagi nongkrong di perpustakaan sekarang! 📚</p>
+      <p v-else>Oh tidak! Kayaknya kamu lagi jauh dari buku-buku favoritmu. 😢</p>
     </section>
 
     <section class="main-section col-span-full lg:col-span-9">
