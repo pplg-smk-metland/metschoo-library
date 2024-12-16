@@ -62,17 +62,21 @@ async function handleSignIn() {
   }
 }
 
-async function handleSignUp() {
-  const { nama, email, phoneNumber, password, confirmPassword } = data.value
-
-  if (confirmPassword !== password) {
-    alert("passwordnya ga sama")
-    return
+const passwordState = computed(() => {
+  return {
+    isStrong: data.value.password.length >= 8,
+    isConfirmed: data.value.confirmPassword === data.value.password,
   }
+})
+
+async function handleSignUp() {
+  const { nama, email, phoneNumber, password } = data.value
 
   isLoading.value = true
   try {
-    await authStore.handleSignUp({ nama, email, phoneNumber, password })
+    const error = await authStore.handleSignUp({ nama, email, phoneNumber, password })
+    if (error) throw error
+
     alert("Cek email lu ya buat verifikasi email!")
   } catch (err) {
     console.error(err)
@@ -127,10 +131,11 @@ async function handleSignUp() {
           toggle-mask
           input-id="login-password"
           required
-          minlength="8"
+          :invalid="!passwordState.isStrong"
           placeholder="Password Anda"
         />
-        <CTA type="submit" label="Masuk" :disabled="isLoading" />
+
+        <CTA type="submit" label="Masuk" :disabled="isLoading && !passwordState.isStrong" />
       </form>
     </div>
 
@@ -163,6 +168,7 @@ async function handleSignUp() {
           placeholder="0878 kapan kapan kita ke dufan"
           maxlength="14"
         />
+
         <label for="signup-password">Password</label>
         <Password
           v-model="data.password"
@@ -170,9 +176,19 @@ async function handleSignUp() {
           input-id="signup-password"
           required
           toggle-mask
-          minlength="8"
+          :invalid="!passwordState.isStrong"
           placeholder="Password Anda"
+          aria-describedby="weak-password-help"
         />
+
+        <span
+          class="text-sm text-red-400 dark:text-red:500"
+          id="weak-password-help"
+          v-show="!passwordState.isStrong"
+        >
+          Password harus memiliki panjang 8 karakter atau lebih.
+        </span>
+
         <label for="confirm-password">Konfirmasi Password</label>
         <Password
           v-model="data.confirmPassword"
@@ -180,11 +196,25 @@ async function handleSignUp() {
           input-id="confirm-password"
           required
           toggle-mask
-          minlength="8"
+          :invalid="!passwordState.isConfirmed"
           placeholder="Ketik Ulang Password"
+          aria-describedby="unconfirmed-password-help"
         />
 
-        <CTA type="submit" label="Daftar" class="block" :disabled="isLoading" />
+        <span
+          class="text-sm text-red-400 dark:text-red:500"
+          id="unconfirmed-password-help"
+          v-show="!passwordState.isConfirmed"
+        >
+          Password tidak sama.
+        </span>
+
+        <CTA
+          type="submit"
+          label="Daftar"
+          class="block"
+          :disabled="isLoading || !passwordState.isStrong || !passwordState.isConfirmed"
+        />
       </form>
     </div>
 
