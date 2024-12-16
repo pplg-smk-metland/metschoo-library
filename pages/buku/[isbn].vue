@@ -326,8 +326,6 @@ onUnmounted(() => {
         </span>
       </p>
 
-      {{ peminjamanState }}
-
       <div class="button-container">
         <CTA
           :disabled="!peminjamanState?.isBorrowable && user"
