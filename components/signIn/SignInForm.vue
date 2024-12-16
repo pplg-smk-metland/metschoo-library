@@ -94,9 +94,7 @@ async function handleSignUp() {
 </script>
 
 <template>
-  <section
-    class="flex flex-col gap-4 flex-auto max-w-xl p-8 rounded-lg bg-surface-300 dark:bg-surface-700"
-  >
+  <section class="flex flex-col gap-4 flex-auto max-w-xl main-section">
     <header>
       <template v-if="isSigningIn">
         <h1 v-if="isSigningIn" class="text-center">
