@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue"
 import { getPeminjamanData } from "~/lib/peminjaman"
 import IconArrowRight from "~icons/mdi/arrow-right"
 import { Tab, Tabs, TabList, Badge, TabPanels, TabPanel, Toast, useToast } from "primevue"
@@ -17,8 +16,6 @@ definePageMeta({
 const authStore = useAuthStore()
 const user = useSupabaseUser()
 const toast = useToast()
-const supabase = useSupabaseClient<Database>()
-const isPresent = ref(false)
 
 const { data: profile } = useAsyncData(async () => await authStore.getProfile(user.value!.id))
 
@@ -50,27 +47,25 @@ const bukuSudahDikonfirmasi = computed(() => {
   )
 })
 
-async function fetchLibraryStatus() {
-  const { data, error } = await useAsyncData("libraryStatus", async () => {
-    const { data, error } = await supabase
-      .from("kunjungan")
-      .select("event")
-      .eq("user_id", user.value!.id)
-      .order("id")
-      .limit(1)
-      .maybeSingle()
-    if (error) throw error
-    return data?.event === "check_in"
-  })
+const supabase = useSupabaseClient<Database>()
+const { data: isPresent } = await useAsyncData(async () => {
+  if (!user.value) return
 
-  if (error) {
+  const { data, error } = await supabase
+    .from("kunjungan")
+    .select("event")
+    .eq("user_id", user.value.id)
+    .order("check_in", { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  if (error || !data) {
     console.error(error)
-  } else if (data) {
-    isPresent.value = !!data?.value
+    return false
   }
-}
 
-onMounted(fetchLibraryStatus)
+  return data.event === "check_in"
+})
 
 async function enterLibrary() {
   try {
@@ -145,10 +140,6 @@ async function enterLibrary() {
             <CTA label="Keamanan" />
           </NuxtLink>
         </div>
-        <form class="mt-4" @submit.prevent="enterLibrary">
-          <CTA v-if="!isPresent" label="masuk perpustakaan" type="submit" />
-          <CTA v-else label="keluar perpustakaan" type="submit" />
-        </form>
       </div>
     </section>
 
@@ -156,6 +147,10 @@ async function enterLibrary() {
       <h3>✨ Zona Kunjunganmu! ✨</h3>
       <p v-if="isPresent">Wow! kamu lagi nongkrong di perpustakaan sekarang! 📚</p>
       <p v-else>Oh tidak! Kayaknya kamu lagi jauh dari buku-buku favoritmu. 😢</p>
+
+      <form class="mt-4" @submit.prevent="enterLibrary">
+        <CTA :label="!isPresent ? 'masuk perpustakaan' : 'keluar perpustakaan'" type="submit" />
+      </form>
     </section>
 
     <section class="main-section col-span-full lg:col-span-9">
