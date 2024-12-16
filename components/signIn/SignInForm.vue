@@ -41,9 +41,7 @@ const formState = computed(() => {
       isStrong: data.value.password.length >= 8,
       isConfirmed: data.value.confirmPassword === data.value.password,
     },
-    phone: {
-      isValid: phoneIsValid(data.value.phoneNumber).isValid,
-    },
+    phone: phoneIsValid(data.value.phoneNumber),
   }
 })
 
@@ -162,6 +160,7 @@ async function handleSignUp() {
           type="email"
           placeholder="Email"
         />
+
         <label for="signup-number">No. HP</label>
         <InputText
           id="signup-number"
@@ -172,6 +171,10 @@ async function handleSignUp() {
           placeholder="0878 kapan kapan kita ke dufan"
           maxlength="14"
         />
+
+        <span class="text-sm text-red-400 dark:text-red-500" v-show="!formState.phone.isValid">
+          {{ formState.phone.message }}
+        </span>
 
         <label for="signup-password">Password</label>
         <Password
@@ -186,7 +189,7 @@ async function handleSignUp() {
         />
 
         <span
-          class="text-sm text-red-400 dark:text-red:500"
+          class="text-sm text-red-400 dark:text-red-500"
           id="weak-password-help"
           v-show="!formState.password.isStrong"
         >
@@ -206,7 +209,7 @@ async function handleSignUp() {
         />
 
         <span
-          class="text-sm text-red-400 dark:text-red:500"
+          class="text-sm text-red-400 dark:text-red-500"
           id="unconfirmed-password-help"
           v-show="!formState.password.isConfirmed"
         >
