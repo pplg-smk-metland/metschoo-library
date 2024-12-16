@@ -116,13 +116,13 @@ async function enterLibrary() {
       <p>Selamat Datang di Profil kamu</p>
     </PageHeader>
 
-    <section class="main-section flex gap-4 col-span-full lg:col-span-9">
+    <section class="main-section flex gap-4 col-span-full lg:col-span-4">
       <figure class="profile__picture-container">
         <img
-          class="profile-picture"
+          class="basis-32 rounded-lg size-32 aspect-square cover"
           src="@/assets/profilepicture.svg"
-          width="300"
-          height="300"
+          width="150"
+          height="150"
           alt="Foto kamu disini"
         />
       </figure>
@@ -143,7 +143,7 @@ async function enterLibrary() {
       </div>
     </section>
 
-    <section class="main-section col-span-full lg:col-span-9">
+    <section class="main-section col-span-full lg:col-span-5">
       <h3>✨ Zona Kunjunganmu! ✨</h3>
       <p v-if="isPresent">Wow! kamu lagi nongkrong di perpustakaan sekarang! 📚</p>
       <p v-else>Oh tidak! Kayaknya kamu lagi jauh dari buku-buku favoritmu. 😢</p>
@@ -226,9 +226,3 @@ async function enterLibrary() {
   </div>
   <Toast />
 </template>
-
-<style scoped>
-.profile-picture {
-  flex-basis: 35ch;
-}
-</style>
