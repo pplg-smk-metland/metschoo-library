@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import IconClose from "~icons/mdi/close"
+
 interface Props {
   isOpen: boolean
 }
@@ -28,42 +30,36 @@ watch(
 </script>
 
 <template>
-  <dialog ref="myDialog" class="dialog" @close="closeDialog">
-    <form method="dialog">
-      <button class="dialog__close-btn" title="close this dialog">
-        <i class="fa-solid fa-xmark" />
-      </button>
+  <dialog
+    ref="myDialog"
+    class="dialog backdrop:blur-lg min-h-[50vh] grid gap-4 m-auto translate-y-2/4 [&:not([open])]:pointer-events-none [&:not([open])]:opacity-0 open:translate-y-0 transition-all duration-200 border-4 border-solid border-surface-200/80 dark:border-surface-700 rounded-lg text-inherit"
+    @close="closeDialog"
+  >
+    <form method="dialog" class="bg-surface-100 dark:bg-surface-800">
+      <header
+        class="bg-surface-200 dark:bg-surface-800 py-4 px-6 flex justify-between items-center"
+      >
+        <button
+          class="border-surface-200/80 dark:border-surface-700/70 rounded-full order-last"
+          title="close this dialog"
+        >
+          <IconClose size="20" />
+        </button>
 
-      <slot>
+        <slot name="header"></slot>
+      </header>
+
+      <Divider class="!border-2 !m-0" />
+
+      <div class="px-6 py-4">
         <p>ini adalah sebuah dialog</p>
-      </slot>
+      </div>
     </form>
   </dialog>
 </template>
 
-<style>
+<style scoped>
 .dialog {
-  margin: auto;
-  padding: 2rem;
-  width: min(calc(100% - 2rem), 60ch);
-  min-height: 50vh;
-}
-
-.dialog::backdrop {
-  backdrop-filter: blur(2rem);
-}
-
-.dialog__close-btn {
-  border: 2px solid black;
-  color: var(--primary);
-  padding: 0.5rem;
-  margin-left: auto;
-
-  display: grid;
-  place-items: center;
-
-  position: absolute;
-  top: 2rem;
-  right: 2rem;
+  width: min(calc(100% - 2rem), 65ch);
 }
 </style>

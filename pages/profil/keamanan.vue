@@ -6,6 +6,7 @@ import { AuthError } from "@supabase/supabase-js"
 import type { Database } from "~/types/database.types.ts"
 
 import IconArrowLeft from "~icons/mdi/arrow-left"
+import { phoneIsValid } from "~/utils/auth"
 
 useHead({
   title: "Keamanan Profil",
@@ -22,15 +23,15 @@ const user = useSupabaseUser()
 const { dialog } = useDialog()
 const kredensialPengguna = ref({
   password: "",
-  passwordKonfirmasi: "",
+  confirmPassword: "",
   email: user.value!.email,
   phoneNumber: user.value?.user_metadata.phone_no,
 })
 
-async function ubahKredensial() {
-  const { password, passwordKonfirmasi } = kredensialPengguna.value
+async function changePassword() {
+  const { password, confirmPassword } = kredensialPengguna.value
 
-  if (password !== passwordKonfirmasi) {
+  if (password !== confirmPassword) {
     dialog.value.open("Password tidak sama! coba lagi")
     return
   }
@@ -47,7 +48,7 @@ async function ubahKredensial() {
   }
 }
 
-async function ubahEmail() {
+async function changeEmail() {
   if (!confirm("beneran mau ubah email?")) return
 
   try {
@@ -62,13 +63,11 @@ async function ubahEmail() {
   }
 }
 
-async function changePhoneNumber() {
+async function changePhoneNumber(phoneNumber: string) {
   try {
-    const phoneNumber = kredensialPengguna.value.phoneNumber
-    if (!phoneNumber.match(/^08\d{10,14}$/)) {
-      dialog.value.open(
-        "Nomor HP tidak valid. Harus dimulai dengan 08 dan terdiri dari 10-14 angka."
-      )
+    const { isValid, message } = phoneIsValid(phoneNumber)
+    if (!isValid) {
+      dialog.value.open(message)
       return
     }
 
@@ -121,7 +120,10 @@ async function signOut() {
   <section class="main-section">
     <h2 class="text-lg mb-2">Ubah No. HP</h2>
 
-    <form class="flex flex-col gap-2" @submit.prevent="changePhoneNumber">
+    <form
+      class="flex flex-col gap-2"
+      @submit.prevent="changePhoneNumber(kredensialPengguna.phoneNumber)"
+    >
       <label for="number">No. HP</label>
       <InputText
         id="number"
@@ -142,7 +144,7 @@ async function signOut() {
   <section class="main-section">
     <h2 class="text-lg mb-2">Ubah password</h2>
 
-    <form class="flex flex-col gap-2" @submit.prevent="ubahKredensial">
+    <form class="flex flex-col gap-2" @submit.prevent="changePassword">
       <label for="password">Password</label>
       <Password
         v-model="kredensialPengguna.password"
@@ -151,17 +153,19 @@ async function signOut() {
         fluid
         name="password"
         placeholder="Password rahasia anda"
+        minlength="8"
         required
       />
 
       <label for="confirm-password">konfirmasi password</label>
       <Password
-        v-model="kredensialPengguna.passwordKonfirmasi"
+        v-model="kredensialPengguna.confirmPassword"
         input-id="password"
         toggle-mask
         fluid
         name="confirm-password"
         placeholder="Password rahasia anda"
+        minlength="8"
         required
       />
       <div class="button-container">
@@ -173,7 +177,7 @@ async function signOut() {
   <section class="main-section">
     <h2 class="text-lg mb-2">Ubah email</h2>
 
-    <form class="flex flex-col gap-2" @submit.prevent="ubahEmail">
+    <form class="flex flex-col gap-2" @submit.prevent="changeEmail">
       <label for="email">Email</label>
       <InputText
         id="email"
@@ -202,7 +206,10 @@ async function signOut() {
   </section>
 
   <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">
-    <h2>Info!!!</h2>
+    <template v-slot:header>
+      <h2 class="text-xl">Info!!!</h2>
+    </template>
+
     <p>{{ dialog.message }}</p>
   </TheDialog>
 </template>

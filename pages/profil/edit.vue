@@ -16,17 +16,19 @@ definePageMeta({
   middleware: "profil",
 })
 
+const user = useSupabaseUser()
 const authStore = useAuthStore()
 
-const { data: user } = await useLazyAsyncData(async () => {
-  return authStore.profile
+const { data: userProfile } = await useAsyncData(async () => {
+  if (user.value) return await authStore.getProfile(user.value.id)
+  return false
 })
 
 const toast = useToast()
 
 async function updateProfile() {
   try {
-    await authStore.handleUpdateProfile(user.value as Pengguna)
+    await authStore.handleUpdateProfile(userProfile.value as Pengguna)
 
     toast.add({
       severity: "success",
@@ -54,7 +56,7 @@ async function updateProfile() {
     </CTA>
   </PageHeader>
 
-  <section v-if="user" class="main-section flex gap-4">
+  <section v-if="userProfile" class="main-section flex gap-4">
     <figure class="flex flex-col gap-4">
       <img class="profile__picture" src="@/assets/profilepicture.svg" alt="Foto kamu disini" />
       <CTA label="Edit foto profil" />
@@ -62,18 +64,18 @@ async function updateProfile() {
 
     <form class="flex flex-col gap-2 flex-1" @submit.prevent="updateProfile">
       <label for="name">Nama</label>
-      <InputText v-model="user.nama" type="text" placeholder="Masukan Nama" />
+      <InputText v-model="userProfile.nama" type="text" placeholder="Masukan Nama" />
 
       <label for="kelas">Kelas</label>
       <Select
-        v-model="user.kelas"
+        v-model="userProfile.kelas"
         :options="['X', 'XI', 'XII']"
         placeholder="Kelas Berapa Kamu"
         checkmark
       />
 
       <label for="jurusan">Jurusan</label>
-      <InputText v-model="user.jurusan" type="text" placeholder="Masukkan Jurusan" />
+      <InputText v-model="userProfile.jurusan" type="text" placeholder="Masukkan Jurusan" />
 
       <CTA label="Edit profil" class="mt-auto" @click="updateProfile" />
     </form>

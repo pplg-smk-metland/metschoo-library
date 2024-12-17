@@ -16,6 +16,8 @@ useHead({
   title: title,
 })
 
+const isLoading = ref(false)
+
 function handleSwitchForm() {
   isSigningIn.value = !isSigningIn.value
 }
@@ -32,7 +34,19 @@ const authStore = useAuthStore()
 const router = useRouter()
 
 const toast = useToast()
+
+const formState = computed(() => {
+  return {
+    password: {
+      isStrong: data.value.password.length >= 8,
+      isConfirmed: data.value.confirmPassword === data.value.password,
+    },
+    phone: phoneIsValid(data.value.phoneNumber),
+  }
+})
+
 async function handleSignIn() {
+  isLoading.value = true
   try {
     const error = await authStore.handleSignIn(data.value.email, data.value.password)
     if (error) throw error
@@ -40,50 +54,50 @@ async function handleSignIn() {
   } catch (err) {
     console.error(err)
 
+    let detail = "Ada sebuah kesalahan saat mendaftar. Silahkan coba lagi"
     if (err instanceof AuthError) {
-      let detail = "Ada sebuah kesalahan saat mendaftar. Silahkan coba lagi"
       if (err.message === "Invalid login credentials") {
         detail = "email atau password salah."
       }
-
-      toast.add({
-        severity: "error",
-        summary: "Gagal masuk!",
-        detail,
-      })
     }
+
+    toast.add({
+      severity: "error",
+      summary: "Gagal masuk!",
+      detail,
+      life: 10000,
+    })
+  } finally {
+    isLoading.value = false
   }
 }
 
 async function handleSignUp() {
-  const { nama, email, phoneNumber, password, confirmPassword } = data.value
+  const { nama, email, phoneNumber, password } = data.value
 
-  if (confirmPassword !== password) {
-    alert("passwordnya ga sama")
-    return
-  }
-
+  isLoading.value = true
   try {
-    await authStore.handleSignUp({ nama, email, phoneNumber, password })
+    const error = await authStore.handleSignUp({ nama, email, phoneNumber, password })
+    if (error) throw error
+
     alert("Cek email lu ya buat verifikasi email!")
   } catch (err) {
     console.error(err)
 
-    if (err instanceof AuthError) {
-      toast.add({
-        severity: "error",
-        summary: "Gagal mendaftar!",
-        detail: "Ada sebuah kesalahan saat mendaftar. Silahkan coba lagi",
-      })
-    }
+    toast.add({
+      severity: "error",
+      summary: "Gagal mendaftar!",
+      detail: "Ada sebuah kesalahan saat mendaftar. Silahkan coba lagi",
+      life: 10000,
+    })
+  } finally {
+    isLoading.value = false
   }
 }
 </script>
 
 <template>
-  <section
-    class="flex flex-col gap-4 flex-auto max-w-xl p-8 rounded-lg bg-surface-300 dark:bg-surface-700"
-  >
+  <section class="flex flex-col gap-4 flex-auto max-w-xl main-section">
     <header>
       <template v-if="isSigningIn">
         <h1 v-if="isSigningIn" class="text-center">
@@ -118,9 +132,11 @@ async function handleSignUp() {
           toggle-mask
           input-id="login-password"
           required
+          :invalid="!formState.password.isStrong"
           placeholder="Password Anda"
         />
-        <CTA type="submit" label="Masuk" />
+
+        <CTA type="submit" label="Masuk" :disabled="isLoading && !formState.password.isStrong" />
       </form>
     </div>
 
@@ -144,15 +160,22 @@ async function handleSignUp() {
           type="email"
           placeholder="Email"
         />
+
         <label for="signup-number">No. HP</label>
         <InputText
           id="signup-number"
           v-model="data.phoneNumber"
           type="text"
           required
+          :invalid="!formState.phone.isValid"
           placeholder="0878 kapan kapan kita ke dufan"
           maxlength="14"
         />
+
+        <span class="text-sm text-red-400 dark:text-red-500" v-show="!formState.phone.isValid">
+          {{ formState.phone.message }}
+        </span>
+
         <label for="signup-password">Password</label>
         <Password
           v-model="data.password"
@@ -160,8 +183,19 @@ async function handleSignUp() {
           input-id="signup-password"
           required
           toggle-mask
+          :invalid="!formState.password.isStrong"
           placeholder="Password Anda"
+          aria-describedby="weak-password-help"
         />
+
+        <span
+          class="text-sm text-red-400 dark:text-red-500"
+          id="weak-password-help"
+          v-show="!formState.password.isStrong"
+        >
+          Password harus memiliki panjang 8 karakter atau lebih.
+        </span>
+
         <label for="confirm-password">Konfirmasi Password</label>
         <Password
           v-model="data.confirmPassword"
@@ -169,10 +203,25 @@ async function handleSignUp() {
           input-id="confirm-password"
           required
           toggle-mask
+          :invalid="!formState.password.isConfirmed"
           placeholder="Ketik Ulang Password"
+          aria-describedby="unconfirmed-password-help"
         />
 
-        <CTA type="submit" label="Daftar" class="block" />
+        <span
+          class="text-sm text-red-400 dark:text-red-500"
+          id="unconfirmed-password-help"
+          v-show="!formState.password.isConfirmed"
+        >
+          Password tidak sama.
+        </span>
+
+        <CTA
+          type="submit"
+          label="Daftar"
+          class="block"
+          :disabled="isLoading || !formState.password.isStrong || !formState.password.isConfirmed"
+        />
       </form>
     </div>
 
@@ -180,3 +229,9 @@ async function handleSignUp() {
     <Toast />
   </section>
 </template>
+
+<style scoped>
+form label {
+  @apply mt-2;
+}
+</style>

@@ -20,7 +20,7 @@ const { data: profile } = useAsyncData(async () => await authStore.getProfile(us
 const { data: peminjaman } = useAsyncData(async () => await getPeminjamanData())
 const activePeminjaman = computed(() => {
   return peminjaman.value
-    ? peminjaman.value.filter((data) => [6, 7].includes(data.peminjaman_detail[0]?.state_id))
+    ? peminjaman.value.filter((data) => ![5, 6, 7].includes(data.peminjaman_detail[0]?.state_id))
     : []
 })
 
