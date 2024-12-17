@@ -11,7 +11,7 @@ useHead({
   ],
   bodyAttrs: {
     class: computed(() => [
-      "bg-surface-100/80 dark:bg-surface-900 dark:text-gray-300",
+      "bg-surface-100/80 dark:bg-surface-950 dark:text-gray-300",
       // on the server themeStore.theme is always undefined
       // so we pass an empty string like so
       themeStore.theme ?? "",
