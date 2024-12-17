@@ -1,6 +1,6 @@
 <template>
   <TheNavbar />
-  <main class="p-2 md:p-8">
+  <main class="px-4 py-8 md:px-8">
     <slot />
   </main>
   <TheFooter />
