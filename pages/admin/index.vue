@@ -143,6 +143,19 @@ async function konfirmasiPengembalian(dataPeminjaman: Peminjaman) {
   }
 }
 
+const { data: kunjungans } = await useAsyncData(async () => {
+  const { data, error } = await supabase.from("kunjungan").select("id, check_in, event")
+  if (error) {
+    toast.add({
+      severity: "error",
+      summary: "Gagal mengambil data",
+      detail: "Gagal mengambil data kunjungan, silahkan coba lagi.",
+    })
+    throw error
+  }
+  return data
+})
+
 async function insertPeminjamandata(payload: RealtimePostgresChangesPayload<Peminjaman>) {
   try {
     const { data, error } = await _peminjamanQuery.eq("id", (payload.new as Peminjaman).id).single()
@@ -255,13 +268,42 @@ supabase
         </Column>
       </DataTable>
     </section>
-
     <section class="main-section col-span-full">
       <ul class="grid grid-cols-4 gap-4">
         <AdminInfoChip to="buku" :data="90" label="Buku sedang dipinjam" />
         <AdminInfoChip to="buku" :data="counts?.bukuCount" label="Buku tersedia" />
         <AdminInfoChip to="pengguna" :data="counts?.penggunaCount" label="Pengguna aktif" />
       </ul>
+    </section>
+    <section v-if="kunjungans" class="main-section col-span-full">
+      <h2 class="leading-relaxed mb-4">Riwayat Kunjungan</h2>
+      <DataTable :value="kunjungans" striped-rows>
+        <template #header>
+          <p>Menampilkan {{ kunjungans.length }} kunjungan.</p>
+        </template>
+
+        <Column header="No">
+          <template #body="slotProps">
+            {{ kunjungans.indexOf(slotProps.data) + 1 }}
+          </template>
+        </Column>
+
+        <Column header="Waktu">
+          <template #body="slotProps">
+            {{
+              formatDate(new Date(slotProps.data.check_in), {
+                dateStyle: "long",
+                timeStyle: "short",
+              })
+            }}
+          </template>
+        </Column>
+        <Column header="Status">
+          <template #body="slotProps">
+            {{ slotProps.data.event.replace("_", " ") }}
+          </template>
+        </Column>
+      </DataTable>
     </section>
   </div>
 
