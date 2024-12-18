@@ -144,7 +144,9 @@ async function konfirmasiPengembalian(dataPeminjaman: Peminjaman) {
 }
 
 const { data: kunjungans } = await useAsyncData(async () => {
-  const { data, error } = await supabase.from("kunjungan").select("id, check_in, event")
+  const { data, error } = await supabase
+    .from("kunjungan")
+    .select("id, check_in, event, pengguna (nama)")
   if (error) {
     toast.add({
       severity: "error",
@@ -287,7 +289,7 @@ supabase
             {{ kunjungans.indexOf(slotProps.data) + 1 }}
           </template>
         </Column>
-
+        <Column field="pengguna.nama" header="Pengguna" />
         <Column header="Waktu">
           <template #body="slotProps">
             {{
