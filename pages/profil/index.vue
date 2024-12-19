@@ -48,12 +48,12 @@ const bukuSudahDikonfirmasi = computed(() => {
 })
 
 const supabase = useSupabaseClient<Database>()
-const { data: isPresent } = await useAsyncData(async () => {
+const { data: presence } = await useAsyncData(async () => {
   if (!user.value) return
 
   const { data, error } = await supabase
     .from("kunjungan")
-    .select("event")
+    .select("event, check_in")
     .eq("user_id", user.value.id)
     .order("check_in", { ascending: false })
     .limit(1)
@@ -64,7 +64,22 @@ const { data: isPresent } = await useAsyncData(async () => {
     return false
   }
 
-  return data.event === "check_in"
+  return data
+})
+
+const isPresent = computed(() => {
+  return presence.value && presence.value.event === "check_in"
+})
+
+/*
+ * returns true if user already clicked the presency button
+ * less than 5 mins ago
+ */
+const isDelayed = computed(() => {
+  if (!presence.value) return false
+
+  const delta = new Date().getTime() - new Date(presence.value.check_in).getTime()
+  return delta <= 1000 * 60 * 5 // less than 5 mins
 })
 
 async function enterLibrary() {
@@ -91,14 +106,7 @@ async function enterLibrary() {
       life: 5000,
     })
 
-      toast.add({
-        severity: "success",
-        summary: "Sukses!",
-        detail: "Sukses masuk perpustakaan, selamat beraktivitas.",
-        life: 5000,
-      })
-      isPresent.value = true
-    }
+    presence.value = data
   } catch (error) {
     toast.add({
       severity: "error",
@@ -149,8 +157,16 @@ async function enterLibrary() {
       <p v-if="isPresent">Wow! kamu lagi nongkrong di perpustakaan sekarang! 📚</p>
       <p v-else>Oh tidak! Kayaknya kamu lagi jauh dari buku-buku favoritmu. 😢</p>
 
-      <form class="mt-4" @submit.prevent="enterLibrary">
-        <CTA :label="!isPresent ? 'masuk perpustakaan' : 'keluar perpustakaan'" type="submit" />
+      <form class="mt-4 flex flex-col gap-4 align-start" @submit.prevent="enterLibrary">
+        <label v-if="isDelayed" class="text-gray-500">
+          Tunggu beberapa saat lagi ya, kamu hanya bisa keluar/masuk perpustakaan setiap 5 menit.
+        </label>
+
+        <CTA
+          v-else
+          :label="isPresent ? 'keluar perpustakaan' : 'masuk perpustakaan'"
+          type="submit"
+        />
       </form>
     </section>
 
