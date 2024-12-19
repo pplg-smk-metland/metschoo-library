@@ -69,26 +69,27 @@ const { data: isPresent } = await useAsyncData(async () => {
 
 async function enterLibrary() {
   try {
-    if (isPresent.value) {
-      const { error } = await supabase.from("kunjungan").insert({
-        event: "check_out",
+    const newEvent = isPresent.value ? "check_out" : "check_in"
+    const { data, error } = await supabase
+      .from("kunjungan")
+      .insert({
+        event: newEvent,
       })
+      .select("event, check_in")
+      .single()
 
-      if (error) throw error
+    if (error) throw error
 
-      toast.add({
-        severity: "success",
-        summary: "Sukses!",
-        detail: "Sukses keluar perpustakaan, semoga hari mu menyenangkan.",
-        life: 5000,
-      })
-      isPresent.value = false
-    } else {
-      const { error } = await supabase.from("kunjungan").insert({
-        event: "check_in",
-      })
+    const toastDetail = isPresent.value
+      ? "Sukses masuk perpustakaan, selamat beraktivitas."
+      : "Sukses keluar perpustakaan, semoga hari mu menyenangkan."
 
-      if (error) throw error
+    toast.add({
+      severity: "success",
+      summary: "Sukses!",
+      detail: toastDetail,
+      life: 5000,
+    })
 
       toast.add({
         severity: "success",
