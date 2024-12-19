@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import InputText from "primevue/inputtext"
 import Password from "primevue/password"
+import Dialog from "primevue/dialog"
 import { AuthError } from "@supabase/supabase-js"
 import type { SignUpData } from "@/types"
 
@@ -94,6 +95,31 @@ async function handleSignUp() {
     isLoading.value = false
   }
 }
+
+const isForgotPasswordOpen = ref(false)
+const isRecoveryEmailSent = ref(false)
+
+function forgotPassword() {
+  isForgotPasswordOpen.value = true
+}
+
+async function handleForgotPasword() {
+  isLoading.value = true
+
+  try {
+    await authStore.handleForgotPassword(data.value.email)
+    isRecoveryEmailSent.value = true
+  } catch (err) {
+    toast.add({
+      severity: "error",
+      summary: "gagal mengirim email!",
+      detail: "ada kesalahan saat mengirim email. Silahkan coba lagi",
+      life: 10000,
+    })
+  } finally {
+    isLoading.value = false
+  }
+}
 </script>
 
 <template>
@@ -137,6 +163,7 @@ async function handleSignUp() {
         />
 
         <CTA type="submit" label="Masuk" :disabled="isLoading && !formState.password.isStrong" />
+        <CTA type="button" label="lupa password?" text @click="forgotPassword" />
       </form>
     </div>
 
@@ -227,6 +254,35 @@ async function handleSignUp() {
 
     <CTA :label="buttonLabel" text @click="handleSwitchForm" />
     <Toast />
+
+    <Dialog
+      v-model:visible="isForgotPasswordOpen"
+      modal
+      header="Lupa password"
+      class="mx-4 max-w-xl"
+    >
+      <p v-show="!isRecoveryEmailSent">
+        Masukkan emailmu, dan kami akan mengirimkan link untuk mengganti passwordmu.
+      </p>
+      <p v-show="isRecoveryEmailSent">
+        Email terkirim! setelah kamu klik linknya, kamu bisa menutup tab ini.
+      </p>
+
+      <form @submit.prevent="handleForgotPasword" class="flex gap-4 flex-wrap">
+        <InputText
+          v-model="data.email"
+          type="email"
+          name="recovery-email"
+          id="recovery-email"
+          placeholder="email kamu"
+          autocomplete="off"
+          class="flex-grow"
+          required
+        />
+
+        <CTA type="submit" :label="isLoading ? 'sebentar ya...' : 'Kirim email'" fill />
+      </form>
+    </Dialog>
   </section>
 </template>
 
