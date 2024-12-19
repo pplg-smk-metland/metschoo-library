@@ -100,13 +100,41 @@ export type Database = {
         }
         Relationships: []
       }
+      kunjungan: {
+        Row: {
+          check_in: string
+          event: Database["public"]["Enums"]["event type"]
+          id: number
+          user_id: string
+        }
+        Insert: {
+          check_in?: string
+          event?: Database["public"]["Enums"]["event type"]
+          id?: number
+          user_id?: string
+        }
+        Update: {
+          check_in?: string
+          event?: Database["public"]["Enums"]["event type"]
+          id?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kunjungan_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "pengguna"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       peminjaman: {
         Row: {
           id: string
           no_isbn: string
           state_id: number | null
           tenggat_waktu: string
-          tgl_kembali: string | null
           tgl_pinjam: string | null
           user_id: string
         }
@@ -115,7 +143,6 @@ export type Database = {
           no_isbn: string
           state_id?: number | null
           tenggat_waktu: string
-          tgl_kembali?: string | null
           tgl_pinjam?: string | null
           user_id?: string
         }
@@ -124,7 +151,6 @@ export type Database = {
           no_isbn?: string
           state_id?: number | null
           tenggat_waktu?: string
-          tgl_kembali?: string | null
           tgl_pinjam?: string | null
           user_id?: string
         }
@@ -135,13 +161,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "buku"
             referencedColumns: ["no_isbn"]
-          },
-          {
-            foreignKeyName: "peminjaman_state_id_fkey"
-            columns: ["state_id"]
-            isOneToOne: false
-            referencedRelation: "peminjaman_state"
-            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "peminjaman_user_id_fkey"
@@ -290,10 +309,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_super_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      "event type": "check_in" | "check_out"
     }
     CompositeTypes: {
       [_ in never]: never

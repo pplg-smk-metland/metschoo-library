@@ -33,6 +33,17 @@ const { data: peminjaman } = await useAsyncData(async () => {
   return data
 })
 
+const { data: kunjungan } = await useAsyncData(async () => {
+  const { data, error } = await supabase
+    .from("kunjungan")
+    .select("check_in, event")
+    .eq("user_id", userId)
+    .order("check_in", { ascending: true })
+
+  if (error) throw error
+  return data
+})
+
 // TODO: pindah ke database
 const keteranganText = (state_id: Peminjaman["state_id"]) => {
   switch (state_id) {
@@ -130,7 +141,26 @@ const formatPhoneNumber = (phoneNo: string | null): string => {
     </section>
 
     <Divider />
+    <section class="main-section">
+      <DataTable :value="kunjungan" striped-rows>
+        <template #header>
+          <p>Riwayat kunjungan untuk {{ pengguna.nama }}</p>
+        </template>
 
+        <Column header="Waktu">
+          <template #body="{ data }">
+            {{ formatDate(new Date(data.check_in), { dateStyle: "long", timeStyle: "short" }) }}
+          </template>
+        </Column>
+
+        <Column header="Event">
+          <template #body="{ data }">
+            {{ data.event.replace("_", " ") }}
+          </template>
+        </Column>
+      </DataTable>
+    </section>
+    <Divider />
     <section class="main-section">
       <h2 class="text-lg font-bold">Aksi</h2>
 
