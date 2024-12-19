@@ -1,6 +1,6 @@
 <template>
-  <header class="flex flex-wrap justify-between">
-    <div class="flex-1">
+  <header class="flex flex-wrap justify-between gap-8">
+    <div class="basis-80 flex-grow">
       <h1>
         <slot name="header-heading"> Metschoo Library </slot>
       </h1>
@@ -9,7 +9,7 @@
       </p>
     </div>
 
-    <div class="flex-1">
+    <div class="flex-grow">
       <SearchBar />
     </div>
   </header>

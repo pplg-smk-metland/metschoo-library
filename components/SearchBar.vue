@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import InputText from "primevue/inputtext"
+import IconSearch from "~icons/mdi/search"
 const term = ref("")
 
 async function searchRedirect() {
@@ -23,6 +24,9 @@ async function searchRedirect() {
       placeholder="Cari buku disini"
       required
     />
-    <CTA id="search-submit" label="Cari" type="submit" />
+
+    <CTA id="search-submit" label="Cari" type="submit" fill>
+      <IconSearch size="20" />
+    </CTA>
   </form>
 </template>
