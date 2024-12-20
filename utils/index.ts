@@ -1,4 +1,4 @@
-import type { Buku, BukuSearchArgs, Kategori, Peminjaman } from "@/types"
+import type { Buku, BukuSearchArgs, Kategori, KunjunganSearchArgs, Peminjaman } from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
 import type { PeminjamanData } from "~/pages/admin/index.vue"
 import type { Database } from "~/types/database.types.ts"
@@ -258,4 +258,22 @@ export function getPeminjamanStateDate(data: PeminjamanData[number], state_id: n
 
   if (target === undefined) return "-"
   else return formatDate(new Date(target.created_at))
+}
+
+export async function searchKunjungans({ timestamp_range }: KunjunganSearchArgs) {
+  const supabase = useSupabaseClient()
+  let query = supabase
+    .from("kunjungan")
+    .select("id, check_in, event, pengguna (nama)")
+    .order("check_in", { ascending: false })
+
+  if (timestamp_range[0]) {
+    query = query.gt("check_in", timestamp_range[0])
+  }
+  if (timestamp_range[1]) {
+    query = query.lte("check_in", timestamp_range[1])
+  }
+
+  const { data, error } = await query
+  return { data, error }
 }

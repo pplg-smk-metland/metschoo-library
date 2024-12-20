@@ -4,14 +4,17 @@ import type {
   QueryData,
   RealtimePostgresChangesPayload,
 } from "@supabase/supabase-js"
-import type { Peminjaman, PeminjamanDetail } from "@/types"
+import type { KunjunganSearchArgs, Peminjaman, PeminjamanDetail } from "@/types"
 import { formatDate } from "#imports"
 import DataTable from "primevue/datatable"
 import Column from "primevue/column"
+import DatePicker from "primevue/datepicker"
+
 import { getPeminjamanData } from "@/lib/peminjaman"
 import { useConfirm } from "primevue/useconfirm"
 import { useToast } from "primevue/usetoast"
 import type { Database } from "~/types/database.types.ts"
+import { searchKunjungans } from "~/utils"
 
 useHead({
   title: "Admin",
@@ -143,11 +146,13 @@ async function konfirmasiPengembalian(dataPeminjaman: Peminjaman) {
   }
 }
 
+const kunjunganSearchFor = ref<KunjunganSearchArgs>({
+  timestamp_range: [null, null],
+})
+
 const { data: kunjungans } = await useAsyncData(async () => {
-  const { data, error } = await supabase
-    .from("kunjungan")
-    .select("id, check_in, event, pengguna (nama)")
-    .order("check_in", { ascending: false })
+  const { data, error } = await searchKunjungans(kunjunganSearchFor.value)
+
   if (error) {
     toast.add({
       severity: "error",
@@ -282,6 +287,20 @@ supabase
 
     <section v-if="kunjungans" class="main-section col-span-full">
       <h2 class="leading-relaxed mb-4">Riwayat Kunjungan</h2>
+
+      <form @submit.prevent="searchKunjungans(kunjunganSearchFor)" class="flex gap-4 py-4">
+        <label for="waktu">Waktu</label>
+
+        <DatePicker
+          input-id="waktu"
+          selection-mode="range"
+          v-model="kunjunganSearchFor.timestamp_range"
+          show-button-bar
+          :max-date="new Date()"
+        />
+
+        <CTA type="submit" label="filter" class="ml-auto" fill />
+      </form>
 
       <DataTable :value="kunjungans" striped-rows paginator :rows="10">
         <template #header>

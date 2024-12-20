@@ -38,4 +38,8 @@ export interface BukuSearchArgs {
   kategori?: Kategori["id"] | null
 }
 
+export interface KunjunganSearchArgs {
+  timestamp_range: Array<Date | null>
+}
+
 export type Theme = "light" | "dark"
