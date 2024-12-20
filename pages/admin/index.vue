@@ -147,6 +147,7 @@ const { data: kunjungans } = await useAsyncData(async () => {
   const { data, error } = await supabase
     .from("kunjungan")
     .select("id, check_in, event, pengguna (nama)")
+    .order("check_in", { ascending: false })
   if (error) {
     toast.add({
       severity: "error",
@@ -270,6 +271,7 @@ supabase
         </Column>
       </DataTable>
     </section>
+
     <section class="main-section col-span-full">
       <ul class="grid grid-cols-4 gap-4">
         <AdminInfoChip to="buku" :data="90" label="Buku sedang dipinjam" />
@@ -277,9 +279,11 @@ supabase
         <AdminInfoChip to="pengguna" :data="counts?.penggunaCount" label="Pengguna aktif" />
       </ul>
     </section>
+
     <section v-if="kunjungans" class="main-section col-span-full">
       <h2 class="leading-relaxed mb-4">Riwayat Kunjungan</h2>
-      <DataTable :value="kunjungans" striped-rows>
+
+      <DataTable :value="kunjungans" striped-rows paginator :rows="10">
         <template #header>
           <p>Menampilkan {{ kunjungans.length }} kunjungan.</p>
         </template>
