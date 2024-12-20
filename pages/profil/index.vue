@@ -59,9 +59,8 @@ const { data: presence } = await useAsyncData(async () => {
     .limit(1)
     .maybeSingle()
 
-  if (error || !data) {
+  if (error) {
     console.error(error)
-    return false
   }
 
   return data
