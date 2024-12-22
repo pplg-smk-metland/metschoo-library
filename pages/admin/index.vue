@@ -9,6 +9,7 @@ import { formatDate } from "#imports"
 import DataTable from "primevue/datatable"
 import Column from "primevue/column"
 import DatePicker from "primevue/datepicker"
+import FloatLabel from "primevue/floatlabel"
 
 import { getPeminjamanData } from "@/lib/peminjaman"
 import { useConfirm } from "primevue/useconfirm"
@@ -147,7 +148,7 @@ async function konfirmasiPengembalian(dataPeminjaman: Peminjaman) {
 }
 
 const kunjunganSearchFor = ref<KunjunganSearchArgs>({
-  timestamp_range: [null, null],
+  timestamp_range: [],
 })
 
 const { data: kunjungans } = await useAsyncData(async () => {
@@ -163,6 +164,23 @@ const { data: kunjungans } = await useAsyncData(async () => {
   }
   return data
 })
+
+async function handleSearchKunjungans() {
+  const { data, error } = await searchKunjungans(kunjunganSearchFor.value)
+
+  if (error) {
+    console.error(error)
+
+    toast.add({
+      severity: "error",
+      summary: "Gagal mencari data peminjaman",
+      detail: "gagal mencari data peminjaman, silahkan coba lagi.",
+      life: 10000,
+    })
+  }
+
+  kunjungans.value = data
+}
 
 async function insertPeminjamandata(payload: RealtimePostgresChangesPayload<Peminjaman>) {
   try {
@@ -288,16 +306,27 @@ supabase
     <section v-if="kunjungans" class="main-section col-span-full">
       <h2 class="leading-relaxed mb-4">Riwayat Kunjungan</h2>
 
-      <form @submit.prevent="searchKunjungans(kunjunganSearchFor)" class="flex gap-4 py-4">
-        <label for="waktu">Waktu</label>
+      <form @submit.prevent="handleSearchKunjungans()" class="flex gap-4 py-4">
+        <FloatLabel>
+          <DatePicker
+            input-id="start-date"
+            v-model="kunjunganSearchFor.timestamp_range[0]"
+            show-button-bar
+            :max-date="new Date()"
+          />
+          <label for="start-date">Tanggal awal</label>
+        </FloatLabel>
 
-        <DatePicker
-          input-id="waktu"
-          selection-mode="range"
-          v-model="kunjunganSearchFor.timestamp_range"
-          show-button-bar
-          :max-date="new Date()"
-        />
+        <FloatLabel>
+          <DatePicker
+            input-id="end-date"
+            v-model="kunjunganSearchFor.timestamp_range[1]"
+            show-button-bar
+            :max-date="new Date()"
+          />
+
+          <label for="start-date">Tanggal akhir</label>
+        </FloatLabel>
 
         <CTA type="submit" label="filter" class="ml-auto" fill />
       </form>

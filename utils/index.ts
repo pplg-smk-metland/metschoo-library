@@ -268,10 +268,10 @@ export async function searchKunjungans({ timestamp_range }: KunjunganSearchArgs)
     .order("check_in", { ascending: false })
 
   if (timestamp_range[0]) {
-    query = query.gt("check_in", timestamp_range[0])
+    query = query.gte("check_in", timestamp_range[0].toISOString())
   }
   if (timestamp_range[1]) {
-    query = query.lte("check_in", timestamp_range[1])
+    query = query.lte("check_in", new Date(timestamp_range[1].setHours(23, 59, 59)).toISOString())
   }
 
   const { data, error } = await query
