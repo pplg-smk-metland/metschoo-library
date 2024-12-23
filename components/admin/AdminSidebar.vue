@@ -56,6 +56,10 @@ const sidebarLinks = ref<SidebarLink[]>([
         label: "Tambah buku",
         route: "buku/tambah",
       },
+      {
+        label: "Buku kategori",
+        route: "buku/kategori",
+      },
     ],
   },
 ])
