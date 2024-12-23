@@ -60,7 +60,7 @@ export function useDialog() {
  */
 export async function usePeminjamanState({
   no_isbn,
-  jumlah_exspl,
+  jumlah_exspl_aktual,
 }: ActualBuku): Promise<PeminjamanState> {
   const supabase = useSupabaseClient<Database>()
 
@@ -77,7 +77,7 @@ export async function usePeminjamanState({
   // PGRST116 == empty
   if ((error && error.code === "PGRST116") || !data || !data.peminjaman_state || !data.peminjaman) {
     return {
-      isBorrowable: jumlah_exspl > 0,
+      isBorrowable: jumlah_exspl_aktual > 0,
       isCancellable: false,
       isReturnable: false,
     }
@@ -98,7 +98,8 @@ export async function usePeminjamanState({
   ]
 
   const isCancellable = data.peminjaman_state.name === "borrow pending"
-  const isBorrowable = borrowableConditions.includes(data.peminjaman_state.name) && jumlah_exspl > 0
+  const isBorrowable =
+    borrowableConditions.includes(data.peminjaman_state.name) && jumlah_exspl_aktual > 0
   const isReturnable = data.peminjaman_state.name === "borrow confirmed"
 
   return {

@@ -37,7 +37,7 @@ export async function getBuku(isbn: Buku["no_isbn"]): Promise<ActualBuku> {
     .single()
 
   if (error) throw error
-  return data
+  return data as ActualBuku
 }
 
 /**

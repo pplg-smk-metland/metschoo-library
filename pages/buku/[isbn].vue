@@ -321,8 +321,8 @@ onUnmounted(() => {
       <p>{{ buku.penerbit }} - {{ buku.alamat_terbit }}</p>
       <p>
         Jumlah tersedia:
-        <span :class="['font-bold', { 'text-red': buku.jumlah_exspl === 0 }]">
-          {{ buku.jumlah_exspl }}
+        <span :class="['font-bold', { 'text-red': buku.jumlah_exspl_aktual === 0 }]">
+          {{ buku.jumlah_exspl_aktual }}
         </span>
       </p>
 
