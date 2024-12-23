@@ -1,4 +1,11 @@
-import type { Buku, BukuSearchArgs, Kategori, KunjunganSearchArgs, Peminjaman } from "@/types"
+import type {
+  ActualBuku,
+  Buku,
+  BukuSearchArgs,
+  Kategori,
+  KunjunganSearchArgs,
+  Peminjaman,
+} from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
 import type { PeminjamanData } from "~/pages/admin/index.vue"
 import type { Database } from "~/types/database.types.ts"
@@ -16,14 +23,14 @@ export async function insertBookData(buku: Buku): Promise<PostgrestError | null>
 }
 
 /**
- * get a single buku by its isbn.
+ * get a single buku by its isbn from the view.
  * @param {Buku['no_isbn']} isbn - isbn
  * @returns {Promise<Buku>} Buku
  */
-export async function getBuku(isbn: Buku["no_isbn"]): Promise<Buku> {
+export async function getBuku(isbn: Buku["no_isbn"]): Promise<ActualBuku> {
   const supabase = useSupabaseClient<Database>()
   const { data, error } = await supabase
-    .from("buku")
+    .from("actual_buku")
     .select("*")
     .eq("no_isbn", isbn)
     .limit(1)

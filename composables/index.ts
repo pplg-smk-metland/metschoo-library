@@ -1,6 +1,6 @@
 import { ref } from "vue"
 import type { PostgrestError } from "@supabase/supabase-js"
-import type { Buku, PeminjamanState } from "@/types"
+import type { ActualBuku, Buku, PeminjamanState } from "@/types"
 import type { Database } from "~/types/database.types"
 import type { FileUploadSelectEvent } from "primevue"
 
@@ -61,7 +61,7 @@ export function useDialog() {
 export async function usePeminjamanState({
   no_isbn,
   jumlah_exspl,
-}: Buku): Promise<PeminjamanState> {
+}: ActualBuku): Promise<PeminjamanState> {
   const supabase = useSupabaseClient<Database>()
 
   const peminjamanQuery = supabase
