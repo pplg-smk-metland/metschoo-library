@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { formatDate } from "#imports"
-import type { Peminjaman } from "~/types"
 import type { Database } from "~/types/database.types"
 import type { PeminjamanData } from "../index.vue"
 import { DataTable, Column, Divider } from "primevue"
@@ -24,7 +23,9 @@ const { data: pengguna } = await useAsyncData(async () => {
 const { data: peminjaman } = await useAsyncData(async () => {
   const { data, error } = await supabase
     .from("peminjaman")
-    .select("*, peminjaman_detail(state_id, created_at), buku(judul)")
+    .select(
+      "*, peminjaman_detail(*, peminjaman_state(name)), pengguna(nama, kelas, jurusan), buku(*)"
+    )
     .order("tgl_pinjam", { ascending: true })
     .order("created_at", { referencedTable: "peminjaman_detail", ascending: false })
     .eq("user_id", userId)
@@ -45,22 +46,22 @@ const { data: kunjungan } = await useAsyncData(async () => {
 })
 
 // TODO: pindah ke database
-const keteranganText = (state_id: Peminjaman["state_id"]) => {
-  switch (state_id) {
-    case 1:
-      return "menunggu konfirmasi"
-    case 2:
-      return "sedang dipinjam"
-    case 3:
-      return "dibatalkan"
-    case 4:
-      return "menunggu konfirmasi pengembalian"
-    case 5:
-      return "dikembalikan"
-    case 6:
-      return "terlambat"
-  }
-}
+// const keteranganText = (state_id: Peminjaman["state_id"]) => {
+//   switch (state_id) {
+//     case 1:
+//       return "menunggu konfirmasi"
+//     case 2:
+//       return "sedang dipinjam"
+//     case 3:
+//       return "dibatalkan"
+//     case 4:
+//       return "menunggu konfirmasi pengembalian"
+//     case 5:
+//       return "dikembalikan"
+//     case 6:
+//       return "terlambat"
+//   }
+// }
 const formatPhoneNumber = (phoneNo: string | null): string => {
   if (!phoneNo) return ""
   return phoneNo.replace(/^0/, "62")
@@ -134,7 +135,7 @@ const formatPhoneNumber = (phoneNo: string | null): string => {
 
         <Column header="keterangan">
           <template #body="{ data }: { data: PeminjamanData[number] }">
-            {{ keteranganText(data.peminjaman_detail[0].state_id) }}
+            {{ data.peminjaman_detail[0].peminjaman_state?.name }}
           </template>
         </Column>
       </DataTable>
