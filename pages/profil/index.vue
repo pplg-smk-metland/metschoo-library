@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { getPeminjamanData } from "~/lib/peminjaman"
 import IconArrowRight from "~icons/mdi/arrow-right"
-import { Tab, Tabs, TabList, Badge, TabPanels, TabPanel } from "primevue"
+import { Tab, Tabs, TabList, Badge, TabPanels, TabPanel, Toast, useToast } from "primevue"
+import type { Database } from "~/types/database.types"
 
 useHead({
   title: "Profil",
@@ -14,6 +15,7 @@ definePageMeta({
 
 const authStore = useAuthStore()
 const user = useSupabaseUser()
+const toast = useToast()
 
 const { data: profile } = useAsyncData(async () => await authStore.getProfile(user.value!.id))
 
@@ -44,6 +46,76 @@ const bukuSudahDikonfirmasi = computed(() => {
     ({ peminjaman_detail }) => peminjaman_detail[0]?.state_id === 2
   )
 })
+
+const supabase = useSupabaseClient<Database>()
+const { data: presence } = await useAsyncData(async () => {
+  if (!user.value) return
+
+  const { data, error } = await supabase
+    .from("kunjungan")
+    .select("event, check_in")
+    .eq("user_id", user.value.id)
+    .order("check_in", { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  if (error) {
+    console.error(error)
+  }
+
+  return data
+})
+
+const isPresent = computed(() => {
+  return presence.value && presence.value.event === "check_in"
+})
+
+/*
+ * returns true if user already clicked the presency button
+ * less than 5 mins ago
+ */
+const isDelayed = computed(() => {
+  if (!presence.value) return false
+
+  const delta = new Date().getTime() - new Date(presence.value.check_in).getTime()
+  return delta <= 1000 * 60 * 5 // less than 5 mins
+})
+
+async function enterLibrary() {
+  try {
+    const newEvent = isPresent.value ? "check_out" : "check_in"
+    const { data, error } = await supabase
+      .from("kunjungan")
+      .insert({
+        event: newEvent,
+      })
+      .select("event, check_in")
+      .single()
+
+    if (error) throw error
+
+    const toastDetail = isPresent.value
+      ? "Sukses masuk perpustakaan, selamat beraktivitas."
+      : "Sukses keluar perpustakaan, semoga hari mu menyenangkan."
+
+    toast.add({
+      severity: "success",
+      summary: "Sukses!",
+      detail: toastDetail,
+      life: 5000,
+    })
+
+    presence.value = data
+  } catch (error) {
+    toast.add({
+      severity: "error",
+      summary: "Gagal!",
+      detail: "Terjadi kesalahan saat masuk perpustakaan. Coba lagi nanti.",
+      life: 5000,
+    })
+    console.error(error)
+  }
+}
 </script>
 
 <template>
@@ -52,13 +124,13 @@ const bukuSudahDikonfirmasi = computed(() => {
       <p>Selamat Datang di Profil kamu</p>
     </PageHeader>
 
-    <section class="main-section flex gap-4 col-span-full lg:col-span-9">
+    <section class="main-section flex gap-4 col-span-full lg:col-span-4">
       <figure class="profile__picture-container">
         <img
-          class="profile-picture"
+          class="basis-32 rounded-lg size-32 aspect-square cover"
           src="@/assets/profilepicture.svg"
-          width="300"
-          height="300"
+          width="150"
+          height="150"
           alt="Foto kamu disini"
         />
       </figure>
@@ -77,6 +149,24 @@ const bukuSudahDikonfirmasi = computed(() => {
           </NuxtLink>
         </div>
       </div>
+    </section>
+
+    <section class="main-section col-span-full lg:col-span-5">
+      <h3>✨ Zona Kunjunganmu! ✨</h3>
+      <p v-if="isPresent">Wow! kamu lagi nongkrong di perpustakaan sekarang! 📚</p>
+      <p v-else>Oh tidak! Kayaknya kamu lagi jauh dari buku-buku favoritmu. 😢</p>
+
+      <form class="mt-4 flex flex-col gap-4 align-start" @submit.prevent="enterLibrary">
+        <label v-if="isDelayed" class="text-gray-500">
+          Tunggu beberapa saat lagi ya, kamu hanya bisa keluar/masuk perpustakaan setiap 5 menit.
+        </label>
+
+        <CTA
+          v-else
+          :label="isPresent ? 'keluar perpustakaan' : 'masuk perpustakaan'"
+          type="submit"
+        />
+      </form>
     </section>
 
     <section class="main-section col-span-full lg:col-span-9">
@@ -150,10 +240,5 @@ const bukuSudahDikonfirmasi = computed(() => {
       </ul>
     </aside>
   </div>
+  <Toast />
 </template>
-
-<style scoped>
-.profile-picture {
-  flex-basis: 35ch;
-}
-</style>
