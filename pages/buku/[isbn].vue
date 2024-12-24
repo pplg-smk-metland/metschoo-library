@@ -99,6 +99,11 @@ async function pinjamBuku({ judul, no_isbn }: Buku, tanggal: Date) {
 
     await borrowBuku(no_isbn, tanggal)
 
+    if (!buku.value || !peminjamanState.value) return
+
+    buku.value.jumlah_exspl_aktual = buku.value.jumlah_exspl_aktual - 1
+    peminjamanState.value.isBorrowable = false
+
     toast.add({
       severity: "success",
       summary: "Sukses meminjam buku",
