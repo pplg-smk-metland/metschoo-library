@@ -13,8 +13,8 @@ SELECT b.no_isbn,
     b.image,
     b.kategori_id,
     b.jumlah_exspl,
-    bb.count AS jumlah_dipinjam,
-    (b.jumlah_exspl - bb.count) AS jumlah_exspl_aktual
+    coalesce(bb.count, 0) AS jumlah_dipinjam,
+    (coalesce(b.jumlah_exspl, 0) - coalesce(bb.count, 0)) AS jumlah_exspl_aktual
    FROM (buku b
      LEFT JOIN ( WITH latest_state AS (
                  SELECT DISTINCT ON (pd.peminjaman_id) pd.id,
