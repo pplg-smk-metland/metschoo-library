@@ -169,7 +169,7 @@ export async function cancelBorrowBuku(id: Peminjaman["id"]) {
   const supabase = useSupabaseClient<Database>()
   const { error } = await supabase.from("peminjaman_detail").insert({
     peminjaman_id: id,
-    state_id: 6,
+    state_id: 3,
   })
 
   if (error) throw error

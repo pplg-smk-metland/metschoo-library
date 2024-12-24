@@ -121,6 +121,41 @@ async function konfirmasiPeminjaman(id: Peminjaman["id"]) {
   })
 }
 
+async function konfirmasiPembatalan(id: Peminjaman["id"]) {
+  confirm.require({
+    header: "Konfirmasi pembatalan",
+    message: "Beneran nih mau membatalkan peminjaman buku?",
+    accept: async () => {
+      try {
+        await cancelBorrowBuku(id)
+
+        toast.add({
+          severity: "success",
+          summary: "Sukses!",
+          detail: "Sukses membatalkan peminjaman buku!",
+          life: 10000,
+        })
+      } catch (err) {
+        console.error((err as PostgrestError).message)
+
+        toast.add({
+          severity: "error",
+          summary: "Gagal membatalkan peminjaman",
+          detail: "Gagal membatalkan peminjaman buku. Silahkan coba lagi",
+        })
+      }
+    },
+    reject: () => {
+      toast.add({
+        severity: "info",
+        summary: "Gak jadi nih..",
+        detail: "Gak jadi membatalkan peminjaman buku.",
+        life: 10000,
+      })
+    },
+  })
+}
+
 async function konfirmasiPengembalian(dataPeminjaman: Peminjaman) {
   try {
     confirm.require({
@@ -255,7 +290,10 @@ onUnmounted(() => {
         <Column field="pengguna.kelas" header="Kelas" />
         <Column header="aksi">
           <template #body="{ data }: { data: PeminjamanData[number] }">
-            <CTA label="konfirmasi" @click="konfirmasiPeminjaman(data.id)" />
+            <div class="flex gap-4">
+              <CTA label="konfirmasi" @click="konfirmasiPeminjaman(data.id)" />
+              <CTA label="Batalkan" severity="danger" @click="konfirmasiPembatalan(data.id)" />
+            </div>
           </template>
         </Column>
       </DataTable>
