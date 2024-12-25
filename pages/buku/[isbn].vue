@@ -333,8 +333,8 @@ onUnmounted(() => {
 
       <div class="button-container">
         <CTA
-          :disabled="!peminjamanState?.isBorrowable && user"
           v-if="!peminjamanState?.isCancellable && !peminjamanState?.isReturnable"
+          :disabled="!peminjamanState?.isBorrowable && user"
           fill
           label="Pinjam buku"
           @click="konfirmasiPinjamBuku"

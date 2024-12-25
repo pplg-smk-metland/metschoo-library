@@ -353,11 +353,11 @@ onUnmounted(() => {
     <section v-if="kunjungans" class="main-section col-span-full">
       <h2 class="leading-relaxed mb-4">Riwayat Kunjungan</h2>
 
-      <form @submit.prevent="handleSearchKunjungans()" class="flex gap-4 py-4">
+      <form class="flex gap-4 py-4" @submit.prevent="handleSearchKunjungans()">
         <FloatLabel>
           <DatePicker
-            input-id="start-date"
             v-model="kunjunganSearchFor.timestamp_range[0]"
+            input-id="start-date"
             show-button-bar
             :max-date="new Date()"
           />
@@ -366,8 +366,8 @@ onUnmounted(() => {
 
         <FloatLabel>
           <DatePicker
-            input-id="end-date"
             v-model="kunjunganSearchFor.timestamp_range[1]"
+            input-id="end-date"
             show-button-bar
             :max-date="new Date()"
           />

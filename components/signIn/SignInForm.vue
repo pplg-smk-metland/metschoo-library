@@ -172,7 +172,7 @@ async function handleSignUp() {
           maxlength="14"
         />
 
-        <span class="text-sm text-red-400 dark:text-red-500" v-show="!formState.phone.isValid">
+        <span v-show="!formState.phone.isValid" class="text-sm text-red-400 dark:text-red-500">
           {{ formState.phone.message }}
         </span>
 
@@ -189,9 +189,9 @@ async function handleSignUp() {
         />
 
         <span
-          class="text-sm text-red-400 dark:text-red-500"
-          id="weak-password-help"
           v-show="!formState.password.isStrong"
+          id="weak-password-help"
+          class="text-sm text-red-400 dark:text-red-500"
         >
           Password harus memiliki panjang 8 karakter atau lebih.
         </span>
@@ -209,9 +209,9 @@ async function handleSignUp() {
         />
 
         <span
-          class="text-sm text-red-400 dark:text-red-500"
-          id="unconfirmed-password-help"
           v-show="!formState.password.isConfirmed"
+          id="unconfirmed-password-help"
+          class="text-sm text-red-400 dark:text-red-500"
         >
           Password tidak sama.
         </span>
