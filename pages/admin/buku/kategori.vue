@@ -4,6 +4,7 @@ import Column from "primevue/column"
 import PageHeader from "~/components/PageHeader.vue"
 import { FloatLabel, InputText, Toast } from "primevue"
 import type { Database } from "~/types/database.types.ts"
+import type { Kategori } from "~/types"
 
 useHead({
   title: "Kategori buku",
@@ -90,6 +91,54 @@ const deleteCategory = async (targetCategory: string) => {
   }
 }
 
+const editCategoryState = ref({
+  isEditing: false,
+  targetCategoryId: 0,
+})
+
+// store selected category for editing
+const selectedCategory = ref<Kategori>()
+
+const initiateEditCategory = (targetCategoryId: number) => {
+  editCategoryState.value = {
+    targetCategoryId,
+    isEditing: true,
+  }
+
+  if (!categories.value) return
+  const target = categories.value.find(({ id }) => id === targetCategoryId)
+  if (target) selectedCategory.value = Object.create(target)
+}
+
+const cancelEditCategory = () => {
+  editCategoryState.value = { targetCategoryId: 0, isEditing: false }
+}
+
+const editCategory = async ({ kategori, id }: Kategori) => {
+  try {
+    const { error } = await supabase.from("kategori_buku").update({ kategori }).eq("id", id)
+    if (error) throw error
+
+    toast.add({
+      severity: "success",
+      summary: "sukses mengubah kategori",
+      detail: `sukses mengubah kategori ${kategori}!`,
+      life: 3000,
+    })
+
+    editCategoryState.value = { targetCategoryId: 0, isEditing: false }
+  } catch (error) {
+    console.error(error)
+
+    toast.add({
+      severity: "error",
+      summary: "gagal mengubah kategori",
+      detail: "ada kesalahan saatu menghapus kategori, silahkan coba lagi.",
+      life: 3000,
+    })
+  }
+}
+
 const { data: categories } = useAsyncData(async () => {
   const categories = await getAllAvailableCategories()
   return categories
@@ -104,11 +153,13 @@ const { data: categories } = useAsyncData(async () => {
         <InputText v-model="categoryInput" input-id="nama-kategori" fluid required />
         <label for="nama-kategori">Nama Kategori</label>
       </FloatLabel>
+
       <CTA
         type="submit"
         :disabled="isLoading"
         :loading="isLoading"
         label="Tambah Kategori"
+        fill
         class="ms-auto"
       />
     </form>
@@ -117,15 +168,40 @@ const { data: categories } = useAsyncData(async () => {
       <template #header>
         <p>Menampilkan {{ categories?.length || 0 }} kategori.</p>
       </template>
-      <Column field="kategori" header="Kategori" />
+
+      <Column field="kategori" header="Kategori">
+        <template #body="{ data }: { data: Kategori }">
+          <InputText
+            v-show="editCategoryState.isEditing && editCategoryState.targetCategoryId === data.id"
+            placeholder="nama kategori baru"
+            v-model="data.kategori"
+            required
+          />
+
+          <span v-show="editCategoryState.targetCategoryId !== data.id">{{ data.kategori }}</span>
+        </template>
+      </Column>
+
       <Column header="Aksi">
-        <template #body="slotProps">
-          <CTA label="Hapus" @click="deleteCategory(slotProps.data.kategori)" />
+        <template #body="{ data }: { data: Kategori }">
+          <div class="flex gap-4" v-show="editCategoryState.targetCategoryId !== data.id">
+            <CTA label="Hapus" @click="deleteCategory(data.kategori)" severity="danger" />
+            <CTA label="Edit" @click="initiateEditCategory(data.id)" />
+          </div>
+
+          <div
+            v-show="editCategoryState.isEditing && editCategoryState.targetCategoryId === data.id"
+            class="flex gap-4"
+          >
+            <CTA label="Batal" @click="cancelEditCategory()" severity="danger" />
+            <CTA label="Simpan" @click="editCategory(data)" />
+          </div>
         </template>
       </Column>
 
       <template #empty>Tidak ada kategori ditemukan.</template>
     </DataTable>
   </section>
+
   <Toast />
 </template>
