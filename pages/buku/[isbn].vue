@@ -102,7 +102,11 @@ async function pinjamBuku({ judul, no_isbn }: Buku, tanggal: Date) {
     if (!buku.value || !peminjamanState.value) return
 
     buku.value.jumlah_exspl_aktual = buku.value.jumlah_exspl_aktual - 1
-    peminjamanState.value.isBorrowable = false
+    peminjamanState.value = {
+      isBorrowable: false,
+      isReturnable: false,
+      isCancellable: true,
+    }
 
     toast.add({
       severity: "success",
@@ -242,36 +246,15 @@ async function perbaruiDataBuku() {
   }
 }
 
-const channel = supabase
-  .channel("peminjaman")
-  .on(
-    "postgres_changes",
-    {
-      event: "INSERT",
-      schema: "public",
-      table: "peminjaman_detail",
-    },
-    perbaruiDataBuku
-  )
-  .on(
-    "postgres_changes",
-    {
-      event: "INSERT",
-      schema: "public",
-      table: "peminjaman",
-    },
-    (payload: RealtimePostgresChangesPayload<Peminjaman>) => {
-      // a new insert that matches the current book
-      // is automatically cancellable
-      if ((payload.new as Peminjaman).no_isbn !== isbn) return
-
-      peminjamanState.value = {
-        isBorrowable: false,
-        isReturnable: false,
-        isCancellable: true,
-      }
-    }
-  )
+const channel = supabase.channel("peminjaman").on(
+  "postgres_changes",
+  {
+    event: "INSERT",
+    schema: "public",
+    table: "peminjaman_detail",
+  },
+  perbaruiDataBuku
+)
 
 onMounted(() => {
   channel.subscribe()
