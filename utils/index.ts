@@ -140,7 +140,10 @@ export function getBukuImage(image?: Buku["image"]): string {
  *
  * @param {Buku['no_isbn']} no_isbn - field of buku
  */
-export async function borrowBuku(no_isbn: Buku["no_isbn"], tenggat_waktu: Date) {
+export async function borrowBuku(
+  no_isbn: Buku["no_isbn"],
+  tenggat_waktu: Date
+): Promise<Peminjaman["id"]> {
   const supabase = useSupabaseClient<Database>()
   const { data: peminjaman, error } = await supabase
     .from("peminjaman")
@@ -158,6 +161,7 @@ export async function borrowBuku(no_isbn: Buku["no_isbn"], tenggat_waktu: Date) 
   })
 
   if (detailError) throw detailError
+  return peminjaman.id
 }
 
 /**

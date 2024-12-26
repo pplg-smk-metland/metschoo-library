@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useDialog } from "@/composables"
-import type { Buku, Peminjaman, PeminjamanState } from "@/types"
-import type { PostgrestError, RealtimePostgresChangesPayload } from "@supabase/supabase-js"
+import type { Buku, Peminjaman, PeminjamanDetail, PeminjamanState } from "@/types"
+import type { PostgrestError, RealtimePostgresInsertPayload } from "@supabase/supabase-js"
 import IconArrowLeft from "~icons/mdi/arrow-left"
 
 import ConfirmPopup from "primevue/confirmpopup"
@@ -97,12 +97,13 @@ async function pinjamBuku({ judul, no_isbn }: Buku, tanggal: Date) {
       await supabase.from("wishlist").delete().eq("no_isbn", no_isbn)
     }
 
-    await borrowBuku(no_isbn, tanggal)
+    const id = await borrowBuku(no_isbn, tanggal)
 
     if (!buku.value || !peminjamanState.value) return
-
     buku.value.jumlah_exspl_aktual = buku.value.jumlah_exspl_aktual - 1
+
     peminjamanState.value = {
+      id,
       isBorrowable: false,
       isReturnable: false,
       isCancellable: true,
@@ -139,6 +140,8 @@ async function batalkanPeminjamanBuku({ judul }: Buku, id: Peminjaman["id"]) {
 
   try {
     await cancelBorrowBuku(id)
+
+    if (buku.value) buku.value.jumlah_exspl_aktual += 1
 
     toast.add({
       severity: "success",
@@ -237,9 +240,9 @@ async function masukkanWishlist({ no_isbn }: Buku) {
 /**
  * function to subscribe to realtime peminjaman state change.
  */
-async function perbaruiDataBuku() {
+async function perbaruiDataBuku(payload: RealtimePostgresInsertPayload<PeminjamanDetail>) {
   try {
-    peminjamanState.value = await usePeminjamanState(buku.value!)
+    peminjamanState.value = await usePeminjamanState(buku.value!, payload.new)
   } catch (err) {
     dialogError.value.open("Gagal mengambil data peminjaman, silahkan coba lagi.")
     console.error(err as PostgrestError)
@@ -253,7 +256,10 @@ const channel = supabase.channel("peminjaman").on(
     schema: "public",
     table: "peminjaman_detail",
   },
-  perbaruiDataBuku
+  (payload: RealtimePostgresInsertPayload<PeminjamanDetail>) => {
+    if (!peminjamanState.value || payload.new.peminjaman_id !== peminjamanState.value.id) return
+    perbaruiDataBuku(payload)
+  }
 )
 
 onMounted(() => {
