@@ -173,8 +173,8 @@ const { data: categories } = useAsyncData(async () => {
         <template #body="{ data }: { data: Kategori }">
           <InputText
             v-show="editCategoryState.isEditing && editCategoryState.targetCategoryId === data.id"
-            placeholder="nama kategori baru"
             v-model="data.kategori"
+            placeholder="nama kategori baru"
             required
           />
 
@@ -184,8 +184,8 @@ const { data: categories } = useAsyncData(async () => {
 
       <Column header="Aksi">
         <template #body="{ data }: { data: Kategori }">
-          <div class="flex gap-4" v-show="editCategoryState.targetCategoryId !== data.id">
-            <CTA label="Hapus" @click="deleteCategory(data.kategori)" severity="danger" />
+          <div v-show="editCategoryState.targetCategoryId !== data.id" class="flex gap-4">
+            <CTA label="Hapus" severity="danger" @click="deleteCategory(data.kategori)" />
             <CTA label="Edit" @click="initiateEditCategory(data.id)" />
           </div>
 
@@ -193,7 +193,7 @@ const { data: categories } = useAsyncData(async () => {
             v-show="editCategoryState.isEditing && editCategoryState.targetCategoryId === data.id"
             class="flex gap-4"
           >
-            <CTA label="Batal" @click="cancelEditCategory()" severity="danger" />
+            <CTA label="Batal" severity="danger" @click="cancelEditCategory()" />
             <CTA label="Simpan" @click="editCategory(data)" />
           </div>
         </template>
