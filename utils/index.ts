@@ -1,4 +1,11 @@
-import type { Buku, BukuSearchArgs, Kategori, Peminjaman } from "@/types"
+import type {
+  ActualBuku,
+  Buku,
+  BukuSearchArgs,
+  Kategori,
+  KunjunganSearchArgs,
+  Peminjaman,
+} from "@/types"
 import type { PostgrestError } from "@supabase/supabase-js"
 import type { PeminjamanData } from "~/pages/admin/index.vue"
 import type { Database } from "~/types/database.types.ts"
@@ -16,21 +23,21 @@ export async function insertBookData(buku: Buku): Promise<PostgrestError | null>
 }
 
 /**
- * get a single buku by its isbn.
+ * get a single buku by its isbn from the view.
  * @param {Buku['no_isbn']} isbn - isbn
  * @returns {Promise<Buku>} Buku
  */
-export async function getBuku(isbn: Buku["no_isbn"]): Promise<Buku> {
+export async function getBuku(isbn: Buku["no_isbn"]): Promise<ActualBuku> {
   const supabase = useSupabaseClient<Database>()
   const { data, error } = await supabase
-    .from("buku")
+    .from("actual_buku")
     .select("*")
     .eq("no_isbn", isbn)
     .limit(1)
     .single()
 
   if (error) throw error
-  return data
+  return data as ActualBuku
 }
 
 /**
@@ -162,7 +169,7 @@ export async function cancelBorrowBuku(id: Peminjaman["id"]) {
   const supabase = useSupabaseClient<Database>()
   const { error } = await supabase.from("peminjaman_detail").insert({
     peminjaman_id: id,
-    state_id: 6,
+    state_id: 3,
   })
 
   if (error) throw error
@@ -258,4 +265,22 @@ export function getPeminjamanStateDate(data: PeminjamanData[number], state_id: n
 
   if (target === undefined) return "-"
   else return formatDate(new Date(target.created_at))
+}
+
+export async function searchKunjungans({ timestamp_range }: KunjunganSearchArgs) {
+  const supabase = useSupabaseClient()
+  let query = supabase
+    .from("kunjungan")
+    .select("id, check_in, event, pengguna (nama)")
+    .order("check_in", { ascending: false })
+
+  if (timestamp_range[0]) {
+    query = query.gte("check_in", timestamp_range[0].toISOString())
+  }
+  if (timestamp_range[1]) {
+    query = query.lte("check_in", new Date(timestamp_range[1].setHours(23, 59, 59)).toISOString())
+  }
+
+  const { data, error } = await query
+  return { data, error }
 }

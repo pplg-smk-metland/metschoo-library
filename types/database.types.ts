@@ -8,31 +8,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          operationName?: string
-          query?: string
-          variables?: Json
-          extensions?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       buku: {
@@ -100,31 +75,54 @@ export type Database = {
         }
         Relationships: []
       }
+      kunjungan: {
+        Row: {
+          check_in: string
+          event: Database["public"]["Enums"]["event type"]
+          id: number
+          user_id: string
+        }
+        Insert: {
+          check_in?: string
+          event?: Database["public"]["Enums"]["event type"]
+          id?: number
+          user_id?: string
+        }
+        Update: {
+          check_in?: string
+          event?: Database["public"]["Enums"]["event type"]
+          id?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kunjungan_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "pengguna"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       peminjaman: {
         Row: {
           id: string
           no_isbn: string
-          state_id: number | null
           tenggat_waktu: string
-          tgl_kembali: string | null
           tgl_pinjam: string | null
           user_id: string
         }
         Insert: {
           id?: string
           no_isbn: string
-          state_id?: number | null
           tenggat_waktu: string
-          tgl_kembali?: string | null
           tgl_pinjam?: string | null
           user_id?: string
         }
         Update: {
           id?: string
           no_isbn?: string
-          state_id?: number | null
           tenggat_waktu?: string
-          tgl_kembali?: string | null
           tgl_pinjam?: string | null
           user_id?: string
         }
@@ -133,15 +131,15 @@ export type Database = {
             foreignKeyName: "peminjaman_no_isbn_fkey"
             columns: ["no_isbn"]
             isOneToOne: false
-            referencedRelation: "buku"
+            referencedRelation: "actual_buku"
             referencedColumns: ["no_isbn"]
           },
           {
-            foreignKeyName: "peminjaman_state_id_fkey"
-            columns: ["state_id"]
+            foreignKeyName: "peminjaman_no_isbn_fkey"
+            columns: ["no_isbn"]
             isOneToOne: false
-            referencedRelation: "peminjaman_state"
-            referencedColumns: ["id"]
+            referencedRelation: "buku"
+            referencedColumns: ["no_isbn"]
           },
           {
             foreignKeyName: "peminjaman_user_id_fkey"
@@ -280,335 +278,61 @@ export type Database = {
             foreignKeyName: "wishlist_no_isbn_fkey"
             columns: ["no_isbn"]
             isOneToOne: false
+            referencedRelation: "actual_buku"
+            referencedColumns: ["no_isbn"]
+          },
+          {
+            foreignKeyName: "wishlist_no_isbn_fkey"
+            columns: ["no_isbn"]
+            isOneToOne: false
             referencedRelation: "buku"
             referencedColumns: ["no_isbn"]
           },
-        ]
-      }
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      [_ in never]: never
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
-  storage: {
-    Tables: {
-      buckets: {
-        Row: {
-          allowed_mime_types: string[] | null
-          avif_autodetection: boolean | null
-          created_at: string | null
-          file_size_limit: number | null
-          id: string
-          name: string
-          owner: string | null
-          owner_id: string | null
-          public: boolean | null
-          updated_at: string | null
-        }
-        Insert: {
-          allowed_mime_types?: string[] | null
-          avif_autodetection?: boolean | null
-          created_at?: string | null
-          file_size_limit?: number | null
-          id: string
-          name: string
-          owner?: string | null
-          owner_id?: string | null
-          public?: boolean | null
-          updated_at?: string | null
-        }
-        Update: {
-          allowed_mime_types?: string[] | null
-          avif_autodetection?: boolean | null
-          created_at?: string | null
-          file_size_limit?: number | null
-          id?: string
-          name?: string
-          owner?: string | null
-          owner_id?: string | null
-          public?: boolean | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      migrations: {
-        Row: {
-          executed_at: string | null
-          hash: string
-          id: number
-          name: string
-        }
-        Insert: {
-          executed_at?: string | null
-          hash: string
-          id: number
-          name: string
-        }
-        Update: {
-          executed_at?: string | null
-          hash?: string
-          id?: number
-          name?: string
-        }
-        Relationships: []
-      }
-      objects: {
-        Row: {
-          bucket_id: string | null
-          created_at: string | null
-          id: string
-          last_accessed_at: string | null
-          metadata: Json | null
-          name: string | null
-          owner: string | null
-          owner_id: string | null
-          path_tokens: string[] | null
-          updated_at: string | null
-          user_metadata: Json | null
-          version: string | null
-        }
-        Insert: {
-          bucket_id?: string | null
-          created_at?: string | null
-          id?: string
-          last_accessed_at?: string | null
-          metadata?: Json | null
-          name?: string | null
-          owner?: string | null
-          owner_id?: string | null
-          path_tokens?: string[] | null
-          updated_at?: string | null
-          user_metadata?: Json | null
-          version?: string | null
-        }
-        Update: {
-          bucket_id?: string | null
-          created_at?: string | null
-          id?: string
-          last_accessed_at?: string | null
-          metadata?: Json | null
-          name?: string | null
-          owner?: string | null
-          owner_id?: string | null
-          path_tokens?: string[] | null
-          updated_at?: string | null
-          user_metadata?: Json | null
-          version?: string | null
-        }
-        Relationships: [
           {
-            foreignKeyName: "objects_bucketId_fkey"
-            columns: ["bucket_id"]
+            foreignKeyName: "wishlist_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "buckets"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      s3_multipart_uploads: {
-        Row: {
-          bucket_id: string
-          created_at: string
-          id: string
-          in_progress_size: number
-          key: string
-          owner_id: string | null
-          upload_signature: string
-          user_metadata: Json | null
-          version: string
-        }
-        Insert: {
-          bucket_id: string
-          created_at?: string
-          id: string
-          in_progress_size?: number
-          key: string
-          owner_id?: string | null
-          upload_signature: string
-          user_metadata?: Json | null
-          version: string
-        }
-        Update: {
-          bucket_id?: string
-          created_at?: string
-          id?: string
-          in_progress_size?: number
-          key?: string
-          owner_id?: string | null
-          upload_signature?: string
-          user_metadata?: Json | null
-          version?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "s3_multipart_uploads_bucket_id_fkey"
-            columns: ["bucket_id"]
-            isOneToOne: false
-            referencedRelation: "buckets"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      s3_multipart_uploads_parts: {
-        Row: {
-          bucket_id: string
-          created_at: string
-          etag: string
-          id: string
-          key: string
-          owner_id: string | null
-          part_number: number
-          size: number
-          upload_id: string
-          version: string
-        }
-        Insert: {
-          bucket_id: string
-          created_at?: string
-          etag: string
-          id?: string
-          key: string
-          owner_id?: string | null
-          part_number: number
-          size?: number
-          upload_id: string
-          version: string
-        }
-        Update: {
-          bucket_id?: string
-          created_at?: string
-          etag?: string
-          id?: string
-          key?: string
-          owner_id?: string | null
-          part_number?: number
-          size?: number
-          upload_id?: string
-          version?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "s3_multipart_uploads_parts_bucket_id_fkey"
-            columns: ["bucket_id"]
-            isOneToOne: false
-            referencedRelation: "buckets"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "s3_multipart_uploads_parts_upload_id_fkey"
-            columns: ["upload_id"]
-            isOneToOne: false
-            referencedRelation: "s3_multipart_uploads"
-            referencedColumns: ["id"]
+            referencedRelation: "pengguna"
+            referencedColumns: ["user_id"]
           },
         ]
       }
     }
     Views: {
-      [_ in never]: never
+      actual_buku: {
+        Row: {
+          alamat_terbit: string | null
+          asal: string | null
+          image: string | null
+          judul: string | null
+          jumlah_dipinjam: number | null
+          jumlah_exspl: number | null
+          jumlah_exspl_aktual: number | null
+          kategori_id: number | null
+          no_isbn: string | null
+          penerbit: string | null
+          penulis: string | null
+          tahun_terbit: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_buku_kategori_id_fkey"
+            columns: ["kategori_id"]
+            isOneToOne: false
+            referencedRelation: "kategori_buku"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
-      can_insert_object: {
-        Args: {
-          bucketid: string
-          name: string
-          owner: string
-          metadata: Json
-        }
-        Returns: undefined
-      }
-      extension: {
-        Args: {
-          name: string
-        }
-        Returns: string
-      }
-      filename: {
-        Args: {
-          name: string
-        }
-        Returns: string
-      }
-      foldername: {
-        Args: {
-          name: string
-        }
-        Returns: string[]
-      }
-      get_size_by_bucket: {
+      is_super_admin: {
         Args: Record<PropertyKey, never>
-        Returns: {
-          size: number
-          bucket_id: string
-        }[]
-      }
-      list_multipart_uploads_with_delimiter: {
-        Args: {
-          bucket_id: string
-          prefix_param: string
-          delimiter_param: string
-          max_keys?: number
-          next_key_token?: string
-          next_upload_token?: string
-        }
-        Returns: {
-          key: string
-          id: string
-          created_at: string
-        }[]
-      }
-      list_objects_with_delimiter: {
-        Args: {
-          bucket_id: string
-          prefix_param: string
-          delimiter_param: string
-          max_keys?: number
-          start_after?: string
-          next_token?: string
-        }
-        Returns: {
-          name: string
-          id: string
-          metadata: Json
-          updated_at: string
-        }[]
-      }
-      operation: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      search: {
-        Args: {
-          prefix: string
-          bucketname: string
-          limits?: number
-          levels?: number
-          offsets?: number
-          search?: string
-          sortcolumn?: string
-          sortorder?: string
-        }
-        Returns: {
-          name: string
-          id: string
-          updated_at: string
-          created_at: string
-          last_accessed_at: string
-          metadata: Json
-        }[]
+        Returns: boolean
       }
     }
     Enums: {
-      [_ in never]: never
+      "event type": "check_in" | "check_out"
     }
     CompositeTypes: {
       [_ in never]: never

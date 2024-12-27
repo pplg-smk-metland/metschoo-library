@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { formatDate } from "#imports"
-import type { Peminjaman } from "~/types"
 import type { Database } from "~/types/database.types"
 import type { PeminjamanData } from "../index.vue"
 import { DataTable, Column, Divider } from "primevue"
@@ -24,7 +23,9 @@ const { data: pengguna } = await useAsyncData(async () => {
 const { data: peminjaman } = await useAsyncData(async () => {
   const { data, error } = await supabase
     .from("peminjaman")
-    .select("*, peminjaman_detail(state_id, created_at), buku(judul)")
+    .select(
+      "*, peminjaman_detail(*, peminjaman_state(name)), pengguna(nama, kelas, jurusan), buku(*)"
+    )
     .order("tgl_pinjam", { ascending: true })
     .order("created_at", { referencedTable: "peminjaman_detail", ascending: false })
     .eq("user_id", userId)
@@ -33,23 +34,34 @@ const { data: peminjaman } = await useAsyncData(async () => {
   return data
 })
 
+const { data: kunjungan } = await useAsyncData(async () => {
+  const { data, error } = await supabase
+    .from("kunjungan")
+    .select("check_in, event")
+    .eq("user_id", userId)
+    .order("check_in", { ascending: true })
+
+  if (error) throw error
+  return data
+})
+
 // TODO: pindah ke database
-const keteranganText = (state_id: Peminjaman["state_id"]) => {
-  switch (state_id) {
-    case 1:
-      return "menunggu konfirmasi"
-    case 2:
-      return "sedang dipinjam"
-    case 3:
-      return "dibatalkan"
-    case 4:
-      return "menunggu konfirmasi pengembalian"
-    case 5:
-      return "dikembalikan"
-    case 6:
-      return "terlambat"
-  }
-}
+// const keteranganText = (state_id: Peminjaman["state_id"]) => {
+//   switch (state_id) {
+//     case 1:
+//       return "menunggu konfirmasi"
+//     case 2:
+//       return "sedang dipinjam"
+//     case 3:
+//       return "dibatalkan"
+//     case 4:
+//       return "menunggu konfirmasi pengembalian"
+//     case 5:
+//       return "dikembalikan"
+//     case 6:
+//       return "terlambat"
+//   }
+// }
 const formatPhoneNumber = (phoneNo: string | null): string => {
   if (!phoneNo) return ""
   return phoneNo.replace(/^0/, "62")
@@ -123,14 +135,33 @@ const formatPhoneNumber = (phoneNo: string | null): string => {
 
         <Column header="keterangan">
           <template #body="{ data }: { data: PeminjamanData[number] }">
-            {{ keteranganText(data.peminjaman_detail[0].state_id) }}
+            {{ data.peminjaman_detail[0].peminjaman_state?.name }}
           </template>
         </Column>
       </DataTable>
     </section>
 
     <Divider />
+    <section class="main-section">
+      <DataTable :value="kunjungan" striped-rows>
+        <template #header>
+          <p>Riwayat kunjungan untuk {{ pengguna.nama }}</p>
+        </template>
 
+        <Column header="Waktu">
+          <template #body="{ data }">
+            {{ formatDate(new Date(data.check_in), { dateStyle: "long", timeStyle: "short" }) }}
+          </template>
+        </Column>
+
+        <Column header="Event">
+          <template #body="{ data }">
+            {{ data.event.replace("_", " ") }}
+          </template>
+        </Column>
+      </DataTable>
+    </section>
+    <Divider />
     <section class="main-section">
       <h2 class="text-lg font-bold">Aksi</h2>
 

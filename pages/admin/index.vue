@@ -4,14 +4,20 @@ import type {
   QueryData,
   RealtimePostgresChangesPayload,
 } from "@supabase/supabase-js"
-import type { Peminjaman, PeminjamanDetail } from "@/types"
+import type { KunjunganSearchArgs, Peminjaman, PeminjamanDetail } from "@/types"
 import { formatDate } from "#imports"
 import DataTable from "primevue/datatable"
 import Column from "primevue/column"
+import DatePicker from "primevue/datepicker"
+import FloatLabel from "primevue/floatlabel"
+import Toast from "primevue/toast"
+import { ConfirmDialog } from "primevue"
+
 import { getPeminjamanData } from "@/lib/peminjaman"
 import { useConfirm } from "primevue/useconfirm"
 import { useToast } from "primevue/usetoast"
 import type { Database } from "~/types/database.types.ts"
+import { searchKunjungans } from "~/utils"
 
 useHead({
   title: "Admin",
@@ -115,6 +121,41 @@ async function konfirmasiPeminjaman(id: Peminjaman["id"]) {
   })
 }
 
+async function konfirmasiPembatalan(id: Peminjaman["id"]) {
+  confirm.require({
+    header: "Konfirmasi pembatalan",
+    message: "Beneran nih mau membatalkan peminjaman buku?",
+    accept: async () => {
+      try {
+        await cancelBorrowBuku(id)
+
+        toast.add({
+          severity: "success",
+          summary: "Sukses!",
+          detail: "Sukses membatalkan peminjaman buku!",
+          life: 10000,
+        })
+      } catch (err) {
+        console.error((err as PostgrestError).message)
+
+        toast.add({
+          severity: "error",
+          summary: "Gagal membatalkan peminjaman",
+          detail: "Gagal membatalkan peminjaman buku. Silahkan coba lagi",
+        })
+      }
+    },
+    reject: () => {
+      toast.add({
+        severity: "info",
+        summary: "Gak jadi nih..",
+        detail: "Gak jadi membatalkan peminjaman buku.",
+        life: 10000,
+      })
+    },
+  })
+}
+
 async function konfirmasiPengembalian(dataPeminjaman: Peminjaman) {
   try {
     confirm.require({
@@ -141,6 +182,41 @@ async function konfirmasiPengembalian(dataPeminjaman: Peminjaman) {
       life: 10000,
     })
   }
+}
+
+const kunjunganSearchFor = ref<KunjunganSearchArgs>({
+  timestamp_range: [],
+})
+
+const { data: kunjungans } = await useAsyncData(async () => {
+  const { data, error } = await searchKunjungans(kunjunganSearchFor.value)
+
+  if (error) {
+    toast.add({
+      severity: "error",
+      summary: "Gagal mengambil data",
+      detail: "Gagal mengambil data kunjungan, silahkan coba lagi.",
+    })
+    throw error
+  }
+  return data
+})
+
+async function handleSearchKunjungans() {
+  const { data, error } = await searchKunjungans(kunjunganSearchFor.value)
+
+  if (error) {
+    console.error(error)
+
+    toast.add({
+      severity: "error",
+      summary: "Gagal mencari data peminjaman",
+      detail: "gagal mencari data peminjaman, silahkan coba lagi.",
+      life: 10000,
+    })
+  }
+
+  kunjungans.value = data
 }
 
 async function insertPeminjamandata(payload: RealtimePostgresChangesPayload<Peminjaman>) {
@@ -214,7 +290,10 @@ onUnmounted(() => {
         <Column field="pengguna.kelas" header="Kelas" />
         <Column header="aksi">
           <template #body="{ data }: { data: PeminjamanData[number] }">
-            <CTA label="konfirmasi" @click="konfirmasiPeminjaman(data.id)" />
+            <div class="flex gap-4">
+              <CTA label="konfirmasi" @click="konfirmasiPeminjaman(data.id)" />
+              <CTA label="Batalkan" severity="danger" @click="konfirmasiPembatalan(data.id)" />
+            </div>
           </template>
         </Column>
       </DataTable>
@@ -269,6 +348,63 @@ onUnmounted(() => {
         <AdminInfoChip to="buku" :data="counts?.bukuCount" label="Buku tersedia" />
         <AdminInfoChip to="pengguna" :data="counts?.penggunaCount" label="Pengguna aktif" />
       </ul>
+    </section>
+
+    <section v-if="kunjungans" class="main-section col-span-full">
+      <h2 class="leading-relaxed mb-4">Riwayat Kunjungan</h2>
+
+      <form @submit.prevent="handleSearchKunjungans()" class="flex gap-4 py-4">
+        <FloatLabel>
+          <DatePicker
+            input-id="start-date"
+            v-model="kunjunganSearchFor.timestamp_range[0]"
+            show-button-bar
+            :max-date="new Date()"
+          />
+          <label for="start-date">Tanggal awal</label>
+        </FloatLabel>
+
+        <FloatLabel>
+          <DatePicker
+            input-id="end-date"
+            v-model="kunjunganSearchFor.timestamp_range[1]"
+            show-button-bar
+            :max-date="new Date()"
+          />
+
+          <label for="start-date">Tanggal akhir</label>
+        </FloatLabel>
+
+        <CTA type="submit" label="filter" class="ml-auto" fill />
+      </form>
+
+      <DataTable :value="kunjungans" striped-rows paginator :rows="10">
+        <template #header>
+          <p>Menampilkan {{ kunjungans.length }} kunjungan.</p>
+        </template>
+
+        <Column header="No">
+          <template #body="slotProps">
+            {{ kunjungans.indexOf(slotProps.data) + 1 }}
+          </template>
+        </Column>
+        <Column field="pengguna.nama" header="Pengguna" />
+        <Column header="Waktu">
+          <template #body="slotProps">
+            {{
+              formatDate(new Date(slotProps.data.check_in), {
+                dateStyle: "long",
+                timeStyle: "short",
+              })
+            }}
+          </template>
+        </Column>
+        <Column header="Status">
+          <template #body="slotProps">
+            {{ slotProps.data.event.replace("_", " ") }}
+          </template>
+        </Column>
+      </DataTable>
     </section>
   </div>
 

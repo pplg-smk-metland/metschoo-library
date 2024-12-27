@@ -24,7 +24,7 @@ const isAdmin = computed(() =>
 
 <template>
   <nav
-    class="flex justify-between items-center sticky top-0 bg-primary dark:bg-surface-700/90 text-primary-contrast z-10 shadow-md navbar"
+    class="flex justify-between items-center sticky top-0 bg-primary dark:bg-surface-700/90 z-10 shadow-md backdrop-blur-md navbar"
   >
     <div class="logo">
       <img src="/logo.svg" alt="Logo Metschoo Library" class="h-14" />
@@ -32,7 +32,8 @@ const isAdmin = computed(() =>
 
     <ul
       ref="navlinks"
-      class="flex flex-col absolute top-0 left-0 -translate-y-full w-full md:flex-row md:relative md:translate-y-0 md:w-auto bg-inherit dark:bg-surface-700 transition-transform z-10"
+      class="flex flex-col absolute top-0 left-0 -translate-y-full w-full md:flex-row md:relative md:translate-y-0 md:w-auto bg-surface-700 md:bg-transparent transition-transform z-10"
+      @click="closeNav"
     >
       <li class="flex justify-between md:hidden md:appearance-none">
         <div class="logo">

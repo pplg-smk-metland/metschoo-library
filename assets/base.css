@@ -1,31 +1,5 @@
 :root {
   --primary-500: #336f6c;
-  --primary-200: #1d564c;
-  --primary: var(--primary-500);
-
-  --secondary-100: #1d564c;
-  --secondary-500: #08322c;
-  --accent: #40d4c5;
-
-  --white: hsl(180, 54%, 95%);
-  --pale-white: hsl(180, 20%, 85%);
-  --grey: hsl(180, 25%, 90%);
-  --dark-grey: hsl(180, 20%, 80%);
-  --neutral: hsl(0 0% 82%);
-  --neutral-transparent: hsla(0 0% 94% / 85%);
-  --dark: var(--secondary-500);
-
-  --color-confirm: hsl(100, 50%, 50%);
-  --color-warning: hsl(39, 100%, 50%);
-  --color-warning-subtle: hsl(39, 90%, 80%);
-  --color-danger: hsl(0, 70%, 55%);
-  --color-informational: hsl(240, 100%, 50%);
-
-  --background: var(--white);
-  --text: var(--dark);
-  --text-light: var(--dark-grey);
-
-  --nav-link-active: var(--primary-200);
 }
 
 :root {
@@ -50,7 +24,7 @@
   --p-surface-700: hsl(219 35% 17%);
   --p-surface-800: hsl(219 46% 13%);
   --p-surface-900: hsl(222 47% 11%);
-  --p-surface-950: hsl(168 38% 3%);
+  --p-surface-950: hsl(230 50% 6%);
 
   --p-content-border-radius: 0.5rem;
   --p-highlight-color: hsl(0, 50%, 100%);

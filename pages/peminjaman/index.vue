@@ -32,13 +32,13 @@ const { data: peminjamans } = await useAsyncData(
   { watch: [user.value!] }
 )
 
-const returnedStates = [5, 6, 7]
+const activeStates = [1, 2, 4]
 
 const historicalPeminjaman = computed(() => {
   return peminjamans.value
     ? peminjamans.value.filter((data) => {
         const latestStateId = data.peminjaman_detail[0].state_id
-        return returnedStates.includes(latestStateId)
+        return !activeStates.includes(latestStateId)
       })
     : []
 })
@@ -47,7 +47,7 @@ const activePeminjaman = computed(() => {
   return peminjamans.value
     ? peminjamans.value.filter((data) => {
         const latestStateId = data.peminjaman_detail[0].state_id
-        return !returnedStates.includes(latestStateId)
+        return activeStates.includes(latestStateId)
       })
     : []
 })
