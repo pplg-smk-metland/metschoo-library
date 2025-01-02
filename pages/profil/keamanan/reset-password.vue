@@ -46,7 +46,7 @@ async function handleResetPassword() {
     <PageHeader heading="reset password" />
 
     <section class="main-section">
-      <form @submit.prevent="handleResetPassword" class="flex flex-col gap-2">
+      <form class="flex flex-col gap-2" @submit.prevent="handleResetPassword">
         <label for="password">Password baru kamu</label>
         <Password
           v-model="data.password"
@@ -58,25 +58,25 @@ async function handleResetPassword() {
           placeholder="Password Anda"
         />
 
-        <span class="text-sm text-red-400 dark:text-red-500" v-show="!formState.password.isStrong">
+        <span v-show="!formState.password.isStrong" class="text-sm text-red-400 dark:text-red-500">
           Password harus memiliki panjang 8 karakter atau lebih.
         </span>
 
         <label for="confirm-password">Konfirmasi password baru</label>
         <Password
+          id="confirm-password"
           v-model="data.confirmPassword"
           fluid
           type="password"
           name="confirm-password"
-          id="confirm-password"
           required
           toggle-mask
           :invalid="!formState.password.isConfirmed"
           placeholder="password anda"
         />
         <span
-          class="text-sm text-red-400 dark:text-red-500"
           v-show="!formState.password.isConfirmed"
+          class="text-sm text-red-400 dark:text-red-500"
         >
           Password tidak sama.
         </span>

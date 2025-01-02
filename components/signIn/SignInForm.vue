@@ -110,6 +110,8 @@ async function handleForgotPasword() {
     await authStore.handleForgotPassword(data.value.email)
     isRecoveryEmailSent.value = true
   } catch (err) {
+    console.error(err)
+
     toast.add({
       severity: "error",
       summary: "gagal mengirim email!",
@@ -199,7 +201,7 @@ async function handleForgotPasword() {
           maxlength="14"
         />
 
-        <span class="text-sm text-red-400 dark:text-red-500" v-show="!formState.phone.isValid">
+        <span v-show="!formState.phone.isValid" class="text-sm text-red-400 dark:text-red-500">
           {{ formState.phone.message }}
         </span>
 
@@ -216,9 +218,9 @@ async function handleForgotPasword() {
         />
 
         <span
-          class="text-sm text-red-400 dark:text-red-500"
-          id="weak-password-help"
           v-show="!formState.password.isStrong"
+          id="weak-password-help"
+          class="text-sm text-red-400 dark:text-red-500"
         >
           Password harus memiliki panjang 8 karakter atau lebih.
         </span>
@@ -236,9 +238,9 @@ async function handleForgotPasword() {
         />
 
         <span
-          class="text-sm text-red-400 dark:text-red-500"
-          id="unconfirmed-password-help"
           v-show="!formState.password.isConfirmed"
+          id="unconfirmed-password-help"
+          class="text-sm text-red-400 dark:text-red-500"
         >
           Password tidak sama.
         </span>
@@ -268,12 +270,12 @@ async function handleForgotPasword() {
         Email terkirim! setelah kamu klik linknya, kamu bisa menutup tab ini.
       </p>
 
-      <form @submit.prevent="handleForgotPasword" class="flex gap-4 flex-wrap">
+      <form class="flex gap-4 flex-wrap" @submit.prevent="handleForgotPasword">
         <InputText
+          id="recovery-email"
           v-model="data.email"
           type="email"
           name="recovery-email"
-          id="recovery-email"
           placeholder="email kamu"
           autocomplete="off"
           class="flex-grow"
