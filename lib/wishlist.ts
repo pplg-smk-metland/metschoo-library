@@ -29,3 +29,10 @@ export async function deleteFromWishlist(isbn: Buku["no_isbn"]): Promise<Buku["n
   if (error) throw error
   return data.no_isbn
 }
+
+export async function addToWishlist(no_isbn: Buku["no_isbn"]) {
+  const supabase = useSupabaseClient<Database>()
+  const { error } = await supabase.from("wishlist").insert({ no_isbn })
+
+  if (error) throw error
+}

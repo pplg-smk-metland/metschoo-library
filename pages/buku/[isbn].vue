@@ -11,6 +11,7 @@ import { useToast } from "primevue/usetoast"
 import DatePicker from "primevue/datepicker"
 import Dialog from "primevue/dialog"
 import type { Database } from "~/types/database.types.ts"
+import { addToWishlist } from "~/lib/wishlist"
 
 definePageMeta({
   layout: "default",
@@ -188,14 +189,22 @@ const confirmWishlistIsVisible = ref(false)
 /**
  * handle confirmation for adding a new entry to wishlist.
  */
-function konfirmasiMasukkanWishlist(buku: Buku, e: Event) {
+function confirmAddToWishlist(buku: Buku, e: Event) {
   confirm.require({
     target: e.currentTarget as HTMLElement,
     header: "Konfirmasi wishlist",
     message: "Apakah anda mau menambahkan buku ini ke dalam wishlist?",
     group: "headless",
     accept: async () => {
-      await masukkanWishlist(buku)
+      if (!user.value) {
+        return toast.add({
+          severity: "warn",
+          summary: "gagal memasukkan buku ke wishlist",
+          detail: "silahkan masuk jika anda ingin menambahkan buku ke dalam wishlist",
+        })
+      }
+
+      await handleAddToWishlist(buku)
     },
     onShow: () => (confirmWishlistIsVisible.value = true),
     onHide: () => (confirmWishlistIsVisible.value = false),
@@ -205,19 +214,9 @@ function konfirmasiMasukkanWishlist(buku: Buku, e: Event) {
 /**
  * handle adding a new buku to wishlist.
  */
-async function masukkanWishlist({ no_isbn }: Buku) {
-  if (!user.value) {
-    return toast.add({
-      severity: "warn",
-      summary: "gagal memasukkan buku ke wishlist",
-      detail: "silahkan masuk jika anda ingin menambahkan buku ke dalam wishlist",
-    })
-  }
-
+async function handleAddToWishlist({ no_isbn }: Buku) {
   try {
-    const { data, error } = await supabase.from("wishlist").insert({ no_isbn })
-    if (error) throw error
-
+    await addToWishlist(no_isbn)
     bukuAdaDiWishlist.value = true
 
     toast.add({
@@ -228,12 +227,13 @@ async function masukkanWishlist({ no_isbn }: Buku) {
     })
     return data
   } catch (err) {
+    console.error((err as PostgrestError).message)
+
     toast.add({
       severity: "error",
       summary: "gagal",
       detail: `Ada yang salah ketika menambahkan buku ke dalam wishlist. Silahkan coba beberapa saat lagi.`,
     })
-    console.error((err as PostgrestError).message)
   }
 }
 
@@ -364,7 +364,7 @@ onUnmounted(() => {
           :aria-expanded="confirmWishlistIsVisible"
           :aria-controls="confirmWishlistIsVisible ? 'confirm' : null"
           label="tambahkan ke wishlist"
-          @click="konfirmasiMasukkanWishlist(buku, $event)"
+          @click="confirmAddToWishlist(buku, $event)"
         />
       </div>
     </article>
