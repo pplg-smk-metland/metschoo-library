@@ -4,7 +4,7 @@ import type { PostgrestError } from "@supabase/supabase-js"
 
 import Toast from "primevue/toast"
 import { useToast } from "primevue/usetoast"
-import type { Database } from "~/types/database.types.ts"
+import { deleteFromWishlist, getWishlist } from "~/lib/wishlist"
 
 useHead({
   title: "Wishlist",
@@ -14,34 +14,23 @@ definePageMeta({
   layout: "default",
 })
 
-const supabase = useSupabaseClient<Database>()
-
-const wishlistQuery = supabase.from("wishlist").select("*, buku(*)")
-
-async function ambilWishlist() {
-  try {
-    const { data, error } = await wishlistQuery
-    if (error) throw error
-    return data
-  } catch (err) {
-    console.error((err as PostgrestError).message)
-    return []
-  }
-}
-
-const { data: wishlist } = useAsyncData(async () => await ambilWishlist())
+const { data: wishlist } = useAsyncData(async () => await getWishlist())
 
 const toast = useToast()
 
-async function hapusBukuDariWishlist(buku: Buku) {
+async function handleDeleteFromWishlist(buku: Buku) {
+  if (!wishlist.value) return
+
   try {
-    await supabase.from("wishlist").delete().eq("no_isbn", buku.no_isbn)
-    hapusBuku(buku)
+    const targetIsbn = await deleteFromWishlist(buku.no_isbn)
+
+    // sync UI after deletion
+    wishlist.value = wishlist.value.filter(({ no_isbn }) => no_isbn !== targetIsbn)
 
     toast.add({
       severity: "success",
       summary: "Sukses!",
-      detail: "sukses menghapus buku dari wishlist",
+      detail: `sukses menghapus buku ${buku.judul} dari wishlist`,
       life: 5000,
     })
   } catch (err) {
@@ -50,15 +39,10 @@ async function hapusBukuDariWishlist(buku: Buku) {
     toast.add({
       severity: "error",
       summary: "Gagal",
-      detail: "gagal menghapus buku dari wishlist",
+      detail: `gagal menghapus buku ${buku.judul} dari wishlist`,
       life: 10000,
     })
   }
-}
-
-function hapusBuku(buku: Buku) {
-  if (!wishlist.value) return
-  wishlist.value = wishlist.value.filter(({ no_isbn }) => no_isbn !== buku.no_isbn)
 }
 
 const router = useRouter()
@@ -85,7 +69,7 @@ const user = useSupabaseUser()
           :key="wishlistItem.id"
           :buku="wishlistItem.buku!"
           @pinjam-buku="router.push(`/buku/${wishlistItem.no_isbn}`)"
-          @hapus-buku="hapusBukuDariWishlist(wishlistItem.buku!)"
+          @hapus-buku="handleDeleteFromWishlist(wishlistItem.buku!)"
         />
       </ul>
     </section>
