@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { AuthApiError } from "@supabase/supabase-js"
 import Password from "primevue/password"
 
 useHead({
@@ -28,12 +29,34 @@ const isLoading = ref(false)
 const authStore = useAuthStore()
 const router = useRouter()
 
+const toast = useToast()
+
 async function handleResetPassword() {
   isLoading.value = true
   try {
     await authStore.handleResetPassword(data.value.password)
+    toast.add({
+      severity: "success",
+      summary: "Berhasil masuk!",
+      detail: "Password kamu sudah berhasil diganti. Mengembalikan kamu ke beranda dalam 15 detik...",
+      life: 10000,
+    })
+    
+    // [HAPUS KOMEN SETELAH SELESAI] delay beberapa detik dengan memakai setTimeout
+
+
+    setTimeout(() => router.push("/"), 15000)
     router.push("/")
-  } catch (err) {
+  } catch (err) { 
+    console.log((err as AuthApiError).code)
+    if ((err as AuthApiError).code == "same_password") {
+      toast.add({
+      severity: "error",
+      summary: "Gagal masuk!",
+      detail: "Password harus berbeda dari password sebelumnya.",
+      life: 10000,
+    })
+    }
     console.error(err)
   } finally {
     isLoading.value = false
@@ -89,4 +112,6 @@ async function handleResetPassword() {
       </form>
     </section>
   </div>
+  <Toast />
+
 </template>
