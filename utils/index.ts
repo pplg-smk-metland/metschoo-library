@@ -264,11 +264,15 @@ export function formatDate(date: Date, opts?: Intl.DateTimeFormatOptions): strin
  *
  * @returns {string} formatted date string of peminjaman event date
  */
-export function getPeminjamanStateDate(data: PeminjamanData[number], state_id: number): string {
+export function getPeminjamanStateDate(
+  data: PeminjamanData[number],
+  state_id: number,
+  opts?: Intl.DateTimeFormatOptions
+): string {
   const target = data.peminjaman_detail.find((data) => data.state_id === state_id)
 
   if (target === undefined) return "-"
-  else return formatDate(new Date(target.created_at))
+  else return formatDate(new Date(target.created_at), opts)
 }
 
 export async function searchKunjungans({ timestamp_range }: KunjunganSearchArgs) {
