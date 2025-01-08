@@ -374,7 +374,7 @@ onUnmounted(() => {
       <table class="tabel-bibliografi block">
         <tbody class="table-auto block">
           <tr>
-            <td>judul</td>
+            <td>Judul</td>
             <td>{{ buku?.judul }}</td>
           </tr>
 
