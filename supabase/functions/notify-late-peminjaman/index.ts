@@ -15,7 +15,7 @@ const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY") as string
 const resend = new Resend(RESEND_API_KEY)
 
 Deno.serve(async () => {
-  let { data, error } = await supabase
+  const { data, error } = await supabase
     .from("peminjaman")
     .select(
       "*, buku(judul, no_isbn), pengguna(user_id, nama, kelas, email), peminjaman_detail(state_id, created_at)"
@@ -32,7 +32,7 @@ Deno.serve(async () => {
     )
   }
 
-  data = data
+  const latePeminjamans = data
     ? data.filter(
         (d) =>
           // if is currently borrowing
@@ -49,7 +49,7 @@ Deno.serve(async () => {
   }
 
   const siteURL = "https://metschoo-lib-preview.netlify.app"
-  const emails = data.map((d) => ({
+  const emails = latePeminjamans.map((d) => ({
     from: "Metschoo Library <contact@library.smkmetland.net>",
     to: d.pengguna.email,
     subject: "Peminjaman terlambat di Metschoo Library",
