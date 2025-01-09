@@ -331,12 +331,7 @@ onUnmounted(() => {
         <Column field="pengguna.kelas" header="Kelas" />
         <Column header="Dipinjam pada">
           <template #body="{ data }: { data: PeminjamanData[number] }">
-            {{
-              formatDate(new Date(data.peminjaman_detail[0].created_at), {
-                dateStyle: "long",
-                timeStyle: "long",
-              })
-            }}
+            {{ getPeminjamanStateDate(data, 1, { dateStyle: "long", timeStyle: "long" }) }}
           </template>
         </Column>
       </DataTable>

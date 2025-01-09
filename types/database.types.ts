@@ -326,6 +326,10 @@ export type Database = {
       }
     }
     Functions: {
+      check_out_users: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       is_super_admin: {
         Args: Record<PropertyKey, never>
         Returns: boolean

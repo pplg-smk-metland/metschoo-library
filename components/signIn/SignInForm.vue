@@ -162,6 +162,7 @@ async function handleForgotPasword() {
           required
           :invalid="!formState.password.isStrong"
           placeholder="Password Anda"
+          :feedback="false"
         />
 
         <CTA type="submit" label="Masuk" :disabled="isLoading && !formState.password.isStrong" />
@@ -235,6 +236,7 @@ async function handleForgotPasword() {
           :invalid="!formState.password.isConfirmed"
           placeholder="Ketik Ulang Password"
           aria-describedby="unconfirmed-password-help"
+          :feedback="false"
         />
 
         <span
