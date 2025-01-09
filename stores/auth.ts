@@ -12,39 +12,42 @@ export const useAuthStore = defineStore("auth", () => {
   async function init() {
     const user = useSupabaseUser()
 
-    supabase.auth.onAuthStateChange(async (event) => {
+    supabase.auth.onAuthStateChange((event) => {
       if (event === "SIGNED_OUT") {
         profile.value = null
         return
       }
 
-      if (user.value) {
-        if (event === "INITIAL_SESSION" || event === "SIGNED_IN") {
-          if (user.value.user_metadata.new) {
-            const { nama, phone_no } = user.value.user_metadata
-
-            const { error } = await supabase
-              .from("pengguna")
-              .update({ nama, phone_no })
-              .eq("user_id", user.value.id)
-
-            if (error) console.error("gagal memperbarui metadata pengguna.")
-
-            const { error: updateNewError } = await supabase.auth.admin.updateUserById(
-              user.value.id,
-              {
-                user_metadata: {
-                  new: false,
-                },
-              }
-            )
-
-            if (updateNewError)
-              console.error("gagal memperbarui metadata pengguna (complete signup flow).")
-          }
-        }
-
+      // use setTimeout as per the docs
+      // https://supabase.com/docs/reference/javascript/auth-onauthstatechange
+      setTimeout(async () => {
+        if (!user.value) return
         profile.value = await getProfile(user.value.id)
+      })
+
+      if (event === "INITIAL_SESSION" || event === "SIGNED_IN") {
+        setTimeout(async () => {
+          if (!user.value || !user.value.user_metadata.new) return
+          const { nama, phone_no } = user.value.user_metadata
+
+          const { error } = await supabase
+            .from("pengguna")
+            .update({ nama, phone_no })
+            .eq("user_id", user.value.id)
+
+          if (error) console.error("gagal memperbarui metadata pengguna.")
+
+          const { error: updateNewError } = await supabase.auth.updateUser({
+            data: {
+              new: false,
+            },
+          })
+
+          if (updateNewError) {
+            console.error(updateNewError)
+            console.error("gagal memperbarui metadata pengguna (complete signup flow).")
+          }
+        }, 0)
       }
     })
   }
@@ -88,6 +91,25 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
+  async function handleForgotPassword(email: string) {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: import.meta.dev
+        ? "http://localhost:3000/profil/keamanan/reset-password"
+        : "https://metschoo-lib-preview.netlify.app/profil/keamanan/reset-password",
+    })
+    if (error) throw error
+  }
+
+  async function handleResetPassword(password: string) {
+    const { error } = await supabase.auth.updateUser({
+      password,
+    })
+
+    if (error) throw error
+
+    console.log(error)
+  }
+
   async function getProfile(id: string): Promise<Pengguna | null> {
     try {
       const { data, error } = await supabase
@@ -117,6 +139,8 @@ export const useAuthStore = defineStore("auth", () => {
     handleSignUp,
     handleSignIn,
     handleSignOut,
+    handleForgotPassword,
+    handleResetPassword,
     getProfile,
     handleUpdateProfile,
   }
