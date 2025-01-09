@@ -52,7 +52,9 @@ watch(
       <Divider class="!border-2 !m-0" />
 
       <div class="px-6 py-4">
-        <p>ini adalah sebuah dialog</p>
+        <slot>
+          <p>ini adalah sebuah dialog</p>
+        </slot>
       </div>
     </form>
   </dialog>

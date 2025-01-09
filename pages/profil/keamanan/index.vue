@@ -44,7 +44,14 @@ async function changePassword() {
     if (error) throw error
     dialog.value.open("memperbarui kredensial...")
   } catch (err) {
-    console.error((err as AuthError).message)
+    console.error(err as AuthError)
+    let message = "gagal mengubah password! "
+
+    if ((err as AuthError).code === "same_password") {
+      message += "password tidak boleh sama dengan yang lama."
+    }
+
+    dialog.value.open(message)
   }
 }
 
@@ -168,8 +175,9 @@ async function signOut() {
         minlength="8"
         required
       />
+
       <div class="button-container">
-        <CTA label="Ubah kredensial" type="submit" />
+        <CTA label="Ubah password" type="submit" />
       </div>
     </form>
   </section>
@@ -206,7 +214,7 @@ async function signOut() {
   </section>
 
   <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">
-    <template v-slot:header>
+    <template #header>
       <h2 class="text-xl">Info!!!</h2>
     </template>
 
