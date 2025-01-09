@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useDialog } from "@/composables"
-import type { Buku, Peminjaman, PeminjamanState } from "@/types"
-import type { PostgrestError, RealtimePostgresChangesPayload } from "@supabase/supabase-js"
+import type { Buku, Peminjaman, PeminjamanDetail, PeminjamanState } from "@/types"
+import type { PostgrestError, RealtimePostgresInsertPayload } from "@supabase/supabase-js"
 import IconArrowLeft from "~icons/mdi/arrow-left"
 
 import ConfirmPopup from "primevue/confirmpopup"
@@ -11,6 +11,7 @@ import { useToast } from "primevue/usetoast"
 import DatePicker from "primevue/datepicker"
 import Dialog from "primevue/dialog"
 import type { Database } from "~/types/database.types.ts"
+import { addToWishlist } from "~/lib/wishlist"
 
 definePageMeta({
   layout: "default",
@@ -97,12 +98,17 @@ async function pinjamBuku({ judul, no_isbn }: Buku, tanggal: Date) {
       await supabase.from("wishlist").delete().eq("no_isbn", no_isbn)
     }
 
-    await borrowBuku(no_isbn, tanggal)
+    const id = await borrowBuku(no_isbn, tanggal)
 
     if (!buku.value || !peminjamanState.value) return
-
     buku.value.jumlah_exspl_aktual = buku.value.jumlah_exspl_aktual - 1
-    peminjamanState.value.isBorrowable = false
+
+    peminjamanState.value = {
+      id,
+      isBorrowable: false,
+      isReturnable: false,
+      isCancellable: true,
+    }
 
     toast.add({
       severity: "success",
@@ -135,6 +141,8 @@ async function batalkanPeminjamanBuku({ judul }: Buku, id: Peminjaman["id"]) {
 
   try {
     await cancelBorrowBuku(id)
+
+    if (buku.value) buku.value.jumlah_exspl_aktual += 1
 
     toast.add({
       severity: "success",
@@ -181,14 +189,22 @@ const confirmWishlistIsVisible = ref(false)
 /**
  * handle confirmation for adding a new entry to wishlist.
  */
-function konfirmasiMasukkanWishlist(buku: Buku, e: Event) {
+function confirmAddToWishlist(buku: Buku, e: Event) {
   confirm.require({
     target: e.currentTarget as HTMLElement,
     header: "Konfirmasi wishlist",
     message: "Apakah anda mau menambahkan buku ini ke dalam wishlist?",
     group: "headless",
     accept: async () => {
-      await masukkanWishlist(buku)
+      if (!user.value) {
+        return toast.add({
+          severity: "warn",
+          summary: "gagal memasukkan buku ke wishlist",
+          detail: "silahkan masuk jika anda ingin menambahkan buku ke dalam wishlist",
+        })
+      }
+
+      await handleAddToWishlist(buku)
     },
     onShow: () => (confirmWishlistIsVisible.value = true),
     onHide: () => (confirmWishlistIsVisible.value = false),
@@ -198,19 +214,9 @@ function konfirmasiMasukkanWishlist(buku: Buku, e: Event) {
 /**
  * handle adding a new buku to wishlist.
  */
-async function masukkanWishlist({ no_isbn }: Buku) {
-  if (!user.value) {
-    return toast.add({
-      severity: "warn",
-      summary: "gagal memasukkan buku ke wishlist",
-      detail: "silahkan masuk jika anda ingin menambahkan buku ke dalam wishlist",
-    })
-  }
-
+async function handleAddToWishlist({ no_isbn }: Buku) {
   try {
-    const { data, error } = await supabase.from("wishlist").insert({ no_isbn })
-    if (error) throw error
-
+    await addToWishlist(no_isbn)
     bukuAdaDiWishlist.value = true
 
     toast.add({
@@ -221,57 +227,40 @@ async function masukkanWishlist({ no_isbn }: Buku) {
     })
     return data
   } catch (err) {
+    console.error((err as PostgrestError).message)
+
     toast.add({
       severity: "error",
       summary: "gagal",
       detail: `Ada yang salah ketika menambahkan buku ke dalam wishlist. Silahkan coba beberapa saat lagi.`,
     })
-    console.error((err as PostgrestError).message)
   }
 }
 
 /**
  * function to subscribe to realtime peminjaman state change.
  */
-async function perbaruiDataBuku() {
+async function perbaruiDataBuku(payload: RealtimePostgresInsertPayload<PeminjamanDetail>) {
   try {
-    peminjamanState.value = await usePeminjamanState(buku.value!)
+    peminjamanState.value = await usePeminjamanState(buku.value!, payload.new)
   } catch (err) {
     dialogError.value.open("Gagal mengambil data peminjaman, silahkan coba lagi.")
     console.error(err as PostgrestError)
   }
 }
 
-const channel = supabase
-  .channel("peminjaman")
-  .on(
-    "postgres_changes",
-    {
-      event: "INSERT",
-      schema: "public",
-      table: "peminjaman_detail",
-    },
-    perbaruiDataBuku
-  )
-  .on(
-    "postgres_changes",
-    {
-      event: "INSERT",
-      schema: "public",
-      table: "peminjaman",
-    },
-    (payload: RealtimePostgresChangesPayload<Peminjaman>) => {
-      // a new insert that matches the current book
-      // is automatically cancellable
-      if ((payload.new as Peminjaman).no_isbn !== isbn) return
-
-      peminjamanState.value = {
-        isBorrowable: false,
-        isReturnable: false,
-        isCancellable: true,
-      }
-    }
-  )
+const channel = supabase.channel("peminjaman").on(
+  "postgres_changes",
+  {
+    event: "INSERT",
+    schema: "public",
+    table: "peminjaman_detail",
+  },
+  (payload: RealtimePostgresInsertPayload<PeminjamanDetail>) => {
+    if (!peminjamanState.value || payload.new.peminjaman_id !== peminjamanState.value.id) return
+    perbaruiDataBuku(payload)
+  }
+)
 
 onMounted(() => {
   channel.subscribe()
@@ -375,7 +364,7 @@ onUnmounted(() => {
           :aria-expanded="confirmWishlistIsVisible"
           :aria-controls="confirmWishlistIsVisible ? 'confirm' : null"
           label="tambahkan ke wishlist"
-          @click="konfirmasiMasukkanWishlist(buku, $event)"
+          @click="confirmAddToWishlist(buku, $event)"
         />
       </div>
     </article>
@@ -385,7 +374,7 @@ onUnmounted(() => {
       <table class="tabel-bibliografi block">
         <tbody class="table-auto block">
           <tr>
-            <td>judul</td>
+            <td>Judul</td>
             <td>{{ buku?.judul }}</td>
           </tr>
 

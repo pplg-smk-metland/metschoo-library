@@ -1,6 +1,6 @@
 import { ref } from "vue"
 import type { PostgrestError } from "@supabase/supabase-js"
-import type { ActualBuku, Buku, PeminjamanState } from "@/types"
+import type { ActualBuku, Buku, PeminjamanDetail, PeminjamanState } from "@/types"
 import type { Database } from "~/types/database.types"
 import type { FileUploadSelectEvent } from "primevue"
 
@@ -58,55 +58,56 @@ export function useDialog() {
  * @param {Buku['no_isbn']} isbn - isbn of book
  * @returns {Promise<PeminjamanState>} state of peminjaman
  */
-export async function usePeminjamanState({
-  no_isbn,
-  jumlah_exspl_aktual,
-}: ActualBuku): Promise<PeminjamanState> {
+export async function usePeminjamanState(
+  { no_isbn, jumlah_exspl_aktual }: ActualBuku,
+  peminjaman_detail?: PeminjamanDetail
+): Promise<PeminjamanState> {
   const supabase = useSupabaseClient<Database>()
 
-  const peminjamanQuery = supabase
-    .from("peminjaman_detail")
-    .select("state_id, peminjaman(id, no_isbn), peminjaman_state(name)")
-    .eq("peminjaman.no_isbn", no_isbn)
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .single()
+  const borrowableStateIds = [3, 5, 6, 7]
 
-  const { data, error } = await peminjamanQuery
+  if (!peminjaman_detail) {
+    const peminjamanQuery = supabase
+      .from("peminjaman_detail")
+      .select("peminjaman_id, peminjaman(no_isbn), state_id")
+      .eq("peminjaman.no_isbn", no_isbn)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single()
 
-  // PGRST116 == empty
-  if ((error && error.code === "PGRST116") || !data || !data.peminjaman_state || !data.peminjaman) {
+    const { data, error } = await peminjamanQuery
+
+    // PGRST116 == empty
+    if ((error && error.code === "PGRST116") || !data) {
+      return {
+        isBorrowable: jumlah_exspl_aktual > 0,
+        isCancellable: false,
+        isReturnable: false,
+      }
+    }
+
+    if (error) {
+      return {
+        isBorrowable: false,
+        isCancellable: false,
+        isReturnable: false,
+      }
+    }
+
     return {
-      isBorrowable: jumlah_exspl_aktual > 0,
-      isCancellable: false,
-      isReturnable: false,
+      id: data.peminjaman_id,
+      isBorrowable: borrowableStateIds.includes(data.state_id) && jumlah_exspl_aktual > 0,
+      isCancellable: data.state_id === 1,
+      isReturnable: data.state_id === 2,
     }
   }
 
-  if (error)
-    return {
-      isBorrowable: false,
-      isCancellable: false,
-      isReturnable: false,
-    }
-
-  const borrowableConditions = [
-    "borrow cancelled",
-    "return confirmed",
-    "return late",
-    "return cancelled",
-  ]
-
-  const isCancellable = data.peminjaman_state.name === "borrow pending"
-  const isBorrowable =
-    borrowableConditions.includes(data.peminjaman_state.name) && jumlah_exspl_aktual > 0
-  const isReturnable = data.peminjaman_state.name === "borrow confirmed"
-
+  const { state_id, peminjaman_id: id } = peminjaman_detail
   return {
-    id: data.peminjaman.id,
-    isBorrowable,
-    isCancellable,
-    isReturnable,
+    id,
+    isBorrowable: borrowableStateIds.includes(state_id) && jumlah_exspl_aktual > 0,
+    isCancellable: state_id === 1,
+    isReturnable: state_id === 2,
   }
 }
 

@@ -140,7 +140,10 @@ export function getBukuImage(image?: Buku["image"]): string {
  *
  * @param {Buku['no_isbn']} no_isbn - field of buku
  */
-export async function borrowBuku(no_isbn: Buku["no_isbn"], tenggat_waktu: Date) {
+export async function borrowBuku(
+  no_isbn: Buku["no_isbn"],
+  tenggat_waktu: Date
+): Promise<Peminjaman["id"]> {
   const supabase = useSupabaseClient<Database>()
   const { data: peminjaman, error } = await supabase
     .from("peminjaman")
@@ -158,6 +161,7 @@ export async function borrowBuku(no_isbn: Buku["no_isbn"], tenggat_waktu: Date) 
   })
 
   if (detailError) throw detailError
+  return peminjaman.id
 }
 
 /**
@@ -260,11 +264,15 @@ export function formatDate(date: Date, opts?: Intl.DateTimeFormatOptions): strin
  *
  * @returns {string} formatted date string of peminjaman event date
  */
-export function getPeminjamanStateDate(data: PeminjamanData[number], state_id: number): string {
+export function getPeminjamanStateDate(
+  data: PeminjamanData[number],
+  state_id: number,
+  opts?: Intl.DateTimeFormatOptions
+): string {
   const target = data.peminjaman_detail.find((data) => data.state_id === state_id)
 
   if (target === undefined) return "-"
-  else return formatDate(new Date(target.created_at))
+  else return formatDate(new Date(target.created_at), opts)
 }
 
 export async function searchKunjungans({ timestamp_range }: KunjunganSearchArgs) {
