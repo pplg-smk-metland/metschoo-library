@@ -12,6 +12,7 @@ export default defineNuxtConfig({
     "@nuxtjs/tailwindcss",
     "@nuxt/fonts",
   ],
+  ignore: ["supabase/functions/*"],
   typescript: {
     typeCheck: true,
   },
