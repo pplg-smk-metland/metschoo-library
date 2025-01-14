@@ -3,7 +3,7 @@
 // This enables autocomplete, go to definition, etc.
 
 // Setup type definitions for built-in Supabase Runtime APIs
-import { createClient } from "npm:@supabase/supabase-js"
+import { createClient } from "jsr:@supabase/supabase-js"
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import { Resend } from "npm:resend@4.0.0"
 
