@@ -6,6 +6,34 @@ const toast = useToast()
 
 const { data } = await useAsyncData(() => getAllAvailableCategories())
 
+const user = useSupabaseUser()
+
+const { data: latestRequest } = await useAsyncData(async () => {
+  const supabase = useSupabaseClient<Database>()
+
+  const { data, error } = await supabase
+    .from("book_requests")
+    .select("*")
+    .eq("user_id", user.value!.id)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .single()
+
+  if (error) console.log(error)
+  return data
+})
+
+const canRequest = computed(() => {
+  console.log(latestRequest.value)
+  if (latestRequest.value === null) return true
+
+  const SecondDate = new Date().getTime() - new Date(latestRequest.value.created_at).getTime()
+  const aDayInMs = 24 * 60 * 60 * 1000
+
+  const canRequest = Math.floor(SecondDate / aDayInMs) > 30
+  return canRequest
+})
+
 const requestData = ref({
   title: "",
   isbn: "",
@@ -56,7 +84,11 @@ async function insertRequest() {
       </p>
     </header>
 
-    <form class="flex flex-col gap-2 main-section" @submit.prevent="insertRequest">
+    <form
+      v-if="canRequest"
+      class="flex flex-col gap-2 main-section"
+      @submit.prevent="insertRequest"
+    >
       <label for="judul"> Judul </label>
       <InputText id="judul" v-model="requestData.title" type="text" placeholder="judul" required />
 
@@ -78,6 +110,10 @@ async function insertRequest() {
 
       <Button type="submit"> Request </Button>
     </form>
+
+    <p v-else>
+      Mohon maaf anda belum bisa request buku karena requets kamu dibuat dalam 30 hari terakhir
+    </p>
   </section>
 
   <Toast />
