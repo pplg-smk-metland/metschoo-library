@@ -10,7 +10,7 @@ definePageMeta({
 
 const { data } = await useAsyncData(async () => {
   const supabase = useSupabaseClient()
-  let query = supabase.from("book_requests").select()
+  const query = supabase.from("book_requests").select()
 
   const { data, error } = await query
   return data
