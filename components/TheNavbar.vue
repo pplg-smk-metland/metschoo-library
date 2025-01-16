@@ -24,7 +24,7 @@ const isAdmin = computed(() =>
 
 <template>
   <nav
-    class="flex justify-between items-center sticky top-0 bg-primary dark:bg-surface-700/90 z-10 shadow-md backdrop-blur-md navbar"
+    class="flex justify-between items-center sticky top-0 bg-primary dark:bg-surface-700/90 z-10 shadow-md backdrop-blur-md"
   >
     <div class="logo">
       <img src="/logo.svg" alt="Logo Metschoo Library" class="h-14" />
@@ -46,7 +46,9 @@ const isAdmin = computed(() =>
         </button>
       </li>
       <li>
-        <ThemeToggle class="nav-link text-lg" />
+        <ClientOnly fallback-tag="span" fallback="memuat tema...">
+          <ThemeToggle class="nav-link text-lg block" />
+        </ClientOnly>
       </li>
       <li>
         <NuxtLink class="nav-link" to="/"> Beranda </NuxtLink>
@@ -56,6 +58,9 @@ const isAdmin = computed(() =>
       </li>
       <li>
         <NuxtLink class="nav-link" to="/wishlist"> Wishlist </NuxtLink>
+      </li>
+      <li>
+        <NuxtLink class="nav-link" to="/request"> Request Buku </NuxtLink>
       </li>
 
       <template v-if="user">
