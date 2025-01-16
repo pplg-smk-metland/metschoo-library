@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { Toast } from "primevue"
 import type { Database } from "~/types/database.types"
-import Kategori from "./admin/buku/kategori.vue"
+
+const toast = useToast()
 
 const { data } = await useAsyncData(() => getAllAvailableCategories())
 
@@ -13,19 +15,31 @@ const requestData = ref({
 async function insertRequest() {
   const supabase = useSupabaseClient<Database>()
 
-  // console.log({
-  //   title: requestData.value.title,
-  //   isbn: requestData.value.isbn,
-  //   kategori: requestData.value.category.kategori,
-  // })
+  try {
+    const { error } = await supabase.from("book_requests").insert({
+      title: requestData.value.title,
+      isbn: requestData.value.isbn,
+      category: requestData.value.category.kategori,
+    })
 
-  const { error } = await supabase.from("book_requests").insert({
-    title: requestData.value.title,
-    isbn: requestData.value.isbn,
-    category: requestData.value.category.kategori,
-  })
+    if (error) throw error
 
-  if (error) console.log(error)
+    toast.add({
+      severity: "success",
+      summary: "menanbahkan request",
+      detail: "sukses menanbahkan request buku, mohon ditunggu ya",
+      life: 10000,
+    })
+  } catch (error) {
+    console.log(error)
+
+    toast.add({
+      severity: "error",
+      summary: "gagal menambahkan buku",
+      detail: "gagal menanbahkan request buku, silahkan coba lagi nanti",
+      life: 10000,
+    })
+  }
 }
 </script>
 
@@ -64,4 +78,6 @@ async function insertRequest() {
       <Button type="submit"> Request </Button>
     </form>
   </section>
+
+  <Toast />
 </template>
