@@ -19,7 +19,7 @@ async function insertRequest() {
     const { error } = await supabase.from("book_requests").insert({
       title: requestData.value.title,
       isbn: requestData.value.isbn,
-      category: requestData.value.category.kategori,
+      category: requestData.value.category,
     })
 
     if (error) throw error
@@ -70,6 +70,7 @@ async function insertRequest() {
         v-model="requestData.category"
         :options="data"
         option-label="kategori"
+        option-value="kategori"
         variant="filled"
         placeholder="Pilih kategori"
         class="w-full"

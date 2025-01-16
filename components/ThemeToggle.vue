@@ -11,10 +11,9 @@ function toggleTheme(theme: Theme) {
 </script>
 
 <template>
-  <ClientOnly fallback-tag="span" fallback="memuat tema...">
-    <button :title="`mode ${themeStore.theme}`" @click="toggleTheme(themeStore.theme ?? 'light')">
-      <IconMoonCrescent v-if="themeStore.theme === 'dark'" />
-      <IconSun v-else />
-    </button>
-  </ClientOnly>
+ 
+  <button :title="`mode ${themeStore.theme}`" @click="toggleTheme(themeStore.theme ?? 'light')">
+    <IconMoonCrescent v-if="themeStore.theme === 'dark'" />
+    <IconSun v-else />
+  </button>
 </template>
