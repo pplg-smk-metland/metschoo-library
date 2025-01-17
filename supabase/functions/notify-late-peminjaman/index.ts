@@ -1,3 +1,5 @@
+/* @vite-ignore */
+
 // Follow this setup guide to integrate the Deno language server with your editor:
 // https://deno.land/manual/getting_started/setup_your_environment
 // This enables autocomplete, go to definition, etc.
@@ -48,8 +50,17 @@ Deno.serve(async () => {
     })
   }
 
+  interface Data {
+    pengguna: {
+      email: string
+      nama: string
+    }
+    buku: { judul: string; no_isbn: string }
+    tenggat_waktu: string
+  }
+
   const siteURL = "https://metschoo-lib-preview.netlify.app"
-  const emails = latePeminjamans.map((d) => ({
+  const emails = latePeminjamans.map((d: Data) => ({
     from: "Metschoo Library <contact@library.smkmetland.net>",
     to: d.pengguna.email,
     subject: "Peminjaman terlambat di Metschoo Library",
