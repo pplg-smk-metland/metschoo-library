@@ -24,7 +24,7 @@ const isAdmin = computed(() =>
 
 <template>
   <nav
-    class="flex justify-between items-center sticky top-0 bg-primary dark:bg-surface-700/90 z-10 shadow-md backdrop-blur-md"
+    class="flex justify-between items-center sticky top-0 bg-primary dark:bg-surface-700/90 z-10 shadow-md backdrop-blur-md navbar"
   >
     <div class="logo">
       <img src="/logo.svg" alt="Logo Metschoo Library" class="h-14" />
