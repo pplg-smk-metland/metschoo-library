@@ -52,3 +52,8 @@ export interface KunjunganSearchArgs {
 }
 
 export type Theme = "light" | "dark"
+
+export interface PhoneValidationResult {
+  isValid: boolean
+  message: string
+}

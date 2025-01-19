@@ -1,7 +1,9 @@
 import { describe, it, expect } from "vitest"
 import { formatDate, getPeminjamanStateDate } from "./index"
+import { phoneIsValid } from "./auth"
 import { randomUUID } from "node:crypto"
 import type { PeminjamanData } from "~/pages/admin/index.vue"
+import type { PhoneValidationResult } from "~/types"
 
 describe("date util", () => {
   it("formats dates in Indonesian locale correctly", () => {
@@ -77,5 +79,42 @@ describe("peminjaman state date", () => {
   it("returns the correct formatted state date", () => {
     const peminjamanStateDate = getPeminjamanStateDate(peminjaman[0], 4)
     expect(peminjamanStateDate).toBe(formatDate(new Date(returnDate)))
+  })
+})
+
+describe("phone number validator", () => {
+  it("validates phone numbers correctly", () => {
+    const phoneNumber = "081218820200"
+    expect(phoneIsValid(phoneNumber)).toMatchObject({ isValid: true, message: "nomor valid" })
+  })
+
+  it("rejects empty numbers", () => {
+    const validationResult = phoneIsValid("")
+    const expectedResult: PhoneValidationResult = {
+      isValid: false,
+      message: "nomor kosong",
+    }
+
+    expect(validationResult).toEqual(expectedResult)
+  })
+
+  const expectedResult: PhoneValidationResult = {
+    isValid: false,
+    message: "nomor harus diawali dengan 08 dan memiliki panjang 10-14 digit.",
+  }
+
+  it("rejects numbers with less than 10 digits", () => {
+    const validationResult = phoneIsValid("081234")
+    expect(validationResult).toEqual(expectedResult)
+  })
+
+  it("rejects numbers with more than 14 digits", () => {
+    const validationResult = phoneIsValid("08123403493049239403")
+
+    expect(validationResult).toEqual(expectedResult)
+  })
+
+  it("rejects numbers not starting with 08", () => {
+    expect(phoneIsValid("123123123")).toMatchObject(expectedResult)
   })
 })

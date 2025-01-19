@@ -1,7 +1,4 @@
-interface PhoneValidationResult {
-  isValid: boolean
-  message: string
-}
+import type { PhoneValidationResult } from "~/types"
 
 export function phoneIsValid(number: string): PhoneValidationResult {
   if (!number.length) {
