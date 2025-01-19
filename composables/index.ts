@@ -62,11 +62,11 @@ export async function usePeminjamanState(
   { no_isbn, jumlah_exspl_aktual }: ActualBuku,
   peminjaman_detail?: PeminjamanDetail
 ): Promise<PeminjamanState> {
-  const supabase = useSupabaseClient<Database>()
-
   const borrowableStateIds = [3, 5, 6, 7]
 
   if (!peminjaman_detail) {
+    const supabase = useSupabaseClient<Database>()
+
     const peminjamanQuery = supabase
       .from("peminjaman_detail")
       .select("peminjaman_id, peminjaman(no_isbn), state_id")
