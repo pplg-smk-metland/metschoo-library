@@ -11,9 +11,15 @@ export default defineNuxtConfig({
     "@nuxt/image",
     "@nuxtjs/tailwindcss",
     "@nuxt/fonts",
+    "@nuxt/test-utils/module",
   ],
   typescript: {
     typeCheck: true,
+    tsConfig: {
+      compilerOptions: {
+        types: ["vitest/globals"],
+      },
+    },
   },
   postcss: {
     plugins: {
