@@ -1,18 +1,33 @@
 <script setup lang="ts">
+import Toast from "primevue/toast"
+
 useHead({
   title: "request",
 })
+
 definePageMeta({
   layout: "admin",
 })
 
-const { data } = await useAsyncData(async () => {
+const toast = useToast()
+
+const { data, error } = await useAsyncData(async () => {
   const supabase = useSupabaseClient()
   const query = supabase.from("book_requests").select()
 
   const { data, error } = await query
+  if (error) throw error
   return data
 })
+
+if (error) {
+  toast.add({
+    severity: "error",
+    summary: "gagal mengambil data request!",
+    detail: "gagal mengambil data request, silahkan coba lagi nanti.",
+    life: 10000,
+  })
+}
 </script>
 
 <template>
@@ -28,4 +43,6 @@ const { data } = await useAsyncData(async () => {
     <Column field="isbn" header="ISBN" />
     <Column field="title" header="Judul" />
   </DataTable>
+
+  <Toast />
 </template>
