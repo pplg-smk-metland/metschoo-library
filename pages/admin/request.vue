@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { Database } from "~/types/database.types"
-
 useHead({
   title: "request",
 })
@@ -21,11 +19,12 @@ const { data } = await useAsyncData(async () => {
   <h1>request</h1>
 
   <DataTable :value="data">
-    <Column header="Tanggal request">
+    <Column field="created_at" header="Tanggal request" sortable>
       <template #body="{ data }">
-        <!-- {{ formatDate(data.created_at) }} -->
+        {{ formatDate(new Date(data.created_at)) }}
       </template>
     </Column>
+
     <Column field="isbn" header="ISBN" />
     <Column field="title" header="Judul" />
   </DataTable>
