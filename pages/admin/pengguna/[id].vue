@@ -37,9 +37,9 @@ const { data: peminjaman } = await useAsyncData(async () => {
 const { data: kunjungan } = await useAsyncData(async () => {
   const { data, error } = await supabase
     .from("kunjungan")
-    .select("check_in, event")
+    .select("timestamp, event")
     .eq("user_id", userId)
-    .order("check_in", { ascending: true })
+    .order("timestamp", { ascending: true })
 
   if (error) throw error
   return data
@@ -150,7 +150,7 @@ const formatPhoneNumber = (phoneNo: string | null): string => {
 
         <Column header="Waktu">
           <template #body="{ data }">
-            {{ formatDate(new Date(data.check_in), { dateStyle: "long", timeStyle: "short" }) }}
+            {{ formatDate(new Date(data.timestamp), { dateStyle: "long", timeStyle: "short" }) }}
           </template>
         </Column>
 

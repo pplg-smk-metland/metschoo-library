@@ -115,21 +115,21 @@ export type Database = {
       }
       kunjungan: {
         Row: {
-          check_in: string
           event: Database["public"]["Enums"]["event type"]
           id: number
+          timestamp: string
           user_id: string
         }
         Insert: {
-          check_in?: string
           event?: Database["public"]["Enums"]["event type"]
           id?: number
+          timestamp?: string
           user_id?: string
         }
         Update: {
-          check_in?: string
           event?: Database["public"]["Enums"]["event type"]
           id?: number
+          timestamp?: string
           user_id?: string
         }
         Relationships: [
@@ -246,6 +246,7 @@ export type Database = {
           kelas: string | null
           nama: string
           phone_no: string | null
+          rfid: string | null
           role_id: number
           user_id: string
         }
@@ -255,6 +256,7 @@ export type Database = {
           kelas?: string | null
           nama?: string
           phone_no?: string | null
+          rfid?: string | null
           role_id?: number
           user_id?: string
         }
@@ -264,6 +266,7 @@ export type Database = {
           kelas?: string | null
           nama?: string
           phone_no?: string | null
+          rfid?: string | null
           role_id?: number
           user_id?: string
         }
