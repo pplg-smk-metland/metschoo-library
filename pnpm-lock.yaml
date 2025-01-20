@@ -45,6 +45,9 @@ importers:
       '@nuxtjs/tailwindcss':
         specifier: ^6.12.1
         version: 6.12.2(magicast@0.3.5)(rollup@4.27.2)
+      '@pinia/testing':
+        specifier: ^0.1.7
+        version: 0.1.7(pinia@2.2.6(typescript@5.6.3)(vue@3.5.13(typescript@5.6.3)))(vue@3.5.13(typescript@5.6.3))
       '@primevue/nuxt-module':
         specifier: ^4.2.0
         version: 4.2.2(@babel/parser@7.26.2)(magicast@0.3.5)(rollup@4.27.2)(vue@3.5.13(typescript@5.6.3))
@@ -1115,6 +1118,11 @@ packages:
 
   '@pinia/nuxt@0.5.5':
     resolution: {integrity: sha512-wjxS7YqIesh4OLK+qE3ZjhdOJ5pYZQ+VlEmZNtTwzQn1Kavei/khovx7mzXVXNA/mvSPXVhb9xBzhyS3XMURtw==}
+
+  '@pinia/testing@0.1.7':
+    resolution: {integrity: sha512-xcDq6Ry/kNhZ5bsUMl7DeoFXwdume1NYzDggCiDUDKoPQ6Mo0eH9VU7bJvBtlurqe6byAntWoX5IhVFqWzRz/Q==}
+    peerDependencies:
+      pinia: '>=2.2.6'
 
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -6648,6 +6656,14 @@ snapshots:
       - rollup
       - supports-color
       - typescript
+      - vue
+
+  '@pinia/testing@0.1.7(pinia@2.2.6(typescript@5.6.3)(vue@3.5.13(typescript@5.6.3)))(vue@3.5.13(typescript@5.6.3))':
+    dependencies:
+      pinia: 2.2.6(typescript@5.6.3)(vue@3.5.13(typescript@5.6.3))
+      vue-demi: 0.14.10(vue@3.5.13(typescript@5.6.3))
+    transitivePeerDependencies:
+      - '@vue/composition-api'
       - vue
 
   '@pkgjs/parseargs@0.11.0':

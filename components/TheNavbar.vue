@@ -34,6 +34,7 @@ const isAdmin = computed(() =>
       ref="navlinks"
       class="flex flex-col absolute top-0 left-0 -translate-y-full w-full md:flex-row md:relative md:translate-y-0 md:w-auto bg-surface-700 md:bg-transparent transition-transform z-10"
       @click="closeNav"
+      data-testid="nav-links"
     >
       <li class="flex justify-between md:hidden md:appearance-none">
         <div class="logo">
@@ -41,12 +42,14 @@ const isAdmin = computed(() =>
             <img src="/logo.svg" alt="Logo Metschoo Library" height="50" class="w-16" />
           </NuxtLink>
         </div>
-        <button ref="closeNavBtn" class="nav-btn" @click="closeNav">
+        <button ref="closeNavBtn" class="nav-btn" @click="closeNav" data-testid="burger-close">
           <MdiClose />
         </button>
       </li>
       <li>
-        <ThemeToggle class="nav-link text-lg" />
+        <ClientOnly tag="span" fallback="membuat tema..">
+          <ThemeToggle class="nav-link text-lg" />
+        </ClientOnly>
       </li>
       <li>
         <NuxtLink class="nav-link" to="/"> Beranda </NuxtLink>
@@ -71,7 +74,7 @@ const isAdmin = computed(() =>
       </li>
     </ul>
 
-    <button ref="openNavBtn" class="nav-btn" @click="openNav">
+    <button ref="openNavBtn" class="nav-btn" @click="openNav" data-testid="burger-open">
       <MdiHamburgerMenu />
     </button>
   </nav>
