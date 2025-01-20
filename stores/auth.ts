@@ -118,7 +118,7 @@ export const useAuthStore = defineStore("auth", () => {
         .eq("user_id", id)
         .single()
       if (error) throw error
-      return data
+      return data as Pengguna
     } catch (err) {
       console.trace((err as PostgrestError).message)
       return null
