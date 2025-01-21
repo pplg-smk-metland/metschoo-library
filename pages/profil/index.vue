@@ -53,9 +53,9 @@ const { data: presence } = await useAsyncData(async () => {
 
   const { data, error } = await supabase
     .from("kunjungan")
-    .select("event, check_in")
+    .select("event, timestamp")
     .eq("user_id", user.value.id)
-    .order("check_in", { ascending: false })
+    .order("timestamp", { ascending: false })
     .limit(1)
     .maybeSingle()
 
@@ -77,7 +77,7 @@ const isPresent = computed(() => {
 const isDelayed = computed(() => {
   if (!presence.value) return false
 
-  const delta = new Date().getTime() - new Date(presence.value.check_in).getTime()
+  const delta = new Date().getTime() - new Date(presence.value.timestamp).getTime()
   return delta <= 1000 * 60 * 5 // less than 5 mins
 })
 
@@ -89,7 +89,7 @@ async function enterLibrary() {
       .insert({
         event: newEvent,
       })
-      .select("event, check_in")
+      .select("event, timestamp")
       .single()
 
     if (error) throw error

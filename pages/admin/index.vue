@@ -387,7 +387,7 @@ onUnmounted(() => {
         <Column header="Waktu">
           <template #body="slotProps">
             {{
-              formatDate(new Date(slotProps.data.check_in), {
+              formatDate(new Date(slotProps.data.timestamp), {
                 dateStyle: "long",
                 timeStyle: "short",
               })
