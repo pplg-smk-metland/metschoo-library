@@ -46,7 +46,9 @@ const isAdmin = computed(() =>
         </button>
       </li>
       <li>
-        <ThemeToggle class="nav-link text-lg" />
+        <ClientOnly fallback-tag="span" fallback="memuat tema...">
+          <ThemeToggle class="nav-link text-lg block" />
+        </ClientOnly>
       </li>
       <li>
         <NuxtLink class="nav-link" to="/"> Beranda </NuxtLink>
@@ -56,6 +58,9 @@ const isAdmin = computed(() =>
       </li>
       <li>
         <NuxtLink class="nav-link" to="/wishlist"> Wishlist </NuxtLink>
+      </li>
+      <li>
+        <NuxtLink class="nav-link" to="/request"> Request Buku </NuxtLink>
       </li>
 
       <template v-if="user">

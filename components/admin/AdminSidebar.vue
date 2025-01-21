@@ -62,6 +62,10 @@ const sidebarLinks = ref<SidebarLink[]>([
       },
     ],
   },
+  {
+    label: "Request",
+    route: "request",
+  },
 ])
 
 const popover = ref()

@@ -10,6 +10,44 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      book_requests: {
+        Row: {
+          category: string
+          created_at: string
+          id: number
+          is_accepted: Database["public"]["Enums"]["request status"] | null
+          isbn: string
+          title: string
+          user_id: string | null
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          id?: number
+          is_accepted?: Database["public"]["Enums"]["request status"] | null
+          isbn: string
+          title: string
+          user_id?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: number
+          is_accepted?: Database["public"]["Enums"]["request status"] | null
+          isbn?: string
+          title?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "book_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "pengguna"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       buku: {
         Row: {
           alamat_terbit: string
@@ -328,7 +366,7 @@ export type Database = {
     Functions: {
       check_out_users: {
         Args: Record<PropertyKey, never>
-        Returns: string
+        Returns: boolean
       }
       is_super_admin: {
         Args: Record<PropertyKey, never>
@@ -337,6 +375,7 @@ export type Database = {
     }
     Enums: {
       "event type": "check_in" | "check_out"
+      "request status": "processing" | "accepted" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
