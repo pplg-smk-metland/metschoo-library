@@ -12,6 +12,9 @@ import BookItem from "./BookItem.vue"
 import TheNavbar from "./TheNavbar.vue"
 import ThemeToggle from "./ThemeToggle.vue"
 import type { Buku } from "@/types"
+import TheHeader from "./TheHeader.vue"
+import WishlistBook from "./wishlist/WishlistBook.vue"
+import { defaultOptions } from "primevue"
 
 const buku: Buku = {
   judul: "Write tests for modern web applications with Vitest",
@@ -32,6 +35,28 @@ describe("BookItem component", () => {
     expect(component.text()).toContain(buku.judul)
     expect(component.text()).toContain(buku.penulis)
     expect(component.text()).toContain(buku.tahun_terbit)
+  })
+})
+
+describe("WishlistBook component", async () => {
+  const component = await mountSuspended(WishlistBook, {
+    props: { buku },
+  })
+
+  it("renders buku data correctly", () => {
+    expect(component.html()).toContain(buku.judul)
+    expect(component.html()).toContain(buku.penulis)
+    expect(component.html()).toContain(buku.tahun_terbit)
+  })
+
+  it("emits pinjamBuku and hapusBuku events correctly", () => {
+    const borrowBtn = component.get('[data-testid="buku-borrow"]')
+    borrowBtn.trigger("click")
+    expect(component.emitted()).toHaveProperty("pinjamBuku")
+
+    const deleteBtn = component.get('[data-testid="buku-delete"]')
+    deleteBtn.trigger("click")
+    expect(component.emitted()).toHaveProperty("hapusBuku")
   })
 })
 
@@ -106,5 +131,41 @@ describe("ThemeToggle component", async () => {
 
     await themeToggle.trigger("click")
     expect(getTheme()).toBe("light")
+  })
+})
+
+describe("TheHeader component", () => {
+  it("has default text", async () => {
+    const component = await mountSuspended(TheHeader, {
+      global: {
+        mocks: {
+          $primevue: {
+            config: defaultOptions,
+          },
+        },
+      },
+    })
+
+    expect(component.html()).toContain("Metschoo Library")
+    expect(component.html()).toContain("Selamat datang di Metschoo Library!")
+  })
+
+  it("can render heading and text properly", async () => {
+    const component = await mountSuspended(TheHeader, {
+      global: {
+        mocks: {
+          $primevue: {
+            config: defaultOptions,
+          },
+        },
+      },
+      slots: {
+        "header-heading": () => "Peminjaman",
+        "header-text": () => "Welcome to the peminjaman page",
+      },
+    })
+
+    expect(component.html()).toContain("Peminjaman")
+    expect(component.html()).toContain("Welcome to the peminjaman page")
   })
 })
