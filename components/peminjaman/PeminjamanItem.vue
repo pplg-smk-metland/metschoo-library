@@ -57,6 +57,10 @@ defineProps<Props>()
 .peminjaman-item {
   grid-template-columns: 20ch 1fr;
   grid-template-rows: min-content 1fr;
+
+  @media only screen and (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .detail-item {
