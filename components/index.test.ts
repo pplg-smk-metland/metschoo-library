@@ -52,7 +52,6 @@ describe("TheNavbar component", async () => {
     window.innerWidth = 1024
     window.dispatchEvent(new Event("resize"))
 
-    // console.log(navOpen.html())
     expect(navOpen.isVisible()).toBe(false)
   })
 

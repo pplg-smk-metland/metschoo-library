@@ -42,7 +42,12 @@ const isAdmin = computed(() =>
             <img src="/logo.svg" alt="Logo Metschoo Library" height="50" class="w-16" />
           </NuxtLink>
         </div>
-        <button ref="closeNavBtn" class="nav-btn" @click="closeNav" data-testid="burger-close">
+        <button
+          ref="closeNavBtn"
+          class="nav-btn md:hidden"
+          @click="closeNav"
+          data-testid="burger-close"
+        >
           <MdiClose />
         </button>
       </li>
@@ -74,7 +79,7 @@ const isAdmin = computed(() =>
       </li>
     </ul>
 
-    <button ref="openNavBtn" class="nav-btn" @click="openNav" data-testid="burger-open">
+    <button ref="openNavBtn" class="nav-btn md:hidden" @click="openNav" data-testid="burger-open">
       <MdiHamburgerMenu />
     </button>
   </nav>
@@ -85,13 +90,13 @@ const isAdmin = computed(() =>
   grid-area: navbar;
 }
 
-.nav-link,
-.nav-btn {
-  @apply text-gray-300/90 hover:text-gray-100 dark:hover:bg-surface-800 transition-colors p-4 block relative;
+.nav-link {
+  display: block;
 }
 
+.nav-link,
 .nav-btn {
-  @apply md:hidden;
+  @apply text-gray-300/90 hover:text-gray-100 dark:hover:bg-surface-800 transition-colors p-4 relative;
 }
 
 .nav-link::before {
