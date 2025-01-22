@@ -45,6 +45,7 @@ async function handleInsertRequest(requestData: RequestData) {
       life: 10000,
     })
   } catch (err) {
+    console.error(err)
     toast.add({
       severity: "success",
       summary: "menanbahkan request",

@@ -33,8 +33,8 @@ const isAdmin = computed(() =>
     <ul
       ref="navlinks"
       class="flex flex-col absolute top-0 left-0 -translate-y-full w-full md:flex-row md:relative md:translate-y-0 md:w-auto bg-surface-700 md:bg-transparent transition-transform z-10"
-      @click="closeNav"
       data-testid="nav-links"
+      @click="closeNav"
     >
       <li class="flex justify-between md:hidden md:appearance-none">
         <div class="logo">
@@ -45,8 +45,8 @@ const isAdmin = computed(() =>
         <button
           ref="closeNavBtn"
           class="nav-btn md:hidden"
-          @click="closeNav"
           data-testid="burger-close"
+          @click="closeNav"
         >
           <MdiClose />
         </button>
@@ -87,7 +87,7 @@ const isAdmin = computed(() =>
       </li>
     </ul>
 
-    <button ref="openNavBtn" class="nav-btn md:hidden" @click="openNav" data-testid="burger-open">
+    <button ref="openNavBtn" class="nav-btn md:hidden" data-testid="burger-open" @click="openNav">
       <MdiHamburgerMenu />
     </button>
   </nav>

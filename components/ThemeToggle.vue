@@ -13,8 +13,8 @@ function toggleTheme(theme: Theme) {
 <template>
   <button
     :title="`mode ${themeStore.theme}`"
-    @click="toggleTheme(themeStore.theme ?? 'light')"
     data-testid="theme-toggle"
+    @click="toggleTheme(themeStore.theme ?? 'light')"
   >
     <IconMoonCrescent v-if="themeStore.theme === 'dark'" />
     <IconSun v-else />
