@@ -5,7 +5,7 @@ import { Tabs, Tab, TabList, TabPanel, TabPanels } from "primevue"
 
 definePageMeta({
   layout: "default",
-  middleware: "profil",
+  middleware: "auth",
 })
 
 const supabase = useSupabaseClient()

@@ -2,6 +2,11 @@
 import { Toast } from "primevue"
 import type { Database } from "~/types/database.types"
 
+definePageMeta({
+  title: "Request buku",
+  middleware: "auth",
+})
+
 const toast = useToast()
 
 const { data } = await useAsyncData(() => getAllAvailableCategories())
@@ -24,7 +29,6 @@ const { data: latestRequest } = await useAsyncData(async () => {
 })
 
 const canRequest = computed(() => {
-  console.log(latestRequest.value)
   if (latestRequest.value === null) return true
 
   const SecondDate = new Date().getTime() - new Date(latestRequest.value.created_at).getTime()

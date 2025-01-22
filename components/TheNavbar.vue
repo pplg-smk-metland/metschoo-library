@@ -65,18 +65,23 @@ const isAdmin = computed(() =>
       <li>
         <NuxtLink class="nav-link" to="/wishlist"> Wishlist </NuxtLink>
       </li>
-      <li>
-        <NuxtLink class="nav-link" to="/request"> Request Buku </NuxtLink>
-      </li>
 
       <template v-if="user">
-        <li v-if="!isAdmin">
-          <NuxtLink to="/profil" class="nav-link bg-primary-700"> Profil </NuxtLink>
-        </li>
+        <template v-if="!isAdmin">
+          <li>
+            <NuxtLink class="nav-link" to="/request"> Request Buku </NuxtLink>
+          </li>
+
+          <li>
+            <NuxtLink to="/profil" class="nav-link bg-primary-700"> Profil </NuxtLink>
+          </li>
+        </template>
+
         <li v-else>
           <NuxtLink to="/admin" class="nav-link bg-primary-700"> Admin </NuxtLink>
         </li>
       </template>
+
       <li v-else>
         <NuxtLink to="/login" class="nav-link bg-primary-700"> Masuk </NuxtLink>
       </li>
