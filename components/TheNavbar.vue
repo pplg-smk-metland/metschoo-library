@@ -33,6 +33,7 @@ const isAdmin = computed(() =>
     <ul
       ref="navlinks"
       class="flex flex-col absolute top-0 left-0 -translate-y-full w-full md:flex-row md:relative md:translate-y-0 md:w-auto bg-surface-700 md:bg-transparent transition-transform z-10"
+      data-testid="nav-links"
       @click="closeNav"
     >
       <li class="flex justify-between md:hidden md:appearance-none">
@@ -41,13 +42,18 @@ const isAdmin = computed(() =>
             <img src="/logo.svg" alt="Logo Metschoo Library" height="50" class="w-16" />
           </NuxtLink>
         </div>
-        <button ref="closeNavBtn" class="nav-btn" @click="closeNav">
+        <button
+          ref="closeNavBtn"
+          class="nav-btn md:hidden"
+          data-testid="burger-close"
+          @click="closeNav"
+        >
           <MdiClose />
         </button>
       </li>
       <li>
         <ClientOnly fallback-tag="span" fallback="memuat tema...">
-          <ThemeToggle class="nav-link text-lg block" />
+          <ThemeToggle class="nav-link text-lg" />
         </ClientOnly>
       </li>
       <li>
@@ -59,24 +65,29 @@ const isAdmin = computed(() =>
       <li>
         <NuxtLink class="nav-link" to="/wishlist"> Wishlist </NuxtLink>
       </li>
-      <li>
-        <NuxtLink class="nav-link" to="/request"> Request Buku </NuxtLink>
-      </li>
 
       <template v-if="user">
-        <li v-if="!isAdmin">
-          <NuxtLink to="/profil" class="nav-link bg-primary-700"> Profil </NuxtLink>
-        </li>
+        <template v-if="!isAdmin">
+          <li>
+            <NuxtLink class="nav-link" to="/request"> Request Buku </NuxtLink>
+          </li>
+
+          <li>
+            <NuxtLink to="/profil" class="nav-link bg-primary-700"> Profil </NuxtLink>
+          </li>
+        </template>
+
         <li v-else>
           <NuxtLink to="/admin" class="nav-link bg-primary-700"> Admin </NuxtLink>
         </li>
       </template>
+
       <li v-else>
         <NuxtLink to="/login" class="nav-link bg-primary-700"> Masuk </NuxtLink>
       </li>
     </ul>
 
-    <button ref="openNavBtn" class="nav-btn" @click="openNav">
+    <button ref="openNavBtn" class="nav-btn md:hidden" data-testid="burger-open" @click="openNav">
       <MdiHamburgerMenu />
     </button>
   </nav>
@@ -87,13 +98,13 @@ const isAdmin = computed(() =>
   grid-area: navbar;
 }
 
-.nav-link,
-.nav-btn {
-  @apply text-gray-300/90 hover:text-gray-100 dark:hover:bg-surface-800 transition-colors p-4 block relative;
+.nav-link {
+  display: block;
 }
 
+.nav-link,
 .nav-btn {
-  @apply md:hidden;
+  @apply text-gray-300/90 hover:text-gray-100 dark:hover:bg-surface-800 transition-colors p-4 relative;
 }
 
 .nav-link::before {

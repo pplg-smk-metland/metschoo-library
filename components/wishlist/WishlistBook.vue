@@ -35,8 +35,13 @@ const imgURL = ref(getBukuImage(props.buku.image))
       </p>
 
       <div class="button-container">
-        <CTA label="Pinjam buku" @click="$emit('pinjamBuku')" />
-        <CTA label="Hapus dari wishlist" severity="danger" @click="$emit('hapusBuku')" />
+        <CTA data-testid="buku-borrow" label="Pinjam buku" @click="$emit('pinjamBuku')" />
+        <CTA
+          data-testid="buku-delete"
+          label="Hapus dari wishlist"
+          severity="danger"
+          @click="$emit('hapusBuku')"
+        />
       </div>
     </article>
   </li>

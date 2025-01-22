@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Toast from "primevue/toast"
+import { getRequests } from "@/lib/request"
 
 useHead({
   title: "request",
@@ -11,14 +12,7 @@ definePageMeta({
 
 const toast = useToast()
 
-const { data, error } = await useAsyncData(async () => {
-  const supabase = useSupabaseClient()
-  const query = supabase.from("book_requests").select()
-
-  const { data, error } = await query
-  if (error) throw error
-  return data
-})
+const { data, error } = await useAsyncData(async () => await getRequests())
 
 if (error) {
   toast.add({

@@ -11,8 +11,11 @@ function toggleTheme(theme: Theme) {
 </script>
 
 <template>
- 
-  <button :title="`mode ${themeStore.theme}`" @click="toggleTheme(themeStore.theme ?? 'light')">
+  <button
+    :title="`mode ${themeStore.theme}`"
+    data-testid="theme-toggle"
+    @click="toggleTheme(themeStore.theme ?? 'light')"
+  >
     <IconMoonCrescent v-if="themeStore.theme === 'dark'" />
     <IconSun v-else />
   </button>

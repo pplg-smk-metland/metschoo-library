@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { Toast } from "primevue"
-import type { Database } from "~/types/database.types"
+import { getUserRequest, insertRequest } from "@/lib/request"
+import type { RequestData } from "~/types"
+
+definePageMeta({
+  title: "Request buku",
+  middleware: "auth",
+})
 
 const toast = useToast()
 
@@ -9,23 +15,11 @@ const { data } = await useAsyncData(() => getAllAvailableCategories())
 const user = useSupabaseUser()
 
 const { data: latestRequest } = await useAsyncData(async () => {
-  const supabase = useSupabaseClient<Database>()
-
-  const { data, error } = await supabase
-    .from("book_requests")
-    .select("*")
-    .eq("user_id", user.value!.id)
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .single()
-
-  if (error) console.log(error)
-  return data
+  if (user.value) return await getUserRequest(user.value.id)
 })
 
 const canRequest = computed(() => {
-  console.log(latestRequest.value)
-  if (latestRequest.value === null) return true
+  if (!latestRequest.value) return true
 
   const SecondDate = new Date().getTime() - new Date(latestRequest.value.created_at).getTime()
   const aDayInMs = 24 * 60 * 60 * 1000
@@ -34,37 +28,28 @@ const canRequest = computed(() => {
   return canRequest
 })
 
-const requestData = ref({
+const requestData = ref<RequestData>({
   title: "",
   isbn: "",
   category: "",
 })
 
-async function insertRequest() {
-  const supabase = useSupabaseClient<Database>()
-
+async function handleInsertRequest(requestData: RequestData) {
   try {
-    const { error } = await supabase.from("book_requests").insert({
-      title: requestData.value.title,
-      isbn: requestData.value.isbn,
-      category: requestData.value.category,
-    })
-
-    if (error) throw error
-
-    toast.add({
-      severity: "success",
-      summary: "menanbahkan request",
-      detail: "sukses menanbahkan request buku, mohon ditunggu ya",
-      life: 10000,
-    })
-  } catch (error) {
-    console.log(error)
+    await insertRequest(requestData)
 
     toast.add({
       severity: "error",
       summary: "gagal menambahkan buku",
       detail: "gagal menanbahkan request buku, silahkan coba lagi nanti",
+      life: 10000,
+    })
+  } catch (err) {
+    console.error(err)
+    toast.add({
+      severity: "success",
+      summary: "menanbahkan request",
+      detail: "sukses menanbahkan request buku, mohon ditunggu ya",
       life: 10000,
     })
   }
@@ -87,7 +72,7 @@ async function insertRequest() {
     <form
       v-if="canRequest"
       class="flex flex-col gap-2 main-section"
-      @submit.prevent="insertRequest"
+      @submit.prevent="handleInsertRequest(requestData)"
     >
       <label for="judul"> Judul </label>
       <InputText id="judul" v-model="requestData.title" type="text" placeholder="judul" required />
