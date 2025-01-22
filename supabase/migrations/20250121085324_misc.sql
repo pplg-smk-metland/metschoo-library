@@ -1,4 +1,3 @@
-
 alter table "public"."wishlist" drop constraint "wishlist_id_key";
 
 drop index if exists "public"."wishlist_id_key";
@@ -9,8 +8,9 @@ alter table "public"."peminjaman" drop constraint "peminjaman_user_id_fkey";
 
 alter table "public"."pengguna" drop constraint "pengguna_role_id_fkey";
 
-
 set check_function_bodies = off;
+
+drop function public.check_out_users();
 
 CREATE OR REPLACE FUNCTION public.check_out_users()
  RETURNS boolean
@@ -34,3 +34,17 @@ insert into kunjungan(user_id, event)
         returning forgot;
 end;$function$
 ;
+
+
+alter table "public"."peminjaman" add constraint "peminjaman_no_isbn_fkey" FOREIGN KEY (no_isbn) REFERENCES buku(no_isbn) ON UPDATE CASCADE not valid;
+
+alter table "public"."peminjaman" validate constraint "peminjaman_no_isbn_fkey";
+
+alter table "public"."peminjaman" add constraint "peminjaman_user_id_fkey" FOREIGN KEY (user_id) REFERENCES pengguna(user_id) ON UPDATE RESTRICT ON DELETE CASCADE not valid;
+
+alter table "public"."peminjaman" validate constraint "peminjaman_user_id_fkey";
+
+alter table "public"."pengguna" add constraint "pengguna_role_id_fkey" FOREIGN KEY (role_id) REFERENCES pengguna_roles(id) ON UPDATE CASCADE ON DELETE RESTRICT not valid;
+
+alter table "public"."pengguna" validate constraint "pengguna_role_id_fkey";
+
