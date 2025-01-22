@@ -57,3 +57,9 @@ export interface PhoneValidationResult {
   isValid: boolean
   message: string
 }
+
+export interface RequestData {
+  title: string
+  isbn: string
+  category: string
+}
