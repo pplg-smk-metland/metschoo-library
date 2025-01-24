@@ -22,6 +22,14 @@ if (error) {
     life: 10000,
   })
 }
+
+function acceptRequest() {
+  console.log("terima")
+}
+
+function rejectRequest() {
+  console.log("tolak")
+}
 </script>
 
 <template>
@@ -36,6 +44,15 @@ if (error) {
 
     <Column field="isbn" header="ISBN" />
     <Column field="title" header="Judul" />
+
+    <Column header="aksi">
+      <template #body>
+        <div class="flex gap-4">
+          <CTA label="terima" @click="acceptRequest" />
+          <CTA label="tolak" @click="rejectRequest" severity="danger" />
+        </div>
+      </template>
+    </Column>
   </DataTable>
 
   <Toast />
