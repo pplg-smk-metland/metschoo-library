@@ -13,7 +13,7 @@ definePageMeta({
 
 const toast = useToast()
 
-const { data, error } = await useAsyncData(async () => await getRequests())
+const { data: requests, error } = await useAsyncData(async () => await getRequests())
 
 if (error) {
   toast.add({
@@ -80,7 +80,7 @@ const tabs = [
       <TabPanel v-for="tab in tabs" :key="tab.status" :value="tab.status">
         <h2>{{ tab.localized }}</h2>
 
-        <DataTable :value="data?.filter((d) => d.is_accepted === tab.status) || []">
+        <DataTable :value="requests?.filter((d) => d.is_accepted === tab.status) || []">
           <Column field="created_at" header="Tanggal request" sortable>
             <template #body="{ data }">
               {{ formatDate(new Date(data.created_at)) }}
@@ -93,11 +93,11 @@ const tabs = [
           <Column field="title" header="Judul" />
           <Column field="category" header="Kategori buku" sortable />
 
-          <Column header="aksi" v-if="tab.status === 'processing'">
+          <Column v-if="tab.status === 'processing'" header="aksi">
             <template #body="{ data }: { data: BookRequest }">
               <div class="flex gap-4">
                 <CTA label="terima" @click="handleRequest(data.id, 'accepted')" />
-                <CTA label="tolak" @click="handleRequest(data.id, 'rejected')" severity="danger" />
+                <CTA label="tolak" severity="danger" @click="handleRequest(data.id, 'rejected')" />
               </div>
             </template>
           </Column>
