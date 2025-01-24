@@ -1,5 +1,5 @@
 import type { Database } from "@/types/database.types"
-import type { Pengguna, RequestData } from "~/types"
+import type { BookRequest, Pengguna, RequestData } from "~/types"
 
 export async function getRequests() {
   const supabase = useSupabaseClient<Database>()
@@ -39,4 +39,15 @@ export async function insertRequest(requestData: RequestData) {
   } catch (error) {
     console.log(error)
   }
+}
+
+export async function processRequest(
+  id: BookRequest["id"],
+  is_accepted: Exclude<BookRequest["is_accepted"], "processing">
+) {
+  const supabase = useSupabaseClient<Database>()
+
+  const { error } = await supabase.from("book_requests").update({ is_accepted }).eq("id", id)
+
+  if (error) throw error
 }

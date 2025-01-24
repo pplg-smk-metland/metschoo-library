@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Toast from "primevue/toast"
-import { getRequests } from "@/lib/request"
+import { getRequests, processRequest } from "@/lib/request"
+import type { BookRequest } from "~/types"
 
 useHead({
   title: "request",
@@ -23,12 +24,30 @@ if (error) {
   })
 }
 
-function acceptRequest() {
-  console.log("terima")
-}
+async function handleRequest(
+  id: BookRequest["id"],
+  type: Exclude<BookRequest["is_accepted"], "processing">
+) {
+  try {
+    await processRequest(id, type)
 
-function rejectRequest() {
-  console.log("tolak")
+    toast.add({
+      severity: "success",
+      summary: "sukses memproses buku",
+      detail:
+        "sukses menandai permintaan buku sebagai " + type === "accepted" ? "diterima" : "ditolak",
+      life: 10000,
+    })
+  } catch (error) {
+    console.error(error)
+
+    toast.add({
+      severity: "error",
+      detail: "ada kesalahan saat menyetujui permintaan buku, silahkan coba lagi.",
+      summary: "gagal menyetujui permintaan buku ",
+      life: 10000,
+    })
+  }
 }
 </script>
 
@@ -46,10 +65,10 @@ function rejectRequest() {
     <Column field="title" header="Judul" />
 
     <Column header="aksi">
-      <template #body>
+      <template #body="{ data }: { data: BookRequest }">
         <div class="flex gap-4">
-          <CTA label="terima" @click="acceptRequest" />
-          <CTA label="tolak" @click="rejectRequest" severity="danger" />
+          <CTA label="terima" @click="handleRequest(data.id, 'accepted')" />
+          <CTA label="tolak" @click="handleRequest(data.id, 'rejected')" severity="danger" />
         </div>
       </template>
     </Column>
