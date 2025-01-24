@@ -3,7 +3,7 @@ import type { BookRequest, Pengguna, RequestData } from "~/types"
 
 export async function getRequests() {
   const supabase = useSupabaseClient<Database>()
-  const query = supabase.from("book_requests").select()
+  const query = supabase.from("book_requests").select("*, pengguna(nama)")
 
   const { data, error } = await query
   if (error) throw error

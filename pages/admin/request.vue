@@ -61,8 +61,11 @@ async function handleRequest(
       </template>
     </Column>
 
+    <Column field="pengguna.nama" header="Peminta" />
+
     <Column field="isbn" header="ISBN" />
     <Column field="title" header="Judul" />
+    <Column field="category" header="Kategori buku" sortable />
 
     <Column header="aksi">
       <template #body="{ data }: { data: BookRequest }">
