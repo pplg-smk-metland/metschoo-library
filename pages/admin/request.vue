@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Toast from "primevue/toast"
+import { Tab, Tabs, TabList, TabPanels, TabPanel, Toast, useToast } from "primevue"
 import { getRequests, processRequest } from "@/lib/request"
 import type { BookRequest } from "~/types"
 
@@ -49,33 +49,62 @@ async function handleRequest(
     })
   }
 }
+
+const tabs = [
+  {
+    status: "processing",
+    localized: "Diproses",
+  },
+
+  {
+    status: "accepted",
+    localized: "Diterima",
+  },
+
+  {
+    status: "rejected",
+    localized: "Ditolak",
+  },
+]
 </script>
 
 <template>
   <h1>request</h1>
 
-  <DataTable :value="data">
-    <Column field="created_at" header="Tanggal request" sortable>
-      <template #body="{ data }">
-        {{ formatDate(new Date(data.created_at)) }}
-      </template>
-    </Column>
+  <Tabs value="requests">
+    <TabList>
+      <Tab v-for="tab in tabs" :key="tab.status" :value="tab.status">{{ tab.localized }}</Tab>
+    </TabList>
 
-    <Column field="pengguna.nama" header="Peminta" />
+    <TabPanels>
+      <TabPanel v-for="tab in tabs" :key="tab.status" :value="tab.status">
+        <h2>{{ tab.localized }}</h2>
 
-    <Column field="isbn" header="ISBN" />
-    <Column field="title" header="Judul" />
-    <Column field="category" header="Kategori buku" sortable />
+        <DataTable :value="data?.filter((d) => d.is_accepted === tab.status) || []">
+          <Column field="created_at" header="Tanggal request" sortable>
+            <template #body="{ data }">
+              {{ formatDate(new Date(data.created_at)) }}
+            </template>
+          </Column>
 
-    <Column header="aksi">
-      <template #body="{ data }: { data: BookRequest }">
-        <div class="flex gap-4">
-          <CTA label="terima" @click="handleRequest(data.id, 'accepted')" />
-          <CTA label="tolak" @click="handleRequest(data.id, 'rejected')" severity="danger" />
-        </div>
-      </template>
-    </Column>
-  </DataTable>
+          <Column field="pengguna.nama" header="Peminta" />
+
+          <Column field="isbn" header="ISBN" />
+          <Column field="title" header="Judul" />
+          <Column field="category" header="Kategori buku" sortable />
+
+          <Column header="aksi" v-if="tab.status === 'processing'">
+            <template #body="{ data }: { data: BookRequest }">
+              <div class="flex gap-4">
+                <CTA label="terima" @click="handleRequest(data.id, 'accepted')" />
+                <CTA label="tolak" @click="handleRequest(data.id, 'rejected')" severity="danger" />
+              </div>
+            </template>
+          </Column>
+        </DataTable>
+      </TabPanel>
+    </TabPanels>
+  </Tabs>
 
   <Toast />
 </template>
