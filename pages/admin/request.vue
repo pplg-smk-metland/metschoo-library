@@ -28,14 +28,20 @@ async function handleRequest(
   id: BookRequest["id"],
   type: Exclude<BookRequest["is_accepted"], "processing">
 ) {
+  let detail;
+
+  if( "accepted" === type) {
+    detail = "sukses menandai permintaan buku sebagai diterima";
+  } else {
+    detail = "sukses menandai permintaan buku sebagai ditolak";
+  }
   try {
     await processRequest(id, type)
 
     toast.add({
       severity: "success",
       summary: "sukses memproses buku",
-      detail:
-        "sukses menandai permintaan buku sebagai " + type === "accepted" ? "diterima" : "ditolak",
+      detail,
       life: 10000,
     })
   } catch (error) {
