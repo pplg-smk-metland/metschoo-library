@@ -18,6 +18,7 @@ export type Pengguna = Tables<"pengguna">
 export type Kategori = Tables<"kategori_buku">
 export type Peminjaman = Tables<"peminjaman">
 export type PeminjamanDetail = Tables<"peminjaman_detail">
+export type BookRequest = Tables<"book_requests">
 
 export interface PeminjamanState {
   id?: Peminjaman["id"]

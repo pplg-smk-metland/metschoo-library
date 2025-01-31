@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import Toast from "primevue/toast"
-import { getRequests } from "@/lib/request"
+import { Tab, Tabs, TabList, TabPanels, TabPanel, Toast, useToast } from "primevue"
+import { getRequests, processRequest } from "@/lib/request"
+import type { BookRequest } from "~/types"
 
 useHead({
   title: "request",
@@ -12,7 +13,7 @@ definePageMeta({
 
 const toast = useToast()
 
-const { data, error } = await useAsyncData(async () => await getRequests())
+const { data: requests, error } = await useAsyncData(async () => await getRequests())
 
 if (error) {
   toast.add({
@@ -22,21 +23,94 @@ if (error) {
     life: 10000,
   })
 }
+
+async function handleRequest(
+  id: BookRequest["id"],
+  type: Exclude<BookRequest["is_accepted"], "processing">
+) {
+  let detail;
+
+  if( "accepted" === type) {
+    detail = "sukses menandai permintaan buku sebagai diterima";
+  } else {
+    detail = "sukses menandai permintaan buku sebagai ditolak";
+  }
+  try {
+    await processRequest(id, type)
+
+    toast.add({
+      severity: "success",
+      summary: "sukses memproses buku",
+      detail,
+      life: 10000,
+    })
+  } catch (error) {
+    console.error(error)
+
+    toast.add({
+      severity: "error",
+      detail: "ada kesalahan saat menyetujui permintaan buku, silahkan coba lagi.",
+      summary: "gagal menyetujui permintaan buku ",
+      life: 10000,
+    })
+  }
+}
+
+const tabs = [
+  {
+    status: "processing",
+    localized: "Diproses",
+  },
+
+  {
+    status: "accepted",
+    localized: "Diterima",
+  },
+
+  {
+    status: "rejected",
+    localized: "Ditolak",
+  },
+]
 </script>
 
 <template>
   <h1>request</h1>
 
-  <DataTable :value="data">
-    <Column field="created_at" header="Tanggal request" sortable>
-      <template #body="{ data }">
-        {{ formatDate(new Date(data.created_at)) }}
-      </template>
-    </Column>
+  <Tabs value="requests">
+    <TabList>
+      <Tab v-for="tab in tabs" :key="tab.status" :value="tab.status">{{ tab.localized }}</Tab>
+    </TabList>
 
-    <Column field="isbn" header="ISBN" />
-    <Column field="title" header="Judul" />
-  </DataTable>
+    <TabPanels>
+      <TabPanel v-for="tab in tabs" :key="tab.status" :value="tab.status">
+        <h2>{{ tab.localized }}</h2>
+
+        <DataTable :value="requests?.filter((d) => d.is_accepted === tab.status) || []">
+          <Column field="created_at" header="Tanggal request" sortable>
+            <template #body="{ data }">
+              {{ formatDate(new Date(data.created_at)) }}
+            </template>
+          </Column>
+
+          <Column field="pengguna.nama" header="Peminta" />
+
+          <Column field="isbn" header="ISBN" />
+          <Column field="title" header="Judul" />
+          <Column field="category" header="Kategori buku" sortable />
+
+          <Column v-if="tab.status === 'processing'" header="aksi">
+            <template #body="{ data }: { data: BookRequest }">
+              <div class="flex gap-4">
+                <CTA label="terima" @click="handleRequest(data.id, 'accepted')" />
+                <CTA label="tolak" severity="danger" @click="handleRequest(data.id, 'rejected')" />
+              </div>
+            </template>
+          </Column>
+        </DataTable>
+      </TabPanel>
+    </TabPanels>
+  </Tabs>
 
   <Toast />
 </template>
