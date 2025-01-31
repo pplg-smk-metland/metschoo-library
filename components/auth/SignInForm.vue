@@ -40,13 +40,7 @@ const formState = computed(() => {
   }
 })
 
-async function handleSignUp({
-  valid,
-  values,
-}: {
-  valid: boolean
-  values: Record<string, unknown>
-}) {
+async function handleSignUp({ valid, values }: { valid: boolean; values: Record<string, string> }) {
   if (!valid) return
 
   const { nama, email, phoneNumber, password } = values

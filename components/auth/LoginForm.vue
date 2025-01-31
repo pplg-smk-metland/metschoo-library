@@ -14,13 +14,7 @@ const formData = reactive({
   password: "",
 })
 
-async function handleSignIn({
-  valid,
-  values,
-}: {
-  valid: boolean
-  values: Record<string, unknown>
-}) {
+async function handleSignIn({ valid, values }: { valid: boolean; values: Record<string, string> }) {
   if (!valid) return
 
   isLoading.value = true
