@@ -21,15 +21,29 @@ const title = computed(() => (isSigningIn.value ? "Log in" : "Sign in"))
 useHead({ title })
 
 const switchFormButtonLabel = computed(() =>
-  isSigningIn.value ? "Belum punya akun? ayo bikin dulu!" : "Sudah punya akun? Masuk"
+  isSigningIn.value ? "Sudah punya akun? Masuk" : "Belum punya akun? ayo bikin dulu!"
 )
 </script>
 
 <template>
-  <div class="flex justify-center min-h-[70vh]">
-    <CTA type="button" @click="handleSwitchForm" :label="switchFormButtonLabel" />
+  <div class="flex flex-col gap-8 justify-center max-w-xl mx-auto min-h-[70vh]">
+    <CTA type="button" @click="handleSwitchForm" :label="switchFormButtonLabel" link />
 
-    <AuthSignInForm v-if="isSigningIn" />
-    <AuthLoginForm v-else />
+    <Transition>
+      <AuthSignInForm v-if="isSigningIn" />
+      <AuthLoginForm v-else />
+    </Transition>
   </div>
 </template>
+
+<style>
+.v-enter-leave,
+.v-enter-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+</style>
