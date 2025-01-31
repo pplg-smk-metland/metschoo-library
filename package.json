@@ -18,11 +18,10 @@
     "@nuxt/fonts": "^0.10.2",
     "@nuxt/image": "^1.7.0",
     "@pinia/nuxt": "^0.5.3",
-    "@vee-validate/zod": "^4.15.0",
+    "@primevue/forms": "^4.2.5",
     "primevue": "^4.2.0",
     "supabase": "^1.219.2",
     "tailwindcss-primeui": "^0.3.4",
-    "vee-validate": "^4.15.0",
     "vue": "latest",
     "zod": "^3.24.1"
   },
