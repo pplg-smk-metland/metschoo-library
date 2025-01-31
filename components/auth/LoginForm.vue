@@ -153,7 +153,12 @@ const resolver = zodResolver(
           required
         />
 
-        <CTA type="submit" :label="isLoading ? 'sebentar ya...' : 'Kirim email'" fill />
+        <CTA
+          type="submit"
+          :label="isLoading ? 'sebentar ya...' : 'Kirim email'"
+          fill
+          :loading="isLoading"
+        />
       </form>
     </Dialog>
 

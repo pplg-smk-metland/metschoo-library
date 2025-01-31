@@ -160,13 +160,7 @@ async function handleSignUp({ valid }: { valid: boolean }) {
           Mohon konfirmasi password kamu, ngetiknya yang bener.
         </Message>
 
-        <CTA
-          type="submit"
-          label="Daftar"
-          class="block"
-          :disabled="isLoading"
-          :loading="isLoading"
-        />
+        <CTA type="submit" label="Daftar" class="block" :loading="isLoading" />
       </Form>
     </div>
 
