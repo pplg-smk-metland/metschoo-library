@@ -2,10 +2,12 @@
 import InputText from "primevue/inputtext"
 import Password from "primevue/password"
 import type { SignUpData } from "@/types"
+import { zodResolver } from "@primevue/forms/resolvers/zod"
+import { z } from "zod"
 
 const isLoading = ref(false)
 
-const data = ref<SignUpData>({
+const formData = ref<SignUpData>({
   nama: "",
   email: "",
   phoneNumber: "",
@@ -13,21 +15,35 @@ const data = ref<SignUpData>({
   confirmPassword: "",
 })
 
+const schema = z.object({
+  nama: z.string().nonempty("namamu ga mungkin kosong bre."),
+  email: z.string().nonempty("emailmu ga mungkin kosong bre.").email("ini bukan email."),
+  phoneNumber: z
+    .string()
+    .regex(/^08\d{10,14}$/, "nomor HP kamu harus diawali 08 dan memiliki 10 sampai 14 angka."),
+  password: z.string().min(8, "password kamu minimal harus 8 karakter atau lebih."),
+  confirmPassword: z.string().nonempty("kamu lupa ngetik konfirmasi password."),
+})
+
+const resolver = zodResolver(schema)
+
 const authStore = useAuthStore()
 const toast = useToast()
 
 const formState = computed(() => {
   return {
     password: {
-      isStrong: data.value.password.length >= 8,
-      isConfirmed: data.value.confirmPassword === data.value.password,
+      isStrong: formData.value.password.length >= 8,
+      isConfirmed: formData.value.confirmPassword === formData.value.password,
     },
-    phone: phoneIsValid(data.value.phoneNumber),
+    phone: phoneIsValid(formData.value.phoneNumber),
   }
 })
 
-async function handleSignUp() {
-  const { nama, email, phoneNumber, password } = data.value
+async function handleSignUp({ valid }: { valid: boolean }) {
+  if (!valid) return
+
+  const { nama, email, phoneNumber, password } = formData.value
 
   isLoading.value = true
   try {
@@ -60,89 +76,98 @@ async function handleSignUp() {
     </header>
 
     <div class="flex-1">
-      <form class="flex flex-col gap-2" @submit.prevent="handleSignUp">
+      <Form
+        v-slot="$form"
+        :initialValues="formData"
+        :resolver="resolver"
+        :validateOnValueUpdate="false"
+        :validateOnSubmit="true"
+        :validateonBlur="true"
+        class="flex flex-col gap-2"
+        @submit="handleSignUp"
+      >
         <label for="nama">Nama</label>
-        <InputText
-          id="nama"
-          v-model="data.nama"
-          type="text"
-          name="nama"
-          placeholder="Siapa namamu?"
-          required
-        />
+        <InputText id="nama" type="text" name="nama" placeholder="Siapa namamu?" />
+
+        <Message v-if="$form.nama?.invalid" severity="error" size="small" variant="simple">
+          {{ $form.nama?.error.message }}
+        </Message>
 
         <label for="signup-email">Email</label>
-        <InputText
-          id="signup-email"
-          v-model="data.email"
-          required
-          type="email"
-          placeholder="Email"
-        />
+        <InputText id="signup-email" name="email" v-model="formData.email" placeholder="Email" />
+
+        <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">
+          {{ $form.email?.error.message }}
+        </Message>
 
         <label for="signup-number">No. HP</label>
         <InputText
           id="signup-number"
-          v-model="data.phoneNumber"
           type="text"
-          required
+          name="phoneNumber"
           :invalid="!formState.phone.isValid"
           placeholder="0878 kapan kapan kita ke dufan"
-          maxlength="14"
         />
 
-        <span v-show="!formState.phone.isValid" class="text-sm text-red-400 dark:text-red-500">
-          {{ formState.phone.message }}
-        </span>
+        <Message v-if="$form.phoneNumber?.invalid" severity="error" size="small" variant="simple">
+          {{ $form.phoneNumber?.error.message }}
+        </Message>
 
         <label for="signup-password">Password</label>
         <Password
-          v-model="data.password"
+          v-model="formData.password"
+          name="password"
           fluid
           input-id="signup-password"
-          required
           toggle-mask
-          :invalid="!formState.password.isStrong"
           placeholder="Password Anda"
           aria-describedby="weak-password-help"
         />
 
-        <span
-          v-show="!formState.password.isStrong"
-          id="weak-password-help"
-          class="text-sm text-red-400 dark:text-red-500"
-        >
-          Password harus memiliki panjang 8 karakter atau lebih.
-        </span>
+        <Message v-if="$form.password?.invalid" severity="error" size="small" variant="simple">
+          {{ $form.password?.error.message }}
+        </Message>
 
         <label for="confirm-password">Konfirmasi Password</label>
         <Password
-          v-model="data.confirmPassword"
           fluid
           input-id="confirm-password"
-          required
+          name="confirmPassword"
           toggle-mask
-          :invalid="!formState.password.isConfirmed"
           placeholder="Ketik Ulang Password"
           aria-describedby="unconfirmed-password-help"
           :feedback="false"
         />
 
-        <span
-          v-show="!formState.password.isConfirmed"
-          id="unconfirmed-password-help"
-          class="text-sm text-red-400 dark:text-red-500"
+        <Message
+          v-if="$form.confirmPassword?.invalid"
+          severity="error"
+          size="small"
+          variant="simple"
         >
-          Password tidak sama.
-        </span>
+          {{ $form.confirmPassword?.error.message }}
+        </Message>
+
+        <Message
+          v-if="
+            !$form.confirmPassword?.invalid &&
+            $form.confirmPassword?.value !== $form.password?.value
+          "
+          severity="error"
+          size="small"
+          variant="simple"
+        >
+          Mohon konfirmasi password kamu, ngetiknya yang bener.
+        </Message>
 
         <CTA
           type="submit"
           label="Daftar"
           class="block"
-          :disabled="isLoading || !formState.password.isStrong || !formState.password.isConfirmed"
+          :disabled="isLoading"
+          :loading="isLoading"
         />
-      </form>
+      </Form>
     </div>
 
     <Toast />
