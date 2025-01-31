@@ -14,12 +14,12 @@ const formData = reactive({
   password: "",
 })
 
-async function handleSignIn({ valid }: { valid: boolean }) {
+async function handleSignIn({ valid, values }: { valid: boolean; values: Record<string, any> }) {
   if (!valid) return
 
   isLoading.value = true
   try {
-    const { email, password } = formData
+    const { email, password } = values
     const error = await authStore.handleSignIn(email, password)
     if (error) throw error
 

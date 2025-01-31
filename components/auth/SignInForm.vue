@@ -40,10 +40,10 @@ const formState = computed(() => {
   }
 })
 
-async function handleSignUp({ valid }: { valid: boolean }) {
+async function handleSignUp({ valid, values }: { valid: boolean; values: Record<string, any> }) {
   if (!valid) return
 
-  const { nama, email, phoneNumber, password } = formData.value
+  const { nama, email, phoneNumber, password } = values
 
   isLoading.value = true
   try {
@@ -94,7 +94,7 @@ async function handleSignUp({ valid }: { valid: boolean }) {
         </Message>
 
         <label for="signup-email">Email</label>
-        <InputText id="signup-email" name="email" v-model="formData.email" placeholder="Email" />
+        <InputText id="signup-email" name="email" placeholder="Email" />
 
         <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">
           {{ $form.email?.error.message }}
@@ -115,7 +115,6 @@ async function handleSignUp({ valid }: { valid: boolean }) {
 
         <label for="signup-password">Password</label>
         <Password
-          v-model="formData.password"
           name="password"
           fluid
           input-id="signup-password"
