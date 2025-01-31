@@ -14,7 +14,13 @@ const formData = reactive({
   password: "",
 })
 
-async function handleSignIn({ valid, values }: { valid: boolean; values: Record<string, any> }) {
+async function handleSignIn({
+  valid,
+  values,
+}: {
+  valid: boolean
+  values: Record<string, unknown>
+}) {
   if (!valid) return
 
   isLoading.value = true
@@ -95,12 +101,12 @@ const resolver = zodResolver(
       <Form
         v-slot="$form"
         class="flex flex-col gap-2"
-        @submit="handleSignIn"
         :resolver
-        :initialValues="formData"
-        :validateOnValueUpdate="false"
-        :validateOnBlur="false"
-        :validateOnSubmit="true"
+        :initial-values="formData"
+        :validate-on-value-update="false"
+        :validate-on-blur="false"
+        :validate-on-submit="true"
+        @submit="handleSignIn"
       >
         <label for="email">Email</label>
         <InputText id="email" name="email" placeholder="Email" autocomplete="off" />

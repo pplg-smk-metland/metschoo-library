@@ -40,7 +40,13 @@ const formState = computed(() => {
   }
 })
 
-async function handleSignUp({ valid, values }: { valid: boolean; values: Record<string, any> }) {
+async function handleSignUp({
+  valid,
+  values,
+}: {
+  valid: boolean
+  values: Record<string, unknown>
+}) {
   if (!valid) return
 
   const { nama, email, phoneNumber, password } = values
@@ -78,11 +84,11 @@ async function handleSignUp({ valid, values }: { valid: boolean; values: Record<
     <div class="flex-1">
       <Form
         v-slot="$form"
-        :initialValues="formData"
+        :initial-values="formData"
         :resolver="resolver"
-        :validateOnValueUpdate="false"
-        :validateOnSubmit="true"
-        :validateonBlur="true"
+        :validate-on-value-update="false"
+        :validate-on-submit="true"
+        :validateon-blur="true"
         class="flex flex-col gap-2"
         @submit="handleSignUp"
       >

@@ -27,7 +27,7 @@ const switchFormButtonLabel = computed(() =>
 
 <template>
   <div class="flex flex-col gap-8 justify-center max-w-xl mx-auto min-h-[70vh]">
-    <CTA type="button" @click="handleSwitchForm" :label="switchFormButtonLabel" link />
+    <CTA type="button" :label="switchFormButtonLabel" link @click="handleSwitchForm" />
 
     <Transition>
       <AuthSignInForm v-if="isSigningIn" />
