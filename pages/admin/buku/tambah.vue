@@ -7,6 +7,8 @@ import type { PostgrestError } from "@supabase/supabase-js"
 import IconArrowLeft from "~icons/mdi/arrow-left"
 import type { Database } from "~/types/database.types.ts"
 import { InputText, InputNumber, FileUpload } from "primevue"
+import { zodResolver } from "@primevue/forms/resolvers/zod"
+import { z } from "zod"
 
 useHead({
   title: "Tambah Buku",
@@ -34,6 +36,23 @@ async function uploadBookImage(isbn: string, file: File) {
   })
   return error
 }
+
+const schema = z.object({
+  judul: z.string(),
+  no_isbn: z.string(),
+  kategori_id: z.number(),
+  asal: z.string(),
+  jumlah_exspl: z
+    .number()
+    .min(0, "jumlah harus 0 atau lebih.")
+    .max(10000, "banyak amat sih ga mungkin lah bukunya segitu."),
+  penerbit: z.string(),
+  alamat_terbit: z.string(),
+  tahun_terbit: z.string().regex(/\d{0,4}/, { message: "tahun terbit harus memiliki 4 digit." }),
+  penulis: z.string(),
+})
+
+const resolver = zodResolver(schema)
 
 async function addNewBook(buku: Buku) {
   isLoading.value = true
@@ -137,7 +156,15 @@ const router = useRouter()
       </p>
     </figure>
 
-    <form class="grid grid-cols-1 sm:grid-cols-2 gap-4" @submit.prevent="addNewBook(buku)">
+    <Form
+      v-slot="$form"
+      :resolver="resolver"
+      :validate-on-blur="true"
+      :validate-on-submit="true"
+      :validate-on-value-update="false"
+      class="grid grid-cols-1 sm:grid-cols-2 gap-4"
+      @submit="addNewBook(buku)"
+    >
       <label for="buku-gambar" class="flex flex-col">
         <span class="font-semibold text-gray-700 dark:text-gray-300">Gambar buku</span>
         <FileUpload
@@ -158,12 +185,10 @@ const router = useRouter()
         <span class="font-semibold text-gray-700 dark:text-gray-300">Judul</span>
         <InputText
           id="buku-judul"
-          v-model="buku.judul"
           type="text"
-          name="buku-judul"
+          name="judul"
           placeholder="judul buku"
           fluid
-          required
           class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
         />
       </label>
@@ -172,12 +197,10 @@ const router = useRouter()
         <span class="font-semibold text-gray-700 dark:text-gray-300">ISBN</span>
         <InputText
           id="buku-isbn"
-          v-model="buku.no_isbn"
           type="text"
-          name="buku-isbn"
+          name="no_isbn"
           placeholder="ISBN buku"
           fluid
-          required
           class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
         />
       </label>
@@ -192,7 +215,6 @@ const router = useRouter()
           option-label="kategori"
           option-value="id"
           fluid
-          required
           class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
         />
       </label>
@@ -201,12 +223,10 @@ const router = useRouter()
         <span class="font-semibold text-gray-700 dark:text-gray-300">Penulis</span>
         <InputText
           id="buku-penulis"
-          v-model="buku.penulis"
           type="text"
-          name="buku-penulis"
+          name="penulis"
           placeholder="penulis buku"
           fluid
-          required
           class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
         />
       </label>
@@ -215,12 +235,10 @@ const router = useRouter()
         <span class="font-semibold text-gray-700 dark:text-gray-300">Penerbit</span>
         <InputText
           id="buku-penerbit"
-          v-model="buku.penerbit"
           type="text"
-          name="buku-penerbit"
+          name="penerbit"
           placeholder="penerbit"
           fluid
-          required
           class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
         />
       </label>
@@ -229,12 +247,10 @@ const router = useRouter()
         <span class="font-semibold text-gray-700 dark:text-gray-300">Tahun terbit</span>
         <InputText
           id="buku-tahun-terbit"
-          v-model="buku.tahun_terbit"
           type="text"
-          name="buku-tahun-terbit"
+          name="tahun_terbit"
           placeholder="tahun terbit"
           fluid
-          required
           class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
         />
       </label>
@@ -243,12 +259,10 @@ const router = useRouter()
         <span class="font-semibold text-gray-700 dark:text-gray-300">Alamat terbit</span>
         <InputText
           id="buku-alamat-terbit"
-          v-model="buku.alamat_terbit"
           type="text"
-          name="buku-alamat-terbit"
+          name="alamat_terbit"
           placeholder="alamat terbit"
           fluid
-          required
           class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
         />
       </label>
@@ -257,12 +271,10 @@ const router = useRouter()
         <span class="font-semibold text-gray-700 dark:text-gray-300">Asal</span>
         <InputText
           id="buku-asal"
-          v-model="buku.asal"
           type="text"
-          name="buku-asal"
+          name="asal"
           placeholder="asal buku"
           fluid
-          required
           class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
         />
       </label>
@@ -271,13 +283,9 @@ const router = useRouter()
         <span class="font-semibold text-gray-700 dark:text-gray-300">Jumlah</span>
         <InputNumber
           id="buku-jumlah"
-          v-model="buku.jumlah_exspl"
-          :min="0"
-          :max="10000"
-          name="buku-jumlah"
+          name="jumlah_exspl"
           placeholder="jumlah buku"
           fluid
-          required
           class="rounded-md border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
         />
       </label>
@@ -302,6 +310,6 @@ const router = useRouter()
         <h2>Sukses!</h2>
         <p>{{ dialog.message }}</p>
       </TheDialog>
-    </form>
+    </Form>
   </section>
 </template>
