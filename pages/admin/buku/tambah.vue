@@ -6,9 +6,8 @@ import type { PostgrestError } from "@supabase/supabase-js"
 import IconArrowLeft from "~icons/mdi/arrow-left"
 import type { Database } from "~/types/database.types.ts"
 import { InputText, InputNumber, FileUpload } from "primevue"
-import { zodResolver } from "@primevue/forms/resolvers/zod"
-import { z } from "zod"
 import type { FormSubmitEvent } from "@primevue/forms"
+import { schema, resolver } from "~/lib/buku"
 
 useHead({
   title: "Tambah Buku",
@@ -36,26 +35,6 @@ async function uploadBookImage(isbn: string, file: File) {
   })
   return error
 }
-
-const schema = z.object({
-  judul: z.string().nonempty("judul tidak boleh kosong."),
-  no_isbn: z.string().nonempty("isbn tidak boleh kosong."),
-  image: z.string().nullable(),
-  kategori_id: z.number({ message: "buku harus memiliki kategori." }),
-  asal: z.string().default("-"),
-  jumlah_exspl: z
-    .number({ message: "jumlah harus berupa angka." })
-    .min(0, "jumlah harus 0 atau lebih.")
-    .max(10000, "banyak amat sih ga mungkin lah bukunya segitu."),
-  penerbit: z.string().nonempty("penerbit tidak boleh kosong."),
-  alamat_terbit: z.string().nonempty("alamat penerbit tidak boleh kosong."),
-  tahun_terbit: z
-    .string()
-    .regex(/^\d{0,4}$/, { message: "tahun terbit harus berupa angka 0 sampai 4 digit." }),
-  penulis: z.string().nonempty("penulis tidak boleh kosong"),
-})
-
-const resolver = zodResolver(schema)
 
 async function addNewBook({ valid, values }: FormSubmitEvent) {
   if (!valid) return
