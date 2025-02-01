@@ -29,8 +29,7 @@ const { newImage, previewURL, previewImage } = usePreviewImage()
 async function uploadBookImage(isbn: string, file: File) {
   if (!formData.value) return console.trace("buku gak ada????")
 
-  formData.value.image = `public/${isbn}`
-  const { error } = await supabase.storage.from("Buku").upload(formData.value.image, file, {
+  const { error } = await supabase.storage.from("Buku").upload(`public/${isbn}`, file, {
     upsert: true,
   })
   return error
@@ -42,10 +41,10 @@ async function addNewBook({ valid, values }: FormSubmitEvent) {
   isLoading.value = true
 
   const { data: buku, success, error } = schema.safeParse(values)
-  if (!buku || !success) {
+  if (!buku || (buku && !success)) {
     isLoading.value = false
 
-    console.log(buku, success, error)
+    console.log(error)
 
     return toast.add({
       severity: "error",
@@ -55,16 +54,14 @@ async function addNewBook({ valid, values }: FormSubmitEvent) {
     })
   }
 
-  const { no_isbn } = buku
-
   try {
     // upload image if admin puts an image
     if (newImage.value) {
-      const uploadError = await uploadBookImage(no_isbn, newImage.value)
+      const uploadError = await uploadBookImage(buku.no_isbn, newImage.value)
       if (uploadError) throw uploadError
     }
 
-    const insertError = await insertBookData(buku)
+    const insertError = await insertBookData({ ...buku, image: `public/${buku.no_isbn}` })
     if (insertError) throw insertError
 
     dialog.value.open("Buku berhasil ditambahkan!")
