@@ -6,6 +6,8 @@ import Toast from "primevue/toast"
 import type { Pengguna } from "@/types"
 import { useToast } from "primevue/usetoast"
 import IconArrowLeft from "~icons/mdi/arrow-left"
+import { zodResolver } from "@primevue/forms/resolvers/zod"
+import { z } from "zod"
 
 useHead({
   title: "Edit profil",
@@ -24,9 +26,19 @@ const { data: userProfile } = await useAsyncData(async () => {
   return false
 })
 
+const formSchema = z.object({
+  nama: z.string().nonempty("nama kamu gak mungkin kosong."),
+  kelas: z.enum(["X", "XI", "XII"], { message: "kelasnya gak valid." }),
+  jurusan: z.string().nonempty("jurusan kamu gak mungkin kosong."),
+})
+
+const resolver = zodResolver(formSchema)
+
 const toast = useToast()
 
-async function updateProfile() {
+async function updateProfile({ valid }: { valid: boolean }) {
+  if (!valid) return
+
   try {
     await authStore.handleUpdateProfile(userProfile.value as Pengguna)
 
@@ -58,27 +70,61 @@ async function updateProfile() {
 
   <section v-if="userProfile" class="main-section flex gap-4">
     <figure class="flex flex-col gap-4">
-      <img class="profile__picture" src="@/assets/profilepicture.svg" alt="Foto kamu disini" />
+      <img
+        width="300"
+        height="300"
+        class="flex-1"
+        src="@/assets/profilepicture.svg"
+        alt="Foto kamu disini"
+      />
       <CTA label="Edit foto profil" />
     </figure>
 
-    <form class="flex flex-col gap-2 flex-1" @submit.prevent="updateProfile">
+    <Form
+      v-slot="$form"
+      :initialValues="userProfile"
+      :resolver="resolver"
+      :validateOnValueUpdate="false"
+      :validateOnBlur="true"
+      :validateOnSubmit="true"
+      @submit="updateProfile"
+      class="flex flex-col gap-2 flex-grow"
+    >
       <label for="name">Nama</label>
-      <InputText v-model="userProfile.nama" type="text" placeholder="Masukan Nama" />
+      <InputText name="nama" v-model="userProfile.nama" type="text" placeholder="Masukan Nama" />
+
+      <Message v-if="$form.nama?.invalid" severity="error" size="small" variant="simple">
+        {{ $form.nama?.error.message }}
+      </Message>
 
       <label for="kelas">Kelas</label>
       <Select
+        :default-value="userProfile.kelas ?? 'X'"
         v-model="userProfile.kelas"
         :options="['X', 'XI', 'XII']"
+        name="kelas"
         placeholder="Kelas Berapa Kamu"
         checkmark
       />
 
-      <label for="jurusan">Jurusan</label>
-      <InputText v-model="userProfile.jurusan" type="text" placeholder="Masukkan Jurusan" />
+      <Message v-if="$form.kelas?.invalid" severity="error" size="small" variant="simple">
+        {{ $form.kelas?.error.message }}
+      </Message>
 
-      <CTA label="Edit profil" class="mt-auto" @click="updateProfile" />
-    </form>
+      <label for="jurusan">Jurusan</label>
+      <InputText
+        name="jurusan"
+        v-model="userProfile.jurusan"
+        type="text"
+        placeholder="Masukkan Jurusan"
+      />
+
+      <Message v-if="$form.jurusan?.invalid" severity="error" size="small" variant="simple">
+        {{ $form.jurusan?.error.message }}
+      </Message>
+
+      <CTA type="submit" label="Edit profil" class="mt-auto" />
+    </Form>
   </section>
 
   <section v-else>
