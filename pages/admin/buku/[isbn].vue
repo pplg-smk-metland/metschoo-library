@@ -9,6 +9,8 @@ import Select from "primevue/select"
 import type { Database } from "~/types/database.types.ts"
 import IconArrowLeft from "~icons/mdi/arrow-left"
 import type { Buku } from "~/types"
+import { schema, resolver } from "~/lib/buku"
+import type { FormSubmitEvent } from "@primevue/forms"
 
 definePageMeta({
   layout: "admin",
@@ -41,21 +43,26 @@ const { data: availableCategories } = await useLazyAsyncData(
   async () => await getAllAvailableCategories()
 )
 
-async function editBook(buku: Buku) {
+async function editBook({ valid, values }: FormSubmitEvent) {
+  if (!valid) return
+
+  const { data: buku, success, error } = schema.safeParse(values)
+
+  if (!buku || !success) {
+    console.log(error)
+
+    return toast.add({
+      severity: "error",
+      summary: "gagal menyunting data buku.",
+      detail: "gagal menyunting data buku. Silahkan coba lagi dalam beberapa saat",
+      life: 10000,
+    })
+  }
+
   try {
     const { error } = await supabase
       .from("buku")
-      .update({
-        judul: buku.judul,
-        no_isbn: buku.no_isbn,
-        penulis: buku.penulis,
-        asal: buku.asal,
-        kategori_id: buku.kategori_id,
-        jumlah_exspl: buku.jumlah_exspl,
-        penerbit: buku.penerbit,
-        alamat_terbit: buku.alamat_terbit,
-        tahun_terbit: buku.tahun_terbit,
-      })
+      .update({ ...buku, image: `public/${buku.no_isbn}` })
       .eq("no_isbn", isbn)
     if (error) throw error
 
@@ -85,7 +92,7 @@ async function deleteBook(isbn: string) {
     const { error } = await supabase.from("buku").delete().eq("no_isbn", isbn)
     if (error) throw error
 
-    const response = await supabase.storage.from("Buku").remove([`${isbn}/${isbn}`])
+    const response = await supabase.storage.from("Buku").remove([`public/${isbn}`])
     if (response.error) throw response.error
     if (error) throw error
 
@@ -153,9 +160,15 @@ const imgURL = ref(getBukuImage(buku.value?.image))
         </p>
       </figure>
 
-      <form
+      <Form
+        v-slot="$form"
         class="buku-edit grid grid-cols-1 sm:grid-cols-2 gap-4"
-        @submit.prevent="editBook(buku)"
+        validate-on-submit
+        :validate-on-value-update="false"
+        validate-on-blur
+        :resolver
+        :initial-values="buku"
+        @submit="editBook"
       >
         <label for="buku-gambar">
           <span>Gambar buku</span>
@@ -163,7 +176,7 @@ const imgURL = ref(getBukuImage(buku.value?.image))
             id="buku-gambar"
             ref="buku-gambar"
             mode="basic"
-            name="buku-gambar"
+            name="image"
             accept="image/*"
             class="w-full border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
             custom-upload
@@ -177,114 +190,151 @@ const imgURL = ref(getBukuImage(buku.value?.image))
           <span class="font-semibold text-gray-700 dark:text-gray-300">Judul</span>
           <InputText
             id="buku-judul"
-            v-model="buku.judul"
+            :default-value="buku.judul"
             type="text"
-            name="buku-judul"
-            required
+            name="judul"
             class="border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
+
+          <Message v-if="$form.judul?.invalid" severity="error" size="small" variant="simple">
+            {{ $form.judul?.error.message }}
+          </Message>
         </label>
 
         <label for="buku-asal" class="flex flex-col">
           <span class="font-semibold text-gray-700 dark:text-gray-300">Asal</span>
           <InputText
             id="buku-asal"
-            v-model="buku.asal"
             type="text"
-            name="buku-asal"
-            required
+            name="asal"
+            :default-value="buku.asal"
             class="border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
+
+          <Message v-if="$form.asal?.invalid" severity="error" size="small" variant="simple">
+            {{ $form.asal?.error.message }}
+          </Message>
         </label>
 
         <label for="buku-penulis" class="flex flex-col">
           <span class="font-semibold text-gray-700 dark:text-gray-300">ISBN</span>
           <InputText
             id="buku-isbn"
-            v-model="buku.no_isbn"
             type="text"
-            name="buku-isbn"
-            required
+            name="no_isbn"
+            :default-value="buku.no_isbn"
             class="border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
+          <Message v-if="$form.no_isbn?.invalid" severity="error" size="small" variant="simple">
+            {{ $form.no_isbn?.error.message }}
+          </Message>
         </label>
 
         <label for="buku-penulis" class="flex flex-col">
           <span class="font-semibold text-gray-700 dark:text-gray-300">Penulis</span>
           <InputText
             id="buku-penulis"
-            v-model="buku.penulis"
+            :default-value="buku.penulis"
             type="text"
-            name="buku-penulis"
-            required
+            name="penulis"
             class="border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
+          <Message v-if="$form.penulis?.invalid" severity="error" size="small" variant="simple">
+            {{ $form.penulis?.error.message }}
+          </Message>
         </label>
 
         <label for="buku-penerbit" class="flex flex-col">
           <span class="font-semibold text-gray-700 dark:text-gray-300">Penerbit</span>
           <InputText
             id="buku-penerbit"
-            v-model="buku.penerbit"
             type="text"
-            name="buku-penerbit"
-            required
+            :default-value="buku.penerbit"
+            name="penerbit"
             class="border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
+          <Message v-if="$form.penerbit?.invalid" severity="error" size="small" variant="simple">
+            {{ $form.penerbit?.error.message }}
+          </Message>
         </label>
 
         <label for="buku-tahun-terbit" class="flex flex-col">
           <span class="font-semibold text-gray-700 dark:text-gray-300">Tahun terbit</span>
           <InputText
             id="buku-tahun-terbit"
-            v-model="buku.tahun_terbit"
             type="text"
-            name="buku-tahun-terbit"
-            required
+            :default-value="buku.tahun_terbit"
+            name="tahun_terbit"
             class="border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
+          <Message
+            v-if="$form.tahun_terbit?.invalid"
+            severity="error"
+            size="small"
+            variant="simple"
+          >
+            {{ $form.tahun_terbit?.error.message }}
+          </Message>
         </label>
 
         <label for="buku-alamat-terbit" class="flex flex-col">
           <span class="font-semibold text-gray-700 dark:text-gray-300">Alamat terbit</span>
           <InputText
             id="buku-alamat-terbit"
-            v-model="buku.alamat_terbit"
             type="text"
-            name="buku-alamat-terbit"
-            required
+            :default-value="buku.alamat_terbit"
+            name="alamat_terbit"
             class="border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
+          <Message
+            v-if="$form.alamat_terbit?.invalid"
+            severity="error"
+            size="small"
+            variant="simple"
+          >
+            {{ $form.alamat_terbit?.error.message }}
+          </Message>
         </label>
 
         <label for="buku-jumlah" class="flex flex-col">
           <span class="font-semibold text-gray-700 dark:text-gray-300">Jumlah</span>
           <InputNumber
             id="buku-jumlah"
-            v-model="buku.jumlah_exspl"
             :invalid="0 > buku.jumlah_exspl || buku.jumlah_exspl > 1000"
-            name="buku-jumlah"
+            :default-value="buku.jumlah_exspl"
+            name="jumlah_exspl"
             fluid
-            required
             class="border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
+          <Message
+            v-if="$form.jumlah_exspl?.invalid"
+            severity="error"
+            size="small"
+            variant="simple"
+          >
+            {{ $form.jumlah_exspl?.error.message }}
+          </Message>
         </label>
 
         <label for="buku-kategori" class="flex flex-col">
           <span class="font-semibold text-gray-700 dark:text-gray-300">Kategori</span>
           <Select
-            v-model="buku.kategori_id"
             placeholder="Pilih kategori"
             :options="availableCategories ?? []"
             checkmark
+            :default-value="buku.kategori_id"
+            name="kategori_id"
             option-label="kategori"
             option-value="id"
             class="border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
+          <Message v-if="$form.kategori_id?.invalid" severity="error" size="small" variant="simple">
+            {{ $form.kategori_id?.error.message }}
+          </Message>
         </label>
 
-        <CTA type="submit" label="Simpan perubahan" class="sm:col-span-2" />
-      </form>
+        <CTA type="submit" label="Simpan perubahan" class="sm:col-span-2" :loading="isLoading" />
+      </Form>
     </section>
 
     <div class="button-container">
