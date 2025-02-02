@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { useBuku, useDialog } from "@/composables"
+import { useDialog } from "@/composables"
 import Select from "primevue/select"
 import { StorageError } from "@supabase/storage-js"
 import type { PostgrestError } from "@supabase/supabase-js"
 import IconArrowLeft from "~icons/mdi/arrow-left"
-import type { Database } from "~/types/database.types.ts"
 import { InputText, InputNumber, FileUpload } from "primevue"
 import type { FormSubmitEvent } from "@primevue/forms"
-import { schema, resolver } from "~/lib/buku"
+import { schema, resolver, uploadBookImage } from "~/lib/buku"
 
 useHead({
   title: "Tambah Buku",
@@ -17,23 +16,11 @@ definePageMeta({
   layout: "admin",
 })
 
-const supabase = useSupabaseClient<Database>()
-const { buku: formData } = useBuku()
-
 const isLoading = ref(false)
 const { dialog } = useDialog()
 const { dialog: errDialog } = useDialog()
 
 const { newImage, previewURL, previewImage } = usePreviewImage()
-
-async function uploadBookImage(isbn: string, file: File) {
-  if (!formData.value) return console.trace("buku gak ada????")
-
-  const { error } = await supabase.storage.from("Buku").upload(`public/${isbn}`, file, {
-    upsert: true,
-  })
-  return error
-}
 
 async function addNewBook({ valid, values }: FormSubmitEvent) {
   if (!valid) return

@@ -9,7 +9,7 @@ import Select from "primevue/select"
 import type { Database } from "~/types/database.types.ts"
 import IconArrowLeft from "~icons/mdi/arrow-left"
 import type { Buku } from "~/types"
-import { schema, resolver } from "~/lib/buku"
+import { schema, resolver, uploadBookImage } from "~/lib/buku"
 import type { FormSubmitEvent } from "@primevue/forms"
 
 definePageMeta({
@@ -43,6 +43,9 @@ const { data: availableCategories } = await useLazyAsyncData(
   async () => await getAllAvailableCategories()
 )
 
+const { newImage, previewURL, previewImage } = usePreviewImage()
+const imgURL = ref(getBukuImage(buku.value?.image))
+
 async function editBook({ valid, values }: FormSubmitEvent) {
   if (!valid) return
 
@@ -60,6 +63,11 @@ async function editBook({ valid, values }: FormSubmitEvent) {
   }
 
   try {
+    if (newImage.value) {
+      const uploadError = await uploadBookImage(buku.no_isbn, newImage.value)
+      if (uploadError) throw uploadError
+    }
+
     const { error } = await supabase
       .from("buku")
       .update({ ...buku, image: `public/${buku.no_isbn}` })
@@ -73,6 +81,22 @@ async function editBook({ valid, values }: FormSubmitEvent) {
     })
   } catch (err) {
     console.trace((err as PostgrestError).message)
+
+    if (err instanceof StorageError) {
+      return toast.add({
+        severity: "error",
+        summary: "gagal mengunggah gambar buku!",
+        detail: "gagal mengunggah gambar buku, Silahkan coba lagi.",
+        life: 10000,
+      })
+    }
+
+    return toast.add({
+      severity: "error",
+      summary: "gagal menyunting data buku!",
+      detail: "gagal menyunting data buku. Silahkan coba lagi dalam beberapa saat.",
+      life: 10000,
+    })
   }
 }
 
@@ -123,9 +147,6 @@ async function deleteBook(isbn: string) {
     isLoading.value = false
   }
 }
-
-const { newImage, previewURL, previewImage } = usePreviewImage()
-const imgURL = ref(getBukuImage(buku.value?.image))
 </script>
 
 <template>

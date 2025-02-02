@@ -1,3 +1,5 @@
+import { useSupabaseClient } from "#build/imports"
+import type { Database } from "~/types/database.types"
 import { zodResolver } from "@primevue/forms/resolvers/zod"
 import { z } from "zod"
 
@@ -20,3 +22,12 @@ export const schema = z.object({
 })
 
 export const resolver = zodResolver(schema)
+
+export async function uploadBookImage(isbn: string, file: File) {
+  const supabase = useSupabaseClient<Database>()
+
+  const { error } = await supabase.storage.from("Buku").upload(`public/${isbn}`, file, {
+    upsert: true,
+  })
+  return error
+}
