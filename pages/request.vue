@@ -39,17 +39,19 @@ async function handleInsertRequest(requestData: RequestData) {
     await insertRequest(requestData)
 
     toast.add({
-      severity: "error",
-      summary: "gagal menambahkan buku",
-      detail: "gagal menanbahkan request buku, silahkan coba lagi nanti",
-      life: 10000,
-    })
-  } catch (err) {
-    console.error(err)
-    toast.add({
       severity: "success",
       summary: "menanbahkan request",
       detail: "sukses menanbahkan request buku, mohon ditunggu ya",
+      life: 10000,
+    })
+
+    latestRequest.value = false
+  } catch (err) {
+    console.error(err)
+    toast.add({
+      severity: "error",
+      summary: "gagal menambahkan buku",
+      detail: "gagal menanbahkan request buku, silahkan coba lagi nanti",
       life: 10000,
     })
   }

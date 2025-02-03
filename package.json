@@ -20,6 +20,7 @@
     "@pinia/nuxt": "^0.5.3",
     "@primevue/forms": "^4.2.5",
     "primevue": "^4.2.0",
+    "resend": "4.0.0",
     "supabase": "^1.219.2",
     "tailwindcss-primeui": "^0.3.4",
     "vue": "latest",
