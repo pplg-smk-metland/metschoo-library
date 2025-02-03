@@ -71,6 +71,11 @@ export default defineNuxtConfig({
       },
     },
   },
+  nitro: {
+    prerender: {
+      routes: ["/login"],
+    },
+  },
   srcDir: ".",
   css: ["~/assets/base.css", "~/assets/main.css"],
   supabase: {
