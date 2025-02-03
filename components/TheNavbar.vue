@@ -52,8 +52,12 @@ const isAdmin = computed(() =>
         </button>
       </li>
       <li>
-        <ClientOnly fallback-tag="span" fallback="memuat tema...">
+        <ClientOnly fallback-tag="span">
           <ThemeToggle class="nav-link text-lg" />
+
+          <template #fallback>
+            <span class="nav-link">Memuat tema...</span>
+          </template>
         </ClientOnly>
       </li>
       <li>
