@@ -30,7 +30,13 @@ async function handleRequest(
   email: string,
   type: Exclude<BookRequest["is_accepted"], "processing">
 ) {
-  const { data, error } = await supabase.functions.invoke("notify-admin-user-request", {
+  // cari data request dari array requests menggunakan id
+  const found = requests.value!.find((request) => request.id == id)
+  if (found) {
+    found.is_accepted = type
+  }
+
+  const { error } = await supabase.functions.invoke("notify-admin-user-request", {
     body: { email, type },
   })
 
@@ -42,9 +48,6 @@ async function handleRequest(
   } else if (error instanceof FunctionsFetchError) {
     console.log("Fetch error:", error.message)
   }
-
-  console.log(data)
-  return
 
   let detail
 
@@ -63,6 +66,8 @@ async function handleRequest(
       detail,
       life: 10000,
     })
+
+    //
   } catch (error) {
     console.error(error)
 
@@ -96,7 +101,7 @@ const tabs = [
 <template>
   <h1>request</h1>
 
-  <Tabs value="requests">
+  <Tabs value="processing">
     <TabList>
       <Tab v-for="tab in tabs" :key="tab.status" :value="tab.status">{{ tab.localized }}</Tab>
     </TabList>
