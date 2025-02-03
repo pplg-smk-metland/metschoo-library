@@ -106,9 +106,12 @@ const authStore = useAuthStore()
 const router = useRouter()
 
 const dialogIsVisible = ref(false)
+const isLoading = ref(false)
 
 async function signOut() {
+  isLoading.value = true
   await authStore.handleSignOut()
+  isLoading.value = false
   router.push("/")
 }
 </script>
@@ -212,7 +215,11 @@ async function signOut() {
   <Dialog v-model:visible="dialogIsVisible" modal header="Beneran mau keluar nih?">
     <p>Mau memastikan aja nih, kalau beneran mau keluar dan bukan kepencet...</p>
 
-    <CTA label="Keluar dari akun" @click="signOut" />
+    <CTA
+      :label="`${isLoading ? 'tunggu sebentar ya' : 'Keluar dari akun'}`"
+      @click="signOut"
+      :loading="isLoading"
+    />
   </Dialog>
 
   <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">
