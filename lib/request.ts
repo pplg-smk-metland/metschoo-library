@@ -4,7 +4,7 @@ import type { BookRequest, Pengguna, RequestData } from "~/types"
 
 export async function getRequests() {
   const supabase = useSupabaseClient<Database>()
-  const query = supabase.from("book_requests").select("*, pengguna(nama, email)")
+  const query = supabase.from("book_requests").select("*, pengguna(user_id, nama, email)")
 
   const { data, error } = await query
   if (error) throw error
@@ -23,7 +23,7 @@ export async function getUserRequest(id: Pengguna["user_id"]) {
     .single()
 
   if (error) {
-    if ((error as PostgrestError).code === 'PGRST116') return false
+    if ((error as PostgrestError).code === "PGRST116") return false
   }
   return data
 }

@@ -117,7 +117,13 @@ const tabs = [
             </template>
           </Column>
 
-          <Column field="pengguna.nama" header="Peminta" />
+          <Column field="pengguna.nama" header="Peminta">
+            <template #body="{ data }">
+              <RouterLink :to="`/admin/pengguna/${data.pengguna.user_id}/`" class="hover:underline">
+                {{ data.pengguna.nama }}
+              </RouterLink>
+            </template>
+          </Column>
 
           <Column field="isbn" header="ISBN" />
           <Column field="title" header="Judul" />
