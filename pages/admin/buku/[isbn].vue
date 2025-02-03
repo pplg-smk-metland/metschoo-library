@@ -183,7 +183,7 @@ async function deleteBook(isbn: string) {
 
       <Form
         v-slot="$form"
-        class="buku-edit grid grid-cols-1 sm:grid-cols-2 gap-4"
+        class="flex flex-col gap-4 md:grid md:grid-cols-2"
         validate-on-submit
         :validate-on-value-update="false"
         validate-on-blur
