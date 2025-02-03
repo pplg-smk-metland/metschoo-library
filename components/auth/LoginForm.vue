@@ -141,7 +141,11 @@ const resolver = zodResolver(
         Email terkirim! setelah kamu klik linknya, kamu bisa menutup tab ini.
       </p>
 
-      <form class="flex gap-4 flex-wrap" @submit.prevent="handleForgotPasword">
+      <form
+        class="flex gap-4 flex-wrap"
+        @submit.prevent="handleForgotPasword"
+        v-if="!isRecoveryEmailSent"
+      >
         <InputText
           id="recovery-email"
           v-model="formData.email"
