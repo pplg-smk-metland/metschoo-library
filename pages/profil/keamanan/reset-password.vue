@@ -13,16 +13,22 @@ definePageMeta({
   layout: "default",
 })
 
+const router = useRouter()
+const user = useSupabaseUser()
+
+if (!user) router.push("/")
+
 const schema = z.object({
-  password: z.string().nonempty().min(8, " Password harus memiliki panjang 8 karakter atau lebih."),
-  confirmPassword: z.string().nonempty("gak boleh kosong."),
+  password: z
+    .string({ message: "kamu lupa ngetik password baru kamu." })
+    .min(8, " Password harus memiliki panjang 8 karakter atau lebih."),
+  confirmPassword: z.string({ message: "kamu lupa mengetik konfirmasi password." }),
 })
 
 const resolver = zodResolver(schema)
 
 const isLoading = ref(false)
 const authStore = useAuthStore()
-const router = useRouter()
 
 const toast = useToast()
 
@@ -65,12 +71,12 @@ async function handleResetPassword({ valid, values }: FormSubmitEvent) {
 
     <section class="main-section">
       <Form
-        :resolver
         v-slot="$form"
-        :validate-on-submit="false"
-        :validate-on-blur="true"
-        :validate-on-value-update="false"
         class="flex flex-col gap-2"
+        :resolver
+        :validate-on-value-update="false"
+        :validate-on-blur="false"
+        :validate-on-submit="true"
         @submit="handleResetPassword"
       >
         <label for="password">Password baru kamu</label>
@@ -79,34 +85,29 @@ async function handleResetPassword({ valid, values }: FormSubmitEvent) {
           toggle-mask
           input-id="password"
           name="password"
-          placeholder="Password Anda"
+          placeholder="Password baru kamu"
+          autocomplete="off"
         />
 
-        <Message
-          v-show="$form.password?.invalid"
-          class="text-sm text-red-400 dark:text-red-500"
-          variant="simple"
-          size="small"
-        >
+        <Message v-if="$form.password?.invalid" severity="error" size="small" variant="simple">
           {{ $form.password?.error.message }}
         </Message>
 
-        <label for="confirm-password">Konfirmasi password baru</label>
+        <label for="confirm-password">Konfirmasi Password</label>
         <Password
-          id="confirm-password"
           fluid
-          name="confirmPassword"
           toggle-mask
-          placeholder="password anda"
+          input-id="confirm-password"
+          name="confirmPassword"
+          placeholder="Konfirmasi password kamu"
+          :feedback="false"
         />
 
         <Message
-          v-show="
-            $form.confirmPassword?.invalid || $form.confirmPassword?.value !== $form.password?.value
-          "
-          class="text-sm text-red-400 dark:text-red-500"
-          variant="simple"
+          v-if="$form.confirmPassword?.invalid"
+          severity="error"
           size="small"
+          variant="simple"
         >
           {{ $form.confirmPassword?.error.message }}
         </Message>
