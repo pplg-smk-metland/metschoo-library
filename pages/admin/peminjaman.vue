@@ -113,7 +113,7 @@ async function handleFilterPeminjaman() {
       </template>
 
       <Column field="pengguna.nama" header="Peminjam" />
-      <Column header="Judul buku" class="!p-0">
+      <Column field="judul" header="Judul buku" class="!p-0">
         <template #body="{ data }">
           <NuxtLink
             :to="`/admin/buku/${data.buku.no_isbn}`"
@@ -126,13 +126,13 @@ async function handleFilterPeminjaman() {
 
       <Column field="no_isbn" header="ISBN" />
 
-      <Column header="Tanggal pinjam" sortable>
+      <Column field="tgl_pinjam" header="Tanggal pinjam" sortable>
         <template #body="{ data }: { data: PeminjamanData[number] }">
           {{ getPeminjamanStateDate(data, 1) }}
         </template>
       </Column>
 
-      <Column header="Tanggal kembali" sortable>
+      <Column header="Tanggal kembali">
         <template #body="{ data }: { data: PeminjamanData[number] }">
           {{ getPeminjamanStateDate(data, 5) }}
         </template>
