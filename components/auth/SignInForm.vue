@@ -1,19 +1,10 @@
 <script setup lang="ts">
 import InputText from "primevue/inputtext"
 import Password from "primevue/password"
-import type { SignUpData } from "@/types"
 import { zodResolver } from "@primevue/forms/resolvers/zod"
 import { z } from "zod"
 
 const isLoading = ref(false)
-
-const formData = ref<SignUpData>({
-  nama: "",
-  email: "",
-  phoneNumber: "",
-  password: "",
-  confirmPassword: "",
-})
 
 const schema = z.object({
   nama: z.string().nonempty("namamu ga mungkin kosong bre."),
@@ -29,16 +20,6 @@ const resolver = zodResolver(schema)
 
 const authStore = useAuthStore()
 const toast = useToast()
-
-const formState = computed(() => {
-  return {
-    password: {
-      isStrong: formData.value.password.length >= 8,
-      isConfirmed: formData.value.confirmPassword === formData.value.password,
-    },
-    phone: phoneIsValid(formData.value.phoneNumber),
-  }
-})
 
 async function handleSignUp({ valid, values }: { valid: boolean; values: Record<string, string> }) {
   if (!valid) return
@@ -64,6 +45,8 @@ async function handleSignUp({ valid, values }: { valid: boolean; values: Record<
     isLoading.value = false
   }
 }
+
+const dialogIsVisible = ref(false)
 </script>
 
 <template>
@@ -78,7 +61,6 @@ async function handleSignUp({ valid, values }: { valid: boolean; values: Record<
     <div class="flex-1">
       <Form
         v-slot="$form"
-        :initial-values="formData"
         :resolver="resolver"
         :validate-on-value-update="false"
         :validate-on-submit="true"
@@ -105,7 +87,6 @@ async function handleSignUp({ valid, values }: { valid: boolean; values: Record<
           id="signup-number"
           type="text"
           name="phoneNumber"
-          :invalid="!formState.phone.isValid"
           placeholder="0878 kapan kapan kita ke dufan"
         />
 
@@ -162,6 +143,13 @@ async function handleSignUp({ valid, values }: { valid: boolean; values: Record<
         <CTA type="submit" label="Daftar" class="block" :loading="isLoading" />
       </Form>
     </div>
+
+    <Dialog v-model:visible="dialogIsVisible" modal header="Cek email kamu ya!">
+      <p>
+        Kami sudah mengirimkan email yang berisi pranala untuk konfirmasi akun kamu. Jangan lupa cek
+        spam juga! Setelah kamu klik pranalanya, kamu boleh menutup tab ini.
+      </p>
+    </Dialog>
 
     <Toast />
   </section>
