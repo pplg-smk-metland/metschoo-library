@@ -9,6 +9,7 @@ useHead({
       content: "Aplikasi Perpustakan Metschoo.",
     },
   ],
+  link: [{ rel: "icon", type: "image/svg+xml", href: "logo.svg" }],
   bodyAttrs: {
     class: computed(() => [
       "bg-surface-100/80 dark:bg-surface-950 dark:text-gray-300",
