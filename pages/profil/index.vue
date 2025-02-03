@@ -95,8 +95,8 @@ async function enterLibrary() {
     if (error) throw error
 
     const toastDetail = isPresent.value
-      ? "Sukses masuk perpustakaan, selamat beraktivitas."
-      : "Sukses keluar perpustakaan, semoga hari mu menyenangkan."
+      ? "Sukses keluar perpustakaan, semoga hari mu menyenangkan."
+      : "Sukses masuk perpustakaan, selamat beraktivitas."
 
     toast.add({
       severity: "success",

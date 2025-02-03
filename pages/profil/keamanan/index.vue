@@ -105,13 +105,9 @@ async function changePhoneNumber(phoneNumber: string) {
 const authStore = useAuthStore()
 const router = useRouter()
 
+const dialogIsVisible = ref(false)
+
 async function signOut() {
-  const reallySigningOut = confirm("Beneran nih mau keluar akun?")
-
-  if (!reallySigningOut) {
-    return
-  }
-
   await authStore.handleSignOut()
   router.push("/")
 }
@@ -206,12 +202,18 @@ async function signOut() {
 
   <section class="main-section">
     <h2 class="text-lg mb-2 text-red-500">Keluar dari akun</h2>
-    <p>Klik disini untuk keluar dari akun anda</p>
+    <p>Klik disini untuk keluar dari akun kamu.</p>
 
     <div class="button-container">
-      <CTA label="Keluar dari akun" severity="danger" @click="signOut" />
+      <CTA label="Keluar dari akun" severity="danger" @click="dialogIsVisible = true" />
     </div>
   </section>
+
+  <Dialog v-model:visible="dialogIsVisible" modal header="Beneran mau keluar nih?">
+    <p>Mau memastikan aja nih, kalau beneran mau keluar dan bukan kepencet...</p>
+
+    <CTA label="Keluar dari akun" @click="signOut" />
+  </Dialog>
 
   <TheDialog :is-open="dialog.isOpen" @dialog-close="dialog.close()">
     <template #header>

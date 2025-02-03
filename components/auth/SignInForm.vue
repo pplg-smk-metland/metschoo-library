@@ -21,6 +21,7 @@ const resolver = zodResolver(schema)
 const authStore = useAuthStore()
 const toast = useToast()
 
+const dialogIsVisible = ref(false)
 async function handleSignUp({ valid, values }: { valid: boolean; values: Record<string, string> }) {
   if (!valid) return
 
@@ -31,7 +32,7 @@ async function handleSignUp({ valid, values }: { valid: boolean; values: Record<
     const error = await authStore.handleSignUp({ nama, email, phoneNumber, password })
     if (error) throw error
 
-    alert("Cek email lu ya buat verifikasi email!")
+    dialogIsVisible.value = true
   } catch (err) {
     console.error(err)
 
@@ -45,8 +46,6 @@ async function handleSignUp({ valid, values }: { valid: boolean; values: Record<
     isLoading.value = false
   }
 }
-
-const dialogIsVisible = ref(false)
 </script>
 
 <template>
