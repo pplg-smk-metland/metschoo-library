@@ -1,9 +1,10 @@
 import type { Database } from "@/types/database.types"
+import type { PostgrestError } from "@supabase/supabase-js"
 import type { BookRequest, Pengguna, RequestData } from "~/types"
 
 export async function getRequests() {
   const supabase = useSupabaseClient<Database>()
-  const query = supabase.from("book_requests").select("*, pengguna(nama)")
+  const query = supabase.from("book_requests").select("*, pengguna(nama, email)")
 
   const { data, error } = await query
   if (error) throw error
@@ -21,7 +22,9 @@ export async function getUserRequest(id: Pengguna["user_id"]) {
     .limit(1)
     .single()
 
-  if (error) console.log(error)
+  if (error) {
+    if ((error as PostgrestError).code === 'PGRST116') return false
+  }
   return data
 }
 

@@ -2,6 +2,7 @@
 import { Tab, Tabs, TabList, TabPanels, TabPanel, Toast, useToast } from "primevue"
 import { getRequests, processRequest } from "@/lib/request"
 import type { BookRequest } from "~/types"
+import { FunctionsFetchError, FunctionsHttpError, FunctionsRelayError } from "@supabase/supabase-js"
 
 useHead({
   title: "request",
@@ -10,7 +11,7 @@ useHead({
 definePageMeta({
   layout: "admin",
 })
-
+const supabase = useSupabaseClient()
 const toast = useToast()
 
 const { data: requests, error } = await useAsyncData(async () => await getRequests())
@@ -26,15 +27,33 @@ if (error) {
 
 async function handleRequest(
   id: BookRequest["id"],
+  email: string,
   type: Exclude<BookRequest["is_accepted"], "processing">
 ) {
-  let detail;
+  const { data, error } = await supabase.functions.invoke("notify-admin-user-request", {
+    body: { email, type },
+  })
 
-  if( "accepted" === type) {
-    detail = "sukses menandai permintaan buku sebagai diterima";
-  } else {
-    detail = "sukses menandai permintaan buku sebagai ditolak";
+  if (error instanceof FunctionsHttpError) {
+    const errorMessage = await error.context.json()
+    console.log("Function returned an error", errorMessage)
+  } else if (error instanceof FunctionsRelayError) {
+    console.log("Relay error:", error.message)
+  } else if (error instanceof FunctionsFetchError) {
+    console.log("Fetch error:", error.message)
   }
+
+  console.log(data)
+  return
+
+  let detail
+
+  if ("accepted" === type) {
+    detail = "sukses menandai permintaan buku sebagai diterima"
+  } else {
+    detail = "sukses menandai permintaan buku sebagai ditolak"
+  }
+
   try {
     await processRequest(id, type)
 
@@ -100,10 +119,17 @@ const tabs = [
           <Column field="category" header="Kategori buku" sortable />
 
           <Column v-if="tab.status === 'processing'" header="aksi">
-            <template #body="{ data }: { data: BookRequest }">
+            <template #body="{ data }">
               <div class="flex gap-4">
-                <CTA label="terima" @click="handleRequest(data.id, 'accepted')" />
-                <CTA label="tolak" severity="danger" @click="handleRequest(data.id, 'rejected')" />
+                <CTA
+                  label="terima"
+                  @click="handleRequest(data.id, data.pengguna.email, 'accepted')"
+                />
+                <CTA
+                  label="tolak"
+                  severity="danger"
+                  @click="handleRequest(data.id, data.pengguna.email, 'rejected')"
+                />
               </div>
             </template>
           </Column>
