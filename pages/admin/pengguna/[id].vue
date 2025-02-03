@@ -83,6 +83,7 @@ const formatPhoneNumber = (phoneNo: string | null): string => {
     </CTA>
     <PageHeader :heading="pengguna.nama">
       <p>kelas: {{ pengguna.kelas ? pengguna.kelas : "tidak ada kelas" }}</p>
+      <p>email: {{ pengguna.email }}</p>
       <p>jurusan: {{ pengguna.jurusan ? pengguna.jurusan : "tidak ada jurusan" }}</p>
       <p>
         Nomor telepon:
@@ -102,6 +103,10 @@ const formatPhoneNumber = (phoneNo: string | null): string => {
 
     <section class="main-section">
       <DataTable :value="peminjaman" striped-rows>
+        <template #empty>
+          <p>Pengguna ini belum pernah meminjam buku.</p>
+        </template>
+
         <template #header>
           <p>Data peminjaman untuk {{ pengguna.nama }}</p>
         </template>
@@ -144,6 +149,10 @@ const formatPhoneNumber = (phoneNo: string | null): string => {
     <Divider />
     <section class="main-section">
       <DataTable :value="kunjungan" striped-rows>
+        <template #empty>
+          <p>Pengguna ini belum pernah mengunjungi perpustakaan.</p>
+        </template>
+
         <template #header>
           <p>Riwayat kunjungan untuk {{ pengguna.nama }}</p>
         </template>
@@ -166,8 +175,7 @@ const formatPhoneNumber = (phoneNo: string | null): string => {
       <h2 class="text-lg font-bold">Aksi</h2>
 
       <div class="flex flex-col items-start gap-4">
-        <CTA label="edit" />
-        <CTA label="kirimkan email reset password" />
+        <CTA label="kirimkan email reset password" @click="console.log('belum diimplementais')" />
         <CTA label="hapus" severity="danger" />
       </div>
     </section>

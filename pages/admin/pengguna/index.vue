@@ -64,7 +64,7 @@ const { data: penggunas } = await useAsyncData(async () => {
       <Column header="Aksi">
         <template #body="slotProps">
           <NuxtLink :to="`/admin/pengguna/${slotProps.data.user_id}`">
-            <CTA label="edit" link />
+            <CTA label="selengkapnya" link />
           </NuxtLink>
         </template>
       </Column>
