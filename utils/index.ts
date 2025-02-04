@@ -58,31 +58,13 @@ export async function getBukus(typeId?: Kategori["id"]): Promise<Buku[]> {
   return data
 }
 
-/**
- * count the amount of bukus available.
- * @returns {Promise<number>} buku count
- * */
-export async function countBukus(): Promise<number> {
+export async function getDashboardStatistics() {
   const supabase = useSupabaseClient<Database>()
 
-  const { count, error } = await supabase.from("buku").select("*", { count: "exact", head: true })
+  const { data, error } = await supabase.rpc("dashboard_statistics")
   if (error) throw error
 
-  return count ?? 0
-}
-
-/**
- * count the amount of active users (pengguna).
- * @returns {Promise<number>} pengguna count
- * */
-export async function countPenggunas(): Promise<number> {
-  const supabase = useSupabaseClient<Database>()
-
-  const { count, error } = await supabase
-    .from("pengguna")
-    .select("*", { count: "exact", head: true })
-  if (error) throw error
-  return count ?? 0
+  return data
 }
 
 /**

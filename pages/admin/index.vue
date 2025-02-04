@@ -67,20 +67,8 @@ const peminjamanData = computed(() => {
 })
 
 const { data: counts } = await useLazyAsyncData(async () => {
-  const [bukuCount, penggunaCount] = await Promise.all([countBukus(), countPenggunas()])
-  return { bukuCount: bukuCount ?? 0, penggunaCount: penggunaCount ?? 0 }
-})
-
-onMounted(async () => {
-  if (!counts.value) {
-    toast.add({
-      severity: "error",
-      summary: "gagal mengambil data dashboard",
-      detail:
-        "gagal mengambil data statistik dashboard. Silahkan coba refresh atau lagi dalam beberapa saat",
-      life: 10000,
-    })
-  }
+  const data = await getDashboardStatistics()
+  return data
 })
 
 const confirm = useConfirm()
@@ -339,9 +327,9 @@ onUnmounted(() => {
 
     <section class="main-section col-span-full">
       <ul class="grid grid-cols-4 gap-4">
-        <AdminInfoChip to="buku" :data="90" label="Buku sedang dipinjam" />
-        <AdminInfoChip to="buku" :data="counts?.bukuCount" label="Buku tersedia" />
-        <AdminInfoChip to="pengguna" :data="counts?.penggunaCount" label="Pengguna aktif" />
+        <AdminInfoChip to="buku" :data="counts?.peminjaman_count" label="Buku sedang dipinjam" />
+        <AdminInfoChip to="buku" :data="counts?.buku_count" label="Buku tersedia" />
+        <AdminInfoChip to="pengguna" :data="counts?.pengguna_count" label="Pengguna aktif" />
       </ul>
     </section>
 
