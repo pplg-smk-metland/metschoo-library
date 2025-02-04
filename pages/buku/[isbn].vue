@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useDialog } from "@/composables"
 import type { Buku, Peminjaman, PeminjamanDetail, PeminjamanState } from "@/types"
 import type { PostgrestError, RealtimePostgresInsertPayload } from "@supabase/supabase-js"
 import IconArrowLeft from "~icons/mdi/arrow-left"
@@ -67,14 +66,8 @@ onMounted(async () => {
 })
 
 const dialogIsVisible = ref(false)
-const { dialog: dialogError } = useDialog()
 
 const date = ref(new Date())
-
-const formattedDate = computed(() => {
-  return formatDate(date.value, { dateStyle: "full" })
-})
-
 const isValidDate = computed(() => date.value > new Date())
 
 function konfirmasiPinjamBuku() {
@@ -244,8 +237,14 @@ async function perbaruiDataBuku(payload: RealtimePostgresInsertPayload<Peminjama
   try {
     peminjamanState.value = await usePeminjamanState(buku.value!, payload.new)
   } catch (err) {
-    dialogError.value.open("Gagal mengambil data peminjaman, silahkan coba lagi.")
     console.error(err as PostgrestError)
+
+    toast.add({
+      severity: "error",
+      summary: "Gagal mengambil data peminjaman buku!",
+      detail: "Gagal mengambil data peminjaman, silahkan coba lagi.",
+      life: 10000,
+    })
   }
 }
 
@@ -398,30 +397,21 @@ onUnmounted(() => {
       </table>
     </article>
 
-    <Dialog v-model:visible="dialogIsVisible" modal header="Mau dikembalikan kapan">
-      <p>Saya akan mengembalikan buku ini pada...</p>
+    <Dialog v-model:visible="dialogIsVisible" modal header="Mau dikembalikan kapan?">
+      <div class="flex flex-col gap-4">
+        <p>Saya akan mengembalikan buku ini pada...</p>
 
-      <DatePicker v-model="date" :min-date="new Date()" />
+        <DatePicker v-model="date" :min-date="new Date()" date-format="DD, dd MM yy" fluid />
 
-      <p class="font-bold">
-        <time v-if="date" :datetime="date?.toISOString()">{{ formattedDate }}</time>
-        <span v-else> pilih dulu tanggalnya. </span>
-      </p>
-
-      <CTA
-        :disabled="!isValidDate"
-        label="Pinjam buku"
-        fill
-        @click="pinjamBuku({ ...buku }, date)"
-      />
+        <CTA
+          :disabled="!isValidDate"
+          label="Pinjam buku"
+          fill
+          @click="pinjamBuku({ ...buku }, date)"
+        />
+      </div>
     </Dialog>
   </section>
-
-  <TheDialog :is-open="dialogError.isOpen" @dialog-close="dialogError.close()">
-    <h2>Ups, ada yang salah nih.</h2>
-    <p>{{ dialogError.message }}</p>
-    <p>Silahkan coba lagi, atau hubungi admin.</p>
-  </TheDialog>
 </template>
 
 <style scoped>

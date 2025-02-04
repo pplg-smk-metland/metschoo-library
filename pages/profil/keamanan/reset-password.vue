@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import type { FormSubmitEvent } from "@primevue/forms"
+import { zodResolver } from "@primevue/forms/resolvers/zod"
 import type { AuthApiError } from "@supabase/supabase-js"
 import Password from "primevue/password"
+import { z } from "zod"
 
 useHead({
   title: "Reset password",
@@ -8,54 +11,52 @@ useHead({
 
 definePageMeta({
   layout: "default",
-  middleware: "profil",
 })
 
-const data = ref({
-  password: "",
-  confirmPassword: "",
+const router = useRouter()
+const user = useSupabaseUser()
+
+if (!user) router.push("/")
+
+const schema = z.object({
+  password: z
+    .string({ message: "kamu lupa ngetik password baru kamu." })
+    .min(8, " Password harus memiliki panjang 8 karakter atau lebih."),
+  confirmPassword: z.string({ message: "kamu lupa mengetik konfirmasi password." }),
 })
 
-const formState = computed(() => {
-  return {
-    password: {
-      isStrong: data.value.password.length >= 8,
-      isConfirmed: data.value.confirmPassword === data.value.password,
-    },
-  }
-})
+const resolver = zodResolver(schema)
 
 const isLoading = ref(false)
 const authStore = useAuthStore()
-const router = useRouter()
 
 const toast = useToast()
 
-async function handleResetPassword() {
+async function handleResetPassword({ valid, values }: FormSubmitEvent) {
+  if (!valid) return
+
   isLoading.value = true
   try {
-    await authStore.handleResetPassword(data.value.password)
+    await authStore.handleResetPassword(values.password)
     toast.add({
       severity: "success",
       summary: "Berhasil masuk!",
-      detail: "Password kamu sudah berhasil diganti. Mengembalikan kamu ke beranda dalam 15 detik...",
+      detail:
+        "Password kamu sudah berhasil diganti. Mengembalikan kamu ke beranda dalam 15 detik...",
       life: 10000,
     })
-    
-    // [HAPUS KOMEN SETELAH SELESAI] delay beberapa detik dengan memakai setTimeout
-
 
     setTimeout(() => router.push("/"), 15000)
     router.push("/")
-  } catch (err) { 
+  } catch (err) {
     console.log((err as AuthApiError).code)
     if ((err as AuthApiError).code == "same_password") {
       toast.add({
-      severity: "error",
-      summary: "Gagal masuk!",
-      detail: "Password harus berbeda dari password sebelumnya.",
-      life: 10000,
-    })
+        severity: "error",
+        summary: "Gagal masuk!",
+        detail: "Password harus berbeda dari password sebelumnya.",
+        life: 10000,
+      })
     }
     console.error(err)
   } finally {
@@ -69,49 +70,55 @@ async function handleResetPassword() {
     <PageHeader heading="reset password" />
 
     <section class="main-section">
-      <form class="flex flex-col gap-2" @submit.prevent="handleResetPassword">
+      <Form
+        v-slot="$form"
+        class="flex flex-col gap-2"
+        :resolver
+        :validate-on-value-update="false"
+        :validate-on-blur="false"
+        :validate-on-submit="true"
+        @submit="handleResetPassword"
+      >
         <label for="password">Password baru kamu</label>
         <Password
-          v-model="data.password"
           fluid
           toggle-mask
           input-id="password"
-          required
-          :invalid="!formState.password.isStrong"
-          placeholder="Password Anda"
+          name="password"
+          placeholder="Password baru kamu"
+          autocomplete="off"
         />
 
-        <span v-show="!formState.password.isStrong" class="text-sm text-red-400 dark:text-red-500">
-          Password harus memiliki panjang 8 karakter atau lebih.
-        </span>
+        <Message v-if="$form.password?.invalid" severity="error" size="small" variant="simple">
+          {{ $form.password?.error.message }}
+        </Message>
 
-        <label for="confirm-password">Konfirmasi password baru</label>
+        <label for="confirm-password">Konfirmasi Password</label>
         <Password
-          id="confirm-password"
-          v-model="data.confirmPassword"
           fluid
-          type="password"
-          name="confirm-password"
-          required
           toggle-mask
-          :invalid="!formState.password.isConfirmed"
-          placeholder="password anda"
+          input-id="confirm-password"
+          name="confirmPassword"
+          placeholder="Konfirmasi password kamu"
+          :feedback="false"
         />
-        <span
-          v-show="!formState.password.isConfirmed"
-          class="text-sm text-red-400 dark:text-red-500"
+
+        <Message
+          v-if="$form.confirmPassword?.invalid"
+          severity="error"
+          size="small"
+          variant="simple"
         >
-          Password tidak sama.
-        </span>
+          {{ $form.confirmPassword?.error.message }}
+        </Message>
 
         <CTA
           type="submit"
           :label="isLoading ? 'sebentar ya...' : 'reset password'"
-          :disabled="!(formState.password.isStrong && formState.password.isConfirmed) || isLoading"
+          :loading="isLoading"
         />
-      </form>
+      </Form>
     </section>
   </div>
   <Toast />
-
 </template>

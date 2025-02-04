@@ -13,10 +13,11 @@ useHead({
   },
 })
 
-defineProps({
+const props = defineProps({
   error: Object as () => NuxtError,
 })
 
+if (import.meta.dev) console.log(props.error)
 const handleError = () => clearError({ redirect: "/" })
 </script>
 

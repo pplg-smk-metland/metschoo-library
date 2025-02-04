@@ -79,7 +79,7 @@ const activePeminjaman = computed(() => {
                 :peminjaman="peminjaman"
               />
 
-              <li v-if="!peminjamans">belum ada peminjaman.</li>
+              <li v-if="!peminjamans || !peminjamans.length">belum ada peminjaman.</li>
             </ul>
           </TabPanel>
 
@@ -91,7 +91,7 @@ const activePeminjaman = computed(() => {
                 :peminjaman="peminjaman"
               />
 
-              <li v-if="!peminjamans">belum ada peminjaman.</li>
+              <li v-if="!peminjamans || !peminjamans.length">belum ada peminjaman.</li>
             </ul>
           </TabPanel>
 
@@ -103,7 +103,7 @@ const activePeminjaman = computed(() => {
                 :peminjaman="peminjaman"
               />
 
-              <li v-if="!peminjamans">belum ada peminjaman.</li>
+              <li v-if="!peminjamans || !peminjamans.length">belum ada peminjaman.</li>
             </ul>
           </TabPanel>
         </TabPanels>

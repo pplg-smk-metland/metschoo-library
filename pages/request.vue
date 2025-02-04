@@ -24,8 +24,8 @@ const canRequest = computed(() => {
   const SecondDate = new Date().getTime() - new Date(latestRequest.value.created_at).getTime()
   const aDayInMs = 24 * 60 * 60 * 1000
 
-  const canRequest = Math.floor(SecondDate / aDayInMs) > 30
-  return canRequest
+  const olderThan30Days = Math.floor(SecondDate / aDayInMs) > 30
+  return olderThan30Days
 })
 
 const requestData = ref<RequestData>({
@@ -72,7 +72,7 @@ async function handleInsertRequest(requestData: RequestData) {
     </header>
 
     <form
-      v-if="canRequest"
+      v-if="canRequest && latestRequest"
       class="flex flex-col gap-2 main-section"
       @submit.prevent="handleInsertRequest(requestData)"
     >

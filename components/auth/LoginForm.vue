@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { FormSubmitEvent } from "@primevue/forms"
 import { zodResolver } from "@primevue/forms/resolvers/zod"
 import { AuthError } from "@supabase/supabase-js"
 import { z } from "zod"
@@ -8,11 +9,6 @@ const router = useRouter()
 
 const toast = useToast()
 const isLoading = ref(false)
-
-const formData = reactive({
-  email: "",
-  password: "",
-})
 
 async function handleSignIn({ valid, values }: { valid: boolean; values: Record<string, string> }) {
   if (!valid) return
@@ -48,11 +44,13 @@ async function handleSignIn({ valid, values }: { valid: boolean; values: Record<
 const isForgotPasswordOpen = ref(false)
 const isRecoveryEmailSent = ref(false)
 
-async function handleForgotPasword() {
+async function handleForgotPasword({ valid, values }: FormSubmitEvent) {
+  if (!valid) return
+
   isLoading.value = true
 
   try {
-    await authStore.handleForgotPassword(formData.email)
+    await authStore.handleForgotPassword(values.email)
     isRecoveryEmailSent.value = true
   } catch (err) {
     console.error(err)
@@ -80,6 +78,12 @@ const resolver = zodResolver(
       .min(7, "password harus lebih dari atau sama dengan 8 karakter."),
   })
 )
+
+const forgotPasswordResolver = zodResolver(
+  z.object({
+    email: z.string().nonempty("email tidak boleh kosong").email("ini bukan email."),
+  })
+)
 </script>
 
 <template>
@@ -96,7 +100,6 @@ const resolver = zodResolver(
         v-slot="$form"
         class="flex flex-col gap-2"
         :resolver
-        :initial-values="formData"
         :validate-on-value-update="false"
         :validate-on-blur="false"
         :validate-on-submit="true"
@@ -141,17 +144,19 @@ const resolver = zodResolver(
         Email terkirim! setelah kamu klik linknya, kamu bisa menutup tab ini.
       </p>
 
-      <form class="flex gap-4 flex-wrap" @submit.prevent="handleForgotPasword">
-        <InputText
-          id="recovery-email"
-          v-model="formData.email"
-          type="email"
-          name="recovery-email"
-          placeholder="email kamu"
-          autocomplete="off"
-          class="flex-grow"
-          required
-        />
+      <Form
+        v-slot="$form"
+        class="grid gap-4"
+        :resolver="forgotPasswordResolver"
+        @submit="handleForgotPasword"
+        v-if="!isRecoveryEmailSent"
+      >
+        <label for="email">Email</label>
+        <InputText id="email" name="email" placeholder="Email" autocomplete="off" />
+
+        <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">
+          {{ $form.email.error.message }}
+        </Message>
 
         <CTA
           type="submit"
@@ -159,7 +164,7 @@ const resolver = zodResolver(
           fill
           :loading="isLoading"
         />
-      </form>
+      </Form>
     </Dialog>
 
     <Toast />

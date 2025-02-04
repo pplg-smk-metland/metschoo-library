@@ -140,7 +140,7 @@ const router = useRouter()
       :validate-on-blur="true"
       :validate-on-submit="true"
       :validate-on-value-update="false"
-      class="grid grid-cols-1 sm:grid-cols-2 gap-4"
+      class="flex flex-col gap-4 md:grid md:grid-cols-2"
       @submit="addNewBook"
     >
       <label for="buku-gambar" class="flex flex-col">
