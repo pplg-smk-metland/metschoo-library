@@ -1,4 +1,3 @@
-
 export type Json =
   | string
   | number
@@ -371,6 +370,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      dashboard_statistics: {
+        Args: Record<PropertyKey, never>
+        Returns: Record<string, unknown>
+      }
       is_super_admin: {
         Args: Record<PropertyKey, never>
         Returns: boolean
@@ -482,3 +485,4 @@ export type CompositeTypes<
   : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
     ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
+
