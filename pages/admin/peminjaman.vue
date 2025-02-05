@@ -112,12 +112,21 @@ async function handleFilterPeminjaman() {
         <p>Menampilkan {{ peminjamanData?.length }} peminjaman.</p>
       </template>
 
-      <Column field="pengguna.nama" header="Peminjam" />
+      <Column field="pengguna.nama" header="Peminjam">
+        <template #body="{ data }">
+          <NuxtLink
+            :to="`/admin/pengguna/${data.pengguna.user_id}`"
+            class="hover:underline inline-block py-2"
+          >
+            {{ data.pengguna.nama }}
+          </NuxtLink>
+        </template>
+      </Column>
       <Column field="judul" header="Judul buku" class="!p-0">
         <template #body="{ data }">
           <NuxtLink
             :to="`/admin/buku/${data.buku.no_isbn}`"
-            class="hover:underline py-4 w-full inline-block max-w-72 overflow-hidden whitespace-nowrap text-ellipsis"
+            class="hover:underline py-2 w-full inline-block max-w-72 overflow-hidden whitespace-nowrap text-ellipsis"
           >
             {{ data.buku.judul }}
           </NuxtLink>

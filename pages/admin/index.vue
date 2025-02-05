@@ -32,7 +32,7 @@ const supabase = useSupabaseClient<Database>()
 const _peminjamanQuery = supabase
   .from("peminjaman")
   .select(
-    "*, peminjaman_detail(*, peminjaman_state(name)), pengguna(nama, kelas, jurusan), buku(*)"
+    "*, peminjaman_detail(*, peminjaman_state(name)), pengguna(user_id, nama, kelas, jurusan), buku(*)"
   )
   .order("created_at", { referencedTable: "peminjaman_detail", ascending: false })
   .limit(1, { referencedTable: "peminjaman_detail" })
