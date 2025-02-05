@@ -36,7 +36,7 @@ const requestData = ref<RequestData>({
 
 async function handleInsertRequest(requestData: RequestData) {
   try {
-    await insertRequest(requestData)
+    const data = await insertRequest(requestData)
 
     toast.add({
       severity: "success",
@@ -45,7 +45,7 @@ async function handleInsertRequest(requestData: RequestData) {
       life: 10000,
     })
 
-    latestRequest.value = false
+    latestRequest.value = data
   } catch (err) {
     console.error(err)
     toast.add({
@@ -72,7 +72,7 @@ async function handleInsertRequest(requestData: RequestData) {
     </header>
 
     <form
-      v-if="canRequest && latestRequest"
+      v-if="canRequest"
       class="flex flex-col gap-2 main-section"
       @submit.prevent="handleInsertRequest(requestData)"
     >

@@ -32,13 +32,19 @@ export async function insertRequest(requestData: RequestData) {
   const supabase = useSupabaseClient<Database>()
 
   try {
-    const { error } = await supabase.from("book_requests").insert({
-      title: requestData.title,
-      isbn: requestData.isbn,
-      category: requestData.category,
-    })
+    const { data, error } = await supabase
+      .from("book_requests")
+      .insert({
+        title: requestData.title,
+        isbn: requestData.isbn,
+        category: requestData.category,
+      })
+      .select("*")
+      .single()
 
     if (error) throw error
+
+    return data
   } catch (error) {
     console.log(error)
   }
