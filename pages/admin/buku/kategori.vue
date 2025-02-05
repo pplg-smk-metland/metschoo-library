@@ -139,7 +139,7 @@ const editCategory = async ({ kategori, id }: Kategori) => {
   }
 }
 
-const { data: categories } = useAsyncData(async () => {
+const { data: categories } = await useAsyncData(async () => {
   const categories = await getAllAvailableCategories()
   return categories
 })

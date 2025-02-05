@@ -23,7 +23,9 @@ const searchFor = ref<PeminjamanSearchArgs>({
   tenggat_waktu: [null, null],
 })
 
-const { data: peminjamanData } = useAsyncData(async () => await getPeminjamanData(searchFor.value))
+const { data: peminjamanData } = await useAsyncData(
+  async () => await getPeminjamanData(searchFor.value)
+)
 
 const isLoading = ref(false)
 
@@ -112,12 +114,21 @@ async function handleFilterPeminjaman() {
         <p>Menampilkan {{ peminjamanData?.length }} peminjaman.</p>
       </template>
 
-      <Column field="pengguna.nama" header="Peminjam" />
+      <Column field="pengguna.nama" header="Peminjam">
+        <template #body="{ data }">
+          <NuxtLink
+            :to="`/admin/pengguna/${data.pengguna.user_id}`"
+            class="hover:underline inline-block py-2"
+          >
+            {{ data.pengguna.nama }}
+          </NuxtLink>
+        </template>
+      </Column>
       <Column field="judul" header="Judul buku" class="!p-0">
         <template #body="{ data }">
           <NuxtLink
             :to="`/admin/buku/${data.buku.no_isbn}`"
-            class="hover:underline py-4 w-full inline-block max-w-72 overflow-hidden whitespace-nowrap text-ellipsis"
+            class="hover:underline py-2 w-full inline-block max-w-72 overflow-hidden whitespace-nowrap text-ellipsis"
           >
             {{ data.buku.judul }}
           </NuxtLink>
@@ -134,7 +145,11 @@ async function handleFilterPeminjaman() {
 
       <Column header="Tanggal kembali">
         <template #body="{ data }: { data: PeminjamanData[number] }">
-          {{ getPeminjamanStateDate(data, 5) }}
+          {{
+            [5, 6].includes(data.peminjaman_detail[0].state_id)
+              ? getPeminjamanStateDate(data, data.peminjaman_detail[0].state_id)
+              : "-"
+          }}
         </template>
       </Column>
 
