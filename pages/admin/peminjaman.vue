@@ -134,7 +134,11 @@ async function handleFilterPeminjaman() {
 
       <Column header="Tanggal kembali">
         <template #body="{ data }: { data: PeminjamanData[number] }">
-          {{ getPeminjamanStateDate(data, 5) }}
+          {{
+            [5, 6].includes(data.peminjaman_detail[0].state_id)
+              ? getPeminjamanStateDate(data, data.peminjaman_detail[0].state_id)
+              : "-"
+          }}
         </template>
       </Column>
 
