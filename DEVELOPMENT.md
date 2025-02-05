@@ -101,7 +101,7 @@ To add a new admin user, add a new user like usual, through the app or Supabase
 dashboard, then run this query in the SQL Editor on the dashboard:
 
 ```sql
-update auth.users set raw_app_meta_data = raw_app_meta_data || '{"role": "super-admin"}' where auth.users.id = 'id';
+update auth.users set raw_app_meta_data = raw_app_meta_data || '{"role": "super-admin"}' where auth.users.email = 'email';
 ```
 
 This will add the role 'super-admin' to the target user.
