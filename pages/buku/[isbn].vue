@@ -111,6 +111,15 @@ async function pinjamBuku({ judul, no_isbn }: Buku, tanggal: Date) {
     })
     dialogIsVisible.value = false
   } catch (err) {
+    if (err instanceof Error && err.name === "CostomError") {
+      return toast.add({
+        severity: "error",
+        summary: "Gagal meminjam buku",
+        detail: err.message,
+        life: 10000,
+      })
+    }
+
     console.error((err as PostgrestError).message)
 
     toast.add({

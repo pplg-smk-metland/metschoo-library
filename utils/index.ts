@@ -10,6 +10,13 @@ import type { PostgrestError } from "@supabase/supabase-js"
 import type { PeminjamanData } from "~/pages/admin/index.vue"
 import type { Database } from "~/types/database.types.ts"
 
+class CostomError extends Error {
+  constructor(massage: string) {
+    super(massage)
+    this.name = "CostomError"
+  }
+}
+
 /**
  * insert new buku.
  * @param {Buku} buku - the buku you want to insert
@@ -127,6 +134,19 @@ export async function borrowBuku(
   tenggat_waktu: Date
 ): Promise<Peminjaman["id"]> {
   const supabase = useSupabaseClient<Database>()
+
+  const { data: buku, error: bukuError } = await supabase
+    .from("actual_buku")
+    .select("jumlah_exspl_aktual")
+    .eq("no_isbn", no_isbn)
+    .single()
+
+  if (bukuError) throw bukuError
+
+  if (buku?.jumlah_exspl_aktual === 0) {
+    throw new CostomError("tidak bisa minjam buku, karena buku sudah habis")
+  }
+
   const { data: peminjaman, error } = await supabase
     .from("peminjaman")
     .insert({
