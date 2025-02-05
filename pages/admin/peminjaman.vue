@@ -23,7 +23,9 @@ const searchFor = ref<PeminjamanSearchArgs>({
   tenggat_waktu: [null, null],
 })
 
-const { data: peminjamanData } = useAsyncData(async () => await getPeminjamanData(searchFor.value))
+const { data: peminjamanData } = await useAsyncData(
+  async () => await getPeminjamanData(searchFor.value)
+)
 
 const isLoading = ref(false)
 

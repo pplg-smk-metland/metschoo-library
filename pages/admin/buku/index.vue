@@ -20,7 +20,7 @@ const categoriesOptions = computed(() => {
   return [{ id: 0, kategori: "semua" }, ...(categories.value || [])]
 })
 
-const { data: searchResults } = useAsyncData(async () => await searchBukus({}))
+const { data: searchResults, status } = await useAsyncData(async () => await searchBukus({}))
 
 const searchFor = ref<BukuSearchArgs>({
   judul: "",
@@ -46,7 +46,6 @@ watch(
 async function handleSearchBuku() {
   await navigateTo({
     path: route.path,
-    // query: { term: searchTerm.value, category: selectedCategory.value },
     query: searchFor.value,
   })
 }
@@ -82,7 +81,10 @@ async function handleSearchBuku() {
       <CTA fill type="submit" label="Cari" class="px-6 ms-auto" />
     </form>
 
+    <LoadingSpinner v-if="status === 'pending'" />
+
     <DataTable
+      v-else
       :value="searchResults"
       scroll-height="60vh"
       scrollable
