@@ -108,9 +108,11 @@ const tabs = [
 
     <TabPanels>
       <TabPanel v-for="tab in tabs" :key="tab.status" :value="tab.status">
-        <h2>{{ tab.localized }}</h2>
-
         <DataTable :value="requests?.filter((d) => d.is_accepted === tab.status) || []">
+          <template #empty>
+            <p>Belum ada request dari pengguna.</p>
+          </template>
+
           <Column field="created_at" header="Tanggal request" sortable>
             <template #body="{ data }">
               {{ formatDate(new Date(data.created_at)) }}
