@@ -145,11 +145,11 @@ const forgotPasswordResolver = zodResolver(
       </p>
 
       <Form
+        v-if="!isRecoveryEmailSent"
         v-slot="$form"
         class="grid gap-4"
         :resolver="forgotPasswordResolver"
         @submit="handleForgotPasword"
-        v-if="!isRecoveryEmailSent"
       >
         <label for="email">Email</label>
         <InputText id="email" name="email" placeholder="Email" autocomplete="off" />

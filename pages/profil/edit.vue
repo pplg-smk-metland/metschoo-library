@@ -82,16 +82,16 @@ async function updateProfile({ valid }: { valid: boolean }) {
 
     <Form
       v-slot="$form"
-      :initialValues="userProfile"
+      :initial-values="userProfile"
       :resolver="resolver"
-      :validateOnValueUpdate="false"
-      :validateOnBlur="true"
-      :validateOnSubmit="true"
-      @submit="updateProfile"
+      :validate-on-value-update="false"
+      :validate-on-blur="true"
+      :validate-on-submit="true"
       class="flex flex-col gap-2 flex-grow"
+      @submit="updateProfile"
     >
       <label for="name">Nama</label>
-      <InputText name="nama" v-model="userProfile.nama" type="text" placeholder="Masukan Nama" />
+      <InputText v-model="userProfile.nama" name="nama" type="text" placeholder="Masukan Nama" />
 
       <Message v-if="$form.nama?.invalid" severity="error" size="small" variant="simple">
         {{ $form.nama?.error.message }}
@@ -99,8 +99,8 @@ async function updateProfile({ valid }: { valid: boolean }) {
 
       <label for="kelas">Kelas</label>
       <Select
-        :default-value="userProfile.kelas ?? 'X'"
         v-model="userProfile.kelas"
+        :default-value="userProfile.kelas ?? 'X'"
         :options="['X', 'XI', 'XII']"
         name="kelas"
         placeholder="Kelas Berapa Kamu"
@@ -113,8 +113,8 @@ async function updateProfile({ valid }: { valid: boolean }) {
 
       <label for="jurusan">Jurusan</label>
       <InputText
-        name="jurusan"
         v-model="userProfile.jurusan"
+        name="jurusan"
         type="text"
         placeholder="Masukkan Jurusan"
       />
