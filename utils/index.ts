@@ -15,7 +15,7 @@ import type { Database } from "~/types/database.types.ts"
  * @param {Buku} buku - the buku you want to insert
  * @returns {Promise<PostgrestError | null>} error
  * */
-export async function insertBookData(buku: Buku): Promise<PostgrestError | null> {
+export async function insertBookData(buku: Omit<Buku, "id">): Promise<PostgrestError | null> {
   const supabase = useSupabaseClient<Database>()
 
   const { error } = await supabase.from("buku").insert({ ...buku })

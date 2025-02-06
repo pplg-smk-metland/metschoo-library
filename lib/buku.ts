@@ -4,7 +4,7 @@ import { zodResolver } from "@primevue/forms/resolvers/zod"
 import { z } from "zod"
 
 export const schema = z.object({
-  id: z.string().uuid(),
+  id: z.string().uuid().optional(),
   judul: z.string().nonempty("judul tidak boleh kosong."),
   no_isbn: z.string().nonempty("isbn tidak boleh kosong."),
   image: z.string().optional().nullable().default(null),

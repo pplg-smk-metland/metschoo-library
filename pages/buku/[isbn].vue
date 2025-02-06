@@ -44,7 +44,7 @@ const bukuAdaDiWishlist = ref<boolean | null>(null)
 const { data } = await useAsyncData(async () => {
   const [peminjamanStateData, checkWishlistData] = await Promise.all([
     usePeminjamanState(buku.value!),
-    useCheckWishlist(isbn),
+    useCheckWishlist(buku.value!.id),
   ])
 
   return { peminjamanStateData, checkWishlistData }
