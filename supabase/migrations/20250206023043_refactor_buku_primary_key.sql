@@ -12,7 +12,10 @@ drop index if exists "public"."buku_pkey";
 alter table "public"."buku" add column "id" uuid not null default gen_random_uuid();
 
 drop view if exists "public"."actual_buku";
-create or replace view "public"."actual_buku" as  SELECT b.id,
+create or replace view "public"."actual_buku" as  
+SELECT 
+    b.id,
+    b.slug,
     b.no_isbn,
     b.penulis,
     b.judul,

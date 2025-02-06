@@ -19,7 +19,7 @@ definePageMeta({
 const supabase = useSupabaseClient<Database>()
 const route = useRoute()
 const router = useRouter()
-const { slug } = route.params
+const slug = route.params.slug as string
 
 const toast = useToast()
 const confirm = useConfirm()
@@ -31,7 +31,7 @@ const isLoading = ref(false)
 /**
  * get buku data on the server
  */
-const { data: buku } = await useAsyncData(async () => await getBuku(slug as string))
+const { data: buku } = await useAsyncData(async () => await getBuku(slug))
 
 const imgURL = computed(() => getBukuImage(buku.value?.image))
 

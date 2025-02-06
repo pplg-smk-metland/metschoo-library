@@ -22,9 +22,9 @@ const isLoading = ref(false)
 const router = useRouter()
 const currentRoute = useRoute()
 
-const { slug } = currentRoute.params
+const slug = currentRoute.params.slug as string
 
-const { data: buku } = await useLazyAsyncData(async () => {
+const { data: buku } = await useLazyAsyncData(slug, async () => {
   const { data, error } = await supabase
     .from("buku")
     .select("*, kategori_buku(kategori)")
