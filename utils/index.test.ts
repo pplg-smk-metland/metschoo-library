@@ -24,7 +24,7 @@ describe("peminjaman state date", () => {
 
   const peminjaman: PeminjamanData = [
     {
-      no_isbn: "123-456-789",
+      buku_id: randomUUID(),
       tenggat_waktu: new Date("01-10-1970").toISOString(),
       tgl_pinjam: tgl_pinjam.toISOString(),
       user_id: randomUUID(),

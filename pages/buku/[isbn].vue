@@ -83,7 +83,7 @@ function konfirmasiPinjamBuku() {
   dialogIsVisible.value = true
 }
 
-async function pinjamBuku({ judul, no_isbn }: Buku, tanggal: Date) {
+async function pinjamBuku({ judul, id: buku_id }: Buku, tanggal: Date) {
   if (!window.confirm(`Beneran mau pinjem buku ${judul}?`)) return
 
   try {
@@ -91,7 +91,7 @@ async function pinjamBuku({ judul, no_isbn }: Buku, tanggal: Date) {
       await supabase.from("wishlist").delete().eq("buku_id", buku_id)
     }
 
-    const id = await borrowBuku(no_isbn, tanggal)
+    const id = await borrowBuku(buku_id, tanggal)
 
     if (!buku.value || !peminjamanState.value) return
     buku.value.jumlah_exspl_aktual = buku.value.jumlah_exspl_aktual - 1
