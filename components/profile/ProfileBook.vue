@@ -16,7 +16,7 @@ const imgURL = ref(getBukuImage(buku?.image))
   <li v-else>
     <NuxtLink
       v-if="buku"
-      :to="`/buku/${buku.no_isbn}`"
+      :to="`/buku/${buku.slug}`"
       class="p-4 rounded-lg h-full flex flex-col gap-4 shadow-md hover:bg-primary/10"
     >
       <figure>

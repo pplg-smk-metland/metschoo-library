@@ -127,7 +127,7 @@ async function handleFilterPeminjaman() {
       <Column field="judul" header="Judul buku" class="!p-0">
         <template #body="{ data }">
           <NuxtLink
-            :to="`/admin/buku/${data.buku.no_isbn}`"
+            :to="`/admin/buku/${data.buku.slug}`"
             class="hover:underline py-2 w-full inline-block max-w-72 overflow-hidden whitespace-nowrap text-ellipsis"
           >
             {{ data.buku.judul }}

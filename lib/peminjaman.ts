@@ -11,7 +11,7 @@ export async function getPeminjamanData(searchFor?: PeminjamanSearchArgs): Promi
   let query = supabase
     .from("peminjaman")
     .select(
-      "*, peminjaman_detail(*, peminjaman_state(name)), pengguna(user_id, nama, kelas, jurusan), buku(*)"
+      "*, peminjaman_detail(*, peminjaman_state(name)), pengguna(user_id, nama, kelas, jurusan), buku(slug, judul)"
     )
     .order("created_at", { referencedTable: "peminjaman_detail", ascending: false })
 

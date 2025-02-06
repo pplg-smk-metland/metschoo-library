@@ -13,7 +13,7 @@ const user = useSupabaseUser()
 
 const _peminjamanQuery = supabase
   .from("peminjaman")
-  .select("*, buku(no_isbn, judul, penulis, image), peminjaman_detail(*, peminjaman_state(name))")
+  .select("*, buku(slug, judul, penulis, image), peminjaman_detail(*, peminjaman_state(name))")
   .order("tgl_pinjam", { ascending: false })
   .order("created_at", { referencedTable: "peminjaman_detail", ascending: false })
 

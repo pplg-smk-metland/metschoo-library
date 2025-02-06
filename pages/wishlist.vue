@@ -64,13 +64,14 @@ const user = useSupabaseUser()
     <section v-else class="main-section">
       <p v-if="!wishlist || wishlist.length === 0">Kamu belum punya apa-apa dalam wishlist kamu.</p>
       <ul v-else class="book-list">
-        <WishlistBook
-          v-for="wishlistItem in wishlist"
-          :key="wishlistItem.id"
-          :buku="wishlistItem.buku!"
-          @pinjam-buku="router.push(`/buku/${wishlistItem.buku_id}`)"
-          @hapus-buku="handleDeleteFromWishlist(wishlistItem.id, wishlistItem.buku!.judul)"
-        />
+        <template v-for="wishlistItem in wishlist" :key="wishlistItem.id">
+          <WishlistBook
+            v-if="wishlistItem.buku"
+            :buku="wishlistItem.buku!"
+            @pinjam-buku="router.push(`/buku/${wishlistItem.buku.slug}`)"
+            @hapus-buku="handleDeleteFromWishlist(wishlistItem.id, wishlistItem.buku.judul)"
+          />
+        </template>
       </ul>
     </section>
 

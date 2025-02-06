@@ -77,7 +77,7 @@ export async function searchBukus(searchFor?: BukuSearchArgs) {
 
   let query = supabase
     .from("buku")
-    .select(`no_isbn, judul, penulis, penerbit, tahun_terbit, kategori_buku(kategori)`)
+    .select(`no_isbn, slug, judul, penulis, penerbit, tahun_terbit, kategori_buku(kategori)`)
 
   if (searchFor) {
     const { judul, no_isbn, kategori } = searchFor
