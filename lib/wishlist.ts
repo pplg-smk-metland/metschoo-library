@@ -1,5 +1,5 @@
 import type { PostgrestError } from "@supabase/supabase-js"
-import type { Buku } from "~/types"
+import type { Buku, Wishlist } from "~/types"
 import type { Database } from "~/types/database.types.ts"
 
 export async function getWishlist() {
@@ -16,23 +16,23 @@ export async function getWishlist() {
   }
 }
 
-export async function deleteFromWishlist(isbn: Buku["no_isbn"]): Promise<Buku["no_isbn"]> {
+export async function deleteFromWishlist(id: Wishlist["id"]): Promise<Wishlist["id"]> {
   const supabase = useSupabaseClient<Database>()
 
   const { data, error } = await supabase
     .from("wishlist")
     .delete()
-    .eq("no_isbn", isbn)
-    .select("no_isbn")
+    .eq("id", id)
+    .select("id")
     .single()
 
   if (error) throw error
-  return data.no_isbn
+  return data.id
 }
 
-export async function addToWishlist(no_isbn: Buku["no_isbn"]) {
+export async function addToWishlist(buku_id: Buku["id"]) {
   const supabase = useSupabaseClient<Database>()
-  const { error } = await supabase.from("wishlist").insert({ no_isbn })
+  const { error } = await supabase.from("wishlist").insert({ buku_id })
 
   if (error) throw error
 }

@@ -37,12 +37,4 @@ inner join buku_count_table b on pe.a = b.a
 inner join peminjaman_count_table pc on pc.a = b.a
 into result;
 return result;
-END;$function$
-;
-
-create policy "Enable delete for admin"
-on "public"."buku"
-as permissive
-for delete
-to authenticated
-using (( SELECT is_super_admin() AS is_super_admin));
+END;$function$ ;

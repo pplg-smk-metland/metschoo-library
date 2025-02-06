@@ -44,7 +44,7 @@ const bukuAdaDiWishlist = ref<boolean | null>(null)
 const { data } = await useAsyncData(async () => {
   const [peminjamanStateData, checkWishlistData] = await Promise.all([
     usePeminjamanState(buku.value!),
-    useCheckWishlist(isbn),
+    useCheckWishlist(buku.value!.id),
   ])
 
   return { peminjamanStateData, checkWishlistData }
@@ -83,15 +83,15 @@ function konfirmasiPinjamBuku() {
   dialogIsVisible.value = true
 }
 
-async function pinjamBuku({ judul, no_isbn }: Buku, tanggal: Date) {
+async function pinjamBuku({ judul, id: buku_id }: Buku, tanggal: Date) {
   if (!window.confirm(`Beneran mau pinjem buku ${judul}?`)) return
 
   try {
     if (bukuAdaDiWishlist.value) {
-      await supabase.from("wishlist").delete().eq("no_isbn", no_isbn)
+      await supabase.from("wishlist").delete().eq("buku_id", buku_id)
     }
 
-    const id = await borrowBuku(no_isbn, tanggal)
+    const id = await borrowBuku(buku_id, tanggal)
 
     if (!buku.value || !peminjamanState.value) return
     buku.value.jumlah_exspl_aktual = buku.value.jumlah_exspl_aktual - 1
@@ -216,15 +216,15 @@ function confirmAddToWishlist(buku: Buku, e: Event) {
 /**
  * handle adding a new buku to wishlist.
  */
-async function handleAddToWishlist({ no_isbn }: Buku) {
+async function handleAddToWishlist(buku: Buku) {
   try {
-    await addToWishlist(no_isbn)
+    await addToWishlist(buku.id)
     bukuAdaDiWishlist.value = true
 
     toast.add({
       severity: "success",
       summary: "Sukses",
-      detail: "Sukses menambahkan buku ke dalam wishlist",
+      detail: `Sukses menambahkan ${buku.judul} ke dalam wishlist.`,
       life: 5000,
     })
     return data

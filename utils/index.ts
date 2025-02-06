@@ -22,7 +22,7 @@ class CostomError extends Error {
  * @param {Buku} buku - the buku you want to insert
  * @returns {Promise<PostgrestError | null>} error
  * */
-export async function insertBookData(buku: Buku): Promise<PostgrestError | null> {
+export async function insertBookData(buku: Omit<Buku, "id">): Promise<PostgrestError | null> {
   const supabase = useSupabaseClient<Database>()
 
   const { error } = await supabase.from("buku").insert({ ...buku })
@@ -130,7 +130,7 @@ export function getBukuImage(image?: Buku["image"]): string {
  * @param {Buku['no_isbn']} no_isbn - field of buku
  */
 export async function borrowBuku(
-  no_isbn: Buku["no_isbn"],
+  buku_id: Buku["id"],
   tenggat_waktu: Date
 ): Promise<Peminjaman["id"]> {
   const supabase = useSupabaseClient<Database>()
@@ -150,7 +150,7 @@ export async function borrowBuku(
   const { data: peminjaman, error } = await supabase
     .from("peminjaman")
     .insert({
-      no_isbn,
+      buku_id,
       tenggat_waktu: tenggat_waktu.toISOString(),
     })
     .select()
