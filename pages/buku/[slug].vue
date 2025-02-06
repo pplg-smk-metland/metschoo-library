@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Buku, Peminjaman, PeminjamanDetail, PeminjamanState } from "@/types"
+import type { ActualBuku, Peminjaman, PeminjamanDetail, PeminjamanState } from "@/types"
 import type { PostgrestError, RealtimePostgresInsertPayload } from "@supabase/supabase-js"
 import IconArrowLeft from "~icons/mdi/arrow-left"
 
@@ -19,7 +19,7 @@ definePageMeta({
 const supabase = useSupabaseClient<Database>()
 const route = useRoute()
 const router = useRouter()
-const isbn = route.params.isbn as string
+const { slug } = route.params
 
 const toast = useToast()
 const confirm = useConfirm()
@@ -31,7 +31,7 @@ const isLoading = ref(false)
 /**
  * get buku data on the server
  */
-const { data: buku } = await useAsyncData(async () => await getBuku(isbn))
+const { data: buku } = await useAsyncData(async () => await getBuku(slug as string))
 
 const imgURL = computed(() => getBukuImage(buku.value?.image))
 
@@ -83,7 +83,7 @@ function konfirmasiPinjamBuku() {
   dialogIsVisible.value = true
 }
 
-async function pinjamBuku({ judul, id: buku_id }: Buku, tanggal: Date) {
+async function pinjamBuku({ judul, id: buku_id }: ActualBuku, tanggal: Date) {
   if (!window.confirm(`Beneran mau pinjem buku ${judul}?`)) return
 
   try {
@@ -122,7 +122,7 @@ async function pinjamBuku({ judul, id: buku_id }: Buku, tanggal: Date) {
   }
 }
 
-async function batalkanPeminjamanBuku({ judul }: Buku, id: Peminjaman["id"]) {
+async function batalkanPeminjamanBuku(judul: ActualBuku["judul"], id: Peminjaman["id"]) {
   if (!window.confirm(`apakah anda ingin membatalkan peminjaman ${judul}?`)) {
     return toast.add({
       severity: "info",
@@ -155,7 +155,7 @@ async function batalkanPeminjamanBuku({ judul }: Buku, id: Peminjaman["id"]) {
   }
 }
 
-async function kembalikanBuku({ judul }: Buku, id: Peminjaman["id"]) {
+async function kembalikanBuku({ judul }: ActualBuku, id: Peminjaman["id"]) {
   try {
     await returnBuku(id)
 
@@ -182,7 +182,7 @@ const confirmWishlistIsVisible = ref(false)
 /**
  * handle confirmation for adding a new entry to wishlist.
  */
-function confirmAddToWishlist(buku: Buku, e: Event) {
+function confirmAddToWishlist(buku: ActualBuku, e: Event) {
   confirm.require({
     target: e.currentTarget as HTMLElement,
     header: "Konfirmasi wishlist",
@@ -207,7 +207,7 @@ function confirmAddToWishlist(buku: Buku, e: Event) {
 /**
  * handle adding a new buku to wishlist.
  */
-async function handleAddToWishlist(buku: Buku) {
+async function handleAddToWishlist(buku: ActualBuku) {
   try {
     await addToWishlist(buku.id)
     bukuAdaDiWishlist.value = true
@@ -332,7 +332,7 @@ onUnmounted(() => {
           v-if="peminjamanState?.isCancellable"
           severity="danger"
           label="batalkan peminjaman"
-          @click="batalkanPeminjamanBuku(buku, peminjamanState?.id!)"
+          @click="batalkanPeminjamanBuku(buku.judul, peminjamanState?.id!)"
         />
 
         <CTA

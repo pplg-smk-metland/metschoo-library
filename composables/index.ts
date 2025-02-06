@@ -10,6 +10,7 @@ import type { FileUploadSelectEvent } from "primevue"
 export function useBuku() {
   const buku = ref<Buku | null>({
     id: "",
+    slug: "",
     judul: "",
     no_isbn: "",
     penulis: "",

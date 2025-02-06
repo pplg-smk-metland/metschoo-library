@@ -60,6 +60,7 @@ export type Database = {
           no_isbn: string
           penerbit: string
           penulis: string
+          slug: string
           tahun_terbit: string
         }
         Insert: {
@@ -74,6 +75,7 @@ export type Database = {
           no_isbn?: string
           penerbit: string
           penulis: string
+          slug?: string
           tahun_terbit: string
         }
         Update: {
@@ -88,6 +90,7 @@ export type Database = {
           no_isbn?: string
           penerbit?: string
           penulis?: string
+          slug?: string
           tahun_terbit?: string
         }
         Relationships: [
@@ -356,6 +359,7 @@ export type Database = {
           no_isbn: string | null
           penerbit: string | null
           penulis: string | null
+          slug: string | null
           tahun_terbit: string | null
         }
         Relationships: [

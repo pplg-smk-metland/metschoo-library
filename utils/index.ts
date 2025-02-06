@@ -23,16 +23,16 @@ export async function insertBookData(buku: Omit<Buku, "id">): Promise<PostgrestE
 }
 
 /**
- * get a single buku by its isbn from the view.
- * @param {Buku['no_isbn']} isbn - isbn
- * @returns {Promise<Buku>} Buku
+ * get a single buku by its slug from the view.
+ * @param {Buku['slug']} slug - slug of buku
+ * @returns {Promise<ActualBuku>} Buku
  */
-export async function getBuku(isbn: Buku["no_isbn"]): Promise<ActualBuku> {
+export async function getBuku(slug: Buku["slug"]): Promise<ActualBuku> {
   const supabase = useSupabaseClient<Database>()
   const { data, error } = await supabase
     .from("actual_buku")
     .select("*")
-    .eq("no_isbn", isbn)
+    .eq("slug", slug)
     .limit(1)
     .single()
 
@@ -238,6 +238,18 @@ export function formatDate(date: Date, opts?: Intl.DateTimeFormatOptions): strin
     }
   }
   return new Intl.DateTimeFormat("id-ID", opts).format(date)
+}
+
+export function slugify(input: string): string {
+  return String(input)
+    .trim()
+    .toLowerCase()
+    .normalize("NFKD") // split accented characters into their base characters and diacritical marks
+    .replace(/[\u0300-\u036f]/g, "") // remove all the accents, which happen to be all in the \u03xx UNICODE block.
+    .replace(/[^\w\s-]/g, "") // Remove special characters
+    .split(" ", 8) // limit to 8 words, in normal cases
+    .join("-")
+    .replace(/[\s-]+/g, "-") // replace multiple spaces or hyphens with a single hyphen
 }
 
 /**

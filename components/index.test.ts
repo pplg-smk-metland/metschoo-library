@@ -19,6 +19,7 @@ import { randomUUID } from "node:crypto"
 const buku: Buku = {
   id: randomUUID(),
   judul: "Write tests for modern web applications with Vitest",
+  slug: 'write-tests-for-modern-web-apps-with-vitest',
   no_isbn: "123-456-789",
   kategori_id: 1,
   alamat_terbit: "Jonggol",

@@ -22,13 +22,13 @@ const isLoading = ref(false)
 const router = useRouter()
 const currentRoute = useRoute()
 
-const isbn = currentRoute.params.isbn
+const { slug } = currentRoute.params
 
 const { data: buku } = await useLazyAsyncData(async () => {
   const { data, error } = await supabase
     .from("buku")
     .select("*, kategori_buku(kategori)")
-    .eq("no_isbn", isbn)
+    .eq("slug", slug)
     .single()
 
   if (error) {
@@ -71,7 +71,7 @@ async function editBook({ valid, values }: FormSubmitEvent) {
     const { error } = await supabase
       .from("buku")
       .update({ ...buku, image: `public/${buku.no_isbn}` })
-      .eq("no_isbn", isbn)
+      .eq("slug", slug)
     if (error) throw error
 
     toast.add({

@@ -6,6 +6,7 @@ import { randomUUID } from "node:crypto"
 describe("peminjaman state composable", () => {
   const buku: ActualBuku = {
     id: randomUUID(),
+    slug: "dummy-buku",
     no_isbn: "123-456-79",
     jumlah_exspl: 0,
     alamat_terbit: new Date("01-01-1970").toISOString(),

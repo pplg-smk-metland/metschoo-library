@@ -5,6 +5,7 @@ import { z } from "zod"
 
 export const schema = z.object({
   id: z.string().uuid().optional(),
+  slug: z.string().optional(),
   judul: z.string().nonempty("judul tidak boleh kosong."),
   no_isbn: z.string().nonempty("isbn tidak boleh kosong."),
   image: z.string().optional().nullable().default(null),
