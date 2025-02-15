@@ -70,6 +70,11 @@ const dialogIsVisible = ref(false)
 const date = ref(new Date())
 const isValidDate = computed(() => date.value > new Date())
 
+const maxDate = computed(() => {
+  const now = new Date()
+  return new Date(now.setDate(now.getDate() + 3))
+})
+
 function konfirmasiPinjamBuku() {
   if (!user.value) {
     return toast.add({
@@ -410,7 +415,13 @@ onUnmounted(() => {
       <div class="flex flex-col gap-4">
         <p>Saya akan mengembalikan buku ini pada...</p>
 
-        <DatePicker v-model="date" :min-date="new Date()" date-format="DD, dd MM yy" fluid />
+        <DatePicker
+          v-model="date"
+          :min-date="new Date()"
+          :max-date="maxDate"
+          date-format="DD, dd MM yy"
+          fluid
+        />
 
         <CTA
           :disabled="!isValidDate"
