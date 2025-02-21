@@ -11,17 +11,17 @@ definePageMeta({
   ],
 })
 
-const isSigningIn = ref(false)
+const isLoggingIn = ref(false)
 
 function handleSwitchForm() {
-  isSigningIn.value = !isSigningIn.value
+  isLoggingIn.value = !isLoggingIn.value
 }
 
-const title = computed(() => (isSigningIn.value ? "Log in" : "Sign in"))
+const title = computed(() => (isLoggingIn.value ? "Log in" : "Sign in"))
 useHead({ title })
 
 const switchFormButtonLabel = computed(() =>
-  isSigningIn.value ? "Sudah punya akun? Masuk" : "Belum punya akun? ayo bikin dulu!"
+  isLoggingIn.value ? "Sudah punya akun? Masuk" : "Belum punya akun? ayo bikin dulu!"
 )
 </script>
 
@@ -30,7 +30,7 @@ const switchFormButtonLabel = computed(() =>
     <CTA type="button" :label="switchFormButtonLabel" link @click="handleSwitchForm" />
 
     <Transition>
-      <AuthSignInForm v-if="isSigningIn" />
+      <AuthLoginForm v-if="isLoggingIn" />
       <AuthRegisterForm v-else />
     </Transition>
   </div>

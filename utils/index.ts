@@ -127,7 +127,8 @@ export function getBukuImage(image?: Buku["image"]): string {
 /**
  * borrow a buku.
  *
- * @param {Buku['no_isbn']} no_isbn - field of buku
+ * @param {Buku['id']} buku_id - id of buku
+ * @param {Date} tenggat_waktu - when to return the buku
  */
 export async function borrowBuku(
   buku_id: Buku["id"],
@@ -138,7 +139,7 @@ export async function borrowBuku(
   const { data: buku, error: bukuError } = await supabase
     .from("actual_buku")
     .select("jumlah_exspl_aktual")
-    .eq("no_isbn", no_isbn)
+    .eq("id", buku_id)
     .single()
 
   if (bukuError) throw bukuError
