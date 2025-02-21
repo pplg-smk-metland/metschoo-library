@@ -31,7 +31,7 @@ const switchFormButtonLabel = computed(() =>
 
     <Transition>
       <AuthSignInForm v-if="isSigningIn" />
-      <AuthLoginForm v-else />
+      <AuthRegisterForm v-else />
     </Transition>
   </div>
 </template>
