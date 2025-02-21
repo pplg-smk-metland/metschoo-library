@@ -1,3 +1,4 @@
+
 export type Json =
   | string
   | number
@@ -386,6 +387,12 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      slugify: {
+        Args: {
+          "": string
+        }
+        Returns: string
+      }
     }
     Enums: {
       "event type": "check_in" | "check_out"
@@ -493,4 +500,3 @@ export type CompositeTypes<
   : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
     ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
-
