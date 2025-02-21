@@ -3,6 +3,7 @@ import InputText from "primevue/inputtext"
 import Password from "primevue/password"
 import { zodResolver } from "@primevue/forms/resolvers/zod"
 import { z } from "zod"
+import type { FormSubmitEvent } from "@primevue/forms"
 
 const isLoading = ref(false)
 
@@ -22,14 +23,14 @@ const authStore = useAuthStore()
 const toast = useToast()
 
 const dialogIsVisible = ref(false)
-async function handleSignUp({ valid, values }: { valid: boolean; values: Record<string, string> }) {
+async function handleRegister({ valid, values }: FormSubmitEvent) {
   if (!valid) return
 
   const { nama, email, phoneNumber, password } = values
 
   isLoading.value = true
   try {
-    const error = await authStore.handleSignUp({ nama, email, phoneNumber, password })
+    const error = await authStore.handleRegister({ nama, email, phoneNumber, password })
     if (error) throw error
 
     dialogIsVisible.value = true
@@ -65,7 +66,7 @@ async function handleSignUp({ valid, values }: { valid: boolean; values: Record<
         :validate-on-submit="true"
         :validateon-blur="true"
         class="flex flex-col gap-2"
-        @submit="handleSignUp"
+        @submit="handleRegister"
       >
         <label for="nama">Nama</label>
         <InputText id="nama" type="text" name="nama" placeholder="Siapa namamu?" />
@@ -143,7 +144,7 @@ async function handleSignUp({ valid, values }: { valid: boolean; values: Record<
       </Form>
     </div>
 
-    <Dialog v-model:visible="dialogIsVisible" modal header="Cek email kamu ya!">
+    <Dialog v-model:visible="dialogIsVisible" modal header="Cek email kamu ya!" class="max-w-xl">
       <p>
         Kami sudah mengirimkan email yang berisi pranala untuk konfirmasi akun kamu. Jangan lupa cek
         spam juga! Setelah kamu klik pranalanya, kamu boleh menutup tab ini.

@@ -52,7 +52,7 @@ export const useAuthStore = defineStore("auth", () => {
     })
   }
 
-  async function handleSignUp({
+  async function handleRegister({
     nama,
     email,
     phoneNumber,
@@ -136,7 +136,7 @@ export const useAuthStore = defineStore("auth", () => {
   return {
     profile,
     init,
-    handleSignUp,
+    handleRegister,
     handleSignIn,
     handleSignOut,
     handleForgotPassword,
