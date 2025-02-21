@@ -20,7 +20,7 @@ Deno.serve(async () => {
   const { data, error } = await supabase
     .from("peminjaman")
     .select(
-      "*, buku(judul, no_isbn), pengguna(user_id, nama, kelas, email), peminjaman_detail(state_id, created_at)"
+      "*, buku(judul, slug), pengguna(user_id, nama, kelas, email), peminjaman_detail(state_id, created_at)"
     )
     .order("created_at", { ascending: false, referencedTable: "peminjaman_detail" })
 
@@ -55,7 +55,7 @@ Deno.serve(async () => {
       email: string
       nama: string
     }
-    buku: { judul: string; no_isbn: string }
+    buku: { judul: string; slug: string }
     tenggat_waktu: string
   }
 
@@ -67,7 +67,7 @@ Deno.serve(async () => {
     html: `
       <h1>${d.pengguna.nama}, kamu punya peminjaman terlambat</h1>
       <p>Kamu meminjam buku ${d.buku.judul} yang seharusnya dikembalikan pada ${Intl.DateTimeFormat("id-ID", { dateStyle: "long" }).format(new Date(d.tenggat_waktu))}. Segera kembalikan!</p>
-      <a href="${siteURL}/buku/${d.buku.no_isbn}" style="background: #23514e; padding: 1rem 2rem; text-decoration: none; color:white; display: block; max-width: fit-content; text-align: center; border-radius: 1rem;">Kembalikan buku</a>
+      <a href="${siteURL}/buku/${d.buku.slug}" style="background: #23514e; padding: 1rem 2rem; text-decoration: none; color:white; display: block; max-width: fit-content; text-align: center; border-radius: 1rem;">Kembalikan buku</a>
 `,
   }))
 

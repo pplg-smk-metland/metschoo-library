@@ -48,7 +48,8 @@ async function addNewBook({ valid, values }: FormSubmitEvent) {
       if (uploadError) throw uploadError
     }
 
-    const insertError = await insertBookData({ ...buku, image: `public/${buku.no_isbn}` })
+    const slug = slugify(buku.judul)
+    const insertError = await insertBookData({ ...buku, slug, image: `public/${buku.no_isbn}` })
     if (insertError) throw insertError
 
     dialog.value.open("Buku berhasil ditambahkan!")

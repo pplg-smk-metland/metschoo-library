@@ -99,7 +99,7 @@ async function handleSearchBuku() {
       <Column field="judul" header="Judul">
         <template #body="slotProps">
           <NuxtLink
-            :to="`/admin/buku/${slotProps.data.no_isbn}`"
+            :to="`/admin/buku/${slotProps.data.slug}`"
             class="hover:underline inline-block max-w-72 overflow-hidden whitespace-nowrap text-ellipsis"
           >
             {{ slotProps.data.judul }}

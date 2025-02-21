@@ -5,7 +5,7 @@ import { createTestingPinia } from "@pinia/testing"
 import { useThemeStore } from "@/stores/theme"
 
 import { mountSuspended } from "@nuxt/test-utils/runtime"
-import { beforeEach , describe, it, expect } from "vitest"
+import { beforeEach, describe, it, expect } from "vitest"
 import { mount } from "@vue/test-utils"
 import BookItem from "./BookItem.vue"
 import TheNavbar from "./TheNavbar.vue"
@@ -14,9 +14,12 @@ import type { Buku } from "@/types"
 import TheHeader from "./TheHeader.vue"
 import WishlistBook from "./wishlist/WishlistBook.vue"
 import { defaultOptions } from "primevue"
+import { randomUUID } from "node:crypto"
 
 const buku: Buku = {
+  id: randomUUID(),
   judul: "Write tests for modern web applications with Vitest",
+  slug: 'write-tests-for-modern-web-apps-with-vitest',
   no_isbn: "123-456-789",
   kategori_id: 1,
   alamat_terbit: "Jonggol",

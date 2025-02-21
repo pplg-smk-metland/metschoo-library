@@ -9,6 +9,8 @@ import type { FileUploadSelectEvent } from "primevue"
  */
 export function useBuku() {
   const buku = ref<Buku | null>({
+    id: "",
+    slug: "",
     judul: "",
     no_isbn: "",
     penulis: "",
@@ -55,11 +57,11 @@ export function useDialog() {
 
 /**
  * gets newest peminjaman and returns the state
- * @param {Buku['no_isbn']} isbn - isbn of book
+ * @param {Buku['id']} id - id of book
  * @returns {Promise<PeminjamanState>} state of peminjaman
  */
 export async function usePeminjamanState(
-  { no_isbn, jumlah_exspl_aktual }: ActualBuku,
+  { id: buku_id, jumlah_exspl_aktual }: ActualBuku,
   peminjaman_detail?: PeminjamanDetail
 ): Promise<PeminjamanState> {
   const borrowableStateIds = [3, 5, 6, 7]
@@ -69,8 +71,8 @@ export async function usePeminjamanState(
 
     const peminjamanQuery = supabase
       .from("peminjaman_detail")
-      .select("peminjaman_id, peminjaman(no_isbn), state_id")
-      .eq("peminjaman.no_isbn", no_isbn)
+      .select("peminjaman_id, peminjaman(buku_id), state_id")
+      .eq("peminjaman.buku_id", buku_id)
       .order("created_at", { ascending: false })
       .limit(1)
       .single()
@@ -111,14 +113,14 @@ export async function usePeminjamanState(
   }
 }
 
-export async function useCheckWishlist(isbn: Buku["no_isbn"]): Promise<boolean> {
+export async function useCheckWishlist(buku_id: Buku["id"]): Promise<boolean> {
   const supabase = useSupabaseClient<Database>()
 
   try {
     const { count, error } = await supabase
       .from("wishlist")
-      .select("no_isbn", { count: "exact", head: true })
-      .eq("no_isbn", isbn)
+      .select("id", { count: "exact", head: true })
+      .eq("buku_id", buku_id)
 
     if (error) throw error
     if (!count) return false

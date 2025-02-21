@@ -5,6 +5,8 @@ import { randomUUID } from "node:crypto"
 
 describe("peminjaman state composable", () => {
   const buku: ActualBuku = {
+    id: randomUUID(),
+    slug: "dummy-buku",
     no_isbn: "123-456-79",
     jumlah_exspl: 0,
     alamat_terbit: new Date("01-01-1970").toISOString(),
@@ -22,7 +24,7 @@ describe("peminjaman state composable", () => {
   it("book with confirmed peminjaman cannot be borrowed again, is cancellable, and is returnable", () => {
     const peminjaman: Peminjaman = {
       id: randomUUID(),
-      no_isbn: buku.no_isbn as string,
+      buku_id: buku.id,
       tenggat_waktu: new Date("09-01-2010").toISOString(),
       tgl_pinjam: new Date("10-01-2010").toISOString(),
       user_id: randomUUID(),

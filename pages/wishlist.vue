@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Buku } from "@/types/"
+import type { Buku, Wishlist } from "@/types/"
 import type { PostgrestError } from "@supabase/supabase-js"
 
 import Toast from "primevue/toast"
@@ -18,19 +18,19 @@ const { data: wishlist } = useAsyncData(async () => await getWishlist())
 
 const toast = useToast()
 
-async function handleDeleteFromWishlist(buku: Buku) {
+async function handleDeleteFromWishlist(id: Wishlist["id"], judul: Buku["judul"]) {
   if (!wishlist.value) return
 
   try {
-    const targetIsbn = await deleteFromWishlist(buku.no_isbn)
+    const targetId = await deleteFromWishlist(id)
 
     // sync UI after deletion
-    wishlist.value = wishlist.value.filter(({ no_isbn }) => no_isbn !== targetIsbn)
+    wishlist.value = wishlist.value.filter(({ id }) => id !== targetId)
 
     toast.add({
       severity: "success",
       summary: "Sukses!",
-      detail: `sukses menghapus buku ${buku.judul} dari wishlist`,
+      detail: `sukses menghapus buku ${judul} dari wishlist`,
       life: 5000,
     })
   } catch (err) {
@@ -39,7 +39,7 @@ async function handleDeleteFromWishlist(buku: Buku) {
     toast.add({
       severity: "error",
       summary: "Gagal",
-      detail: `gagal menghapus buku ${buku.judul} dari wishlist`,
+      detail: `gagal menghapus buku ${judul} dari wishlist`,
       life: 10000,
     })
   }
@@ -64,13 +64,14 @@ const user = useSupabaseUser()
     <section v-else class="main-section">
       <p v-if="!wishlist || wishlist.length === 0">Kamu belum punya apa-apa dalam wishlist kamu.</p>
       <ul v-else class="book-list">
-        <WishlistBook
-          v-for="wishlistItem in wishlist"
-          :key="wishlistItem.id"
-          :buku="wishlistItem.buku!"
-          @pinjam-buku="router.push(`/buku/${wishlistItem.no_isbn}`)"
-          @hapus-buku="handleDeleteFromWishlist(wishlistItem.buku!)"
-        />
+        <template v-for="wishlistItem in wishlist" :key="wishlistItem.id">
+          <WishlistBook
+            v-if="wishlistItem.buku"
+            :buku="wishlistItem.buku!"
+            @pinjam-buku="router.push(`/buku/${wishlistItem.buku.slug}`)"
+            @hapus-buku="handleDeleteFromWishlist(wishlistItem.id, wishlistItem.buku.judul)"
+          />
+        </template>
       </ul>
     </section>
 

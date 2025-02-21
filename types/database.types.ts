@@ -1,3 +1,4 @@
+
 export type Json =
   | string
   | number
@@ -52,6 +53,7 @@ export type Database = {
           alamat_terbit: string
           asal: string
           fts: unknown | null
+          id: string
           image: string | null
           judul: string
           jumlah_exspl: number
@@ -59,25 +61,29 @@ export type Database = {
           no_isbn: string
           penerbit: string
           penulis: string
+          slug: string
           tahun_terbit: string
         }
         Insert: {
           alamat_terbit: string
           asal: string
           fts?: unknown | null
+          id?: string
           image?: string | null
           judul: string
           jumlah_exspl?: number
           kategori_id: number
-          no_isbn: string
+          no_isbn?: string
           penerbit: string
           penulis: string
+          slug?: string
           tahun_terbit: string
         }
         Update: {
           alamat_terbit?: string
           asal?: string
           fts?: unknown | null
+          id?: string
           image?: string | null
           judul?: string
           jumlah_exspl?: number
@@ -85,6 +91,7 @@ export type Database = {
           no_isbn?: string
           penerbit?: string
           penulis?: string
+          slug?: string
           tahun_terbit?: string
         }
         Relationships: [
@@ -143,40 +150,40 @@ export type Database = {
       }
       peminjaman: {
         Row: {
+          buku_id: string
           id: string
-          no_isbn: string
           tenggat_waktu: string
           tgl_pinjam: string | null
           user_id: string
         }
         Insert: {
+          buku_id: string
           id?: string
-          no_isbn: string
           tenggat_waktu: string
           tgl_pinjam?: string | null
           user_id?: string
         }
         Update: {
+          buku_id?: string
           id?: string
-          no_isbn?: string
           tenggat_waktu?: string
           tgl_pinjam?: string | null
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "peminjaman_no_isbn_fkey"
-            columns: ["no_isbn"]
+            foreignKeyName: "peminjaman_buku_id_fkey"
+            columns: ["buku_id"]
             isOneToOne: false
             referencedRelation: "actual_buku"
-            referencedColumns: ["no_isbn"]
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "peminjaman_no_isbn_fkey"
-            columns: ["no_isbn"]
+            foreignKeyName: "peminjaman_buku_id_fkey"
+            columns: ["buku_id"]
             isOneToOne: false
             referencedRelation: "buku"
-            referencedColumns: ["no_isbn"]
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "peminjaman_user_id_fkey"
@@ -299,34 +306,34 @@ export type Database = {
       }
       wishlist: {
         Row: {
+          buku_id: string
           id: number
-          no_isbn: string
           user_id: string
         }
         Insert: {
+          buku_id: string
           id?: number
-          no_isbn: string
           user_id?: string
         }
         Update: {
+          buku_id?: string
           id?: number
-          no_isbn?: string
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "wishlist_no_isbn_fkey"
-            columns: ["no_isbn"]
+            foreignKeyName: "wishlist_buku_id_fkey"
+            columns: ["buku_id"]
             isOneToOne: false
             referencedRelation: "actual_buku"
-            referencedColumns: ["no_isbn"]
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "wishlist_no_isbn_fkey"
-            columns: ["no_isbn"]
+            foreignKeyName: "wishlist_buku_id_fkey"
+            columns: ["buku_id"]
             isOneToOne: false
             referencedRelation: "buku"
-            referencedColumns: ["no_isbn"]
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "wishlist_user_id_fkey"
@@ -343,6 +350,7 @@ export type Database = {
         Row: {
           alamat_terbit: string | null
           asal: string | null
+          id: string | null
           image: string | null
           judul: string | null
           jumlah_dipinjam: number | null
@@ -352,6 +360,7 @@ export type Database = {
           no_isbn: string | null
           penerbit: string | null
           penulis: string | null
+          slug: string | null
           tahun_terbit: string | null
         }
         Relationships: [
@@ -377,6 +386,12 @@ export type Database = {
       is_super_admin: {
         Args: Record<PropertyKey, never>
         Returns: boolean
+      }
+      slugify: {
+        Args: {
+          "": string
+        }
+        Returns: string
       }
     }
     Enums: {
@@ -485,4 +500,3 @@ export type CompositeTypes<
   : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
     ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
-

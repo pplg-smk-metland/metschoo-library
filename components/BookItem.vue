@@ -11,7 +11,7 @@ const imgURL = ref(getBukuImage(props.buku.image))
 <template>
   <li class="shadow">
     <NuxtLink
-      :to="`/buku/${buku.no_isbn}`"
+      :to="`/buku/${buku.slug}`"
       class="inline-block size-full p-4 rounded-lg hover:bg-primary-500/10 transition-colors duration-200"
     >
       <figure>

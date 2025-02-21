@@ -12,7 +12,7 @@ defineProps<Props>()
 <template>
   <li class="grid gap-4 items-start grid-flow-dense rounded-lg peminjaman-item">
     <figure v-if="peminjaman.buku" class="contents">
-      <RouterLink :to="`/buku/${peminjaman.buku.no_isbn}`" class="row-span-2">
+      <RouterLink :to="`/buku/${peminjaman.buku.slug}`" class="row-span-2">
         <Image
           :src="getBukuImage(peminjaman.buku?.image)"
           width="400"

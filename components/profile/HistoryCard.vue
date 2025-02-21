@@ -23,7 +23,7 @@ const peminjamanState = computed(() => {
 <template>
   <NuxtLink
     v-if="buku"
-    :to="`/buku/${buku.no_isbn}`"
+    :to="`/buku/${buku.slug}`"
     class="flex gap-2 hover:bg-primary-500/20 rounded-lg"
   >
     <figure class="max-w-24">

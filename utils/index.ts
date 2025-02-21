@@ -22,7 +22,7 @@ class CostomError extends Error {
  * @param {Buku} buku - the buku you want to insert
  * @returns {Promise<PostgrestError | null>} error
  * */
-export async function insertBookData(buku: Buku): Promise<PostgrestError | null> {
+export async function insertBookData(buku: Omit<Buku, "id">): Promise<PostgrestError | null> {
   const supabase = useSupabaseClient<Database>()
 
   const { error } = await supabase.from("buku").insert({ ...buku })
@@ -30,16 +30,16 @@ export async function insertBookData(buku: Buku): Promise<PostgrestError | null>
 }
 
 /**
- * get a single buku by its isbn from the view.
- * @param {Buku['no_isbn']} isbn - isbn
- * @returns {Promise<Buku>} Buku
+ * get a single buku by its slug from the view.
+ * @param {Buku['slug']} slug - slug of buku
+ * @returns {Promise<ActualBuku>} Buku
  */
-export async function getBuku(isbn: Buku["no_isbn"]): Promise<ActualBuku> {
+export async function getBuku(slug: Buku["slug"]): Promise<ActualBuku> {
   const supabase = useSupabaseClient<Database>()
   const { data, error } = await supabase
     .from("actual_buku")
     .select("*")
-    .eq("no_isbn", isbn)
+    .eq("slug", slug)
     .limit(1)
     .single()
 
@@ -84,7 +84,7 @@ export async function searchBukus(searchFor?: BukuSearchArgs) {
 
   let query = supabase
     .from("buku")
-    .select(`no_isbn, judul, penulis, penerbit, tahun_terbit, kategori_buku(kategori)`)
+    .select(`no_isbn, slug, judul, penulis, penerbit, tahun_terbit, kategori_buku(kategori)`)
 
   if (searchFor) {
     const { judul, no_isbn, kategori } = searchFor
@@ -127,10 +127,11 @@ export function getBukuImage(image?: Buku["image"]): string {
 /**
  * borrow a buku.
  *
- * @param {Buku['no_isbn']} no_isbn - field of buku
+ * @param {Buku['id']} buku_id - id of buku
+ * @param {Date} tenggat_waktu - when to return the buku
  */
 export async function borrowBuku(
-  no_isbn: Buku["no_isbn"],
+  buku_id: Buku["id"],
   tenggat_waktu: Date
 ): Promise<Peminjaman["id"]> {
   const supabase = useSupabaseClient<Database>()
@@ -138,7 +139,7 @@ export async function borrowBuku(
   const { data: buku, error: bukuError } = await supabase
     .from("actual_buku")
     .select("jumlah_exspl_aktual")
-    .eq("no_isbn", no_isbn)
+    .eq("id", buku_id)
     .single()
 
   if (bukuError) throw bukuError
@@ -150,7 +151,7 @@ export async function borrowBuku(
   const { data: peminjaman, error } = await supabase
     .from("peminjaman")
     .insert({
-      no_isbn,
+      buku_id,
       tenggat_waktu: tenggat_waktu.toISOString(),
     })
     .select()
@@ -258,6 +259,18 @@ export function formatDate(date: Date, opts?: Intl.DateTimeFormatOptions): strin
     }
   }
   return new Intl.DateTimeFormat("id-ID", opts).format(date)
+}
+
+export function slugify(input: string): string {
+  return String(input)
+    .trim()
+    .toLowerCase()
+    .normalize("NFKD") // split accented characters into their base characters and diacritical marks
+    .replace(/[\u0300-\u036f]/g, "") // remove all the accents, which happen to be all in the \u03xx UNICODE block.
+    .replace(/[^\w\s-]/g, "") // Remove special characters
+    .split(" ", 8) // limit to 8 words, in normal cases
+    .join("-")
+    .replace(/[\s-]+/g, "-") // replace multiple spaces or hyphens with a single hyphen
 }
 
 /**

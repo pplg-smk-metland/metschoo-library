@@ -217,8 +217,8 @@ async function signOut() {
 
     <CTA
       :label="`${isLoading ? 'tunggu sebentar ya' : 'Keluar dari akun'}`"
-      @click="signOut"
       :loading="isLoading"
+      @click="signOut"
     />
   </Dialog>
 

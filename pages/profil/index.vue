@@ -199,14 +199,14 @@ async function enterLibrary() {
           <TabPanel value="belum-dikonfirmasi">
             <ul class="book-list">
               <li v-if="!bukuBlumDikonfirmasi?.length">ga ada bukunya nih</li>
-              <ProfileBook v-for="data in bukuBlumDikonfirmasi" :key="data.no_isbn" :data="data" />
+              <ProfileBook v-for="data in bukuBlumDikonfirmasi" :key="data.id" :data="data" />
             </ul>
           </TabPanel>
 
           <TabPanel value="sudah-dikonfirmasi">
             <ul class="book-list">
               <li v-if="!bukuSudahDikonfirmasi?.length">ga ada bukunya nih</li>
-              <ProfileBook v-for="data in bukuSudahDikonfirmasi" :key="data.no_isbn" :data="data" />
+              <ProfileBook v-for="data in bukuSudahDikonfirmasi" :key="data.id" :data="data" />
             </ul>
           </TabPanel>
         </TabPanels>
