@@ -21,7 +21,7 @@ const title = computed(() => (isLoggingIn.value ? "Log in" : "Sign in"))
 useHead({ title })
 
 const switchFormButtonLabel = computed(() =>
-  isLoggingIn.value ? "Sudah punya akun? Masuk" : "Belum punya akun? ayo bikin dulu!"
+  isLoggingIn.value ?  "Belum punya akun? ayo bikin dulu! " : "Sudah punya akun? Masuk"
 )
 </script>
 
