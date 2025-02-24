@@ -10,6 +10,11 @@ const { data: profile } = await useLazyAsyncData(async () => {
   if (user.value) return await authStore.getProfile(user.value.id)
   return false
 })
+
+const { data: categories } = await useLazyAsyncData(async () => {
+  const categories = await getAllAvailableCategories()
+  return categories
+})
 </script>
 
 <template>
@@ -21,14 +26,11 @@ const { data: profile } = await useLazyAsyncData(async () => {
       </template>
     </TheHeader>
 
-    <section class="main-section">
-      <h2 class="text-lg">Rekomendasi</h2>
-      <HomeBookList :type-id="1" />
-    </section>
-
-    <section class="main-section">
-      <h2 class="text-lg">Koleksi</h2>
-      <HomeBookList :type-id="2" />
-    </section>
+    <template v-for="category in categories" :key="category.id">
+      <section class="main-section">
+        <h2 class="text-lg">{{ category.kategori }}</h2>
+        <HomeBookList :type-id="category.id" />
+      </section>
+    </template>
   </div>
 </template>
