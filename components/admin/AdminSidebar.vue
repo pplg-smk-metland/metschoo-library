@@ -63,6 +63,10 @@ const sidebarLinks = ref<SidebarLink[]>([
     ],
   },
   {
+    label: "Kunjungan",
+    route: "kunjungan",
+  },
+  {
     label: "Request",
     route: "request",
   },

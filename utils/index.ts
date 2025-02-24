@@ -294,7 +294,7 @@ export async function searchKunjungans({ timestamp_range }: KunjunganSearchArgs)
   const supabase = useSupabaseClient()
   let query = supabase
     .from("kunjungan")
-    .select("id, timestamp, event, pengguna (nama)")
+    .select("id, timestamp, event, pengguna(user_id, nama, kelas, jurusan)")
     .order("timestamp", { ascending: false })
 
   if (timestamp_range[0]) {
