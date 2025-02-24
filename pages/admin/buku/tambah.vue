@@ -72,25 +72,7 @@ async function addNewBook({ valid, values }: FormSubmitEvent) {
 }
 
 // silly loading animation
-const tambahBtnLabel = ref("Tambah buku baru")
-const labelRepeat = ref(0)
-let intervalID: NodeJS.Timeout | undefined = undefined
-
-watch(isLoading, (newIsLoading) => {
-  tambahBtnLabel.value = newIsLoading ? "Menambahkan buku baru" : "Tambah buku baru"
-
-  if (newIsLoading) {
-    intervalID = setInterval(() => {
-      tambahBtnLabel.value = "Menambahkan buku baru" + ".".repeat(labelRepeat.value)
-      labelRepeat.value += 1
-      if (labelRepeat.value > 3) labelRepeat.value = 0
-    }, 500)
-  } else {
-    labelRepeat.value = 0
-    clearInterval(intervalID)
-    intervalID = undefined
-  }
-})
+const { loadingText: tambahBtnLabel } = useLoadingText(isLoading, "Tambah buku", "Menambahkan buku")
 
 const { data: availableCategories } = await useAsyncData(
   async () => await getAllAvailableCategories()

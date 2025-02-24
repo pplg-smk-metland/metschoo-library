@@ -143,3 +143,41 @@ export function usePreviewImage() {
 
   return { newImage, previewURL, previewImage }
 }
+
+/**
+ * returns a dot blinker for loading animations.
+ * @param {string} text - the text to display when not in loading state
+ * @param {string} loadingText - the text to display when in loading state
+ *
+ * @returns finalLoadingText
+ * */
+export function useLoadingText(
+  isLoading: Ref<boolean>,
+  text: MaybeRefOrGetter<string>,
+  loadingText: MaybeRefOrGetter<string>
+) {
+  const processedLoadingText = toRef(loadingText)
+  const processedText = toRef(text)
+  const finalText = ref(processedText.value)
+  const repeatAmount = ref(0)
+
+  let intervalID: NodeJS.Timeout | undefined = undefined
+
+  watch(isLoading, (newIsLoading) => {
+    finalText.value = newIsLoading ? processedLoadingText.value : processedText.value
+
+    if (newIsLoading) {
+      intervalID = setInterval(() => {
+        finalText.value = processedLoadingText.value + ".".repeat(repeatAmount.value)
+        repeatAmount.value += 1
+        if (repeatAmount.value > 3) repeatAmount.value = 0
+      }, 500)
+    } else {
+      repeatAmount.value = 0
+      clearInterval(intervalID)
+      intervalID = undefined
+    }
+  })
+
+  return { loadingText: finalText }
+}
