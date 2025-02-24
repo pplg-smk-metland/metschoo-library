@@ -37,8 +37,8 @@ export type SignUpData = {
 }
 
 export interface PeminjamanSearchArgs {
-  peminjam: Pengguna["nama"]
-  no_isbn: Buku["no_isbn"]
+  peminjam: Pengguna["nama"] | null
+  judul: Buku["judul"] | null
   tgl_pinjam: Array<Date | null>
   tenggat_waktu: Array<Date | null>
 }

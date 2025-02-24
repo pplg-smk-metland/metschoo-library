@@ -3,7 +3,7 @@ import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import DataTable from "primevue/datatable"
 import Column from "primevue/column"
 import { getPeminjamanData } from "@/lib/peminjaman"
-import { formatDate } from "#imports"
+import { formatDate } from "@/utils"
 import type { PeminjamanSearchArgs } from "~/types"
 import { InputText, DatePicker, FloatLabel } from "primevue"
 import type { PeminjamanData } from "./index.vue"
@@ -18,20 +18,20 @@ definePageMeta({
 
 const searchFor = ref<PeminjamanSearchArgs>({
   peminjam: "",
-  no_isbn: "",
+  judul: "",
   tgl_pinjam: [null, null],
   tenggat_waktu: [null, null],
 })
 
-const { data: peminjamanData } = await useAsyncData(
-  async () => await getPeminjamanData(searchFor.value)
-)
+const { data: peminjamanData, refresh: refreshPeminjaman } = await useAsyncData(async () => {
+  return await getPeminjamanData(searchFor.value)
+})
 
 const isLoading = ref(false)
 
 async function handleFilterPeminjaman() {
   isLoading.value = true
-  peminjamanData.value = await getPeminjamanData(searchFor.value)
+  refreshPeminjaman()
   isLoading.value = false
 }
 </script>
@@ -47,8 +47,8 @@ async function handleFilterPeminjaman() {
       </FloatLabel>
 
       <FloatLabel>
-        <InputText v-model="searchFor.no_isbn" input-id="no-isbn" fluid />
-        <label for="no-isbn">ISBN</label>
+        <InputText v-model="searchFor.judul" input-id="no-isbn" fluid />
+        <label for="no-isbn">Judul</label>
       </FloatLabel>
 
       <FloatLabel>
@@ -104,14 +104,14 @@ async function handleFilterPeminjaman() {
       :rows="20"
     >
       <template #empty>
-        <p>Belum ada yang meminjam</p>
+        <p class="text-center py-8">Tidak ada data peminjaman yang ditemukan.</p>
       </template>
 
       <template #loading>
         <LoadingSpinner />
       </template>
       <template #header>
-        <p>Menampilkan {{ peminjamanData?.length }} peminjaman.</p>
+        <p class="dark:text-gray-400">Menampilkan {{ peminjamanData?.length }} peminjaman.</p>
       </template>
 
       <Column field="pengguna.nama" header="Peminjam">

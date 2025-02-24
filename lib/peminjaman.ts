@@ -11,19 +11,19 @@ export async function getPeminjamanData(searchFor?: PeminjamanSearchArgs): Promi
   let query = supabase
     .from("peminjaman")
     .select(
-      "*, peminjaman_detail(*, peminjaman_state(name)), pengguna(user_id, nama, kelas, jurusan), buku(*)"
+      "*, peminjaman_detail(*, peminjaman_state(name)), pengguna!inner(user_id, nama, kelas, jurusan), buku!inner(*)"
     )
     .order("created_at", { referencedTable: "peminjaman_detail", ascending: false })
 
   if (searchFor) {
-    const { peminjam, no_isbn, tgl_pinjam, tenggat_waktu } = searchFor
+    const { peminjam, judul, tgl_pinjam, tenggat_waktu } = searchFor
 
     if (peminjam) {
       query = query.ilike("pengguna.nama", `%${peminjam}%`)
     }
 
-    if (no_isbn) {
-      query = query.ilike("no_isbn", `%$${no_isbn}%`)
+    if (judul) {
+      query = query.ilike("buku.judul", `%${judul}%`)
     }
 
     if (tgl_pinjam) {
