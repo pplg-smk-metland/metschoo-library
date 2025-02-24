@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
-import DataTable from "primevue/datatable"
-import Column from "primevue/column"
+import { DataTable, Column, InputText, DatePicker, FloatLabel } from "primevue"
+import IconExcel from "~icons/mdi/microsoft-excel"
+import xlsx from "xlsx"
 import { getPeminjamanData } from "@/lib/peminjaman"
 import { formatDate } from "@/utils"
+
 import type { PeminjamanSearchArgs } from "~/types"
-import { InputText, DatePicker, FloatLabel } from "primevue"
 import type { PeminjamanData } from "./index.vue"
 
 useHead({
@@ -34,10 +35,48 @@ async function handleFilterPeminjaman() {
   refreshPeminjaman()
   isLoading.value = false
 }
+
+const toast = useToast()
+
+async function handleExportToExcel(data: typeof peminjamanData.value) {
+  if (!data)
+    return toast.add({
+      severity: "error",
+      detail: "Error when exporting!",
+      summary: "aborting export, there was no data to export.",
+      life: 10000,
+    })
+
+  const finalData = data.map((row) => {
+    return {
+      buku: row.buku?.judul,
+      peminjam: row.pengguna,
+      "tanggal pinjam": formatDate(new Date(row.tgl_pinjam ?? "")),
+      "tenggat waktu": formatDate(new Date(row.tenggat_waktu)),
+      keterangan: row.peminjaman_detail[0].peminjaman_state?.name,
+    }
+  })
+
+  const worksheet = xlsx.utils.json_to_sheet(finalData)
+  const workbook = xlsx.utils.book_new()
+  xlsx.utils.book_append_sheet(workbook, worksheet, `peminjaman`)
+
+  return xlsx.writeFileXLSX(
+    workbook,
+    `Peminjaman - Metschoo Library | ${formatDate(new Date())}.xlsx`,
+    {
+      compression: true,
+    }
+  )
+}
 </script>
 
 <template>
-  <PageHeader heading="Data peminjaman" />
+  <PageHeader heading="Data peminjaman">
+    <CTA fill @click="handleExportToExcel(peminjamanData)" label="Export to Excel">
+      <IconExcel />
+    </CTA>
+  </PageHeader>
 
   <section class="main-section">
     <form class="py-4 flex gap-4" @submit.prevent="handleFilterPeminjaman">
@@ -167,6 +206,8 @@ async function handleFilterPeminjaman() {
       </Column>
     </DataTable>
   </section>
+
+  <Toast />
 </template>
 
 <style>
