@@ -39,13 +39,14 @@ async function handleFilterPeminjaman() {
 const toast = useToast()
 
 async function handleExportToExcel(data: typeof peminjamanData.value) {
-  if (!data)
+  if (!data) {
     return toast.add({
       severity: "error",
-      detail: "Error when exporting!",
-      summary: "aborting export, there was no data to export.",
+      detail: "Error ketika mengekspor!",
+      summary: "Tidak ada data untuk diexpor.",
       life: 10000,
     })
+  }
 
   const finalData = data.map((row) => {
     return {
@@ -61,18 +62,21 @@ async function handleExportToExcel(data: typeof peminjamanData.value) {
   const workbook = xlsx.utils.book_new()
   xlsx.utils.book_append_sheet(workbook, worksheet, `peminjaman`)
 
-  return xlsx.writeFileXLSX(
-    workbook,
-    `Peminjaman - Metschoo Library | ${formatDate(new Date())}.xlsx`,
-    {
-      compression: true,
-    }
-  )
+  xlsx.writeFileXLSX(workbook, `Peminjaman - Metschoo Library | ${formatDate(new Date())}.xlsx`, {
+    compression: true,
+  })
+
+  return toast.add({
+    severity: "success",
+    summary: "sukses mengekspor data!",
+    detail: "sukses mengekspor data peminjaman. Lihat folder download anda!",
+    life: 10000,
+  })
 }
 </script>
 
 <template>
-  <PageHeader heading="Data peminjaman">
+  <PageHeader heading="Data peminjaman" class="justify-between">
     <CTA fill @click="handleExportToExcel(peminjamanData)" label="Export to Excel">
       <IconExcel />
     </CTA>

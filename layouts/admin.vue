@@ -9,7 +9,7 @@ const { data: profile } = await useAsyncData(async () => {
   <div class="grid flex-1 wrapper">
     <TheNavbar />
     <AdminSidebar :profile="profile" />
-    <main class="p-4 flex flex-col align-stretch gap-4 mx-auto">
+    <main class="px-4 py-8 flex flex-col align-stretch gap-8 mx-auto">
       <slot />
     </main>
   </div>
