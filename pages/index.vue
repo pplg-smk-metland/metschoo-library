@@ -26,7 +26,7 @@ const { data: categories } = await useLazyAsyncData(async () => {
       </template>
     </TheHeader>
 
-    <template v-for="category in categories">
+    <template v-for="category in categories" :key="category.id">
       <section class="main-section">
         <h2 class="text-lg">{{ category.kategori }}</h2>
         <HomeBookList :type-id="category.id" />
