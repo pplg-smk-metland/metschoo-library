@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import xlsx from "xlsx"
 import type { KunjunganSearchArgs } from "~/types"
+import IconExcel from "~icons/mdi/microsoft-excel"
 
 useHead({
   title: "Kunjungan",
@@ -45,15 +47,49 @@ async function handleSearchKunjungans() {
 
   kunjungans.value = data
 }
+
+async function handleExportToExcel(data: typeof kunjungans.value) {
+  if (!data || !data.length) {
+    return toast.add({
+      severity: "error",
+      summary: "Error ketika mengekspor!",
+      detail: "Tidak ada data untuk diexpor.",
+      life: 10000,
+    })
+  }
+
+  const finalData = data.map((row) => ({
+    pengguna: row.pengguna ? row.pengguna.nama : "-",
+    kelas: row.pengguna ? row.pengguna.kelas : "-",
+    jurusan: row.pengguna ? row.pengguna.jurusan : "-",
+    waktu: formatDate(new Date(row.timestamp)),
+    status: row.event,
+  }))
+
+  const worksheet = xlsx.utils.json_to_sheet(finalData)
+  const workbook = xlsx.utils.book_new()
+  xlsx.utils.book_append_sheet(workbook, worksheet, "peminjaman")
+
+  xlsx.writeFileXLSX(workbook, `Kunjungan - Metschoo Library ${formatDate(new Date())}.xlsx`, {
+    compression: true,
+  })
+
+  return toast.add({
+    severity: "success",
+    summary: "Expor sukses!",
+    detail: "sukses mengekspor data kunjungan. Lihat folder download anda!",
+    life: 10000,
+  })
+}
 </script>
 <template>
-  <PageHeader heading="Admin">
-    <p>Halo admin</p>
+  <PageHeader heading="Riwayat Kunjungan" class="justify-between">
+    <CTA fill label="Export to Excel" @click="handleExportToExcel(kunjungans)">
+      <IconExcel />
+    </CTA>
   </PageHeader>
 
   <section v-if="kunjungans" class="main-section col-span-full">
-    <h2 class="leading-relaxed mb-4">Riwayat Kunjungan</h2>
-
     <form class="flex gap-4 py-4" @submit.prevent="handleSearchKunjungans()">
       <FloatLabel>
         <DatePicker
@@ -111,4 +147,6 @@ async function handleSearchKunjungans() {
       </Column>
     </DataTable>
   </section>
+
+  <Toast />
 </template>
