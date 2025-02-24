@@ -117,7 +117,7 @@ async function handleExportToExcel(data: typeof kunjungans.value) {
 
     <DataTable :value="kunjungans" striped-rows paginator :rows="10">
       <template #header>
-        <p>Menampilkan {{ kunjungans.length }} kunjungan.</p>
+        <p class="dark:text-gray-400">Menampilkan {{ kunjungans.length }} kunjungan.</p>
       </template>
 
       <Column header="No">
