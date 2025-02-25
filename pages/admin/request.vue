@@ -3,6 +3,8 @@ import { Tab, Tabs, TabList, TabPanels, TabPanel, Toast, useToast } from "primev
 import { getRequests, processRequest } from "@/lib/request"
 import type { BookRequest } from "~/types"
 import { FunctionsFetchError, FunctionsHttpError, FunctionsRelayError } from "@supabase/supabase-js"
+import IconExcel from "~icons/mdi/microsoft-excel"
+import xlsx from "xlsx"
 
 useHead({
   title: "request",
@@ -96,60 +98,102 @@ const tabs = [
     localized: "Ditolak",
   },
 ]
+
+function handleExportToExcel(data: typeof requests.value) {
+  if (!data || !data.length) {
+    return toast.add({
+      severity: "error",
+      summary: "Gagal mengekspor!",
+      detail: "Tidak ada data untuk diekspor.",
+      life: 10000,
+    })
+  }
+
+  const worksheet = xlsx.utils.json_to_sheet(data)
+  const workbook = xlsx.utils.book_new()
+
+  xlsx.utils.book_append_sheet(workbook, worksheet, "request")
+
+  xlsx.writeFileXLSX(workbook, `Request buku - Metschoo Library ${formatDate(new Date())}.xlsx`, {
+    compression: true,
+  })
+
+  return toast.add({
+    severity: "success",
+    summary: "sukses mengekspor data request buku!",
+    detail: "sukses mengekspor data request buku.",
+    life: 10000,
+  })
+}
 </script>
 
 <template>
-  <h1>request</h1>
+  <PageHeader heading="request" />
 
-  <Tabs value="processing">
-    <TabList>
-      <Tab v-for="tab in tabs" :key="tab.status" :value="tab.status">{{ tab.localized }}</Tab>
-    </TabList>
+  <section class="main-section">
+    <Tabs value="processing">
+      <TabList>
+        <Tab v-for="tab in tabs" :key="tab.status" :value="tab.status">{{ tab.localized }}</Tab>
+      </TabList>
 
-    <TabPanels>
-      <TabPanel v-for="tab in tabs" :key="tab.status" :value="tab.status">
-        <DataTable :value="requests?.filter((d) => d.is_accepted === tab.status) || []">
-          <template #empty>
-            <p>Belum ada request dari pengguna.</p>
-          </template>
+      <TabPanels>
+        <TabPanel v-for="tab in tabs" :key="tab.status" :value="tab.status">
+          <CTA
+            fill
+            label="Export ke Excel"
+            @click="
+              handleExportToExcel(requests?.filter((d) => d.is_accepted === tab.status) || [])
+            "
+          >
+            <IconExcel />
+          </CTA>
 
-          <Column field="created_at" header="Tanggal request" sortable>
-            <template #body="{ data }">
-              {{ formatDate(new Date(data.created_at)) }}
+          <DataTable :value="requests?.filter((d) => d.is_accepted === tab.status) || []">
+            <template #empty>
+              <p class="text-center py-8">Belum ada request dari pengguna.</p>
             </template>
-          </Column>
 
-          <Column field="pengguna.nama" header="Peminta">
-            <template #body="{ data }">
-              <RouterLink :to="`/admin/pengguna/${data.pengguna.user_id}/`" class="hover:underline">
-                {{ data.pengguna.nama }}
-              </RouterLink>
-            </template>
-          </Column>
+            <Column field="created_at" header="Tanggal request" sortable>
+              <template #body="{ data }">
+                {{ formatDate(new Date(data.created_at)) }}
+              </template>
+            </Column>
 
-          <Column field="isbn" header="ISBN" />
-          <Column field="title" header="Judul" />
-          <Column field="category" header="Kategori buku" sortable />
+            <Column field="pengguna.nama" header="Peminta">
+              <template #body="{ data }">
+                <RouterLink
+                  :to="`/admin/pengguna/${data.pengguna.user_id}/`"
+                  class="hover:underline"
+                >
+                  {{ data.pengguna.nama }}
+                </RouterLink>
+              </template>
+            </Column>
 
-          <Column v-if="tab.status === 'processing'" header="aksi">
-            <template #body="{ data }">
-              <div class="flex gap-4">
-                <CTA
-                  label="terima"
-                  @click="handleRequest(data.id, data.pengguna.email, 'accepted')"
-                />
-                <CTA
-                  label="tolak"
-                  severity="danger"
-                  @click="handleRequest(data.id, data.pengguna.email, 'rejected')"
-                />
-              </div>
-            </template>
-          </Column>
-        </DataTable>
-      </TabPanel>
-    </TabPanels>
-  </Tabs>
+            <Column field="isbn" header="ISBN" />
+            <Column field="title" header="Judul" />
+            <Column field="category" header="Kategori buku" sortable />
+
+            <Column v-if="tab.status === 'processing'" header="aksi">
+              <template #body="{ data }">
+                <div class="flex gap-4">
+                  <CTA
+                    label="terima"
+                    @click="handleRequest(data.id, data.pengguna.email, 'accepted')"
+                  />
+                  <CTA
+                    label="tolak"
+                    severity="danger"
+                    @click="handleRequest(data.id, data.pengguna.email, 'rejected')"
+                  />
+                </div>
+              </template>
+            </Column>
+          </DataTable>
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
+  </section>
 
   <Toast />
 </template>

@@ -23,6 +23,7 @@ const authStore = useAuthStore()
 const toast = useToast()
 
 const dialogIsVisible = ref(false)
+
 async function handleRegister({ valid, values }: FormSubmitEvent) {
   if (!valid) return
 
@@ -47,6 +48,8 @@ async function handleRegister({ valid, values }: FormSubmitEvent) {
     isLoading.value = false
   }
 }
+
+const { loadingText: registerBtnLabel } = useLoadingText(isLoading, "Daftar", "Tunggu sebentar ya")
 </script>
 
 <template>
@@ -140,7 +143,7 @@ async function handleRegister({ valid, values }: FormSubmitEvent) {
           Mohon konfirmasi password kamu, ngetiknya yang bener.
         </Message>
 
-        <CTA type="submit" label="Daftar" class="block" :loading="isLoading" />
+        <CTA type="submit" :label="registerBtnLabel" :loading="isLoading" />
       </Form>
     </div>
 

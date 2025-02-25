@@ -10,7 +10,7 @@ const router = useRouter()
 const toast = useToast()
 const isLoading = ref(false)
 
-async function handleSignIn({ valid, values }: { valid: boolean; values: Record<string, string> }) {
+async function handleSignIn({ valid, values }: FormSubmitEvent) {
   if (!valid) return
 
   isLoading.value = true
@@ -84,14 +84,14 @@ const forgotPasswordResolver = zodResolver(
     email: z.string().nonempty("email tidak boleh kosong").email("ini bukan email."),
   })
 )
+
+const { loadingText: loginBtnLabel } = useLoadingText(isLoading, "Masuk", "Tunggu sebentar ya")
 </script>
 
 <template>
   <section class="flex flex-col gap-4 flex-auto max-w-xl main-section">
     <header>
-      <h1 class="text-center">
-        <span>Masuk</span>
-      </h1>
+      <h1 class="text-center">Masuk</h1>
       <p class="text-center m-0">Masuk ke akun Metschoo Library yang sudah anda miliki!</p>
     </header>
 
@@ -126,7 +126,7 @@ const forgotPasswordResolver = zodResolver(
           {{ $form.password.error.message }}
         </Message>
 
-        <CTA type="submit" label="Masuk" :disabled="isLoading" />
+        <CTA type="submit" :label="loginBtnLabel" :loading="isLoading" />
         <CTA type="button" label="lupa password?" text @click="isForgotPasswordOpen = true" />
       </Form>
     </div>

@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
-import DataTable from "primevue/datatable"
-import Column from "primevue/column"
+import { DataTable, Column, InputText, DatePicker, FloatLabel } from "primevue"
+import IconExcel from "~icons/mdi/microsoft-excel"
+import xlsx from "xlsx"
 import { getPeminjamanData } from "@/lib/peminjaman"
-import { formatDate } from "#imports"
+import { formatDate } from "@/utils"
+
 import type { PeminjamanSearchArgs } from "~/types"
-import { InputText, DatePicker, FloatLabel } from "primevue"
 import type { PeminjamanData } from "./index.vue"
 
 useHead({
@@ -18,26 +19,68 @@ definePageMeta({
 
 const searchFor = ref<PeminjamanSearchArgs>({
   peminjam: "",
-  no_isbn: "",
+  judul: "",
   tgl_pinjam: [null, null],
   tenggat_waktu: [null, null],
 })
 
-const { data: peminjamanData } = await useAsyncData(
-  async () => await getPeminjamanData(searchFor.value)
-)
+const { data: peminjamanData, refresh: refreshPeminjaman } = await useAsyncData(async () => {
+  return await getPeminjamanData(searchFor.value)
+})
 
 const isLoading = ref(false)
 
 async function handleFilterPeminjaman() {
   isLoading.value = true
-  peminjamanData.value = await getPeminjamanData(searchFor.value)
+  refreshPeminjaman()
   isLoading.value = false
+}
+
+const toast = useToast()
+
+async function handleExportToExcel(data: typeof peminjamanData.value) {
+  if (!data) {
+    return toast.add({
+      severity: "error",
+      detail: "Error ketika mengekspor!",
+      summary: "Tidak ada data untuk diexpor.",
+      life: 10000,
+    })
+  }
+
+  const finalData = data.map((row) => {
+    return {
+      buku: row.buku?.judul,
+      peminjam: row.pengguna,
+      "tanggal pinjam": formatDate(new Date(row.tgl_pinjam ?? "")),
+      "tenggat waktu": formatDate(new Date(row.tenggat_waktu)),
+      keterangan: row.peminjaman_detail[0].peminjaman_state?.name,
+    }
+  })
+
+  const worksheet = xlsx.utils.json_to_sheet(finalData)
+  const workbook = xlsx.utils.book_new()
+  xlsx.utils.book_append_sheet(workbook, worksheet, `peminjaman`)
+
+  xlsx.writeFileXLSX(workbook, `Peminjaman - Metschoo Library | ${formatDate(new Date())}.xlsx`, {
+    compression: true,
+  })
+
+  return toast.add({
+    severity: "success",
+    summary: "sukses mengekspor data!",
+    detail: "sukses mengekspor data peminjaman. Lihat folder download anda!",
+    life: 10000,
+  })
 }
 </script>
 
 <template>
-  <PageHeader heading="Data peminjaman" />
+  <PageHeader heading="Data peminjaman" class="justify-between">
+    <CTA fill @click="handleExportToExcel(peminjamanData)" label="Export to Excel">
+      <IconExcel />
+    </CTA>
+  </PageHeader>
 
   <section class="main-section">
     <form class="py-4 flex gap-4" @submit.prevent="handleFilterPeminjaman">
@@ -47,8 +90,8 @@ async function handleFilterPeminjaman() {
       </FloatLabel>
 
       <FloatLabel>
-        <InputText v-model="searchFor.no_isbn" input-id="no-isbn" fluid />
-        <label for="no-isbn">ISBN</label>
+        <InputText v-model="searchFor.judul" input-id="no-isbn" fluid />
+        <label for="no-isbn">Judul</label>
       </FloatLabel>
 
       <FloatLabel>
@@ -104,14 +147,14 @@ async function handleFilterPeminjaman() {
       :rows="20"
     >
       <template #empty>
-        <p>Belum ada yang meminjam</p>
+        <p class="text-center py-8">Tidak ada data peminjaman yang ditemukan.</p>
       </template>
 
       <template #loading>
         <LoadingSpinner />
       </template>
       <template #header>
-        <p>Menampilkan {{ peminjamanData?.length }} peminjaman.</p>
+        <p class="dark:text-gray-400">Menampilkan {{ peminjamanData?.length }} peminjaman.</p>
       </template>
 
       <Column field="pengguna.nama" header="Peminjam">
@@ -167,6 +210,8 @@ async function handleFilterPeminjaman() {
       </Column>
     </DataTable>
   </section>
+
+  <Toast />
 </template>
 
 <style>
