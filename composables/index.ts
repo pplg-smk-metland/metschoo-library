@@ -144,39 +144,52 @@ export function usePreviewImage() {
   return { newImage, previewURL, previewImage }
 }
 
+interface LoadingTextParams {
+  /** loading state */
+  isLoading: Ref<boolean>
+
+  /** text to display when idling  */
+  text: MaybeRefOrGetter<string>
+
+  /** text to display when isLoading is true */
+  loadingText: MaybeRefOrGetter<string>
+
+  /** amount of dots to display, defaults to 3 */
+  dotAmount?: MaybeRefOrGetter<number>
+
+  /** duration to display each dot in ms, defaults to 500 */
+  duration?: MaybeRefOrGetter<number>
+}
+
 /**
  * returns a dot blinker for loading animations.
- * @param {string} text - the text to display when not in loading state
- * @param {string} loadingText - the text to display when in loading state
+ * @param {LoadingTextParams} params - params
  *
  * @returns finalLoadingText
  * */
-export function useLoadingText(
-  isLoading: Ref<boolean>,
-  text: MaybeRefOrGetter<string>,
-  loadingText: MaybeRefOrGetter<string>
-) {
-  const processedLoadingText = toRef(loadingText)
-  const processedText = toRef(text)
-  const finalText = ref(processedText.value)
+export function useLoadingText(params: LoadingTextParams) {
+  const pLoadingText = toRef(params.loadingText)
+  const finalText = ref(params.text)
   const repeatAmount = ref(0)
+  const pDuration = toRef(params.duration ?? 500)
+  const pDotAmount = toRef(params.dotAmount ?? 3)
 
-  let intervalID: NodeJS.Timeout | undefined = undefined
+  let intervalID: NodeJS.Timeout | undefined
 
-  watch(isLoading, (newIsLoading) => {
-    finalText.value = newIsLoading ? processedLoadingText.value : processedText.value
+  watch(params.isLoading, (newIsLoading) => {
+    finalText.value = newIsLoading ? pLoadingText.value : params.text
 
     if (newIsLoading) {
-      intervalID = setInterval(() => {
-        finalText.value = processedLoadingText.value + ".".repeat(repeatAmount.value)
+      return (intervalID = setInterval(() => {
+        finalText.value = pLoadingText.value + ".".repeat(repeatAmount.value)
         repeatAmount.value += 1
-        if (repeatAmount.value > 3) repeatAmount.value = 0
-      }, 500)
-    } else {
-      repeatAmount.value = 0
-      clearInterval(intervalID)
-      intervalID = undefined
+        if (repeatAmount.value > pDotAmount.value) repeatAmount.value = 0
+      }, pDuration.value))
     }
+
+    repeatAmount.value = 0
+    clearInterval(intervalID)
+    intervalID = undefined
   })
 
   return { loadingText: finalText }

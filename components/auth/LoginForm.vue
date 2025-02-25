@@ -85,7 +85,11 @@ const forgotPasswordResolver = zodResolver(
   })
 )
 
-const { loadingText: loginBtnLabel } = useLoadingText(isLoading, "Masuk", "Tunggu sebentar ya")
+const { loadingText: loginBtnLabel } = useLoadingText({
+  isLoading,
+  text: "Masuk",
+  loadingText: "Tunggu sebentar ya",
+})
 </script>
 
 <template>
@@ -109,7 +113,7 @@ const { loadingText: loginBtnLabel } = useLoadingText(isLoading, "Masuk", "Tungg
         <InputText id="email" name="email" placeholder="Email" autocomplete="off" />
 
         <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">
-          {{ $form.email.error.message }}
+          {}
         </Message>
 
         <label for="password">Password</label>

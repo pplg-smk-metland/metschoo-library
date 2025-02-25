@@ -72,7 +72,11 @@ async function addNewBook({ valid, values }: FormSubmitEvent) {
 }
 
 // silly loading animation
-const { loadingText: tambahBtnLabel } = useLoadingText(isLoading, "Tambah buku", "Menambahkan buku")
+const { loadingText: tambahBtnLabel } = useLoadingText({
+  isLoading,
+  text: "Tambah buku",
+  loadingText: "Menambahkan buku",
+})
 
 const { data: availableCategories } = await useAsyncData(
   async () => await getAllAvailableCategories()

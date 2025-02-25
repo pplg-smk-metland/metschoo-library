@@ -49,7 +49,11 @@ async function handleRegister({ valid, values }: FormSubmitEvent) {
   }
 }
 
-const { loadingText: registerBtnLabel } = useLoadingText(isLoading, "Daftar", "Tunggu sebentar ya")
+const { loadingText: registerBtnLabel } = useLoadingText({
+  isLoading,
+  text: "Daftar",
+  loadingText: "Tunggu sebentar ya",
+})
 </script>
 
 <template>
