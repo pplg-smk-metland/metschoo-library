@@ -26,14 +26,13 @@ Deno.serve(async (req) => {
   if ("accepted" === type) {
     subject = "Yey, request buku anda diterima! 🚀"
     html =
-      "buku yang kamu request akan segera ditambahkan ke dalam koleksi Metschoo Library. Stay tuned ya!"
+      "<p>buku yang kamu request akan segera ditambahkan ke dalam koleksi Metschoo Library. Stay tuned ya!</p>"
   } else {
     subject = "Oh tidak, request buku anda ditolak. 😢"
     html =
-      "Sepertinya admin tidak suka buku yang kamu request. Jangan berkecil hati ya, kamu bisa request buku baru minggu depan!"
+      "<p>Sepertinya admin tidak suka buku yang kamu request. Jangan berkecil hati ya, kamu bisa request buku baru lagi di bulan depan!</p>"
   }
 
-  // coba dulu kirim email delivered@resend.dev
   const { data: resendResult, error: resendError } = await resend.emails.send({
     from: "Metschoo Library <contact@library.smkmetland.net>",
     to: email,
@@ -44,7 +43,7 @@ Deno.serve(async (req) => {
   if (resendError) {
     return new Response(
       JSON.stringify({
-        message: "gagal mengirim email",
+        message: "failed to send email",
         data: { error: resendError },
       })
     )
