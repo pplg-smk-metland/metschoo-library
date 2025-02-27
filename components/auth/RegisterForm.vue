@@ -7,17 +7,30 @@ import type { FormSubmitEvent } from "@primevue/forms"
 
 const isLoading = ref(false)
 
-const schema = z.object({
-  nama: z.string().nonempty("namamu ga mungkin kosong bre."),
-  email: z.string().nonempty("emailmu ga mungkin kosong bre.").email("ini bukan email."),
-  phoneNumber: z
-    .string()
-    .regex(/^08\d{10,14}$/, "nomor HP kamu harus diawali 08 dan memiliki 10 sampai 14 angka."),
-  password: z.string().min(8, "password kamu minimal harus 8 karakter atau lebih."),
-  confirmPassword: z.string().nonempty("kamu lupa ngetik konfirmasi password."),
-})
+const schema = z
+  .object({
+    nama: z.string().nonempty("Namamu ga mungkin kosong bre."),
+    email: z.string().nonempty("Emailmu ga mungkin kosong bre.").email("Ini bukan email."),
+    phoneNumber: z
+      .string()
+      .regex(/^08\d{9,14}$/, "Nomor HP kamu harus diawali 08 dan memiliki 9 sampai 14 angka."),
+    password: z.string().min(8, "Password kamu minimal harus 8 karakter atau lebih."),
+    confirmPassword: z.string().nonempty("Kamu lupa ngetik konfirmasi password."),
+  })
+  .refine((schema) => schema.confirmPassword === schema.password, {
+    path: ["confirmPassword"],
+    message: "Mohon konfirmasi password kamu.",
+  })
 
 const resolver = zodResolver(schema)
+
+const initialFormValues: z.infer<typeof schema> = {
+  password: "",
+  nama: "",
+  email: "",
+  phoneNumber: "",
+  confirmPassword: "",
+}
 
 const authStore = useAuthStore()
 const toast = useToast()
@@ -68,6 +81,7 @@ const { loadingText: registerBtnLabel } = useLoadingText(isLoading, "Daftar", "T
         :validate-on-value-update="false"
         :validate-on-submit="true"
         :validateon-blur="true"
+        :initial-values="initialFormValues"
         class="flex flex-col gap-2"
         @submit="handleRegister"
       >
@@ -129,18 +143,6 @@ const { loadingText: registerBtnLabel } = useLoadingText(isLoading, "Daftar", "T
           variant="simple"
         >
           {{ $form.confirmPassword?.error.message }}
-        </Message>
-
-        <Message
-          v-if="
-            !$form.confirmPassword?.invalid &&
-            $form.confirmPassword?.value !== $form.password?.value
-          "
-          severity="error"
-          size="small"
-          variant="simple"
-        >
-          Mohon konfirmasi password kamu, ngetiknya yang bener.
         </Message>
 
         <CTA type="submit" :label="registerBtnLabel" :loading="isLoading" />
