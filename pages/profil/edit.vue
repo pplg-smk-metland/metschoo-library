@@ -27,14 +27,14 @@ const { data: userProfile } = await useAsyncData(async () => {
 
 const initialFormValues = ref({
   nama: userProfile.value?.nama,
-  kelas: userProfile.value?.kelas,
-  jurusan: userProfile.value?.jurusan,
+  kelas: userProfile.value?.kelas ?? "X",
+  jurusan: userProfile.value?.jurusan ?? "",
 })
 
 const formSchema = z.object({
   nama: z.string().nonempty("nama kamu gak mungkin kosong."),
   kelas: z.enum(["X", "XI", "XII"], { message: "kelasnya gak valid." }),
-  jurusan: z.string().nonempty("jurusan kamu gak mungkin kosong."),
+  jurusan: z.string().nonempty("jurusan kamu gak boleh kosong."),
 })
 
 const resolver = zodResolver(formSchema)
