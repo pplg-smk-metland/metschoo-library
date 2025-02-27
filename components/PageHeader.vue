@@ -13,8 +13,8 @@ const { class: className } = defineProps<Props>()
       'flex items-start gap-2',
       {
         'flex-col': !className,
-        className: className && className.length !== 0,
       },
+      className,
     ]"
   >
     <h1>{{ heading }}</h1>

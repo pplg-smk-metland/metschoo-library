@@ -23,7 +23,12 @@ const authStore = useAuthStore()
 
 const { data: userProfile } = await useAsyncData(async () => {
   if (user.value) return await authStore.getProfile(user.value.id)
-  return false
+})
+
+const initialFormValues = ref({
+  nama: userProfile.value?.nama,
+  kelas: userProfile.value?.kelas,
+  jurusan: userProfile.value?.jurusan,
 })
 
 const formSchema = z.object({
@@ -68,6 +73,10 @@ async function updateProfile({ valid }: { valid: boolean }) {
     </CTA>
   </PageHeader>
 
+  <Message v-if="user?.user_metadata.new">
+    Sebelum kamu meminjam buku, ayo masukkan dulu kelas dan jurusanmu!
+  </Message>
+
   <section v-if="userProfile" class="main-section flex gap-4">
     <figure class="flex flex-col gap-4">
       <img
@@ -82,7 +91,7 @@ async function updateProfile({ valid }: { valid: boolean }) {
 
     <Form
       v-slot="$form"
-      :initial-values="userProfile"
+      :initial-values="initialFormValues"
       :resolver="resolver"
       :validate-on-value-update="false"
       :validate-on-blur="true"
@@ -100,7 +109,6 @@ async function updateProfile({ valid }: { valid: boolean }) {
       <label for="kelas">Kelas</label>
       <Select
         v-model="userProfile.kelas"
-        :default-value="userProfile.kelas ?? 'X'"
         :options="['X', 'XI', 'XII']"
         name="kelas"
         placeholder="Kelas Berapa Kamu"
