@@ -10,6 +10,7 @@ export const useAuthStore = defineStore("auth", () => {
   const profile = ref<Pengguna | null>(null)
 
   async function init() {
+    if (import.meta.dev) console.trace("auth store initialized")
     const user = useSupabaseUser()
 
     supabase.auth.onAuthStateChange((event) => {
@@ -36,17 +37,6 @@ export const useAuthStore = defineStore("auth", () => {
             .eq("user_id", user.value.id)
 
           if (error) console.error("gagal memperbarui metadata pengguna.")
-
-          const { error: updateNewError } = await supabase.auth.updateUser({
-            data: {
-              new: false,
-            },
-          })
-
-          if (updateNewError) {
-            console.error(updateNewError)
-            console.error("gagal memperbarui metadata pengguna (complete signup flow).")
-          }
         }, 0)
       }
     })
@@ -131,6 +121,15 @@ export const useAuthStore = defineStore("auth", () => {
     }
     const { error } = await supabase.from("pengguna").upsert(updates)
     if (error) throw error
+
+    const { error: updateNewError } = await supabase.auth.updateUser({
+      data: { new: false },
+    })
+
+    if (updateNewError) {
+      console.error(updateNewError)
+      console.error("gagal memperbarui metadata pengguna (complete signup flow).")
+    }
   }
 
   return {

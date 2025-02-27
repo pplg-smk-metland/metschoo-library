@@ -5,6 +5,11 @@ definePageMeta({
 
 const authStore = useAuthStore()
 const user = useSupabaseUser()
+const router = useRouter()
+
+if (user.value?.user_metadata.new) {
+  router.push("/profil/edit")
+}
 
 const { data: profile } = await useLazyAsyncData(async () => {
   if (user.value) return await authStore.getProfile(user.value.id)
