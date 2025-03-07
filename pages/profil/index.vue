@@ -120,7 +120,7 @@ async function enterLibrary() {
 
 <template>
   <div class="grid gap-4 grid-cols-1 lg:grid-cols-12 lg:grid-flow-dense max-w-screen-2xl mx-auto">
-    <PageHeader heading="Profil" class="col-span-full">
+    <PageHeader heading="Profil" class="col-span-full flex-col">
       <p>Selamat Datang di Profil kamu</p>
     </PageHeader>
 
