@@ -6,6 +6,8 @@ on:
   push:
     paths-ignore:
       - .github/ISSUE_TEMPLATE/**
+      - assets
+      - public
     branches:
       - main
   # Replace pull_request with pull_request_target if you
