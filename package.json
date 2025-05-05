@@ -12,7 +12,8 @@
     "lint": "eslint .  --ignore-pattern \"assets/presets/*\"",
     "lint:fix": "eslint . --fix --ignore-pattern \"assets/presets/*\"",
     "typecheck": "nuxi typecheck",
-    "test": "vitest"
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@nuxt/fonts": "^0.10.2",
@@ -38,6 +39,7 @@
     "@supabase/supabase-js": "^2.45.2",
     "@testing-library/vue": "^8.1.0",
     "@types/eslint-config-prettier": "^6.11.3",
+    "@vitest/coverage-v8": "3.0.2",
     "@vue/test-utils": "^2.4.6",
     "eslint-config-prettier": "^9.1.0",
     "happy-dom": "^16.6.0",
