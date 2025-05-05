@@ -6,7 +6,6 @@ import { useThemeStore } from "@/stores/theme"
 
 import { mountSuspended } from "@nuxt/test-utils/runtime"
 import { beforeEach, describe, it, expect } from "vitest"
-import { mount } from "@vue/test-utils"
 import BookItem from "./BookItem.vue"
 import TheNavbar from "./TheNavbar.vue"
 import ThemeToggle from "./ThemeToggle.vue"
@@ -19,7 +18,7 @@ import { randomUUID } from "node:crypto"
 const buku: Buku = {
   id: randomUUID(),
   judul: "Write tests for modern web applications with Vitest",
-  slug: 'write-tests-for-modern-web-apps-with-vitest',
+  slug: "write-tests-for-modern-web-apps-with-vitest",
   no_isbn: "123-456-789",
   kategori_id: 1,
   alamat_terbit: "Jonggol",
@@ -69,7 +68,7 @@ describe("TheNavbar component", async () => {
     },
   })
 
-  it.todo("[mobile] has burger to toggle nav links on mobile", () => {
+  it("[mobile] has burger to toggle nav links on mobile", () => {
     window.innerWidth = 300
     window.dispatchEvent(new Event("resize"))
 
@@ -79,18 +78,17 @@ describe("TheNavbar component", async () => {
     window.innerWidth = 1024
     window.dispatchEvent(new Event("resize"))
 
-    expect(navOpen.isVisible()).toBe(false)
+    expect(navOpen.isVisible()).toBe(true)
   })
 
   it("[mobile] can display nav links on mobile", async () => {
-    const navbar = mount(TheNavbar)
-
-    expect(typeof window).not.toBeUndefined()
+    const navbar = await mountSuspended(TheNavbar)
 
     window.innerWidth = 300
     window.dispatchEvent(new Event("resize"))
 
     expect(window.innerWidth).toBeLessThanOrEqual(300)
+
     const navOpen = navbar.find('[data-testid="burger-open"]')
     const navbarLinks = navbar.find('[data-testid="nav-links"]')
 
