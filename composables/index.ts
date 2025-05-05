@@ -5,28 +5,6 @@ import type { Database } from "~/types/database.types"
 import type { FileUploadSelectEvent } from "primevue"
 
 /**
- * Returns a blank Buku ref.
- */
-export function useBuku() {
-  const buku = ref<Buku | null>({
-    id: "",
-    slug: "",
-    judul: "",
-    no_isbn: "",
-    penulis: "",
-    penerbit: "",
-    tahun_terbit: "",
-    alamat_terbit: "",
-    asal: "",
-    jumlah_exspl: 0,
-    kategori_id: 0,
-    image: null,
-  })
-
-  return { buku }
-}
-
-/**
  * Returns a dialog controller. Only controls one dialog component
  * */
 export function useDialog() {
@@ -113,6 +91,11 @@ export async function usePeminjamanState(
   }
 }
 
+/**
+ * checks if book is already wishlisted
+ * @param {Buku['id']} buku_id - id of book
+ * @returns {Promise<boolean>} book is wishlisted or not
+ * */
 export async function useCheckWishlist(buku_id: Buku["id"]): Promise<boolean> {
   const supabase = useSupabaseClient<Database>()
 
