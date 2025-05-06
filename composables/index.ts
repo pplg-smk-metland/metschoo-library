@@ -1,5 +1,4 @@
 import { ref } from "vue"
-import type { PostgrestError } from "@supabase/supabase-js"
 import type { ActualBuku, Buku, PeminjamanDetail, PeminjamanState } from "@/types"
 import type { Database } from "~/types/database.types"
 import type { FileUploadSelectEvent } from "primevue"
@@ -57,18 +56,10 @@ export async function usePeminjamanState(
 
     const { data, error } = await peminjamanQuery
 
-    // PGRST116 == empty
-    if ((error && error.code === "PGRST116") || !data) {
-      return {
-        isBorrowable: jumlah_exspl_aktual > 0,
-        isCancellable: false,
-        isReturnable: false,
-      }
-    }
-
     if (error) {
       return {
-        isBorrowable: false,
+        // PGRST116 == empty
+        isBorrowable: error.code === "PGRST116",
         isCancellable: false,
         isReturnable: false,
       }

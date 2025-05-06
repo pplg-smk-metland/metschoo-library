@@ -71,7 +71,6 @@ describe("peminjaman state composable", () => {
 
   it("book with confirmed peminjaman cannot be borrowed again, is cancellable, and is returnable", async () => {
     const peminjamanState = usePeminjamanState(buku, peminjamanDetail)
-
     await expect(peminjamanState).resolves.toMatchObject(expectedPeminjamanState)
   })
 
@@ -80,7 +79,14 @@ describe("peminjaman state composable", () => {
     await expect(peminjamanState).resolves.toMatchObject(expectedPeminjamanState)
   })
 
-  it("cannot cancel or return when it returns an PGRST116", async () => {
+  it("can borrow, but cannot cancel or return when it returns an PGRST116", async () => {
+    /**
+     * why are we able to borrow when peminjaman detail is not found?
+     * because when peminjaman detail data is not found, it means
+     * that there are no one borrowing the buku yet
+     * so we can immediately borrow it
+     * */
+
     mockSupabaseClient.single = vi.fn().mockResolvedValue({
       data: null,
       error: {
@@ -93,10 +99,11 @@ describe("peminjaman state composable", () => {
     })
 
     const expectedPeminjamanState: PeminjamanState = {
-      isBorrowable: false,
+      isBorrowable: true,
       isReturnable: false,
       isCancellable: false,
     }
+
     const peminjamanState = usePeminjamanState(buku)
     await expect(peminjamanState).resolves.toMatchObject(expectedPeminjamanState)
   })
