@@ -16,7 +16,7 @@ export async function getWishlist() {
   }
 }
 
-export async function deleteFromWishlist(id: Wishlist["id"]): Promise<Wishlist["id"]> {
+export async function deleteFromWishlist(id: Wishlist["id"]) {
   const supabase = useSupabaseClient<Database>()
 
   const { data, error } = await supabase
@@ -26,8 +26,10 @@ export async function deleteFromWishlist(id: Wishlist["id"]): Promise<Wishlist["
     .select("id")
     .single()
 
-  if (error) throw error
-  return data.id
+  return {
+    id: data?.id,
+    error,
+  }
 }
 
 export async function addToWishlist(buku_id: Buku["id"]) {
