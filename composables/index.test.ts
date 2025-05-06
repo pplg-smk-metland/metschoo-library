@@ -5,18 +5,19 @@ import { usePeminjamanState } from "./index"
 import { describe, it, expect } from "vitest"
 import { randomUUID } from "node:crypto"
 import { mockNuxtImport } from "@nuxt/test-utils/runtime"
+import type { PostgrestError } from "@supabase/supabase-js"
 
 const buku: ActualBuku = {
   id: randomUUID(),
   slug: "dummy-buku",
   no_isbn: "123-456-79",
-  jumlah_exspl: 0,
-  alamat_terbit: new Date("01-01-1970").toISOString(),
+  jumlah_exspl: 10,
+  alamat_terbit: "Jakarta",
   asal: "jonggol",
   image: "dummy/path/to/buku.png",
   judul: "dummy buku",
   jumlah_dipinjam: 1,
-  jumlah_exspl_aktual: 10,
+  jumlah_exspl_aktual: 0,
   kategori_id: 1,
   penerbit: "Erlangga",
   penulis: "Efraim",
@@ -75,6 +76,50 @@ describe("peminjaman state composable", () => {
   })
 
   it("fetches peminjaman detail when details are not provided", async () => {
+    const peminjamanState = usePeminjamanState(buku)
+    await expect(peminjamanState).resolves.toMatchObject(expectedPeminjamanState)
+  })
+
+  it("cannot cancel or return when it returns an PGRST116", async () => {
+    mockSupabaseClient.single = vi.fn().mockResolvedValue({
+      data: null,
+      error: {
+        name: "",
+        message: "JSON object requested, multiple (or no) rows returned",
+        details: "",
+        hint: "",
+        code: "PGRST116",
+      } satisfies PostgrestError,
+    })
+
+    const expectedPeminjamanState: PeminjamanState = {
+      isBorrowable: false,
+      isReturnable: false,
+      isCancellable: false,
+    }
+
+    const peminjamanState = usePeminjamanState(buku)
+    await expect(peminjamanState).resolves.toMatchObject(expectedPeminjamanState)
+  })
+
+  it("cannot borrow, cancel, or return when it returns an error", async () => {
+    mockSupabaseClient.single = vi.fn().mockResolvedValue({
+      data: null,
+      error: {
+        name: "",
+        message: "The Content-Type sent in the request is invalid.",
+        details: "",
+        hint: "",
+        code: "PGRST107",
+      } satisfies PostgrestError,
+    })
+
+    const expectedPeminjamanState: PeminjamanState = {
+      isBorrowable: false,
+      isReturnable: false,
+      isCancellable: false,
+    }
+
     const peminjamanState = usePeminjamanState(buku)
     await expect(peminjamanState).resolves.toMatchObject(expectedPeminjamanState)
   })
