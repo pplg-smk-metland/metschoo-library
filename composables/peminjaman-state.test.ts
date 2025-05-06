@@ -97,7 +97,6 @@ describe("peminjaman state composable", () => {
       isReturnable: false,
       isCancellable: false,
     }
-
     const peminjamanState = usePeminjamanState(buku)
     await expect(peminjamanState).resolves.toMatchObject(expectedPeminjamanState)
   })

@@ -99,20 +99,19 @@ export async function usePeminjamanState(
 export async function useCheckWishlist(buku_id: Buku["id"]): Promise<boolean> {
   const supabase = useSupabaseClient<Database>()
 
-  try {
-    const { count, error } = await supabase
-      .from("wishlist")
-      .select("id", { count: "exact", head: true })
-      .eq("buku_id", buku_id)
+  const { count, error } = await supabase
+    .from("wishlist")
+    .select("id", { count: "exact", head: true })
+    .eq("buku_id", buku_id)
 
-    if (error) throw error
-    if (!count) return false
-
-    return count !== null && count !== 0
-  } catch (err) {
-    console.trace(err as PostgrestError)
+  if (error) {
+    console.trace(error)
     return false
   }
+
+  if (!count) return false
+
+  return count !== null && count !== 0
 }
 
 export function usePreviewImage() {
