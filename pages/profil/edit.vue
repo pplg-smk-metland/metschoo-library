@@ -100,7 +100,13 @@ async function updateProfile({ valid }: { valid: boolean }) {
       @submit="updateProfile"
     >
       <label for="name">Nama</label>
-      <InputText v-model="userProfile.nama" name="nama" type="text" placeholder="Masukan Nama" />
+      <InputText
+        v-model="userProfile.nama"
+        :defaultValue="user?.user_metadata.new ? user.user_metadata.nama : userProfile.nama"
+        name="nama"
+        type="text"
+        placeholder="Masukan Nama"
+      />
 
       <Message v-if="$form.nama?.invalid" severity="error" size="small" variant="simple">
         {{ $form.nama?.error.message }}

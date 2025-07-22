@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Buku, Wishlist } from "@/types/"
-import type { PostgrestError } from "@supabase/supabase-js"
 
 import Toast from "primevue/toast"
 import { useToast } from "primevue/usetoast"
@@ -21,20 +20,10 @@ const toast = useToast()
 async function handleDeleteFromWishlist(id: Wishlist["id"], judul: Buku["judul"]) {
   if (!wishlist.value) return
 
-  try {
-    const targetId = await deleteFromWishlist(id)
+  const { id: targetId, error } = await deleteFromWishlist(id)
 
-    // sync UI after deletion
-    wishlist.value = wishlist.value.filter(({ id }) => id !== targetId)
-
-    toast.add({
-      severity: "success",
-      summary: "Sukses!",
-      detail: `sukses menghapus buku ${judul} dari wishlist`,
-      life: 5000,
-    })
-  } catch (err) {
-    console.error((err as PostgrestError).message)
+  if (error) {
+    console.error(error.message)
 
     toast.add({
       severity: "error",
@@ -43,6 +32,16 @@ async function handleDeleteFromWishlist(id: Wishlist["id"], judul: Buku["judul"]
       life: 10000,
     })
   }
+
+  // sync UI after deletion
+  wishlist.value = wishlist.value.filter(({ id }) => id !== targetId)
+
+  toast.add({
+    severity: "success",
+    summary: "Sukses!",
+    detail: `sukses menghapus buku ${judul} dari wishlist`,
+    life: 5000,
+  })
 }
 
 const router = useRouter()

@@ -1,30 +1,7 @@
 import { ref } from "vue"
-import type { PostgrestError } from "@supabase/supabase-js"
 import type { ActualBuku, Buku, PeminjamanDetail, PeminjamanState } from "@/types"
 import type { Database } from "~/types/database.types"
 import type { FileUploadSelectEvent } from "primevue"
-
-/**
- * Returns a blank Buku ref.
- */
-export function useBuku() {
-  const buku = ref<Buku | null>({
-    id: "",
-    slug: "",
-    judul: "",
-    no_isbn: "",
-    penulis: "",
-    penerbit: "",
-    tahun_terbit: "",
-    alamat_terbit: "",
-    asal: "",
-    jumlah_exspl: 0,
-    kategori_id: 0,
-    image: null,
-  })
-
-  return { buku }
-}
 
 /**
  * Returns a dialog controller. Only controls one dialog component
@@ -79,18 +56,10 @@ export async function usePeminjamanState(
 
     const { data, error } = await peminjamanQuery
 
-    // PGRST116 == empty
-    if ((error && error.code === "PGRST116") || !data) {
-      return {
-        isBorrowable: jumlah_exspl_aktual > 0,
-        isCancellable: false,
-        isReturnable: false,
-      }
-    }
-
     if (error) {
       return {
-        isBorrowable: false,
+        // PGRST116 == empty
+        isBorrowable: error.code === "PGRST116",
         isCancellable: false,
         isReturnable: false,
       }
@@ -113,23 +82,27 @@ export async function usePeminjamanState(
   }
 }
 
+/**
+ * checks if book is already wishlisted
+ * @param {Buku['id']} buku_id - id of book
+ * @returns {Promise<boolean>} book is wishlisted or not
+ * */
 export async function useCheckWishlist(buku_id: Buku["id"]): Promise<boolean> {
   const supabase = useSupabaseClient<Database>()
 
-  try {
-    const { count, error } = await supabase
-      .from("wishlist")
-      .select("id", { count: "exact", head: true })
-      .eq("buku_id", buku_id)
+  const { count, error } = await supabase
+    .from("wishlist")
+    .select("id", { count: "exact", head: true })
+    .eq("buku_id", buku_id)
 
-    if (error) throw error
-    if (!count) return false
-
-    return count !== null && count !== 0
-  } catch (err) {
-    console.trace(err as PostgrestError)
+  if (error) {
+    console.trace(error)
     return false
   }
+
+  if (!count) return false
+
+  return count !== null && count !== 0
 }
 
 export function usePreviewImage() {
